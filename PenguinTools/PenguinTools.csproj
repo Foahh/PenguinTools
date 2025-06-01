@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
+        <IsPackable>false</IsPackable>
+        <AssemblyName>PenguinTools</AssemblyName>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <PublishSingleFile>true</PublishSingleFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5"/>
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135"/>
+        <PackageReference Include="Swordfish.NET.CollectionsV3" Version="3.3.15" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Localization\FileFilterStrings.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>FileFilterStrings.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Localization\FileFilterStrings.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>FileFilterStrings.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="BuildDateAttribute">
+            <_Parameter1>$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="Resources\error.png" />
+      <Resource Include="Resources\information.png" />
+      <Resource Include="Resources\warning.png" />
+    </ItemGroup>
+
+    <Import Project="..\Version.props"/>
+</Project>

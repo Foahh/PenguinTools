@@ -1,0 +1,9 @@
+[submodule "PenguinTools.Media/External/VGAudio"]
+	path = External/VGAudio
+	url = https://github.com/PenguinHot/VGAudio.git
+[submodule "PenguinTools.Media/External/SonicAudioTools"]
+	path = External/SonicAudioTools
+	url = https://github.com/PenguinHot/SonicAudioTools.git
+[submodule "External/manipulate-lib"]
+	path = External/manipulate-lib
+	url = https://github.com/PenguinHot/manipulate-lib.git

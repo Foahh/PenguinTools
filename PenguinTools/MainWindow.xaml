@@ -1,0 +1,67 @@
+﻿<Window
+    x:Class="PenguinTools.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:PenguinTools.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:PenguinTools.Pages"
+    xmlns:res="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
+    xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
+    xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <converters:BoolHandCursorConverter x:Key="BoolHandCursorConverter" />
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+        <StatusBar Padding="2,0" DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusTime, StringFormat='{}{0:HH:mm:ss}'}" />
+            </StatusBarItem>
+            <Separator Margin="2,0" />
+            <StatusBarItem>
+                <TextBlock Text="{Binding Status}" />
+            </StatusBarItem>
+            <Separator Margin="2,0" />
+            <StatusBarItem>
+                <TextBlock
+                    Cursor="{Binding IsUpdateAvailable, Converter={StaticResource BoolHandCursorConverter}}"
+                    Text="{Binding UpdateStatus}"
+                    ToolTip="{x:Static res:Strings.UpdateCheck_Tooltip}">
+                    <TextBlock.InputBindings>
+                        <MouseBinding Command="{Binding DownloadUpdateCommand}" MouseAction="LeftClick" />
+                    </TextBlock.InputBindings>
+                </TextBlock>
+            </StatusBarItem>
+        </StatusBar>
+
+        <TabControl Margin="8">
+            <TabItem Header="{x:Static res:Strings.Tab_Option}">
+                <pages:OptionTab />
+            </TabItem>
+            <TabItem Header="{x:Static resources:Strings.Tab_Workflow}">
+                <pages:WorkflowTab />
+            </TabItem>
+            <TabItem Header="{x:Static res:Strings.Tab_Chart}">
+                <pages:ChartTab />
+            </TabItem>
+            <TabItem Header="{x:Static res:Strings.Tab_Jacket}">
+                <pages:JacketTab />
+            </TabItem>
+            <TabItem Header="{x:Static res:Strings.Tab_Music}">
+                <pages:MusicTab />
+            </TabItem>
+            <TabItem Header="{x:Static res:Strings.Tab_Stage}">
+                <pages:StageTab />
+            </TabItem>
+            <TabItem Header="{x:Static res:Strings.Tab_Misc}">
+                <pages:MiscTab />
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

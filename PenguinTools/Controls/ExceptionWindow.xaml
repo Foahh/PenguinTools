@@ -1,0 +1,78 @@
+﻿<Window
+    x:Class="PenguinTools.Controls.ExceptionWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
+    Title="{x:Static resources:Strings.Title_Error}"
+    MinWidth="400"
+    MaxWidth="800"
+    MaxHeight="600"
+    Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    ResizeMode="CanResizeWithGrip"
+    SizeToContent="WidthAndHeight"
+    SnapsToDevicePixels="True"
+    TextOptions.TextFormattingMode="Display"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="SingleBorderWindow"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="8,0,0,0" />
+            <Setter Property="Padding" Value="12,4" />
+            <Setter Property="MinWidth" Value="60" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,12"
+            Orientation="Horizontal">
+            <TextBlock
+                FontSize="18"
+                FontWeight="SemiBold"
+                Foreground="#D32F2F"
+                Text="{x:Static resources:Strings.Error_Unhandled}" />
+        </StackPanel>
+
+        <Border
+            Grid.Row="1"
+            Margin="0,0,0,16"
+            BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+            BorderThickness="1">
+            <ScrollViewer
+                Padding="4"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto">
+                <TextBox
+                    Background="Transparent"
+                    BorderThickness="0"
+                    FontFamily="Consolas"
+                    IsReadOnly="True"
+                    Text="{Binding StackTrace}"
+                    TextWrapping="Wrap" />
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button Click="CopyButton_Click" Content="{x:Static resources:Strings.Button_Copy_Exception}" />
+            <Button
+                Click="CloseButton_Click"
+                Content="{x:Static resources:Strings.Button_Close}"
+                IsDefault="True" />
+        </StackPanel>
+    </Grid>
+</Window>

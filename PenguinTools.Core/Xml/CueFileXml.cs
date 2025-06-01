@@ -1,0 +1,31 @@
+﻿using PenguinTools.Common.Asset;
+using System.Xml.Serialization;
+
+namespace PenguinTools.Common.Xml;
+
+[XmlRoot("CueFileData")]
+public sealed class CueFileXml : XmlElement<CueFileXml>
+{
+    internal CueFileXml()
+    {
+    }
+
+    public CueFileXml(int id)
+    {
+        DataName = $"cueFile{id:000000}";
+        Name = new Entry(id, $"music{id:0000}");
+        AcbFile = $"music{id:0000}.acb";
+        AwbFile = $"music{id:0000}.awb";
+    }
+
+    protected override string FileName => "CueFile.xml";
+    
+    [XmlElement("name")]
+    public Entry Name { get; set; } = Entry.Default;
+
+    [XmlElement("acbFile")]
+    public PathElement AcbFile { get; set; } = new();
+
+    [XmlElement("awbFile")]
+    public PathElement AwbFile { get; set; } = new();
+}
