@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using PenguinTools.Common;
 using PenguinTools.Common.Resources;
 using Swordfish.NET.Collections;
+using System.Text.Json;
+using System.Windows;
 
 namespace PenguinTools.Controls;
 
@@ -11,6 +14,7 @@ public partial class DiagnosticsWindow
     {
         InitializeComponent();
     }
+    
 }
 
 public partial class DiagnosticsWindowViewModel : ObservableObject
@@ -22,10 +26,7 @@ public partial class DiagnosticsWindowViewModel : ObservableObject
     public partial ConcurrentObservableSortedSet<Diagnostic>? Diagnostics { get; set; }
 
     [ObservableProperty]
-    public partial string? StackTrace { get; set; } = null;
-
-    [ObservableProperty]
-    public partial Diagnostic? SelectedDiagnostic { get; set; } = null;
+    public partial Diagnostic? SelectedDiagnostic { get; set; }
 
     [ObservableProperty]
     public partial double PathColumnWidth { get; private set; } = double.NaN;
@@ -40,5 +41,7 @@ public partial class DiagnosticsWindowViewModel : ObservableObject
         PathColumnWidth = showPath ? double.NaN : 0;
         var showTime = value.Any(diag => diag.FormattedTime != null);
         TimeColumnWidth = showTime ? double.NaN : 0;
+
+        SelectedDiagnostic = value.FirstOrDefault();
     }
 }

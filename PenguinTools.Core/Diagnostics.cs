@@ -1,5 +1,6 @@
 ﻿using PenguinTools.Common.Chart;
 using System.Collections.Concurrent;
+using System.Text.Json.Serialization;
 
 namespace PenguinTools.Common;
 
@@ -12,13 +13,15 @@ public enum Severity
 
 public class Diagnostic(Severity severity, string message, string? path = null, int? time = null, object? target = null) : IComparable<Diagnostic>, IComparable
 {
-    public Severity Severity { get; init; } = severity;
-    public string Message { get; init; } = message;
+    public Severity Severity { get; set; } = severity;
+    public string Message { get; set; } = message;
     public string? Path { get; set; } = path;
-    public int? Time { get; init; } = time;
-    public object? Target { get; init; } = target;
-    public TimeCalculator? TimeCalculator { get; set; }
+    public int? Time { get; set; } = time;
+    public object? Target { get; set; } = target;
 
+    public Exception? RelatedException { get; set; }
+
+    public TimeCalculator? TimeCalculator { get; set; }
     public string? FormattedTime
     {
         get
@@ -56,8 +59,8 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
 
 public interface IDiagnostic
 {
-    bool HasProblems { get; }
-    bool HasErrors { get; }
+    bool HasProblem { get; }
+    bool HasError { get; }
     TimeCalculator? TimeCalculator { get; set; }
 
     void Report(Diagnostic item);
@@ -71,8 +74,8 @@ public class DiagnosticReporter : IDiagnostic
     private readonly ConcurrentBag<Diagnostic> diags = [];
     public IReadOnlyCollection<Diagnostic> Diagnostics => diags;
 
-    public bool HasProblems => !diags.IsEmpty;
-    public bool HasErrors => diags.Any(d => d.Severity == Severity.Error);
+    public bool HasProblem => !diags.IsEmpty;
+    public bool HasError => diags.Any(d => d.Severity == Severity.Error);
 
     public TimeCalculator? TimeCalculator { get; set; }
 
@@ -84,8 +87,8 @@ public class DiagnosticReporter : IDiagnostic
 
     public void Report(Exception ex)
     {
-        if (ex is DiagnosticException dEx) diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target));
-        Report(new Diagnostic(Severity.Error, ex.Message, target: ex));
+        if (ex is DiagnosticException dEx) diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target) { RelatedException = dEx });
+        Report(new Diagnostic(Severity.Error, ex.Message) { RelatedException = ex });
     }
 
     public void Report(Severity severity, string message, string? path = null, object? target = null)

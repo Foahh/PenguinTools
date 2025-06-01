@@ -48,7 +48,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                 var stageConverter = new StageConverter(AssetManager);
                 var stageOpts = new StageConverter.Context(meta.FullBgiFilePath, [], meta.StageId, path, meta.NotesFieldLine);
                 await stageConverter.ConvertAsync(stageOpts, diag, p, ct);
-                if (diag.HasErrors) return;
+                if (diag.HasError) return;
                 ct.ThrowIfCancellationRequested();
                 stage = stageOpts.Result;
             }
@@ -72,17 +72,17 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 
             var chartConverter = new ChartConverter();
             await chartConverter.ConvertAsync(chartOpts, diag, p, ct);
-            if (diag.HasErrors) return;
+            if (diag.HasError) return;
             ct.ThrowIfCancellationRequested();
 
             var jacketConverter = new JacketConverter();
             await jacketConverter.ConvertAsync(jacketOpts, diag, p, ct);
-            if (diag.HasErrors) return;
+            if (diag.HasError) return;
             ct.ThrowIfCancellationRequested();
 
             var musicConverter = new MusicConverter();
             await musicConverter.ConvertAsync(musicOpts, diag, p, ct);
-            if (diag.HasErrors) return;
+            if (diag.HasError) return;
             ct.ThrowIfCancellationRequested();
         });
 

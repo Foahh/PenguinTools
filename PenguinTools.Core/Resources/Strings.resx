@@ -665,4 +665,7 @@ Output: {1}</value>
   <data name="Error_ffmpeg_failed_parse" xml:space="preserve">
         <value>Failed to parse data from ffmpeg output: {0}</value>
     </data>
+  <data name="Button_copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
 </root>

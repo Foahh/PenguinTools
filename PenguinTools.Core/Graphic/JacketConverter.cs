@@ -17,7 +17,7 @@ public class JacketConverter : IConverter<JacketConverter.Context>
     public Task<bool> CanConvertAsync(Context context, IDiagnostic diag)
     {
         if (!File.Exists(context.InputPath)) diag.Report(Severity.Error, Strings.Error_file_not_found, context.InputPath);
-        return Task.FromResult(!diag.HasErrors);
+        return Task.FromResult(!diag.HasError);
     }
 
     public record Context(string InputPath, string OutputPath);

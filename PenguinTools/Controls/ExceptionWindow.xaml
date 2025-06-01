@@ -6,13 +6,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
     Title="{x:Static resources:Strings.Title_Error}"
-    MinWidth="400"
-    MaxWidth="800"
-    MaxHeight="600"
+    Width="600"
+    Height="400"
+    MinWidth="450"
+    MinHeight="300"
+    MaxWidth="1200"
+    MaxHeight="900"
     Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
-    ResizeMode="CanResizeWithGrip"
-    SizeToContent="WidthAndHeight"
+    ResizeMode="CanResize"
     SnapsToDevicePixels="True"
     TextOptions.TextFormattingMode="Display"
     WindowStartupLocation="CenterScreen"
@@ -23,11 +25,19 @@
         <Style TargetType="Button">
             <Setter Property="Margin" Value="8,0,0,0" />
             <Setter Property="Padding" Value="12,4" />
-            <Setter Property="MinWidth" Value="60" />
+            <Setter Property="MinWidth" Value="80" />
+            <Setter Property="MinHeight" Value="28" />
+        </Style>
+
+        <Style x:Key="ErrorHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#D32F2F" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </Window.Resources>
 
-    <Grid Margin="16">
+    <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -36,43 +46,56 @@
 
         <StackPanel
             Grid.Row="0"
-            Margin="0,0,0,12"
+            Margin="-32,0,0,12"
+            HorizontalAlignment="Left"
             Orientation="Horizontal">
-            <TextBlock
-                FontSize="18"
-                FontWeight="SemiBold"
-                Foreground="#D32F2F"
-                Text="{x:Static resources:Strings.Error_Unhandled}" />
+            <Image
+                Width="24"
+                Height="24"
+                Margin="0,0,8,0"
+                Source="{StaticResource ErrorIcon}" />
+            <TextBlock Style="{StaticResource ErrorHeaderStyle}" Text="{x:Static resources:Strings.Error_Unhandled}" />
         </StackPanel>
 
         <Border
             Grid.Row="1"
-            Margin="0,0,0,16"
+            Margin="0,0,0,12"
+            Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
             BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
-            BorderThickness="1">
+            BorderThickness="1"
+            CornerRadius="2">
             <ScrollViewer
                 Padding="4"
+                Focusable="False"
                 HorizontalScrollBarVisibility="Auto"
                 VerticalScrollBarVisibility="Auto">
                 <TextBox
                     Background="Transparent"
                     BorderThickness="0"
                     FontFamily="Consolas"
+                    FontSize="13"
+                    HorizontalScrollBarVisibility="Auto"
                     IsReadOnly="True"
+                    IsReadOnlyCaretVisible="True"
                     Text="{Binding StackTrace}"
-                    TextWrapping="Wrap" />
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto" />
             </ScrollViewer>
         </Border>
 
-        <StackPanel
-            Grid.Row="2"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal">
-            <Button Click="CopyButton_Click" Content="{x:Static resources:Strings.Button_Copy_Exception}" />
-            <Button
-                Click="CloseButton_Click"
-                Content="{x:Static resources:Strings.Button_Close}"
-                IsDefault="True" />
-        </StackPanel>
+        <DockPanel Grid.Row="2" HorizontalAlignment="Right">
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                <Button Click="CopyButton_Click" Content="{x:Static resources:Strings.Button_Copy_Exception}" />
+            </StackPanel>
+
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button
+                    MinWidth="90"
+                    Click="CloseButton_Click"
+                    Content="{x:Static resources:Strings.Button_Close}"
+                    IsCancel="True"
+                    IsDefault="True" />
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>

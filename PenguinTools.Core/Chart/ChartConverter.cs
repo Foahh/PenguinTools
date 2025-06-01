@@ -85,7 +85,7 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
             }
         }
 
-        if (this.diag.HasErrors) return;
+        if (this.diag.HasError) return;
         await File.WriteAllTextAsync(context.OutputPath, sb.ToString(), ct);
     }
 

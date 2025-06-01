@@ -152,7 +152,18 @@
                             <behaviors:HideIfNullValueBehavior Value="{Binding SelectedBookItem}" />
                         </b:Interaction.Behaviors>
                     </local:MetaPropertyGrid>
+
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontStyle="Italic"
+                        Text="{x:Static res:Strings.Label_Not_Available}">
+                        <b:Interaction.Behaviors>
+                            <behaviors:HideIfNullValueBehavior Invert="True" Value="{Binding Model}" />
+                        </b:Interaction.Behaviors>
+                    </TextBlock>
                 </Grid>
+
             </GroupBox>
 
             <local:Alert

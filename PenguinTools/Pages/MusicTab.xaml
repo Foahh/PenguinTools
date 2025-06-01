@@ -48,6 +48,15 @@
 
                 </Grid>
             </GroupBox>
+
+            <local:Alert
+                Margin="0,8,0,0"
+                Level="Warning"
+                Message="{Binding LastModifiedTime, StringFormat={x:Static res:Strings.Alert_file_changed}}">
+                <b:Interaction.Behaviors>
+                    <behaviors:HideIfNullValueBehavior Value="{Binding LastModifiedTime}" />
+                </b:Interaction.Behaviors>
+            </local:Alert>
         </StackPanel>
 
         <StackPanel Grid.Row="1" Style="{StaticResource ActionPanelStyle}">

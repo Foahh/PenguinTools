@@ -763,4 +763,7 @@
   <data name="Error_ffmpeg_failed_parse" xml:space="preserve">
     <value>读取 ffmpeg 数据失败：{0}</value>
   </data>
+  <data name="Button_copy" xml:space="preserve">
+    <value>复制</value>
+  </data>
 </root>

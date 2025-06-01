@@ -49,7 +49,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             Diagnostic = d,
             Progress = p,
             CancellationToken = ct,
-            BatchSize = model.BatchSize
+            BatchSize = model.BatchSize,
+            WorkingDirectory = model.WorkingDirectory
         };
 
         var walker = Directory.EnumerateFiles(path, FileGlob, SearchOption.AllDirectories);
@@ -147,7 +148,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 Diagnostic = d,
                 Progress = p,
                 CancellationToken = ct,
-                BatchSize = settings.BatchSize
+                BatchSize = settings.BatchSize,
+                WorkingDirectory = settings.WorkingDirectory
             };
 
             var stageConverter = new StageConverter(AssetManager);
@@ -163,7 +165,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                     if (book.StageId is null) throw new DiagnosticException(Strings.Error_stage_id_is_not_set);
                     var stageOpts = new StageConverter.Context(book.Meta.FullBgiFilePath, [], book.StageId, stageFolder, book.NotesFieldLine);
                     await stageConverter.ConvertAsync(stageOpts, d, null, ct);
-                    if (d.HasErrors) throw new DiagnosticException(Strings.Error_Stage_Failed);
+                    if (d.HasError) throw new DiagnosticException(Strings.Error_Stage_Failed);
                     stage = stageOpts.Result;
                     ct.ThrowIfCancellationRequested();
                 }
@@ -185,7 +187,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                             var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
                             var chartOpts = new ChartConverter.Context(chartPath, item.Chart);
                             await chartConverter.ConvertAsync(chartOpts, d, null, ct);
-                            if (d.HasErrors) throw new DiagnosticException(Strings.Error_Chart_Failed);
+                            if (d.HasError) throw new DiagnosticException(Strings.Error_Chart_Failed);
                             ct.ThrowIfCancellationRequested();
                         }
                     }
@@ -194,7 +196,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                     {
                         var jacketOpts = new JacketConverter.Context(book.Meta.FullJacketFilePath, Path.Combine(chartFolder, xml.JaketFile));
                         await jacketConverter.ConvertAsync(jacketOpts, d, null, ct);
-                        if (d.HasErrors) throw new DiagnosticException(Strings.Error_Jacket_Failed);
+                        if (d.HasError) throw new DiagnosticException(Strings.Error_Jacket_Failed);
                         ct.ThrowIfCancellationRequested();
                     }
                 }
@@ -204,7 +206,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 {
                     var musicOpts = new MusicConverter.Context(book.Meta, cueFileFolder);
                     await musicConverter.ConvertAsync(musicOpts, d, null, ct);
-                    if (d.HasErrors) throw new DiagnosticException(Strings.Error_Music_Failed);
+                    if (d.HasError) throw new DiagnosticException(Strings.Error_Music_Failed);
                     ct.ThrowIfCancellationRequested();
                 }
             }, ctx, true);
@@ -257,10 +259,6 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 await action(item, ld);
                 ct.ThrowIfCancellationRequested();
             }
-            catch (DiagnosticException)
-            {
-                throw;
-            }
             catch (Exception ex)
             {
                 ld.Report(ex);
@@ -271,7 +269,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 ctx.Progress.Report($"{prefix}: {done}/{total}...");
                 foreach (var diagItem in ld.Diagnostics)
                 {
-                    diagItem.Path ??= getPath(item);
+                    diagItem.Path ??= Path.GetRelativePath(ctx.WorkingDirectory, getPath(item));
                     ctx.Diagnostic.Report(diagItem);
                 }
             }
@@ -300,5 +298,6 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         public required IProgress<string> Progress { get; init; }
         public required CancellationToken CancellationToken { get; init; }
         public required int BatchSize { get; init; }
+        public required string WorkingDirectory { get; init; }
     }
 }

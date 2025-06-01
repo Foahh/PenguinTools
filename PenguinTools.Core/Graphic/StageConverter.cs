@@ -47,7 +47,7 @@ public sealed class StageConverter(AssetManager asm) : IConverter<StageConverter
             }
         }
 
-        return Task.FromResult(!diag.HasErrors);
+        return Task.FromResult(!diag.HasError);
     }
 
     public record Context(string BgPath, string?[]? FxPaths, int? StageId, string OutputFolder, Entry NoteFieldLane)

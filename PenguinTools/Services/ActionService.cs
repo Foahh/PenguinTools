@@ -38,7 +38,6 @@ public partial class ActionService : ObservableObject
         });
         IProgress<string> ip = progress;
 
-        Exception? lastException = null;
         try
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken ?? CancellationToken.None);
@@ -52,7 +51,6 @@ public partial class ActionService : ObservableObject
         catch (Exception ex)
         {
             diagnostics.Report(ex);
-            lastException = ex;
         }
         finally
         {
@@ -61,12 +59,11 @@ public partial class ActionService : ObservableObject
 
         var model = new DiagnosticsWindowViewModel
         {
-            Diagnostics = [..diagnostics.Diagnostics],
-            StackTrace = lastException?.StackTrace
+            Diagnostics = [..diagnostics.Diagnostics]
         };
 
-        if (!diagnostics.HasProblems) return;
-        if (diagnostics.HasErrors) ip.Report(Strings.Status_error);
+        if (!diagnostics.HasProblem) return;
+        if (diagnostics.HasError) ip.Report(Strings.Status_error);
 
         var window = new DiagnosticsWindow
         {

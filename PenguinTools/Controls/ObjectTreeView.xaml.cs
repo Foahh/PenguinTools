@@ -1,12 +1,17 @@
-﻿using System.Text.Json;
+﻿using CommunityToolkit.Mvvm.Input;
+using PenguinTools.Converters;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace PenguinTools.Controls;
 
 public partial class ObjectTreeView : UserControl
 {
+    public static readonly DependencyProperty JsonRepresentationProperty = DependencyProperty.Register(nameof(JsonRepresentation), typeof(string), typeof(ObjectTreeView));
     public static readonly DependencyProperty SelectedObjectProperty = DependencyProperty.Register(nameof(SelectedObject), typeof(object), typeof(ObjectTreeView), new PropertyMetadata(null, OnObjectChanged));
     public static readonly DependencyProperty TreeNodesProperty = DependencyProperty.Register(nameof(TreeNodes), typeof(List<ObjectTreeNode>), typeof(ObjectTreeView), new PropertyMetadata(null));
 
@@ -15,13 +20,19 @@ public partial class ObjectTreeView : UserControl
         InitializeComponent();
     }
 
+    public string? JsonRepresentation
+    {
+        get => (string)GetValue(JsonRepresentationProperty);
+        set => SetValue(JsonRepresentationProperty, value);
+    }
+
     public object SelectedObject
     {
         get => GetValue(SelectedObjectProperty);
         set => SetValue(SelectedObjectProperty, value);
     }
 
-    public List<ObjectTreeNode> TreeNodes
+    public List<ObjectTreeNode>? TreeNodes
     {
         get => (List<ObjectTreeNode>)GetValue(TreeNodesProperty);
         set => SetValue(TreeNodesProperty, value);
@@ -29,38 +40,33 @@ public partial class ObjectTreeView : UserControl
 
     private static void OnObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        var tree = ObjectTreeNode.CreateTree(e.NewValue);
         if (d is not ObjectTreeView otv) return;
-        otv.TreeNodes = [tree];
-    }
-}
-
-public class ExceptionJsonConverter<TExceptionType> : JsonConverter<TExceptionType> where TExceptionType : Exception
-{
-    public override bool CanConvert(Type typeToConvert)
-    {
-        return typeof(Exception).IsAssignableFrom(typeToConvert);
-    }
-
-    public override TExceptionType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        throw new NotSupportedException();
-    }
-
-    public override void Write(Utf8JsonWriter writer, TExceptionType value, JsonSerializerOptions options)
-    {
-        var properties = value.GetType().GetProperties().Select(uu => new { uu.Name, Value = uu.GetValue(value) }).Where(uu => uu.Name != nameof(Exception.TargetSite));
-        if (options.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingNull) properties = properties.Where(uu => uu.Value != null);
-        var props = properties.ToList();
-        if (props.Count == 0) return;
-
-        writer.WriteStartObject();
-        foreach (var prop in props)
+        if (e.NewValue == null)
         {
-            writer.WritePropertyName(prop.Name);
-            JsonSerializer.Serialize(writer, prop.Value, options);
+            otv.TreeNodes = null;
+            otv.JsonRepresentation = null;
+            return;
         }
-        writer.WriteEndObject();
+        var (json, tree) = ObjectTreeNode.CreateTree(e.NewValue);
+        otv.TreeNodes = [tree];
+        otv.JsonRepresentation = json;
+    }
+
+    private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(JsonRepresentation))
+        {
+            return;
+        }
+
+        try
+        {
+            Clipboard.SetText(JsonRepresentation);
+        }
+        catch
+        {
+            // do nothing
+        }
     }
 }
 
@@ -69,14 +75,17 @@ public class ObjectTreeNode
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
         Converters = { new ExceptionJsonConverter<Exception>() },
-        ReferenceHandler = ReferenceHandler.IgnoreCycles
+        ReferenceHandler = ReferenceHandler.IgnoreCycles,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        WriteIndented = true
     };
 
     public string Name { get; set; } = string.Empty;
     public string? Value { get; set; }
     public List<ObjectTreeNode> Children { get; set; } = [];
 
-    public static ObjectTreeNode CreateTree(object obj, string? rootName = null)
+    public static (string, ObjectTreeNode) CreateTree(object obj, string? rootName = null)
     {
         var json = JsonSerializer.Serialize(obj, JsonSerializerOptions);
         using var doc = JsonDocument.Parse(json);
@@ -87,7 +96,7 @@ public class ObjectTreeNode
             Value = GetValueString(rootElement)
         };
         BuildTree(rootElement, root);
-        return root;
+        return (json, root);
     }
 
     private static void BuildTree(JsonElement element, ObjectTreeNode node)

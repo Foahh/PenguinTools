@@ -11,105 +11,117 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
     Title="{Binding Title}"
-    MinWidth="300"
-    MaxWidth="800"
+    Width="800"
+    Height="600"
+    MinWidth="400"
+    MinHeight="300"
     d:DataContext="{d:DesignInstance controls:DiagnosticsWindowViewModel}"
-    SizeToContent="WidthAndHeight"
     Style="{DynamicResource DialogWindowStyle}"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
+    <Window.Resources>
+        <converters:PercentageConverter x:Key="PercentageConverter" />
+    </Window.Resources>
+
     <Grid Margin="8">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" MaxHeight="400" />
-            <RowDefinition Height="Auto" MaxHeight="400" />
-            <RowDefinition Height="Auto" MaxHeight="400" />
-            <RowDefinition Height="Auto" MaxHeight="400" />
-            <RowDefinition Height="Auto" MaxHeight="400" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ListView
+        <DockPanel
+            Grid.Row="0"
             Margin="8"
-            AlternationCount="1000"
-            ItemsSource="{Binding Diagnostics}"
-            ScrollViewer.CanContentScroll="True"
-            ScrollViewer.HorizontalScrollBarVisibility="Auto"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            SelectedItem="{Binding SelectedDiagnostic}"
-            SelectionMode="Single">
+            VerticalAlignment="Top">
+            <ListView
+                MinHeight="100"
+                MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource PercentageConverter}, ConverterParameter=0.6}"
+                VerticalAlignment="Top"
+                AlternationCount="1000"
+                ItemsSource="{Binding Diagnostics}"
+                ScrollViewer.CanContentScroll="True"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                SelectedItem="{Binding SelectedDiagnostic}"
+                SelectionMode="Single">
 
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Image
-                                    Width="12"
-                                    Height="12"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                                    <Image.Style>
-                                        <Style TargetType="Image">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Severity}" Value="{x:Static common:Severity.Error}">
-                                                    <Setter Property="Source" Value="{StaticResource ErrorIcon}" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Severity}" Value="{x:Static common:Severity.Warning}">
-                                                    <Setter Property="Source" Value="{StaticResource WarningIcon}" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Severity}" Value="{x:Static common:Severity.Information}">
-                                                    <Setter Property="Source" Value="{StaticResource InfoIcon}" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Image.Style>
-                                </Image>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="Auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image
+                                        Width="12"
+                                        Height="12"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static common:Severity.Error}">
+                                                        <Setter Property="Source" Value="{StaticResource ErrorIcon}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static common:Severity.Warning}">
+                                                        <Setter Property="Source" Value="{StaticResource WarningIcon}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static common:Severity.Information}">
+                                                        <Setter Property="Source" Value="{StaticResource InfoIcon}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Width="{Binding TimeColumnWidth}" Header="{x:Static resources:Strings.Label_Time}">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    TextWrapping="Wrap">
-                                    <TextBlock Text="{Binding FormattedTime}" />
-                                </TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Width="{Binding TimeColumnWidth}" Header="{x:Static resources:Strings.Label_Time}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        TextWrapping="Wrap">
+                                        <TextBlock Text="{Binding FormattedTime}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Width="{Binding PathColumnWidth}" Header="{x:Static resources:Strings.Label_Path}">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Text="{Binding Path}"
-                                    TextWrapping="Wrap" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                        <GridViewColumn Width="{Binding PathColumnWidth}" Header="{x:Static resources:Strings.Label_Path}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Path}"
+                                        TextWrapping="Wrap" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                    <GridViewColumn Header="{x:Static resources:Strings.Label_Message}">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Text="{Binding Message}"
-                                    TextWrapping="Wrap" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+                        <GridViewColumn Header="{x:Static resources:Strings.Label_Message}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Message}"
+                                        TextWrapping="Wrap" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
 
         <GroupBox
-            Grid.Row="2"
+            Grid.Row="1"
+            MinHeight="100"
+            MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource PercentageConverter}, ConverterParameter=0.4}"
             Margin="8,0,8,0"
             Header="{x:Static resources:Strings.Label_Details}">
             <i:Interaction.Behaviors>
@@ -118,29 +130,7 @@
             <controls:ObjectTreeView SelectedObject="{Binding SelectedDiagnostic}" />
         </GroupBox>
 
-        <Expander
-            Grid.Row="3"
-            Margin="8,0,8,8"
-            Header="{x:Static resources:Strings.Label_StackTrace}">
-            <i:Interaction.Behaviors>
-                <behaviors:HideIfNullValueBehavior Value="{Binding StackTrace}" />
-            </i:Interaction.Behaviors>
-            <TextBox
-                Height="150"
-                Margin="0,8,0,0"
-                Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-                FontFamily="Consolas, Courier New"
-                HorizontalScrollBarVisibility="Auto"
-                IsReadOnly="True"
-                Text="{Binding StackTrace}"
-                TextWrapping="Wrap"
-                VerticalScrollBarVisibility="Auto" />
-        </Expander>
-
-        <StackPanel
-            Grid.Row="4"
-            Margin="0,8,0,0"
-            HorizontalAlignment="Right">
+        <StackPanel Grid.Row="2" Style="{StaticResource ActionPanelStyle}">
             <Button Content="OK" IsDefault="True">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">

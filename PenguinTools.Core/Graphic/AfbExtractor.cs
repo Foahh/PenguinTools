@@ -16,7 +16,7 @@ public class AfbExtractor : IConverter<AfbExtractor.Options>
     public Task<bool> CanConvertAsync(Options options, IDiagnostic diag)
     {
         if (!File.Exists(options.InputPath)) diag.Report(Severity.Error, Strings.Error_file_not_found, options.InputPath);
-        return Task.FromResult(!diag.HasErrors);
+        return Task.FromResult(!diag.HasError);
     }
 
     public record Options(string InputPath, string OutputFolder);

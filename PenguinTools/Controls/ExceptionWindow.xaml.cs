@@ -24,6 +24,13 @@ public partial class ExceptionWindow : Window
 
     private void CopyButton_Click(object sender, RoutedEventArgs e)
     {
-        Clipboard.SetText(StackTrace);
+        try
+        {
+            Clipboard.SetText(StackTrace);
+        }
+        catch
+        {
+            // do nothing
+        }
     }
 }

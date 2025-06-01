@@ -15,7 +15,7 @@ public sealed class MusicConverter : IConverter<MusicConverter.Context>
         var path = context.Meta.FullBgmFilePath;
         if (!File.Exists(path)) diag.Report(Severity.Error, Strings.Error_file_not_found, path);
         if (context.Meta.BgmAnalysis == null) diag.Report(Severity.Error, Strings.Error_invalid_audio, path);
-        return Task.FromResult(!diag.HasErrors);
+        return Task.FromResult(!diag.HasError);
     }
 
     public async Task ConvertAsync(Context context, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
