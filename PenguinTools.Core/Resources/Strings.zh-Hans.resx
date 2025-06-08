@@ -766,4 +766,19 @@
   <data name="Button_copy" xml:space="preserve">
     <value>复制</value>
   </data>
+  <data name="HintW_title" xml:space="preserve">
+    <value>缺少必要组件</value>
+  </data>
+  <data name="HintW_body_1" xml:space="preserve">
+    <value>未能系统环境中检测到 ffmpeg.exe 和 ffprobe.exe。</value>
+  </data>
+  <data name="HintW_body_2" xml:space="preserve">
+    <value>请安装 FFmpeg 以正常使用本工具。</value>
+  </data>
+  <data name="HintW_body_3" xml:space="preserve">
+    <value>具体安装说明，请参阅文档。</value>
+  </data>
+  <data name="HintW_open" xml:space="preserve">
+    <value>打开文档</value>
+  </data>
 </root>

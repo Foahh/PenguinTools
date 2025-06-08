@@ -228,6 +228,48 @@ public static partial class FFmpeg
 
     [GeneratedRegex(@"Peak:\s*(-?\d+\.\d+) dBFS")]
     private static partial Regex DBFS_REGEX();
+
+    public static bool CheckInstalled()
+    {
+        try
+        {
+            using var ffmpegProcess = new Process();
+            ffmpegProcess.StartInfo = new ProcessStartInfo
+            {
+                FileName = "ffmpeg",
+                Arguments = "-version",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            ffmpegProcess.Start();
+            var ffmpegOutput = ffmpegProcess.StandardOutput.ReadToEnd();
+            ffmpegProcess.WaitForExit();
+
+            using var ffprobeProcess = new Process();
+            ffprobeProcess.StartInfo = new ProcessStartInfo
+            {
+                FileName = "ffprobe",
+                Arguments = "-version",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            ffprobeProcess.Start();
+            var ffprobeOutput = ffprobeProcess.StandardOutput.ReadToEnd();
+            ffprobeProcess.WaitForExit();
+
+            return !string.IsNullOrWhiteSpace(ffmpegOutput) && !string.IsNullOrWhiteSpace(ffprobeOutput);
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }
 
 public class AudioInformation

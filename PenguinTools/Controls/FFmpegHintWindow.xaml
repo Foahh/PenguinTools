@@ -1,0 +1,59 @@
+﻿<Window
+    x:Class="PenguinTools.Controls.FFmpegHintWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
+    Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,16"
+            Orientation="Horizontal">
+            <Image
+                Width="18"
+                Height="18"
+                Margin="0,0,6,0"
+                Source="/Resources/information.png" />
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="{x:Static resources:Strings.HintW_title}" />
+        </StackPanel>
+
+        <TextBlock
+            Grid.Row="1"
+            Margin="0,0,0,16"
+            TextWrapping="Wrap">
+            <Run Text="{x:Static resources:Strings.HintW_body_1}" />
+            <LineBreak />
+            <LineBreak />
+            <Run Text="{x:Static resources:Strings.HintW_body_2}" />
+            <LineBreak />
+            <LineBreak />
+            <Run Text="{x:Static resources:Strings.HintW_body_3}" />
+        </TextBlock>
+
+        <Button
+            Grid.Row="2"
+            Width="Auto"
+            Height="25"
+            Padding="8,0"
+            HorizontalAlignment="Right"
+            Click="OpenDocumentation_Click"
+            Content="{x:Static resources:Strings.HintW_open}" />
+    </Grid>
+</Window>

@@ -1420,6 +1420,51 @@ namespace PenguinTools.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not detect ffmpeg.exe and ffprobe.exe in system environment..
+        /// </summary>
+        public static string HintW_body_1 {
+            get {
+                return ResourceManager.GetString("HintW_body_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please install FFmpeg to using this application..
+        /// </summary>
+        public static string HintW_body_2 {
+            get {
+                return ResourceManager.GetString("HintW_body_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For detailed installation instructions, please see documentation..
+        /// </summary>
+        public static string HintW_body_3 {
+            get {
+                return ResourceManager.GetString("HintW_body_3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Documentation.
+        /// </summary>
+        public static string HintW_open {
+            get {
+                return ResourceManager.GetString("HintW_open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Required Components Missing.
+        /// </summary>
+        public static string HintW_title {
+            get {
+                return ResourceManager.GetString("HintW_title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Audio: .
         /// </summary>
         public static string Label_Audio {

@@ -668,4 +668,19 @@ Output: {1}</value>
   <data name="Button_copy" xml:space="preserve">
     <value>Copy</value>
   </data>
+  <data name="HintW_title" xml:space="preserve">
+    <value>Required Components Missing</value>
+  </data>
+  <data name="HintW_body_1" xml:space="preserve">
+    <value>Could not detect ffmpeg.exe and ffprobe.exe in system environment.</value>
+  </data>
+  <data name="HintW_body_2" xml:space="preserve">
+    <value>Please install FFmpeg to using this application.</value>
+  </data>
+  <data name="HintW_body_3" xml:space="preserve">
+    <value>For detailed installation instructions, please see documentation.</value>
+  </data>
+  <data name="HintW_open" xml:space="preserve">
+    <value>Open Documentation</value>
+  </data>
 </root>
