@@ -28,7 +28,7 @@
                 Path="{Binding ModelPath}"
                 Required="True" />
 
-            <local:Alert Margin="0,8,0,0" Message="{x:Static res:Strings.Alert_mgxc_edit_recommend}" />
+            <local:Alert Margin="0,8,0,0" Message="{x:Static res:Strings.Alert_edit_notice}" />
 
             <GroupBox Margin="0,4,0,0" Header="{x:Static res:Strings.Label_Properties}">
                 <Grid>

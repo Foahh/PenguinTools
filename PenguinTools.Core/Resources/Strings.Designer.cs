@@ -78,15 +78,6 @@ namespace PenguinTools.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to It is recommended to edit chart properties in Margrete first..
-        /// </summary>
-        public static string Alert_mgxc_edit_recommend {
-            get {
-                return ResourceManager.GetString("Alert_mgxc_edit_recommend", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Clear.
         /// </summary>
         public static string Button_Clear {

@@ -169,9 +169,6 @@
   <data name="Alert_edit_notice" xml:space="preserve">
     <value>Please edit the properties of charts in Margrete first.</value>
   </data>
-  <data name="Alert_mgxc_edit_recommend" xml:space="preserve">
-    <value>It is recommended to edit chart properties in Margrete first.</value>
-  </data>
   <data name="Label_Properties" xml:space="preserve">
     <value>Properties</value>
   </data>

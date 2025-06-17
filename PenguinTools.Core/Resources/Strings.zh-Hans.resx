@@ -477,9 +477,6 @@
   <data name="Alert_edit_notice" xml:space="preserve">
     <value>请事先在 Margrete 中编辑谱面属性。</value>
   </data>
-  <data name="Alert_mgxc_edit_recommend" xml:space="preserve">
-        <value>建议先在 Margrete 中编辑谱面属性。</value>
-    </data>
   <data name="Label_Properties" xml:space="preserve">
         <value>属性</value>
     </data>
