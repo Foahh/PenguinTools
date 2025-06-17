@@ -2,7 +2,7 @@
     <PropertyGroup>
         <Copyright>Copyright (C) 2025 Foahh</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Version>1.5.4</Version>
+        <Version>1.5.5</Version>
         <FileVersion>$(Version)</FileVersion>
         <AssemblyVersion>$(Version)</AssemblyVersion>
         <Platforms>AnyCPU</Platforms>

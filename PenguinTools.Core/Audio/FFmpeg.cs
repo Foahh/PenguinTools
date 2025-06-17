@@ -40,14 +40,14 @@ public static partial class FFmpeg
 
         if (needOffset)
         {
-            var offsetSeconds = Math.Round(meta.BgmRealOffset, 6);
+            var sec = Math.Round(meta.BgmRealOffset, 6);
             if (meta.BgmRealOffset > 0)
             {
-                filterChain.Add($"adelay=delays={offsetSeconds}S:all=1");
+                filterChain.Add($"adelay=delays={sec * 1000m}:all=1");
             }
             else if (meta.BgmRealOffset < 0)
             {
-                filterChain.Add($"atrim=start={-offsetSeconds}");
+                filterChain.Add($"atrim=start={-sec}");
             }
         }
 
