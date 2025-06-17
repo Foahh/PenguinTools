@@ -13,11 +13,8 @@ public class TimeSignatureModel(Meta meta) : Model
     [Range(1, short.MaxValue)]
     public int Numerator
     {
-        get => meta.BgmInitialTimeSignature.Numerator;
-        set => SetProperty(meta.BgmInitialTimeSignature.Numerator, value, newValue => meta.BgmInitialTimeSignature = meta.BgmInitialTimeSignature with
-        {
-            Numerator = newValue
-        }, true);
+        get => meta.BgmInitialNumerator;
+        set => SetProperty(meta.BgmInitialNumerator, value, newValue => meta.BgmInitialNumerator = newValue, true);
     }
 
     [PropertyOrder(1)]
@@ -25,11 +22,8 @@ public class TimeSignatureModel(Meta meta) : Model
     [Range(1, short.MaxValue)]
     public int Denominator
     {
-        get => meta.BgmInitialTimeSignature.Denominator;
-        set => SetProperty(meta.BgmInitialTimeSignature.Denominator, value, newValue => meta.BgmInitialTimeSignature = meta.BgmInitialTimeSignature with
-        {
-            Denominator = newValue
-        }, true);
+        get => meta.BgmInitialDenominator;
+        set => SetProperty(meta.BgmInitialDenominator, value, newValue => meta.BgmInitialDenominator = newValue, true);
     }
 
     public override string ToString()

@@ -35,26 +35,29 @@ public partial record Meta
         get
         {
             if (!BgmEnableBarOffset) return BgmManualOffset;
-            return BgmManualOffset + CalculateOffset(BgmInitialBpm, BgmInitialTimeSignature);
+            return BgmManualOffset + BgmCalculatedOffset;
+        }
+    }
+
+    private decimal BgmCalculatedOffset
+    {
+        get
+        {
+            var beatsPerSecond = BgmInitialBpm / 60;
+            var beatLength = 1 / beatsPerSecond;
+            var measureLength = beatLength * BgmInitialNumerator;
+            var fractionOfMeasure = measureLength * (4m / BgmInitialDenominator);
+            return fractionOfMeasure;
         }
     }
 
     public decimal BgmManualOffset { get; set; }
-    public decimal BgmPreviewStart { get; set; }
-    public decimal BgmPreviewStop { get; set; }
+
     public bool BgmEnableBarOffset { get; set; }
     public decimal BgmInitialBpm { get; set; } = 120m;
-    public TimeSignature BgmInitialTimeSignature { get; set; } = new();
+    public int BgmInitialNumerator { get; set; } = 4;
+    public int BgmInitialDenominator { get; set; } = 4;
 
-    private static decimal CalculateOffset(decimal bpm, TimeSignature signature, int bar = 1) // in seconds
-    {
-        var beatsPerSecond = bpm / 60;
-        var beatLength = 1 / beatsPerSecond;
-        var measureLength = beatLength * signature.Numerator;
-        var fractionOfMeasure = measureLength * (4m / signature.Denominator);
-        var offset = bar * fractionOfMeasure;
-        return offset;
-    }
+    public decimal BgmPreviewStart { get; set; }
+    public decimal BgmPreviewStop { get; set; }
 }
-
-public record TimeSignature(int Tick = 0, int Numerator = 4, int Denominator = 4);

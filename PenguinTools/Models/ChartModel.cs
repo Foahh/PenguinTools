@@ -47,7 +47,11 @@ public class ChartModel(mgxc.Chart chart) : MetaModel
     [LocalizableDisplayName(nameof(Strings.Display_DisplayBPM), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_DisplayBPM), typeof(Strings))]
     [PropertyOrder(3)]
-    public decimal MainBpm => Meta.MainBpm;
+    public decimal MainBpm
+    {
+        get => Meta.MainBpm;
+        set => SetProperty(Meta.MainBpm, value, x => Meta.MainBpm = x);
+    }
 
     [LocalizableCategory(nameof(Strings.Category_Sync), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_InsertBlankMeasure), typeof(Strings))]

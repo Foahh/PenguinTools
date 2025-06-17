@@ -3,31 +3,28 @@
    Original Author: paralleltree
 */
 
-using PenguinTools.Common.Metadata;
+using PenguinTools.Common.Chart.Models.mgxc;
 
 namespace PenguinTools.Common.Chart;
 
 public class TimeCalculator
 {
-    public TimeCalculator(int resolution, IEnumerable<TimeSignature> sigs)
+    public TimeCalculator(int resolution, IEnumerable<BeatEvent> beatEvents)
     {
         BarTick = resolution;
-        TimeSignatures = [.. sigs.OrderBy(x => x.Tick)];
-        ReversedTimeSignatures = [.. TimeSignatures.Reverse()];
+        TimeSignatures = beatEvents.Where(e => e.Bar >= 0).OrderBy(x => x.Tick).ToList();
     }
 
     private int BarTick { get; }
-
-    private IEnumerable<TimeSignature> TimeSignatures { get; }
-    private IReadOnlyCollection<TimeSignature> ReversedTimeSignatures { get; }
+    private List<BeatEvent> TimeSignatures { get; }
 
     public Position GetPositionFromTick(int tick)
     {
-        foreach (var ts in ReversedTimeSignatures)
+        foreach (var ts in TimeSignatures.AsEnumerable().Reverse())
         {
-            if (tick < ts.Tick) continue;
+            if (tick < ts.Tick.Original) continue;
             var measureLength = GetMeasureLength(ts);
-            var delta = tick - ts.Tick;
+            var delta = tick - ts.Tick.Original;
             var barsSinceThisSignature = delta / measureLength;
             var remainder = delta % measureLength;
             var totalBarsBefore = CalculateBarsBefore(ts);
@@ -39,23 +36,23 @@ public class TimeCalculator
         throw new InvalidOperationException();
     }
 
-    private int CalculateBarsBefore(TimeSignature signature)
+    private int CalculateBarsBefore(BeatEvent signature)
     {
         var barsCount = 0;
-        var listAsc = TimeSignatures.ToList();
-        for (var i = 0; i < listAsc.Count; i++)
+        var tss = TimeSignatures.ToList();
+        for (var i = 0; i < tss.Count; i++)
         {
-            var current = listAsc[i];
-            if (current == signature) break;
-            var measureLength = GetMeasureLength(current);
-            var nextTick = i < listAsc.Count - 1 ? listAsc[i + 1].Tick : signature.Tick;
-            var ticksUnderCurrent = nextTick - current.Tick;
+            var ts = tss[i];
+            if (ts == signature) break;
+            var measureLength = GetMeasureLength(ts);
+            var nextTick = i < tss.Count - 1 ? tss[i + 1].Tick.Original : signature.Tick.Original;
+            var ticksUnderCurrent = nextTick - ts.Tick.Original;
             barsCount += ticksUnderCurrent / measureLength;
         }
         return barsCount;
     }
 
-    private int GetMeasureLength(TimeSignature ts)
+    private int GetMeasureLength(BeatEvent ts)
     {
         return (int)(BarTick / (double)ts.Denominator * ts.Numerator);
     }

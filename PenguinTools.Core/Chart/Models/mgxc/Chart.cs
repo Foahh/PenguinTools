@@ -22,6 +22,6 @@ public class Chart
             Events.InsertBefore(new BeatEvent { Bar = 0, Numerator = 4, Denominator = 4 }, beatEvents.FirstOrDefault());
             beatEvents = [.. Events.Children.OfType<BeatEvent>().OrderBy(e => e.Bar)];
         }
-        return new TimeCalculator(Time.MarResolution, beatEvents.Select(e => new TimeSignature(e.Tick.Original, e.Numerator, e.Denominator)));
+        return new TimeCalculator(Time.MarResolution, beatEvents);
     }
 }

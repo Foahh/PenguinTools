@@ -33,8 +33,7 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
 
         if (mgxc.Meta.BgmEnableBarOffset)
         {
-            var sig = mgxc.Meta.BgmInitialTimeSignature;
-            var offset = (int)Math.Round((decimal)Time.MarResolution / sig.Denominator * sig.Numerator);
+            var offset = (int)Math.Round((decimal)Time.MarResolution / mgxc.Meta.BgmInitialDenominator * mgxc.Meta.BgmInitialNumerator);
             foreach (var e in Events.Where(e => e.Tick.Original != 0)) e.Tick = e.Tick.Original + offset;
             foreach (var n in Notes)
             {
@@ -53,7 +52,7 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
         sb.AppendLine("LEVEL\t0.0");
         sb.AppendLine($"CREATOR\t{mgxc.Meta.Designer}");
         sb.AppendLine($"BPM_DEF\t{mgxc.Meta.MainBpm:F3}\t{mgxc.Meta.MainBpm:F3}\t{mgxc.Meta.MainBpm:F3}\t{mgxc.Meta.MainBpm:F3}");
-        sb.AppendLine($"MET_DEF\t{mgxc.Meta.BgmInitialTimeSignature.Denominator}\t{mgxc.Meta.BgmInitialTimeSignature.Numerator}");
+        sb.AppendLine($"MET_DEF\t{mgxc.Meta.BgmInitialDenominator}\t{mgxc.Meta.BgmInitialNumerator}");
         sb.AppendLine("RESOLUTION\t384");
         sb.AppendLine("CLK_DEF\t384");
         sb.AppendLine("PROGJUDGE_BPM\t240.000");

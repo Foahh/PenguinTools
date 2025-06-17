@@ -93,7 +93,8 @@ public partial class MgxcParser(IDiagnostic diag, AssetManager asm)
 
         var initBeat = beatEvents[0];
         mgxc.Meta.BgmInitialBpm = bpmEvents[0].Bpm;
-        mgxc.Meta.BgmInitialTimeSignature = new TimeSignature(0, initBeat.Numerator, initBeat.Denominator);
+        mgxc.Meta.BgmInitialNumerator = initBeat.Numerator;
+        mgxc.Meta.BgmInitialDenominator = initBeat.Denominator;
 
         // calculate tick for each beat event
         if (beatEvents.Count > 1)

@@ -142,13 +142,21 @@ public class WorkflowModel : MetaModel
     [LocalizableDisplayName(nameof(Strings.Display_DisplayBPM), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_DisplayBPM), typeof(Strings))]
     [PropertyOrder(7)]
-    public decimal MainBpm => Meta.MainBpm;
+    public decimal MainBpm
+    {
+        get => Meta.MainBpm;
+        set => SetProperty(Meta.MainBpm, value, x => Meta.MainBpm = x);
+    }
 
     [LocalizableCategory(nameof(Strings.Category_Chart), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_MainTil), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_MainTil), typeof(Strings))]
     [PropertyOrder(8)]
-    public int MainTil => Meta.MainTil;
+    public int MainTil
+    {
+        get => Meta.MainTil;
+        set => SetProperty(Meta.MainTil, value, x => Meta.MainTil = x);
+    }
 
     // Display
     [LocalizableCategory(nameof(Strings.Category_Display), typeof(Strings))]
@@ -250,20 +258,32 @@ public class WorkflowModel : MetaModel
     [LocalizableDisplayName(nameof(Strings.Display_ManualOffset), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_ManualOffset), typeof(Strings))]
     [PropertyOrder(1)]
-    public decimal BgmManualOffset => Meta.BgmManualOffset;
+    public decimal BgmManualOffset
+    {
+        get => Meta.BgmManualOffset;
+        set => SetProperty(Meta.BgmManualOffset, value, newValue => Meta.BgmManualOffset = newValue);
+    }
 
     [LocalizableCategory(nameof(Strings.Category_Sync), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_InsertBlankMeasure), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_InsertBlankMeasure), typeof(Strings))]
     [PropertyOrder(2)]
-    public bool BgmEnableBarOffset => Meta.BgmEnableBarOffset;
+    public bool BgmEnableBarOffset
+    {
+        get => Meta.BgmEnableBarOffset;
+        set => SetProperty(Meta.BgmEnableBarOffset, value, newValue => Meta.BgmEnableBarOffset = newValue);
+    }
 
     [LocalizableCategory(nameof(Strings.Category_Sync), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_BgmInitialBpm), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_BgmInitialBpm), typeof(Strings))]
     [Range(1, short.MaxValue)]
     [PropertyOrder(3)]
-    public decimal BgmInitialBpm => Meta.BgmInitialBpm;
+    public decimal BgmInitialBpm
+    {
+        get => Meta.BgmInitialBpm;
+        set => SetProperty(Meta.BgmInitialBpm, value, newValue => Meta.BgmInitialBpm = newValue, true);
+    }
 
     [LocalizableCategory(nameof(Strings.Category_Sync), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_BgmInitialTimeSignature), typeof(Strings))]
