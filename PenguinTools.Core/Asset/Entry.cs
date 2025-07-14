@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
-namespace PenguinTools.Common.Asset;
+namespace PenguinTools.Core.Asset;
 
-public sealed class Entry : IComparable<Entry>, IEquatable<Entry>
+public class Entry : IComparable<Entry>, IEquatable<Entry>
 {
     public static readonly Entry Default = new();
 

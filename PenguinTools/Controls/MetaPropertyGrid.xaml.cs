@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using PenguinTools.Common.Asset;
-using PenguinTools.Common.Metadata;
+using PenguinTools.Core.Asset;
+using PenguinTools.Core.Metadata;
 using PenguinTools.Models;
 using System.ComponentModel;
 using Xceed.Wpf.Toolkit.PropertyGrid;

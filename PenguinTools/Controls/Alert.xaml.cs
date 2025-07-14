@@ -1,4 +1,4 @@
-﻿using PenguinTools.Common;
+﻿using PenguinTools.Core;
 using System.Windows;
 using System.Windows.Controls;
 

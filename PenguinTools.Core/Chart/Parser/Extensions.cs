@@ -1,7 +1,7 @@
-﻿using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Resources;
 using System.Text;
 
-namespace PenguinTools.Common.Chart.Parser;
+namespace PenguinTools.Core.Chart.Parser;
 
 internal static class Extensions
 {

@@ -1,8 +1,9 @@
-﻿using PenguinTools.Common.Asset;
-using PenguinTools.Common.Metadata;
-using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Asset;
+using PenguinTools.Core.Media;
+using PenguinTools.Core.Metadata;
+using PenguinTools.Core.Resources;
 
-namespace PenguinTools.Common.Chart.Parser;
+namespace PenguinTools.Core.Chart.Parser;
 
 public partial class MgxcParser
 {
@@ -59,7 +60,7 @@ public partial class MgxcParser
                 3 => StarDifficulty.S3,
                 4 => StarDifficulty.S4,
                 5 => StarDifficulty.S5,
-                _ => StarDifficulty.NA
+                _ => StarDifficulty.Na
             };
         }
         else if (name == "weat")
@@ -79,14 +80,13 @@ public partial class MgxcParser
         }
         else if (name == "wvfn")
         {
-            try
+            mgxc.Meta.BgmFilePath = (string)data;
+            tasks.Add(Manipulate.IsAudioValidAsync(mgxc.Meta.FullBgmFilePath).ContinueWith(p =>
             {
-                mgxc.Meta.BgmFilePath = (string)data;
-            }
-            catch (Exception ex)
-            {
-                diag.Report(ex);
-            }
+                if (p.Result.IsSuccess) return;
+                diag.Report(Severity.Warning, Strings.Error_invalid_audio, mgxc.Meta.FullBgmFilePath, target: p.Result);
+                mgxc.Meta.BgmFilePath = string.Empty;
+            }));
         }
         else if (name == "wvof")
         {
@@ -103,9 +103,12 @@ public partial class MgxcParser
         else if (name == "jack")
         {
             mgxc.Meta.JacketFilePath = (string)data;
-            if (MuaInterop.IsValidImage(mgxc.Meta.FullJacketFilePath)) return;
-            diag.Report(Severity.Error, Strings.Error_invalid_jk_image, mgxc.Meta.FullJacketFilePath);
-            mgxc.Meta.JacketFilePath = string.Empty;
+            tasks.Add(Manipulate.IsImageValidAsync(mgxc.Meta.FullJacketFilePath).ContinueWith(p =>
+            {
+                if (p.Result.IsSuccess) return;
+                diag.Report(Severity.Warning, Strings.Error_invalid_jk_image, mgxc.Meta.FullJacketFilePath, target: p.Result);
+                mgxc.Meta.JacketFilePath = string.Empty;
+            }));
         }
         else if (name == "bgfn")
         {

@@ -1,12 +1,12 @@
-﻿using PenguinTools.Common.Asset;
-using PenguinTools.Common.Metadata;
-using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Asset;
+using PenguinTools.Core.Metadata;
+using PenguinTools.Core.Resources;
 using System.Xml.Serialization;
 
-namespace PenguinTools.Common.Xml;
+namespace PenguinTools.Core.Xml;
 
 [XmlRoot("MusicData")]
-public sealed class MusicXml : XmlElement<MusicXml>
+public class MusicXml : XmlElement<MusicXml>
 {
     private static readonly Dictionary<Difficulty, Entry> DiffMap = new()
     {
@@ -24,33 +24,33 @@ public sealed class MusicXml : XmlElement<MusicXml>
 
     public MusicXml(Dictionary<Difficulty, Meta> metaMap, Difficulty mainDiff)
     {
-        var mainMeta = metaMap[mainDiff] ?? throw new DiagnosticException("Main meta is null");
-        var id = mainMeta.Id ?? throw new DiagnosticException(Strings.Error_song_id_is_not_set);
+        var main = metaMap[mainDiff] ?? throw new DiagnosticException("Main meta is null");
+        var songId = main.Id ?? throw new DiagnosticException(Strings.Error_song_id_is_not_set);
 
-        DataName = $"music{id:0000}";
-        ExType = mainMeta.Difficulty == Difficulty.WorldsEnd ? 2 : 0;
-        Name = new Entry(id, mainMeta.Title);
-        SortName = mainMeta.SortName;
-        ArtistName = new Entry(id, mainMeta.Artist);
-        GenreNames = new List<Entry> { mainMeta.Genre };
-        JaketFile = $"CHU_UI_Jacket_{id:0000}.dds";
-        EnableUltima = mainMeta.Difficulty == Difficulty.Ultima;
-        ReleaseDate = mainMeta.ReleaseDate.ToString("yyyyMMdd");
-        CueFileName = new Entry(id, $"music{id:0000}");
-        WorldsEndTagName = mainMeta.WeTag;
-        StarDifType = (int)mainMeta.WeDifficulty;
-        StageName = mainMeta.Stage;
+        DataName = $"music{songId:0000}";
+        ExType = main.Difficulty == Difficulty.WorldsEnd ? 2 : 0;
+        Name = new Entry(songId, main.Title);
+        SortName = main.SortName;
+        ArtistName = new Entry(songId, main.Artist);
+        GenreNames = new List<Entry> { main.Genre };
+        JaketFile = $"CHU_UI_Jacket_{songId:0000}.dds";
+        EnableUltima = main.Difficulty == Difficulty.Ultima;
+        ReleaseDate = main.ReleaseDate.ToString("yyyyMMdd");
+        CueFileName = new Entry(songId, $"music{songId:0000}");
+        WorldsEndTagName = main.WeTag;
+        StarDifType = (int)main.WeDifficulty;
+        StageName = main.Stage;
 
         foreach (var diff in Enum.GetValues<Difficulty>())
         {
-            metaMap.TryGetValue(diff, out var meta);
-            var (whole, frac) = meta != null ? SplitLevel(meta.Level) : (0, 0);
+            metaMap.TryGetValue(diff, out var curr);
+            var (whole, frac) = curr != null ? SplitLevel(curr.Level) : (0, 0);
 
             var fumen = new MusicFumenData
             {
                 Type = DiffMap[diff],
-                Enable = meta != null,
-                File = $"{id:0000}_{(int)diff:00}.c2s",
+                Enable = curr != null,
+                File = $"{songId:0000}_{(int)diff:00}.c2s",
                 Level = whole,
                 LevelDecimal = frac
             };

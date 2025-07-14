@@ -1,4 +1,4 @@
-﻿namespace PenguinTools.Common.Chart.Models.mgxc;
+﻿namespace PenguinTools.Core.Chart.Models.mgxc;
 
 public class Event : TimeNode<Event>;
 
@@ -14,17 +14,17 @@ public class BeatEvent : Event
     public int Numerator { get; set; } = 4;
 }
 
-public class SpeedEvent : Event
+public abstract class SpeedEventBase : Event
 {
     public decimal Speed { get; set; }
 }
 
-public class TimelineEvent : SpeedEvent
+public class ScrollSpeedEvent : SpeedEventBase
 {
     public int Timeline { get; set; }
 }
 
-public class NoteSpeedEvent : SpeedEvent;
+public class NoteSpeedEvent : SpeedEventBase;
 
 public class BookmarkEvent : Event
 {

@@ -2,33 +2,34 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <Title>PenguinTools.Common</Title>
-        <Authors>Foahh</Authors>
-        <PackageProjectUrl>https://github.com/Foahh/PenguinTools</PackageProjectUrl>
-        <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
-        <PackageId>PenguinTools.Core</PackageId>
-        <RootNamespace>PenguinTools.Common</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <Import Project="..\Version.props" />
 
     <ItemGroup>
-        <EmbeddedResource Update="Resources\CommonResources.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        <EmbeddedResource Include="Resources\assets.json" LogicalName="assets.json" />
+        <EmbeddedResource Include="Resources\dummy.acb">
+            <LogicalName>dummy.acb</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\st_dummy.afb">
+            <LogicalName>st_dummy.afb</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\nf_dummy.afb">
+            <LogicalName>nf_dummy.afb</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\Release\mua.exe">
+            <LogicalName>mua.exe</LogicalName>
+            <Link>Resources\mua.exe</Link>
         </EmbeddedResource>
         <EmbeddedResource Update="Resources\Strings.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-            <SubType>Designer</SubType>
+          <Generator>PublicResXFileCodeGenerator</Generator>
+          <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+          <SubType>Designer</SubType>
         </EmbeddedResource>
         <EmbeddedResource Update="Resources\Strings.zh-Hans.resx">
-            <DependentUpon>Strings.resx</DependentUpon>
+          <DependentUpon>Strings.resx</DependentUpon>
         </EmbeddedResource>
-        <EmbeddedResource Include="Resources\assets.json" LogicalName="assets.json" />
-        <EmbeddedResource Include="Resources\dummy.acb" LogicalName="dummy.acb" />
-        <EmbeddedResource Include="..\External\manipulate-lib\target\x86_64-pc-windows-msvc\release\mua_lib.dll" LogicalName="mua_lib.dll" Link="Resources\mua_lib.dll" />
     </ItemGroup>
 
     <ItemGroup>

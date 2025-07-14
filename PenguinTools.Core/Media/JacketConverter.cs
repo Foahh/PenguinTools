@@ -1,16 +1,15 @@
-﻿using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Resources;
 
-
-namespace PenguinTools.Common.Graphic;
+namespace PenguinTools.Core.Media;
 
 public class JacketConverter : IConverter<JacketConverter.Context>
 {
-    public async Task ConvertAsync(Context context, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
+    public async Task ConvertAsync(Context ctx, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
     {
-        if (!await CanConvertAsync(context, diag)) return;
+        if (!await CanConvertAsync(ctx, diag)) return;
         progress?.Report(Strings.Status_converting_jacket);
         ct.ThrowIfCancellationRequested();
-        MuaInterop.ConvertJk(context.InputPath, context.OutputPath);
+        await Manipulate.ConvertJacketAsync(ctx.InputPath, ctx.OutputPath, ct);
         ct.ThrowIfCancellationRequested();
     }
 

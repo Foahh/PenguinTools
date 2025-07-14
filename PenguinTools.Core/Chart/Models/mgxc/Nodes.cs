@@ -6,7 +6,7 @@
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
-namespace PenguinTools.Common.Chart.Models.mgxc;
+namespace PenguinTools.Core.Chart.Models.mgxc;
 
 public abstract class TimeNode<T> where T : TimeNode<T>
 {
@@ -25,7 +25,7 @@ public abstract class TimeNode<T> where T : TimeNode<T>
 
     public virtual Time Tick { get; set; }
 
-    public T? AppendChild(T newNode)
+    public T? AppendChild(T? newNode)
     {
         if (newNode is null) return null;
 
@@ -81,7 +81,7 @@ public abstract class TimeNode<T> where T : TimeNode<T>
         return newNode;
     }
 
-    public bool RemoveChild(T child)
+    public bool RemoveChild(T? child)
     {
         if (child is null) return false;
 

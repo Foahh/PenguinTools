@@ -3,13 +3,13 @@
    https://github.com/inonote/MargreteOnline
 */
 
-namespace PenguinTools.Common.Chart.Models.mgxc;
+namespace PenguinTools.Core.Chart.Models.mgxc;
 
 public class Tap : PositiveNote;
 
 public class ExTap : PositiveNote
 {
-    public ExEffect Effect { get; set; } = ExEffect.UP;
+    public ExEffect Effect { get; set; } = ExEffect.Up;
 }
 
 public class Flick : PositiveNote;

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using PenguinTools.Common.Metadata;
+using PenguinTools.Core.Metadata;
 using PenguinTools.Models;
 using PenguinTools.ViewModels;
 using System.Windows;

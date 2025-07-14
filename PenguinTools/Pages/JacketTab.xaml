@@ -5,10 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:res="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
-    xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     MaxWidth="300"
     d:DataContext="{d:DesignInstance Type=viewModels:JacketViewModel}"
     mc:Ignorable="d">
@@ -20,7 +19,7 @@
 
         <StackPanel>
             <local:FileFolderPicker
-                Filter="{x:Static resources:Strings.Filefilter_image}"
+                Filter="{x:Static res:Strings.Filefilter_image}"
                 Label="{x:Static res:Strings.Label_Image}"
                 Path="{Binding JacketPath}"
                 Required="True" />
@@ -31,7 +30,7 @@
                     <TextBlock
                         Margin="2,0,0,0"
                         VerticalAlignment="Center"
-                        Text="{Binding OutputFileName}" />
+                        Text="{Binding DestinationFileName}" />
                 </StackPanel>
             </GroupBox>
 

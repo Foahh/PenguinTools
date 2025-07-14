@@ -3,9 +3,9 @@
    Original Author: paralleltree
 */
 
-using PenguinTools.Common.Chart.Models.mgxc;
+using PenguinTools.Core.Chart.Models.mgxc;
 
-namespace PenguinTools.Common.Chart;
+namespace PenguinTools.Core.Chart;
 
 public class TimeCalculator
 {

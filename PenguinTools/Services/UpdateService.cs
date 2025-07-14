@@ -21,7 +21,7 @@ public class GitHubUpdateService : IUpdateService
 
     public async Task<(Version Version, string Url)> CheckForUpdatesAsync()
     {
-        var response = await httpClient.GetAsync("https://api.github.com/repos/PenguinHot/PenguinTools/releases/latest");
+        var response = await httpClient.GetAsync("https://api.github.com/repos/Foahh/PenguinTools/releases/latest");
         if (!response.IsSuccessStatusCode) throw new OperationCanceledException("Could not retrieve release information from GitHub.");
 
         var jsonContent = await response.Content.ReadAsStringAsync();

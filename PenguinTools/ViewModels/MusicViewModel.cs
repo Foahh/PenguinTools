@@ -1,8 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Win32;
-using PenguinTools.Common;
-using PenguinTools.Common.Audio;
-using PenguinTools.Common.Resources;
+﻿using Microsoft.Win32;
+using PenguinTools.Core;
+using PenguinTools.Core.Media;
+using PenguinTools.Core.Resources;
 using PenguinTools.Models;
 using System.IO;
 

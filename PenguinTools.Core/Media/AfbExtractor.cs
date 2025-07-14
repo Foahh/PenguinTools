@@ -1,14 +1,14 @@
-﻿using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Resources;
 
-namespace PenguinTools.Common.Graphic;
+namespace PenguinTools.Core.Media;
 
 public class AfbExtractor : IConverter<AfbExtractor.Options>
 {
-    public async Task ConvertAsync(Options options, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
+    public async Task ConvertAsync(Options ctx, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
     {
-        if (!await CanConvertAsync(options, diag)) return;
+        if (!await CanConvertAsync(ctx, diag)) return;
         progress?.Report(Strings.Status_extracting);
-        MuaInterop.ExtractAfb(options.InputPath, options.OutputFolder);
+        await Manipulate.ExtractDdsAsync(ctx.InputPath, ctx.DestinationFolder, ct);
         ct.ThrowIfCancellationRequested();
         progress?.Report(Strings.Status_writing);
     }
@@ -19,5 +19,5 @@ public class AfbExtractor : IConverter<AfbExtractor.Options>
         return Task.FromResult(!diag.HasError);
     }
 
-    public record Options(string InputPath, string OutputFolder);
+    public record Options(string InputPath, string DestinationFolder);
 }

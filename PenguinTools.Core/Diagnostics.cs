@@ -1,8 +1,7 @@
-﻿using PenguinTools.Common.Chart;
+﻿using PenguinTools.Core.Chart;
 using System.Collections.Concurrent;
-using System.Text.Json.Serialization;
 
-namespace PenguinTools.Common;
+namespace PenguinTools.Core;
 
 public enum Severity
 {

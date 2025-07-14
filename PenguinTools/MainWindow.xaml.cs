@@ -1,6 +1,4 @@
-﻿using PenguinTools.Common.Audio;
-using PenguinTools.Common.Resources;
-using PenguinTools.Controls;
+﻿using PenguinTools.Core.Resources;
 using PenguinTools.ViewModels;
 using System.Windows;
 
@@ -22,6 +20,5 @@ public partial class MainWindow : Window
     private void OnLoaded(object s, RoutedEventArgs e)
     {
         _ = viewModel.UpdateCheck();
-        if (!FFmpeg.CheckInstalled()) FFmpegHintWindow.ShowDialog(this);
     }
 }

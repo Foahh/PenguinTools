@@ -1,4 +1,4 @@
-﻿using PenguinTools.Common.Metadata;
+﻿using PenguinTools.Core.Metadata;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;

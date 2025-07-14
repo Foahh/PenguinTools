@@ -1,12 +1,12 @@
 ﻿using PenguinTools.Attributes;
-using PenguinTools.Common.Asset;
-using PenguinTools.Common.Metadata;
-using PenguinTools.Common.Resources;
+using PenguinTools.Core.Asset;
+using PenguinTools.Core.Metadata;
+using PenguinTools.Core.Resources;
 using Swordfish.NET.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-using mgxc = PenguinTools.Common.Chart.Models.mgxc;
+using mgxc = PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Models;
 

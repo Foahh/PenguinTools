@@ -778,4 +778,7 @@
   <data name="HintW_open" xml:space="preserve">
     <value>打开文档</value>
   </data>
+  <data name="Button_open_wiki" xml:space="preserve">
+    <value>说明书</value>
+  </data>
 </root>

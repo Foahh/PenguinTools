@@ -3,10 +3,10 @@
    https://margrithm.girlsband.party/
 */
 
-using PenguinTools.Common.Resources;
+using PenguinTools.Core.Resources;
 using System.Text.Json.Serialization;
 
-namespace PenguinTools.Common.Chart.Models.c2s;
+namespace PenguinTools.Core.Chart.Models.c2s;
 
 public class Tap : Note
 {

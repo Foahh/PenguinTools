@@ -1,7 +1,7 @@
-﻿using PenguinTools.Common.Asset;
-using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Asset;
+using PenguinTools.Core.Resources;
 
-namespace PenguinTools.Common.Chart.Parser;
+namespace PenguinTools.Core.Chart.Parser;
 
 public partial class MgxcParser
 {

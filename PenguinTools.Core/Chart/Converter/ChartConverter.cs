@@ -1,10 +1,10 @@
-﻿using PenguinTools.Common.Chart.Models;
-using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Chart.Models;
+using PenguinTools.Core.Resources;
 using System.Text;
 
 // ReSharper disable RedundantNameQualifier
 
-namespace PenguinTools.Common.Chart;
+namespace PenguinTools.Core.Chart.Converter;
 
 using mgxc = Models.mgxc;
 using c2s = Models.c2s;
@@ -15,14 +15,14 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
     private List<c2s.Note> Notes { get; set; } = [];
     private List<c2s.Event> Events { get; set; } = [];
 
-    public async Task ConvertAsync(Context context, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
+    public async Task ConvertAsync(Context ctx, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
     {
         Reset();
-        if (!await CanConvertAsync(context, this.diag)) return;
+        if (!await CanConvertAsync(ctx, this.diag)) return;
         progress?.Report(Strings.Status_converting_chart);
         this.diag = diag;
 
-        var mgxc = context.Chart;
+        var mgxc = ctx.Chart;
         diag.TimeCalculator = mgxc.GetCalculator();
 
         foreach (var note in mgxc.Notes.Children) ConvertNote(note);
@@ -85,7 +85,7 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
         }
 
         if (this.diag.HasError) return;
-        await File.WriteAllTextAsync(context.OutputPath, sb.ToString(), ct);
+        await File.WriteAllTextAsync(ctx.Destination, sb.ToString(), ct);
     }
 
     public Task<bool> CanConvertAsync(Context context, IDiagnostic diag)
@@ -127,5 +127,5 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
         }
     }
 
-    public record Context(string OutputPath, mgxc.Chart Chart);
+    public record Context(string Destination, mgxc.Chart Chart);
 }

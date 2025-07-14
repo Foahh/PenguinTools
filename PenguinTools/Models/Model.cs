@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PenguinTools.Common.Metadata;
+using PenguinTools.Core.Metadata;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using mgxc = PenguinTools.Common.Chart.Models.mgxc;
+using mgxc = PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Models;
 

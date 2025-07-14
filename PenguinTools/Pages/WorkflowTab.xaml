@@ -7,10 +7,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:parser="clr-namespace:PenguinTools.Common.Chart.Parser;assembly=PenguinTools.Core"
-    xmlns:res="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
-    xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
+    xmlns:parser="clr-namespace:PenguinTools.Core.Chart.Parser;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
+    xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     MinWidth="380"
     MaxWidth="600"
     d:DataContext="{d:DesignInstance Type=viewModels:WorkflowViewModel}"
@@ -23,7 +22,7 @@
 
         <StackPanel>
             <local:FileFolderPicker
-                Filter="{x:Static resources:Strings.Filefilter_mgxc}"
+                Filter="{x:Static res:Strings.Filefilter_mgxc}"
                 Label="{x:Static res:Strings.Label_Chart}"
                 Path="{Binding ModelPath}"
                 Required="True" />

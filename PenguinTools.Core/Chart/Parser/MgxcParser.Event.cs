@@ -1,6 +1,6 @@
-﻿using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Resources;
 
-namespace PenguinTools.Common.Chart.Parser;
+namespace PenguinTools.Core.Chart.Parser;
 
 using mgxc = Models.mgxc;
 
@@ -38,7 +38,7 @@ public partial class MgxcParser
         }
         else if (name == "til ")
         {
-            e = new mgxc.TimelineEvent
+            e = new mgxc.ScrollSpeedEvent
             {
                 Timeline = (int)br.ReadData(),
                 Tick = (int)br.ReadData(),

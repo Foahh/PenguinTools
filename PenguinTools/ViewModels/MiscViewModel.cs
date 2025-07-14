@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using PenguinTools.Common;
-using PenguinTools.Common.Graphic;
-using PenguinTools.Common.Resources;
+using PenguinTools.Core;
+using PenguinTools.Core.Media;
+using PenguinTools.Core.Resources;
 using System.Diagnostics;
 using System.IO;
 using System.Media;
@@ -14,7 +14,7 @@ public partial class MiscViewModel : ViewModel
     [RelayCommand]
     private static void OpenTempDirectory()
     {
-        var path = ResourceManager.TempWorkPath;
+        var path = ResourceUtils.TempWorkPath;
 
         Process.Start(new ProcessStartInfo
         {
@@ -69,5 +69,22 @@ public partial class MiscViewModel : ViewModel
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) return;
         await ActionService.RunAsync((diag, p, ct) => AssetManager.CollectAssetsAsync(openDlg.FolderName, p, ct));
         SystemSounds.Exclamation.Play();
+    }
+
+    [RelayCommand]
+    private void OpenWiki()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/Foahh/PenguinTools/wiki/%E4%B8%AD%E6%96%87",
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            // ignored
+        }
     }
 }

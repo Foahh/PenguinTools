@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
+    xmlns:resources="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     Title="{x:Static resources:Strings.Title_Error}"
     Width="600"
     Height="400"

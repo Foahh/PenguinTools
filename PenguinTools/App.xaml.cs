@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PenguinTools.Common;
-using PenguinTools.Common.Asset;
-using PenguinTools.Common.Resources;
 using PenguinTools.Controls;
+using PenguinTools.Core;
+using PenguinTools.Core.Asset;
 using PenguinTools.Services;
 using PenguinTools.ViewModels;
 using System.IO;
@@ -32,7 +31,7 @@ public partial class App : Application
         var basePath = Path.GetDirectoryName(AppContext.BaseDirectory);
         if (basePath != null) Directory.SetCurrentDirectory(basePath);
 
-        ResourceManager.Initialize();
+        ResourceUtils.Initialize();
 
         host = Host.CreateDefaultBuilder().ConfigureServices((_, services) =>
         {
@@ -65,7 +64,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        ResourceManager.Release();
+        ResourceUtils.Release();
         host.Dispose();
     }
 }

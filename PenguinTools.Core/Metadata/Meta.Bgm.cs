@@ -1,34 +1,11 @@
-﻿using PenguinTools.Common.Audio;
-using System.Text.RegularExpressions;
+﻿using PenguinTools.Core.Media;
 
-namespace PenguinTools.Common.Metadata;
+namespace PenguinTools.Core.Metadata;
 
 public partial record Meta
 {
-    public double TargetTargetLoudness { get; set; } = -8.0; // dBFS
-    public double TargetGainTolerance { get; set; } = 0.5;
-    public bool IsTpLimiting { get; set; } = true;
-    public double TargetMaxTruePeak { get; set; } = -1.0; // dBTP
-    public int TargetLookAheadMs { get; set; } = 10;
-    public int TargetReleaseMs { get; set; } = 150;
-    public string TargetCodec { get; set; } = "pcm_s16le";
-    public int TargetSampleRate { get; set; } = 48000;
-    public int TargetChannelCount { get; set; } = 2;
-
-    public string BgmFilePath
-    {
-        get;
-        set
-        {
-            if (field == value) return;
-            if (string.IsNullOrEmpty(value) && string.IsNullOrEmpty(field)) return;
-            field = value;
-            BgmAnalysis = FFmpeg.AnalyzeAudioAsync(FullBgmFilePath);
-        }
-    } = string.Empty;
-
+    public string BgmFilePath { get; set; } = string.Empty;
     public string FullBgmFilePath => GetFullPath(BgmFilePath);
-    public Task<AudioInformation>? BgmAnalysis { get; private set; }
 
     public decimal BgmRealOffset
     {

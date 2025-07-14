@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using PenguinTools.Common.Asset;
-using PenguinTools.Common.Graphic;
-using PenguinTools.Common.Resources;
+using PenguinTools.Core.Asset;
+using PenguinTools.Core.Media;
+using PenguinTools.Core.Resources;
 using System.IO;
 using System.Media;
 
@@ -21,16 +21,16 @@ public partial class StageViewModel : ActionViewModel
     public partial string BackgroundPath { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial string? EffectPath0 { get; set; } 
+    public partial string? EffectPath0 { get; set; }
 
     [ObservableProperty]
-    public partial string? EffectPath1 { get; set; } 
+    public partial string? EffectPath1 { get; set; }
 
     [ObservableProperty]
-    public partial string? EffectPath2 { get; set; } 
+    public partial string? EffectPath2 { get; set; }
 
     [ObservableProperty]
-    public partial string? EffectPath3 { get; set; } 
+    public partial string? EffectPath3 { get; set; }
 
     [ObservableProperty]
     public partial Entry NoteFieldsLine { get; set; }

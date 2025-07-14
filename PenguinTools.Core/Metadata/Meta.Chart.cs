@@ -1,7 +1,7 @@
-﻿using PenguinTools.Common.Asset;
+﻿using PenguinTools.Core.Asset;
 using System.ComponentModel;
 
-namespace PenguinTools.Common.Metadata;
+namespace PenguinTools.Core.Metadata;
 
 public partial record Meta
 {
@@ -15,7 +15,7 @@ public partial record Meta
             field = value;
         }
     }
-
+    
     public string Title { get; set; } = string.Empty;
     public string SortName { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;
@@ -31,7 +31,7 @@ public partial record Meta
 
     public int? UnlockEventId { get; set; }
     public Entry WeTag { get; set; } = Entry.Default;
-    public StarDifficulty WeDifficulty { get; set; } = StarDifficulty.NA;
+    public StarDifficulty WeDifficulty { get; set; } = StarDifficulty.Na;
 }
 
 public enum Difficulty
@@ -53,7 +53,7 @@ public enum Difficulty
 public enum StarDifficulty
 {
     [Description("N/A")]
-    NA = 0,
+    Na = 0,
     [Description("⭐")]
     S1 = 1,
     [Description("⭐⭐")]

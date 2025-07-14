@@ -1,10 +1,10 @@
-﻿using PenguinTools.Common.Asset;
+﻿using PenguinTools.Core.Asset;
 using System.Xml.Serialization;
 
-namespace PenguinTools.Common.Xml;
+namespace PenguinTools.Core.Xml;
 
 [XmlRoot("StageData")]
-public sealed class StageXml : XmlElement<StageXml>
+public class StageXml : XmlElement<StageXml>
 {
     internal StageXml()
     {

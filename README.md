@@ -4,7 +4,7 @@ An all-in-one toolbox for converting custom assets for **CHUNITHM** (charts, mus
 
 ## Usage
 
-- 本工具使用方法请见 [中文 Wiki](https://github.com/PenguinHot/PenguinTools/wiki/%E4%B8%AD%E6%96%87)
+- 本工具使用方法请见 [中文 Wiki](https://github.com/Foahh/PenguinTools/wiki/%E4%B8%AD%E6%96%87)
 
 ## Disclaimer
 

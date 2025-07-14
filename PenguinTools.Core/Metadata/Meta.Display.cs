@@ -1,6 +1,6 @@
-﻿using PenguinTools.Common.Asset;
+﻿using PenguinTools.Core.Asset;
 
-namespace PenguinTools.Common.Metadata;
+namespace PenguinTools.Core.Metadata;
 
 public partial record Meta
 {

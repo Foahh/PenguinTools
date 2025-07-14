@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PenguinTools.Common.Resources {
+namespace PenguinTools.Core.Resources {
     using System;
     
     
@@ -38,7 +38,7 @@ namespace PenguinTools.Common.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PenguinTools.Common.Resources.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PenguinTools.Core.Resources.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -146,6 +146,15 @@ namespace PenguinTools.Common.Resources {
         public static string Button_open_temp_directory {
             get {
                 return ResourceManager.GetString("Button_open_temp_directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documentation.
+        /// </summary>
+        public static string Button_open_wiki {
+            get {
+                return ResourceManager.GetString("Button_open_wiki", resourceCulture);
             }
         }
         
@@ -1623,6 +1632,51 @@ namespace PenguinTools.Common.Resources {
         public static string Label_Time {
             get {
                 return ResourceManager.GetString("Label_Time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No audio stream available in the file..
+        /// </summary>
+        public static string Media_Error_file_no_audio_stream_available {
+            get {
+                return ResourceManager.GetString("Media_Error_file_no_audio_stream_available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No audio channels available in the file..
+        /// </summary>
+        public static string Media_Error_no_audio_channels_available {
+            get {
+                return ResourceManager.GetString("Media_Error_no_audio_channels_available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No available audio codec for the audio stream..
+        /// </summary>
+        public static string Media_Error_no_avaliable_acodec {
+            get {
+                return ResourceManager.GetString("Media_Error_no_avaliable_acodec", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No .dds chunks found in the file..
+        /// </summary>
+        public static string Media_Error_no_dds_chunks {
+            get {
+                return ResourceManager.GetString("Media_Error_no_dds_chunks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File path cannot be null or empty..
+        /// </summary>
+        public static string Media_Error_path_null_or_empty {
+            get {
+                return ResourceManager.GetString("Media_Error_path_null_or_empty", resourceCulture);
             }
         }
         

@@ -1,14 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Win32;
-using PenguinTools.Common;
-using PenguinTools.Common.Asset;
-using PenguinTools.Common.Audio;
-using PenguinTools.Common.Chart;
-using PenguinTools.Common.Chart.Parser;
-using PenguinTools.Common.Graphic;
-using PenguinTools.Common.Metadata;
-using PenguinTools.Common.Resources;
-using PenguinTools.Common.Xml;
+using PenguinTools.Core;
+using PenguinTools.Core.Asset;
+using PenguinTools.Core.Chart;
+using PenguinTools.Core.Chart.Converter;
+using PenguinTools.Core.Chart.Parser;
+using PenguinTools.Core.Media;
+using PenguinTools.Core.Metadata;
+using PenguinTools.Core.Resources;
+using PenguinTools.Core.Xml;
 using PenguinTools.Models;
 using System.Collections.Concurrent;
 using System.IO;
@@ -129,8 +129,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         };
         if (dlg.ShowDialog() != true) return;
         settings.WorkingDirectory = dlg.FolderName;
+        var folderName = Path.GetFileName(settings.WorkingDirectory);
+        var path = folderName == settings.OptionName ? settings.WorkingDirectory : Path.Combine(settings.WorkingDirectory, settings.OptionName);
 
-        var path = Path.Combine(settings.WorkingDirectory, settings.OptionName);
         var musicFolder = Path.Combine(path, "music");
         var stageFolder = Path.Combine(path, "stage");
         var cueFileFolder = Path.Combine(path, "cueFile");
@@ -237,7 +238,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
     private async static Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, IDiagnostic, Task> action, Func<T, string> getPath, ProcessContext ctx, bool parallel = false)
     {
-        var itemList = items as IList<T> ?? [.. items];
+        var itemList = items as IList<T> ?? [..items];
         var total = itemList.Count;
         var completedCount = 0;
         ctx.Progress.Report($"{prefix}: 0/{total}...");
@@ -292,7 +293,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         return base.Reload();
     }
 
-    private sealed class ProcessContext
+    private class ProcessContext
     {
         public required IDiagnostic Diagnostic { get; init; }
         public required IProgress<string> Progress { get; init; }

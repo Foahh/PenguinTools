@@ -1,6 +1,6 @@
-﻿using PenguinTools.Common.Metadata;
+﻿using PenguinTools.Core.Metadata;
 
-namespace PenguinTools.Common.Chart.Models.mgxc;
+namespace PenguinTools.Core.Chart.Models.mgxc;
 
 public class Chart
 {
@@ -20,7 +20,7 @@ public class Chart
         if (beatEvents.FirstOrDefault()?.Bar != 0)
         {
             Events.InsertBefore(new BeatEvent { Bar = 0, Numerator = 4, Denominator = 4 }, beatEvents.FirstOrDefault());
-            beatEvents = [.. Events.Children.OfType<BeatEvent>().OrderBy(e => e.Bar)];
+            beatEvents = [..Events.Children.OfType<BeatEvent>().OrderBy(e => e.Bar)];
         }
         return new TimeCalculator(Time.MarResolution, beatEvents);
     }

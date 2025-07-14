@@ -1,10 +1,10 @@
-﻿using PenguinTools.Common.Asset;
+﻿using PenguinTools.Core.Asset;
 using System.Xml.Serialization;
 
-namespace PenguinTools.Common.Xml;
+namespace PenguinTools.Core.Xml;
 
 [XmlRoot("EventData")]
-public sealed class EventXml : XmlElement<EventXml>
+public class EventXml : XmlElement<EventXml>
 {
     public enum MusicType
     {
@@ -34,7 +34,7 @@ public sealed class EventXml : XmlElement<EventXml>
     }
 
     protected override string FileName => "Event.xml";
-    
+
     [XmlElement("netOpenName")]
     public Entry NetOpenName { get; set; } = XmlConstants.NetOpenName;
 

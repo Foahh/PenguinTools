@@ -1,4 +1,4 @@
-namespace PenguinTools.Common.Metadata;
+namespace PenguinTools.Core.Metadata;
 
 public partial record Meta
 {

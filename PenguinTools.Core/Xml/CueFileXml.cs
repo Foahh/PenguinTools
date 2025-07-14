@@ -1,10 +1,10 @@
-﻿using PenguinTools.Common.Asset;
+﻿using PenguinTools.Core.Asset;
 using System.Xml.Serialization;
 
-namespace PenguinTools.Common.Xml;
+namespace PenguinTools.Core.Xml;
 
 [XmlRoot("CueFileData")]
-public sealed class CueFileXml : XmlElement<CueFileXml>
+public class CueFileXml : XmlElement<CueFileXml>
 {
     internal CueFileXml()
     {
@@ -19,7 +19,7 @@ public sealed class CueFileXml : XmlElement<CueFileXml>
     }
 
     protected override string FileName => "CueFile.xml";
-    
+
     [XmlElement("name")]
     public Entry Name { get; set; } = Entry.Default;
 

@@ -1,8 +1,8 @@
-﻿using PenguinTools.Common.Asset;
+﻿using PenguinTools.Core.Asset;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace PenguinTools.Common.Xml;
+namespace PenguinTools.Core.Xml;
 
 public abstract class XmlElement<T>
 {

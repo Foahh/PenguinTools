@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Win32;
-using PenguinTools.Common.Graphic;
-using PenguinTools.Common.Resources;
+using PenguinTools.Core.Media;
+using PenguinTools.Core.Resources;
 using System.IO;
 using System.Media;
 
@@ -10,15 +10,15 @@ namespace PenguinTools.ViewModels;
 public partial class JacketViewModel : ActionViewModel
 {
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(OutputFileName))]
+    [NotifyPropertyChangedFor(nameof(DestinationFileName))]
     public partial int? JacketId { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(OutputFileName))]
+    [NotifyPropertyChangedFor(nameof(DestinationFileName))]
     [NotifyCanExecuteChangedFor(nameof(ActionCommand))]
     public partial string JacketPath { get; set; } = string.Empty;
 
-    public string OutputFileName
+    public string DestinationFileName
     {
         get
         {

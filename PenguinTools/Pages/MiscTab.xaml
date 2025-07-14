@@ -2,13 +2,12 @@
     x:Class="PenguinTools.Pages.MiscTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="clr-namespace:PenguinTools.Common;assembly=PenguinTools.Core"
     xmlns:converters="clr-namespace:PenguinTools.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:res="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
+    xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     MaxWidth="600"
     d:DataContext="{d:DesignInstance Type=viewModels:MiscViewModel}"
     mc:Ignorable="d">
@@ -53,6 +52,7 @@
             <Button Command="{Binding OpenTempDirectoryCommand}" Content="{x:Static res:Strings.Button_open_temp_directory}" />
             <Button Command="{Binding ExtractAfbFileCommand}" Content="{x:Static res:Strings.Button_extract_dds_from_afb}" />
             <Button Command="{Binding CollectAssetCommand}" Content="{x:Static res:Strings.Button_Recollect_A000}" />
+            <Button Command="{Binding OpenWikiCommand}" Content="{x:Static res:Strings.Button_open_wiki}" />
         </StackPanel>
     </Grid>
 </UserControl>

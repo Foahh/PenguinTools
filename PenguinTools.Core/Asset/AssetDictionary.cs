@@ -5,10 +5,27 @@ using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace PenguinTools.Common.Asset;
+namespace PenguinTools.Core.Asset;
+
+public enum AssetType
+{
+    [JsonStringEnumMemberName("genreNames")]
+    GenreNames,
+    [JsonStringEnumMemberName("notesFieldLine")]
+    FieldLines,
+    [JsonStringEnumMemberName("stageName")]
+    StageNames,
+    [JsonStringEnumMemberName("worldsEndTagName")]
+    WeTagNames
+}
 
 public class AssetDictionary : Dictionary<AssetType, SortedSet<Entry>>
 {
+    public IReadOnlySet<Entry> GenreNames => this[AssetType.GenreNames];
+    public IReadOnlySet<Entry> FieldLines => this[AssetType.FieldLines];
+    public IReadOnlySet<Entry> StageNames => this[AssetType.StageNames];
+    public IReadOnlySet<Entry> WeTagNames => this[AssetType.WeTagNames];
+
     private static readonly JsonSerializerOptions Options = new()
     {
         WriteIndented = true,

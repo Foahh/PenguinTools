@@ -5,7 +5,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace PenguinTools.Common.Chart.Models.c2s;
+namespace PenguinTools.Core.Chart.Models.c2s;
 
 public abstract class Event : Node;
 
@@ -24,21 +24,29 @@ public class Met : Event
     [JsonIgnore] public override string Text => $"{base.Text}\t{Denominator}\t{Numerator}";
 }
 
-public abstract class SpeedEvent : Event
+public abstract class SpeedEventBase : Event
 {
     public decimal Speed { get; set; }
     public Time Length { get; set; }
 }
 
-public class Slp : SpeedEvent
+public class Slp : SpeedEventBase
 {
     public virtual int Timeline { get; set; } = -1;
     public override string Id => "SLP";
     [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Result}\t{Speed:F6}\t{Timeline}";
 }
 
-public class Sfl : SpeedEvent
+
+[Obsolete]
+public class Sfl : SpeedEventBase
 {
     public override string Id => "SFL";
+    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Result}\t{Speed:F6}";
+}
+
+public class Dcm : SpeedEventBase
+{
+    public override string Id => "DCM";
     [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Result}\t{Speed:F6}";
 }

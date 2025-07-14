@@ -1,9 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PenguinTools.Common;
-using PenguinTools.Common.Resources;
 using PenguinTools.Controls;
+using PenguinTools.Core;
+using PenguinTools.Core.Resources;
 using System.Media;
-using System.Net.Mime;
 using System.Windows;
 using System.Windows.Threading;
 

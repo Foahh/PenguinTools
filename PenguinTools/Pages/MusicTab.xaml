@@ -2,15 +2,13 @@
     x:Class="PenguinTools.Pages.MusicTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:audio="clr-namespace:PenguinTools.Common.Audio;assembly=PenguinTools.Core"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:behaviors="clr-namespace:PenguinTools.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:res="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
-    xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
+    xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     MaxWidth="600"
     d:DataContext="{d:DesignInstance Type=viewModels:MusicViewModel}"
     d:DesignHeight="300"
@@ -24,7 +22,7 @@
 
         <StackPanel>
             <local:FileFolderPicker
-                Filter="{x:Static resources:Strings.Filefilter_sound}"
+                Filter="{x:Static res:Strings.Filefilter_sound}"
                 Label="{x:Static res:Strings.Label_Audio}"
                 Path="{Binding ModelPath}"
                 Required="True" />

@@ -5,10 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:res="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
-    xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     MaxWidth="300"
     d:DataContext="{d:DesignInstance Type=viewModels:StageViewModel}"
     mc:Ignorable="d">
@@ -22,7 +21,7 @@
         <StackPanel>
             <StackPanel.Resources>
                 <Style TargetType="{x:Type local:FileFolderPicker}">
-                    <Setter Property="Filter" Value="{x:Static resources:Strings.Filefilter_image}" />
+                    <Setter Property="Filter" Value="{x:Static res:Strings.Filefilter_image}" />
                     <Setter Property="Margin" Value="0,4,0,0" />
                 </Style>
             </StackPanel.Resources>

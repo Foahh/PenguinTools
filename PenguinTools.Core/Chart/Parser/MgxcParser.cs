@@ -1,12 +1,12 @@
-﻿using PenguinTools.Common.Asset;
-using PenguinTools.Common.Chart.Models;
-using PenguinTools.Common.Metadata;
-using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Asset;
+using PenguinTools.Core.Chart.Models;
+using PenguinTools.Core.Media;
+using PenguinTools.Core.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
-using mgxc = PenguinTools.Common.Chart.Models.mgxc;
+using mgxc = PenguinTools.Core.Chart.Models.mgxc;
 
-namespace PenguinTools.Common.Chart.Parser;
+namespace PenguinTools.Core.Chart.Parser;
 
 using mgxc = mgxc;
 
@@ -18,6 +18,8 @@ public partial class MgxcParser(IDiagnostic diag, AssetManager asm)
     private const string HEADER_DAT2 = "dat2"; // 64 61 74 32
     private mgxc.Chart mgxc = new();
     public static string MargreteVersion => "1.8.0";
+    
+    private List<Task> tasks = [];
 
     public async Task<mgxc.Chart> ParseAsync(string path, CancellationToken ct)
     {
@@ -54,6 +56,7 @@ public partial class MgxcParser(IDiagnostic diag, AssetManager asm)
         ProcessMeta();
         ct.ThrowIfCancellationRequested();
 
+        await Task.WhenAll(tasks);
         return mgxc;
     }
 
@@ -67,9 +70,13 @@ public partial class MgxcParser(IDiagnostic diag, AssetManager asm)
 
         if (mgxc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(mgxc.Meta.FullBgiFilePath))
         {
-            if (MuaInterop.IsValidImage(mgxc.Meta.FullBgiFilePath)) return;
-            mgxc.Meta.IsCustomStage = false;
-            diag.Report(Severity.Information, Strings.Error_invalid_bg_image, mgxc.Meta.FullBgiFilePath);
+            tasks.Add(Manipulate.IsImageValidAsync(mgxc.Meta.FullBgiFilePath).ContinueWith(p =>
+            {
+                if (p.Result.IsSuccess) return;
+                mgxc.Meta.IsCustomStage = false;
+                diag.Report(Severity.Warning, Strings.Error_invalid_bg_image, mgxc.Meta.FullBgiFilePath, target: p.Result);
+                mgxc.Meta.BgiFilePath = string.Empty;
+            }));
         }
     }
 
@@ -87,7 +94,7 @@ public partial class MgxcParser(IDiagnostic diag, AssetManager asm)
                 Numerator = 4,
                 Denominator = 4
             }, bpmEvents.FirstOrDefault());
-            beatEvents = [.. mgxc.Events.Children.OfType<mgxc.BeatEvent>().OrderBy(e => e.Bar)];
+            beatEvents = [..mgxc.Events.Children.OfType<mgxc.BeatEvent>().OrderBy(e => e.Bar)];
             diag.Report(Severity.Information, Strings.Diag_time_Signature_event_not_found_at_0);
         }
 

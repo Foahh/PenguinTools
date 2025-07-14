@@ -1,7 +1,7 @@
-﻿using PenguinTools.Common.Chart.Models;
-using PenguinTools.Common.Resources;
+﻿using PenguinTools.Core.Chart.Models;
+using PenguinTools.Core.Resources;
 
-namespace PenguinTools.Common.Chart.Parser;
+namespace PenguinTools.Core.Chart.Parser;
 
 using mgxc = Models.mgxc;
 
@@ -92,16 +92,16 @@ public partial class MgxcParser
             var exNote = new mgxc.ExTap();
             exNote.Effect = direction switch
             {
-                Direction.Up => ExEffect.UP,
-                Direction.Down => ExEffect.DW,
+                Direction.Up => ExEffect.Up,
+                Direction.Down => ExEffect.Dw,
                 Direction.Center => ExEffect.CE,
-                Direction.Left => ExEffect.LS,
-                Direction.Right => ExEffect.RS,
-                Direction.RotateLeft => ExEffect.LC,
-                Direction.RotateRight => ExEffect.RC,
-                Direction.InOut => ExEffect.BS,
+                Direction.Left => ExEffect.Ls,
+                Direction.Right => ExEffect.Rs,
+                Direction.RotateLeft => ExEffect.Lc,
+                Direction.RotateRight => ExEffect.Rc,
+                Direction.InOut => ExEffect.Bs,
                 Direction.OutIn => ExEffect.CE,
-                _ => ExEffect.UP
+                _ => ExEffect.Up
             };
             note = exNote;
         }
@@ -162,14 +162,14 @@ public partial class MgxcParser
             switch (direction)
             {
                 case Direction.Up: exNote.Direction = AirDirection.IR; break;
-                case Direction.Down: exNote.Direction = AirDirection.DW; break;
-                case Direction.UpLeft: exNote.Direction = AirDirection.UL; break;
-                case Direction.UpRight: exNote.Direction = AirDirection.UR; break;
-                case Direction.DownLeft: exNote.Direction = AirDirection.DL; break;
-                case Direction.DownRight: exNote.Direction = AirDirection.DR; break;
+                case Direction.Down: exNote.Direction = AirDirection.Dw; break;
+                case Direction.UpLeft: exNote.Direction = AirDirection.Ul; break;
+                case Direction.UpRight: exNote.Direction = AirDirection.Ur; break;
+                case Direction.DownLeft: exNote.Direction = AirDirection.Dl; break;
+                case Direction.DownRight: exNote.Direction = AirDirection.Dr; break;
                 default: exNote.Direction = AirDirection.IR; break;
             }
-            exNote.Color = exAttr == ExAttr.Invert ? Color.PNK : Color.DEF;
+            exNote.Color = exAttr == ExAttr.Invert ? Color.Pnk : Color.DEF;
             note = exNote;
             isPairNote = true;
         }
@@ -215,22 +215,22 @@ public partial class MgxcParser
             var color = variationId switch
             {
                 0 => Color.DEF,
-                1 => Color.RED, // Red
-                2 => Color.ORN, // Orange
-                3 => Color.YEL, // Yellow
+                1 => Color.Red, // Red
+                2 => Color.Orn, // Orange
+                3 => Color.Yel, // Yellow
                 4 => Color.GRN, // Green
-                5 => Color.AQA, // Sky
+                5 => Color.Aqa, // Sky
                 6 => Color.BLU, // Blue
-                7 => Color.PPL, // Violet
-                8 => Color.VLT, // Pink
-                9 => Color.PPL, // Violet
-                10 => Color.GRY, // White
-                11 => Color.BLK, // Black
-                12 => Color.LIM, // Grass
-                13 => Color.CYN, // Sky Blue
-                14 => Color.DGR, // Cobalt Blue
-                15 => Color.PNK, // Purple
-                35 => Color.NON, // Transparent
+                7 => Color.Ppl, // Violet
+                8 => Color.Vlt, // Pink
+                9 => Color.Ppl, // Violet
+                10 => Color.Gry, // White
+                11 => Color.Blk, // Black
+                12 => Color.Lim, // Grass
+                13 => Color.Cyn, // Sky Blue
+                14 => Color.Dgr, // Cobalt Blue
+                15 => Color.Pnk, // Purple
+                35 => Color.Non, // Transparent
                 _ => Color.DEF
             };
 

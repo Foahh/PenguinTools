@@ -1,10 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using PenguinTools.Common;
-using PenguinTools.Common.Resources;
+using PenguinTools.Core;
+using PenguinTools.Core.Resources;
 using Swordfish.NET.Collections;
-using System.Text.Json;
-using System.Windows;
 
 namespace PenguinTools.Controls;
 
@@ -14,7 +11,6 @@ public partial class DiagnosticsWindow
     {
         InitializeComponent();
     }
-    
 }
 
 public partial class DiagnosticsWindowViewModel : ObservableObject

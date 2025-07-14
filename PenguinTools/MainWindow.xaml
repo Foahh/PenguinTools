@@ -6,9 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="clr-namespace:PenguinTools.Pages"
-    xmlns:res="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
-    xmlns:resources="clr-namespace:PenguinTools.Common.Resources;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
+    xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
@@ -44,7 +43,7 @@
             <TabItem Header="{x:Static res:Strings.Tab_Option}">
                 <pages:OptionTab />
             </TabItem>
-            <TabItem Header="{x:Static resources:Strings.Tab_Workflow}">
+            <TabItem Header="{x:Static res:Strings.Tab_Workflow}">
                 <pages:WorkflowTab />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Chart}">
