@@ -9,7 +9,7 @@ public class Tap : PositiveNote;
 
 public class ExTap : PositiveNote
 {
-    public ExEffect Effect { get; set; } = ExEffect.Up;
+    public ExEffect Effect { get; set; } = ExEffect.UP;
 }
 
 public class Flick : PositiveNote;

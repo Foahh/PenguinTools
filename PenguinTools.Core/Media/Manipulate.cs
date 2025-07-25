@@ -9,8 +9,8 @@ namespace PenguinTools.Core.Media;
 public enum ExitCode
 {
     Success = 0,
-    NoOperation = 1,
-    Failure = 2
+    Failure = 1,
+    NoOperation = 2
 }
 
 public class ProcessCommandResult
@@ -74,7 +74,7 @@ public static class Manipulate
             "an",
             "-s", src,
             "-d", dst,
-            "-o", offset.ToString(CultureInfo.InvariantCulture),
+            "-o", Math.Round(offset, 6).ToString(CultureInfo.InvariantCulture),
         ], ct);
 
         ret.ThrowIfFailed();
