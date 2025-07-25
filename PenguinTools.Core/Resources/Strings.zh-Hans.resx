@@ -778,10 +778,10 @@
   <data name="HintW_open" xml:space="preserve">
     <value>打开文档</value>
   </data>
-  <data name="Button_open_wiki" xml:space="preserve">
-    <value>查看说明书</value>
-  </data>
   <data name="Error_Mua_command_failed" xml:space="preserve">
     <value>命令执行失败。</value>
+  </data>
+  <data name="Button_Help" xml:space="preserve">
+    <value>帮助</value>
   </data>
 </root>

@@ -10,6 +10,7 @@
     xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
     ResizeMode="NoResize"
+    MaxHeight="810"
     SizeToContent="WidthAndHeight"
     mc:Ignorable="d">
 
@@ -41,10 +42,14 @@
 
         <TabControl Margin="8">
             <TabItem Header="{x:Static res:Strings.Tab_Option}">
-                <pages:OptionTab />
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <pages:OptionTab />
+                </ScrollViewer>
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Workflow}">
-                <pages:WorkflowTab />
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <pages:WorkflowTab />
+                </ScrollViewer>
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Chart}">
                 <pages:ChartTab />

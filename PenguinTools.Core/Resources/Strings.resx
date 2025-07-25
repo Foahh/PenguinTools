@@ -167,6 +167,9 @@
     <data name="Button_Reload" xml:space="preserve">
     <value>Reload</value>
   </data>
+    <data name="Button_Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
     <data name="Alert_edit_notice" xml:space="preserve">
     <value>Please edit the properties of charts in Margrete first.</value>
   </data>
@@ -681,25 +684,10 @@ Output: {1}</value>
     <data name="HintW_open" xml:space="preserve">
     <value>Open Documentation</value>
   </data>
-    <data name="Media_Error_file_no_audio_stream_available" xml:space="preserve">
-        <value>No audio stream available in the file.</value>
-    </data>
-    <data name="Media_Error_path_null_or_empty" xml:space="preserve">
-        <value>File path cannot be null or empty.</value>
-    </data>
-    <data name="Media_Error_no_avaliable_acodec" xml:space="preserve">
-    <value>No available audio codec for the audio stream.</value>
-  </data>
-    <data name="Media_Error_no_dds_chunks" xml:space="preserve">
-        <value>No .dds chunks found in the file.</value>
-    </data>
-    <data name="Media_Error_no_audio_channels_available" xml:space="preserve">
-        <value>No audio channels available in the file.</value>
-    </data>
-    <data name="Button_open_wiki" xml:space="preserve">
-        <value>View Documentation</value>
-    </data>
     <data name="Error_Mua_command_failed" xml:space="preserve">
         <value>Command execution failed.</value>
+    </data>
+    <data name="Link_Documentation" xml:space="preserve">
+        <value>https://github.com/Foahh/PenguinTools/wiki/%E4%B8%AD%E6%96%87</value>
     </data>
 </root>

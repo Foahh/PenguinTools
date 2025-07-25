@@ -39,7 +39,6 @@
                         VerticalAlignment="Center"
                         Text="{Binding StageId, StringFormat=[stage{0:000000}], Mode=OneWay}" />
                 </StackPanel>
-
             </GroupBox>
 
             <GroupBox Margin="0,4,0,0" Header="{x:Static res:Strings.Label_Effects}">

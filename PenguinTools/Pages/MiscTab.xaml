@@ -49,7 +49,6 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1">
-            <Button Command="{Binding OpenWikiCommand}" Content="{x:Static res:Strings.Button_open_wiki}" />
             <Button Command="{Binding OpenTempDirectoryCommand}" Content="{x:Static res:Strings.Button_open_temp_directory}" />
             <Button Command="{Binding ExtractAfbFileCommand}" Content="{x:Static res:Strings.Button_extract_dds_from_afb}" />
             <Button Command="{Binding CollectAssetCommand}" Content="{x:Static res:Strings.Button_Recollect_A000}" />

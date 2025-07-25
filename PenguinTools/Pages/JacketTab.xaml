@@ -45,6 +45,5 @@
         <StackPanel Grid.Row="1" Style="{StaticResource ActionPanelStyle}">
             <Button Command="{Binding ActionCommand}" Content="{x:Static res:Strings.Button_Convert}" />
         </StackPanel>
-
     </Grid>
 </UserControl>

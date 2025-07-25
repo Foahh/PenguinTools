@@ -61,15 +61,13 @@
         <StackPanel Grid.Row="1" Style="{StaticResource ActionPanelStyle}">
             <Button
                 Margin="0,0,4,0"
+                Command="{Binding OpenWikiCommand}"
+                Content="{x:Static res:Strings.Button_Help}" />
+            <Button
+                Margin="0,0,4,0"
                 Command="{Binding ReloadCommand}"
                 Content="{x:Static res:Strings.Button_Reload}" />
             <Button Command="{Binding ActionCommand}" Content="{x:Static res:Strings.Button_Convert}" />
         </StackPanel>
-
-        <TextBlock
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            Style="{StaticResource FloatText}"
-            Text="{Binding Source={x:Static parser:MgxcParser.MargreteVersion}, StringFormat={x:Static res:Strings.Compatible_with_Margrete}}" />
     </Grid>
 </UserControl>

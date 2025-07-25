@@ -6,18 +6,36 @@ using PenguinTools.Core.Asset;
 using PenguinTools.Core.Resources;
 using PenguinTools.Models;
 using PenguinTools.Services;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 
 namespace PenguinTools.ViewModels;
 
-public abstract class ViewModel : ObservableObject
+public abstract partial class ViewModel : ObservableObject
 {
     public ActionService ActionService { get; } = App.Services.GetRequiredService<ActionService>();
     public AssetManager AssetManager { get; } = App.Services.GetRequiredService<AssetManager>();
 
     protected static Dispatcher Dispatcher => Application.Current.Dispatcher;
+    
+    [RelayCommand]
+    private static void OpenWiki()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Strings.Link_Documentation,
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            // ignored
+        }
+    }
 }
 
 public abstract class ActionViewModel : ViewModel
