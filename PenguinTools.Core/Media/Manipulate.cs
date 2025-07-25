@@ -1,3 +1,4 @@
+using PenguinTools.Core.Resources;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
@@ -34,7 +35,7 @@ public class ProcessCommandResult
     internal void ThrowIfFailed()
     {
         if (!IsFailure) return;
-        throw new DiagnosticException("Command execution failed", this);
+        throw new DiagnosticException(Strings.Error_Mua_command_failed, this);
     }
 }
 

@@ -17,10 +17,9 @@ public partial class MgxcParser(IDiagnostic diag, AssetManager asm)
     private const string HEADER_EVNT = "evnt"; // 65 76 6E 74
     private const string HEADER_DAT2 = "dat2"; // 64 61 74 32
     private mgxc.Chart mgxc = new();
+    private readonly List<Task> tasks = [];
     public static string MargreteVersion => "1.8.0";
     
-    private List<Task> tasks = [];
-
     public async Task<mgxc.Chart> ParseAsync(string path, CancellationToken ct)
     {
         mgxc = new mgxc.Chart();

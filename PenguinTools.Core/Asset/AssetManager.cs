@@ -6,18 +6,28 @@ namespace PenguinTools.Core.Asset;
 
 public class AssetManager : INotifyPropertyChanged
 {
-    private const string PATH = "assets.json";
-
     public AssetManager()
     {
-        MergeAssets.MergeWith(HardAssets, new AssetDictionary(PATH));
+        MergeAssets = new AssetDictionary();
+        HardAssets = new AssetDictionary(ResourceUtils.GetStream("assets.json"));
+        PlusAssets = new AssetDictionary("assets.json");
+        UserAssets = new AssetDictionary();
+        Merge();
         NotifyAssetChanged();
     }
 
-    public AssetDictionary MergeAssets { get; private set; } = [];
-    private AssetDictionary HardAssets { get; } = new(ResourceUtils.GetStream("assets.json"));
-    private AssetDictionary UserAssets { get; } = [];
+    // Asset Dictionary that merges all assets from various sources below
+    public AssetDictionary MergeAssets { get; }
     
+    // Assets embedded in the assembly, used for default values and initial setup.
+    private AssetDictionary HardAssets { get; }
+    
+    // Assets loaded from the result of AssetDictionary.CollectAsync.
+    private AssetDictionary PlusAssets { get; }
+
+    // Assets from the user-defined.
+    private AssetDictionary UserAssets { get; }
+
     public IReadOnlySet<Entry> this[AssetType type] => MergeAssets[type];
     public IReadOnlySet<Entry> GenreNames => MergeAssets.GenreNames;
     public IReadOnlySet<Entry> FieldLines => MergeAssets.FieldLines;
@@ -29,13 +39,21 @@ public class AssetManager : INotifyPropertyChanged
         if (!Directory.Exists(workDir)) return;
 
         progress?.Report(Strings.Status_collecting);
-        var collected = await AssetDictionary.CollectAsync(workDir, ct);
-        progress?.Report(Strings.Status_saving);
-        await collected.SaveAsync(PATH, ct);
 
-        MergeAssets = [];
-        MergeAssets.MergeWith(HardAssets, UserAssets, collected);
+        PlusAssets.MergeWith(await AssetDictionary.CollectAsync(workDir, ct));
+        PlusAssets.SubtractWith(HardAssets);
+
+        progress?.Report(Strings.Status_saving);
+        await PlusAssets.SaveAsync("assets.json", ct);
+
+        Merge();
         NotifyAssetChanged();
+    }
+
+    private void Merge()
+    {
+        MergeAssets.Clear();
+        MergeAssets.MergeWith(HardAssets, PlusAssets, UserAssets);
     }
 
     public void DefineEntry(AssetType type, Entry entry)

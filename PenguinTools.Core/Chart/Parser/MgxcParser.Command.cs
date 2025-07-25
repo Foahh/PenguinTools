@@ -5,11 +5,11 @@ namespace PenguinTools.Core.Chart.Parser;
 
 public partial class MgxcParser
 {
-    protected void MetaEntryHandler(string name, string[] args, Action<Entry> setter, AssetManager asm, AssetType type)
+    protected void MetaEntryHandler(string name, string[] args, Action<Entry> setter, AssetType type)
     {
         if (args.Length is < 1 or > 2)
         {
-            var msg = string.Format(Strings.Diag_meta_override_arument_count_mismatch, name);
+            var msg = string.Format(Strings.Diag_meta_override_argument_count_mismatch, name);
             diag.Report(Severity.Warning, msg, target: args);
             return;
         }
@@ -41,18 +41,28 @@ public partial class MgxcParser
 
     protected void MetaGenreHandler(string[] args)
     {
-        MetaEntryHandler("genre", args, entry => mgxc.Meta.Genre = entry, asm, AssetType.GenreNames);
+        MetaEntryHandler("genre", args, entry => mgxc.Meta.Genre = entry, AssetType.GenreNames);
     }
 
     protected void MetaStageHandler(string[] args)
     {
-        MetaEntryHandler("stage", args, Setter, asm, AssetType.StageNames);
+        MetaEntryHandler("stage", args, Setter, AssetType.StageNames);
 
         void Setter(Entry entry)
         {
             mgxc.Meta.Stage = entry;
             mgxc.Meta.IsCustomStage = false;
         }
+    }
+    
+    protected void MetaFieldLineHandler(string[] args)
+    {
+        MetaEntryHandler("fline", args, entry => mgxc.Meta.NotesFieldLine = entry, AssetType.FieldLines);
+    }
+
+    protected void MetaWeTagHandler(string[] args)
+    {
+        MetaEntryHandler("wetag", args, entry => mgxc.Meta.WeTag = entry, AssetType.WeTagNames);
     }
 
     protected void MainHandler(string[] args)
@@ -74,6 +84,12 @@ public partial class MgxcParser
                 break;
             case "genre":
                 MetaGenreHandler(value);
+                break;
+            case "fline":
+                MetaFieldLineHandler(value);
+                break;
+            case "wetag":
+                MetaWeTagHandler(value);
                 break;
             default:
                 diag.Report(Severity.Warning, string.Format(Strings.Diag_unknown_tag, name), target: args);

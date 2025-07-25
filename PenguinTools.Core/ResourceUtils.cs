@@ -24,6 +24,7 @@ public static class ResourceUtils
             
             Save("st_dummy.afb");
             Save("mua.exe");
+            Save("mua.LICENSE.txt");
         }
     }
 
@@ -31,8 +32,7 @@ public static class ResourceUtils
     {
         Initialize();
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(fileName));
-        var tempPath = Path.Combine(TempWorkPath, fileName);
-        return tempPath;
+        return Path.Combine(TempWorkPath, fileName);
     }
 
     #region Storage

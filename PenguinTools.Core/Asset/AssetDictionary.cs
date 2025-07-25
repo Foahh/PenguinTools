@@ -19,12 +19,14 @@ public enum AssetType
     WeTagNames
 }
 
-public class AssetDictionary : Dictionary<AssetType, SortedSet<Entry>>
+public class AssetDictionary
 {
-    public IReadOnlySet<Entry> GenreNames => this[AssetType.GenreNames];
-    public IReadOnlySet<Entry> FieldLines => this[AssetType.FieldLines];
-    public IReadOnlySet<Entry> StageNames => this[AssetType.StageNames];
-    public IReadOnlySet<Entry> WeTagNames => this[AssetType.WeTagNames];
+    private readonly Dictionary<AssetType, SortedSet<Entry>> database;
+
+    public IReadOnlySet<Entry> GenreNames => database[AssetType.GenreNames];
+    public IReadOnlySet<Entry> FieldLines => database[AssetType.FieldLines];
+    public IReadOnlySet<Entry> StageNames => database[AssetType.StageNames];
+    public IReadOnlySet<Entry> WeTagNames => database[AssetType.WeTagNames];
 
     private static readonly JsonSerializerOptions Options = new()
     {
@@ -35,10 +37,8 @@ public class AssetDictionary : Dictionary<AssetType, SortedSet<Entry>>
 
     public AssetDictionary()
     {
-        foreach (var type in Enum.GetValues<AssetType>())
-        {
-            if (!ContainsKey(type)) this[type] = [];
-        }
+        database = new Dictionary<AssetType, SortedSet<Entry>>();
+        foreach (var type in Enum.GetValues<AssetType>()) database[type] = [];
     }
 
     public AssetDictionary(string path) : this()
@@ -47,44 +47,74 @@ public class AssetDictionary : Dictionary<AssetType, SortedSet<Entry>>
         var json = File.ReadAllText(path);
         Load(json);
     }
-
-    public AssetDictionary(byte[] bytes) : this()
-    {
-        var json = Encoding.UTF8.GetString(bytes);
-        Load(json);
-    }
-
+    
     public AssetDictionary(Stream stream) : this()
     {
         using var reader = new StreamReader(stream, Encoding.UTF8);
         var json = reader.ReadToEnd();
         Load(json);
     }
-
-    private void Load(string json)
+    
+    private void Load(string json) 
     {
-        var dict = JsonSerializer.Deserialize<AssetDictionary>(json, Options);
+        var dict = JsonSerializer.Deserialize<Dictionary<AssetType, SortedSet<Entry>>>(json, Options);
         if (dict == null) return;
         MergeWith(dict);
     }
 
+    public void MergeWith(Dictionary<AssetType, SortedSet<Entry>> databases)
+    {
+        foreach (var (assetType, sourceSet) in databases)
+        {
+            database[assetType].UnionWith(sourceSet);
+        }
+    }
+    
     public void MergeWith(params AssetDictionary[] databases)
     {
         foreach (var db in databases)
         {
-            foreach (var (assetType, sourceSet) in db) this[assetType].UnionWith(sourceSet);
+            foreach (var (assetType, sourceSet) in db.database)
+            {
+                database[assetType].UnionWith(sourceSet);
+            }
+        }
+    }
+
+    public void SubtractWith(params AssetDictionary[] databases)
+    {
+        foreach (var db in databases)
+        {
+            foreach (var (assetType, sourceSet) in db.database)
+            {
+                database[assetType].ExceptWith(sourceSet);
+            }
         }
     }
 
     public async Task SaveAsync(string path, CancellationToken ct = default)
     {
-        var json = JsonSerializer.Serialize(this, Options);
+        var json = JsonSerializer.Serialize(database, Options);
         await File.WriteAllTextAsync(path, json, ct);
+    }
+
+    public void Clear()
+    {
+        foreach (var set in database.Values)
+        {
+            set.Clear();
+        }
+    }
+
+    public SortedSet<Entry> this[AssetType type]
+    {
+        get => database[type];
+        set => database[type] = value;
     }
 
     #region Collect
 
-    public async static Task<AssetDictionary> CollectAsync(string workDir, CancellationToken ct = default)
+    public async static Task<Dictionary<AssetType, SortedSet<Entry>>> CollectAsync(string workDir, CancellationToken ct = default)
     {
         var specs = new (string FileName, string EntryName)[]
         {
@@ -164,7 +194,7 @@ public class AssetDictionary : Dictionary<AssetType, SortedSet<Entry>>
         return result;
     }
 
-    public async static Task<AssetDictionary> CollectManyAsync(string root, IEnumerable<(string FileName, string EntryName)> specs, CancellationToken ct = default)
+    public async static Task<Dictionary<AssetType, SortedSet<Entry>>> CollectManyAsync(string root, IEnumerable<(string FileName, string EntryName)> specs, CancellationToken ct = default)
     {
         var aggregated = new Dictionary<string, SortedSet<Entry>>();
 
@@ -181,7 +211,7 @@ public class AssetDictionary : Dictionary<AssetType, SortedSet<Entry>>
         }
 
         var json = JsonSerializer.Serialize(aggregated, Options);
-        return JsonSerializer.Deserialize<AssetDictionary>(json, Options) ?? [];
+        return JsonSerializer.Deserialize<Dictionary<AssetType, SortedSet<Entry>>>(json, Options) ?? [];
     }
 
     #endregion

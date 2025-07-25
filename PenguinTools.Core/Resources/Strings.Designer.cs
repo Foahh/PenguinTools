@@ -150,7 +150,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Documentation.
+        ///   Looks up a localized string similar to View Documentation.
         /// </summary>
         public static string Button_open_wiki {
             get {
@@ -159,7 +159,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Recollect A000.
+        ///   Looks up a localized string similar to Recollect Game Assets.
         /// </summary>
         public static string Button_Recollect_A000 {
             get {
@@ -312,7 +312,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used to specify which difficulty&apos;s chart property will be used as the reference..
+        ///   Looks up a localized string similar to Used to specify which difficulty&apos;s chart property will be used as the base reference..
         /// </summary>
         public static string Description_MainDifficulty {
             get {
@@ -458,14 +458,14 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to &apos;#override {0}&apos; requires at one argument or two arguments..
         /// </summary>
-        public static string Diag_meta_override_arument_count_mismatch {
+        public static string Diag_meta_override_argument_count_mismatch {
             get {
-                return ResourceManager.GetString("Diag_meta_override_arument_count_mismatch", resourceCulture);
+                return ResourceManager.GetString("Diag_meta_override_argument_count_mismatch", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multiple charts for this Song ID have been tagged with “#meta main” in their comments. The first chart found with this tag will be set as the reference difficulty..
+        ///   Looks up a localized string similar to Multiple charts for this Song ID have been tagged with “#meta main” in their comments. The first chart found with this tag will be set as the baseline difficulty..
         /// </summary>
         public static string Diag_more_than_one_chart_marked_main {
             get {
@@ -474,7 +474,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No reference difficulty for this Song ID. Selecting the highest-difficulty chart by default. To choose a reference difficulty explicitly, add `#meta main` to the comment of the chart..
+        ///   Looks up a localized string similar to No baseline difficulty for this Song ID. Selecting the highest-difficulty chart by default. To choose a baseline difficulty explicitly, add `#meta main` to the comment of the chart..
         /// </summary>
         public static string Diag_no_chart_marked_main {
             get {
@@ -528,7 +528,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The specified StringID (id or str) {0} could not be found in &apos;{1}&apos;. Please check your input or run &quot;Recollect A000&quot; to refresh the database. If you want to use your custom StringID, please provide both (i.e. &quot;#meta ... [ID] [String]&quot;)..
+        ///   Looks up a localized string similar to The specified StringID (id or str) {0} could not be found in &apos;{1}&apos;. Please check your input or run &quot;Recollect Game Assets&quot; to refresh the database. If you want to use your custom StringID, please provide both (i.e. &quot;#meta ... [ID] [String]&quot;)..
         /// </summary>
         public static string Diag_string_id_not_found {
             get {
@@ -798,7 +798,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Referenced Difficulty.
+        ///   Looks up a localized string similar to Baseline Difficulty.
         /// </summary>
         public static string Display_MainDifficulty {
             get {
@@ -1218,6 +1218,15 @@ namespace PenguinTools.Core.Resources {
         public static string Error_jacket_file_is_not_set {
             get {
                 return ResourceManager.GetString("Error_jacket_file_is_not_set", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command execution failed..
+        /// </summary>
+        public static string Error_Mua_command_failed {
+            get {
+                return ResourceManager.GetString("Error_Mua_command_failed", resourceCulture);
             }
         }
         
@@ -2005,7 +2014,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select the A000 folder.
+        ///   Looks up a localized string similar to Select the game folder.
         /// </summary>
         public static string Title_select_the_A000_folder {
             get {

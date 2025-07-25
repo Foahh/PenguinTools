@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace PenguinTools.Core.Asset;
@@ -27,7 +28,6 @@ public class Entry : IComparable<Entry>, IEquatable<Entry>
 
     [JsonPropertyName("data")] [XmlElement("data")]
     public string Data { get; init; } = string.Empty;
-
 
     public override string ToString()
     {

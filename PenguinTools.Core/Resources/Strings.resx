@@ -41,8 +41,8 @@
     <value>Extract *.dds from *.afb</value>
   </data>
     <data name="Button_Recollect_A000" xml:space="preserve">
-    <value>Recollect A000</value>
-  </data>
+        <value>Recollect Game Assets</value>
+    </data>
     <data name="Label_Not_Available" xml:space="preserve">
     <value>Not available</value>
   </data>
@@ -77,8 +77,8 @@
     <value>Select the output folder</value>
   </data>
     <data name="Title_select_the_A000_folder" xml:space="preserve">
-    <value>Select the A000 folder</value>
-  </data>
+        <value>Select the game folder</value>
+    </data>
     <data name="Title_Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -159,11 +159,11 @@
     <value>World's End chart must use unique Song ID; otherwise, other difficulty charts will not display under common song categories.</value>
   </data>
     <data name="Diag_more_than_one_chart_marked_main" xml:space="preserve">
-    <value>Multiple charts for this Song ID have been tagged with “#meta main” in their comments. The first chart found with this tag will be set as the reference difficulty.</value>
-  </data>
+        <value>Multiple charts for this Song ID have been tagged with “#meta main” in their comments. The first chart found with this tag will be set as the baseline difficulty.</value>
+    </data>
     <data name="Diag_no_chart_marked_main" xml:space="preserve">
-    <value>No reference difficulty for this Song ID. Selecting the highest-difficulty chart by default. To choose a reference difficulty explicitly, add `#meta main` to the comment of the chart.</value>
-  </data>
+        <value>No baseline difficulty for this Song ID. Selecting the highest-difficulty chart by default. To choose a baseline difficulty explicitly, add `#meta main` to the comment of the chart.</value>
+    </data>
     <data name="Button_Reload" xml:space="preserve">
     <value>Reload</value>
   </data>
@@ -360,11 +360,11 @@
         <value>Settings</value>
     </data>
     <data name="Display_MainDifficulty" xml:space="preserve">
-        <value>Referenced Difficulty</value>
+        <value>Baseline Difficulty</value>
     </data>
     <data name="Description_MainDifficulty" xml:space="preserve">
-    <value>Used to specify which difficulty's chart property will be used as the reference.</value>
-  </data>
+        <value>Used to specify which difficulty's chart property will be used as the base reference.</value>
+    </data>
     <data name="Display_OptionName" xml:space="preserve">
     <value>Option Name</value>
   </data>
@@ -560,11 +560,11 @@
     <data name="Diag_no_sortname_provided" xml:space="preserve">
         <value>No SortName was provided. A new SortName has been generated from the Title.</value>
     </data>
-    <data name="Diag_meta_override_arument_count_mismatch" xml:space="preserve">
+    <data name="Diag_meta_override_argument_count_mismatch" xml:space="preserve">
         <value>'#override {0}' requires at one argument or two arguments.</value>
     </data>
     <data name="Diag_string_id_not_found" xml:space="preserve">
-        <value>The specified StringID (id or str) {0} could not be found in '{1}'. Please check your input or run "Recollect A000" to refresh the database. If you want to use your custom StringID, please provide both (i.e. "#meta ... [ID] [String]").</value>
+        <value>The specified StringID (id or str) {0} could not be found in '{1}'. Please check your input or run "Recollect Game Assets" to refresh the database. If you want to use your custom StringID, please provide both (i.e. "#meta ... [ID] [String]").</value>
     </data>
     <data name="Diag_first_argument_must_int" xml:space="preserve">
         <value>First argument must be a valid integer.</value>
@@ -697,6 +697,9 @@ Output: {1}</value>
         <value>No audio channels available in the file.</value>
     </data>
     <data name="Button_open_wiki" xml:space="preserve">
-        <value>Documentation</value>
+        <value>View Documentation</value>
+    </data>
+    <data name="Error_Mua_command_failed" xml:space="preserve">
+        <value>Command execution failed.</value>
     </data>
 </root>
