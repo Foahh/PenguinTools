@@ -4,103 +4,100 @@ using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
-using mgxc = PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Core.Chart.Parser;
 
-using mgxc = mgxc;
+using mg = Models.mgxc;
 
-public partial class MgxcParser(IDiagnostic diag, AssetManager asm)
+public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase<mg.Chart>(diag, prog)
 {
     private const string HEADER_MGXC = "MGXC"; // 4D 47 58 43
     private const string HEADER_META = "meta"; // 6D 65 74 61
     private const string HEADER_EVNT = "evnt"; // 65 76 6E 74
     private const string HEADER_DAT2 = "dat2"; // 64 61 74 32
-    private mgxc.Chart mgxc = new();
-    private readonly List<Task> tasks = [];
-    public static string MargreteVersion => "1.8.0";
-    
-    public async Task<mgxc.Chart> ParseAsync(string path, CancellationToken ct)
-    {
-        mgxc = new mgxc.Chart();
-        mgxc.Meta.FilePath = path;
 
-        await using var fs = File.OpenRead(path);
+    public required string Path { get; init; }
+    public required AssetManager Assets { get; init; }
+
+    private List<Task> Tasks { get; } = [];
+    private mg.Chart Mgxc { get; } = new();
+
+    protected async override Task<mg.Chart> ActionAsync(CancellationToken ct = default)
+    {
+        Mgxc.Meta.FilePath = Path;
+
+        await using var fs = File.OpenRead(Path);
         using var br = new BinaryReader(fs);
+
         var header = br.ReadUtf8String(4);
         if (header != HEADER_MGXC) throw new DiagnosticException(string.Format(Strings.Error_Invalid_Header, header, HEADER_MGXC));
+
         br.ReadInt32(); // MGXC Block Size
         br.ReadInt32(); // unknown
 
         br.ReadBlock(HEADER_META, ParseMeta);
-        ct.ThrowIfCancellationRequested();
 
         br.ReadBlock(HEADER_EVNT, ParseEvent);
-        diag.TimeCalculator = mgxc.GetCalculator();
-        ct.ThrowIfCancellationRequested();
+
+        Diagnostic.TimeCalculator = Mgxc.GetCalculator();
 
         br.ReadBlock(HEADER_DAT2, ParseNote);
-        ct.ThrowIfCancellationRequested();
 
         ProcessEvent();
-        ct.ThrowIfCancellationRequested();
 
         ProcessNote();
-        ct.ThrowIfCancellationRequested();
 
         ProcessTil();
-        ct.ThrowIfCancellationRequested();
 
-        ProcessMetaCommand();
+        ProcessCommand();
         ProcessMeta();
-        ct.ThrowIfCancellationRequested();
 
-        await Task.WhenAll(tasks);
-        return mgxc;
+        await Task.WhenAll(Tasks);
+        return Mgxc;
     }
 
-    protected void ProcessMeta()
+    private void ProcessMeta()
     {
-        if (string.IsNullOrWhiteSpace(mgxc.Meta.SortName))
+        if (string.IsNullOrWhiteSpace(Mgxc.Meta.SortName))
         {
-            mgxc.Meta.SortName = GetSortName(mgxc.Meta.Title);
-            diag.Report(Severity.Information, Strings.Diag_no_sortname_provided);
+            Mgxc.Meta.SortName = GetSortName(Mgxc.Meta.Title);
+            Diagnostic.Report(Severity.Information, Strings.Diag_no_sortname_provided);
         }
 
-        if (mgxc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(mgxc.Meta.FullBgiFilePath))
+        if (Mgxc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(Mgxc.Meta.FullBgiFilePath))
         {
-            tasks.Add(Manipulate.IsImageValidAsync(mgxc.Meta.FullBgiFilePath).ContinueWith(p =>
+            Tasks.Add(Manipulate.IsImageValidAsync(Mgxc.Meta.FullBgiFilePath).ContinueWith(p =>
             {
                 if (p.Result.IsSuccess) return;
-                mgxc.Meta.IsCustomStage = false;
-                diag.Report(Severity.Warning, Strings.Error_invalid_bg_image, mgxc.Meta.FullBgiFilePath, target: p.Result);
-                mgxc.Meta.BgiFilePath = string.Empty;
+                Mgxc.Meta.IsCustomStage = false;
+                Diagnostic.Report(Severity.Warning, Strings.Error_invalid_bg_image, Mgxc.Meta.FullBgiFilePath, target: p.Result);
+                Mgxc.Meta.BgiFilePath = string.Empty;
             }));
         }
     }
 
-    protected void ProcessEvent()
+    private void ProcessEvent()
     {
-        var bpmEvents = mgxc.Events.Children.OfType<mgxc.BpmEvent>().OrderBy(e => e.Tick).ToList();
+        var bpmEvents = Mgxc.Events.Children.OfType<mg.BpmEvent>().OrderBy(e => e.Tick).ToList();
         if (bpmEvents.Count <= 0 || bpmEvents[0].Tick.Original != 0) throw new DiagnosticException(Strings.Error_BPM_change_event_not_found_at_0);
 
-        var beatEvents = mgxc.Events.Children.OfType<mgxc.BeatEvent>().OrderBy(e => e.Bar).ToList();
+        var beatEvents = Mgxc.Events.Children.OfType<mg.BeatEvent>().OrderBy(e => e.Bar).ToList();
         if (beatEvents.Count <= 0 || beatEvents[0].Bar != 0)
         {
-            mgxc.Events.InsertBefore(new mgxc.BeatEvent
+            Mgxc.Events.InsertBefore(new mg.BeatEvent
             {
                 Bar = 0,
                 Numerator = 4,
                 Denominator = 4
             }, bpmEvents.FirstOrDefault());
-            beatEvents = [..mgxc.Events.Children.OfType<mgxc.BeatEvent>().OrderBy(e => e.Bar)];
-            diag.Report(Severity.Information, Strings.Diag_time_Signature_event_not_found_at_0);
+            beatEvents = [..Mgxc.Events.Children.OfType<mg.BeatEvent>().OrderBy(e => e.Bar)];
+            Diagnostic.Report(Severity.Information, Strings.Diag_time_Signature_event_not_found_at_0);
         }
 
         var initBeat = beatEvents[0];
-        mgxc.Meta.BgmInitialBpm = bpmEvents[0].Bpm;
-        mgxc.Meta.BgmInitialNumerator = initBeat.Numerator;
-        mgxc.Meta.BgmInitialDenominator = initBeat.Denominator;
+        Mgxc.Meta.BgmInitialBpm = bpmEvents[0].Bpm;
+        Mgxc.Meta.BgmInitialNumerator = initBeat.Numerator;
+        Mgxc.Meta.BgmInitialDenominator = initBeat.Denominator;
 
         // calculate tick for each beat event
         if (beatEvents.Count > 1)
@@ -115,18 +112,18 @@ public partial class MgxcParser(IDiagnostic diag, AssetManager asm)
             }
         }
 
-        mgxc.Events.Sort();
+        Mgxc.Events.Sort();
     }
 
-    protected void ProcessNote()
+    private void ProcessNote()
     {
-        if (mgxc.Notes.Children.Count <= 0) return;
+        if (Mgxc.Notes.Children.Count <= 0) return;
 
-        var noteGroup = mgxc.Notes.Children.OfType<mgxc.ExTapableNote>().GroupBy(note => (note.Tick, note.Lane, note.Width)).ToDictionary(g => g.Key, g => g.ToList());
+        var noteGroup = Mgxc.Notes.Children.OfType<mg.ExTapableNote>().GroupBy(note => (note.Tick, note.Lane, note.Width)).ToDictionary(g => g.Key, g => g.ToList());
         var exEffects = new Dictionary<Time, HashSet<ExEffect>>();
-        var remove = new List<mgxc.ExTap>();
+        var remove = new List<mg.ExTap>();
 
-        foreach (var exTap in mgxc.Notes.Children.OfType<mgxc.ExTap>())
+        foreach (var exTap in Mgxc.Notes.Children.OfType<mg.ExTap>())
         {
             if (!exEffects.TryGetValue(exTap.Tick, out var effectSet))
             {
@@ -140,20 +137,20 @@ public partial class MgxcParser(IDiagnostic diag, AssetManager asm)
             foreach (var note in matchingNotes) note.Effect = exTap.Effect;
             if (exTap.Children.Count <= 0 && exTap.PairNote == null) remove.Add(exTap);
         }
-        foreach (var exTap in remove) mgxc.Notes.RemoveChild(exTap);
+        foreach (var exTap in remove) Mgxc.Notes.RemoveChild(exTap);
 
-        mgxc.Notes.Sort();
+        Mgxc.Notes.Sort();
 
         foreach (var (tick, effects) in exEffects)
         {
             if (effects.Count <= 1) continue;
             var str = string.Join(", ", effects.Select(e => e.ToString()));
             var msg = string.Format(Strings.Diag_concurrent_ex_effects, str);
-            diag.Report(Severity.Information, msg, tick.Original);
+            Diagnostic.Report(Severity.Information, msg, tick.Original);
         }
     }
 
-    public static string GetSortName(string? s)
+    private static string GetSortName(string? s)
     {
         if (s is null) return string.Empty;
         var t = s.ToUpperInvariant().Normalize(NormalizationForm.FormKC);

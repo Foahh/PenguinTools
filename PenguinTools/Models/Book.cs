@@ -6,7 +6,7 @@ using Swordfish.NET.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-using mgxc = PenguinTools.Core.Chart.Models.mgxc;
+using mg = PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Models;
 
@@ -24,7 +24,7 @@ public class Book : MetaModel
     public ConcurrentObservableSortedDictionary<Difficulty, BookItem> Items { get; } = [];
 
     [Browsable(false)]
-    public override mgxc.Chart Chart => Items[MainDifficulty].Chart;
+    public override mg.Chart Mgxc => Items[MainDifficulty].Mgxc;
 
     [Browsable(false)]
     public IEnumerable<Difficulty> AvailableDifficulties => Items.Keys;

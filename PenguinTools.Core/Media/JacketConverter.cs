@@ -2,22 +2,22 @@
 
 namespace PenguinTools.Core.Media;
 
-public class JacketConverter : IConverter<JacketConverter.Context>
+public class JacketConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
-    public async Task ConvertAsync(Context ctx, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
+    public required string InPath { get; init; }
+    public required string OutPath { get; init; }
+
+    protected async override Task ActionAsync(CancellationToken ct = default)
     {
-        if (!await CanConvertAsync(ctx, diag)) return;
-        progress?.Report(Strings.Status_converting_jacket);
+        Progress?.Report(Strings.Status_converting_jacket);
         ct.ThrowIfCancellationRequested();
-        await Manipulate.ConvertJacketAsync(ctx.InputPath, ctx.OutputPath, ct);
+        await Manipulate.ConvertJacketAsync(InPath, OutPath, ct);
         ct.ThrowIfCancellationRequested();
     }
 
-    public Task<bool> CanConvertAsync(Context context, IDiagnostic diag)
+    protected override Task ValidateAsync(CancellationToken ct = default)
     {
-        if (!File.Exists(context.InputPath)) diag.Report(Severity.Error, Strings.Error_file_not_found, context.InputPath);
-        return Task.FromResult(!diag.HasError);
+        if (!File.Exists(InPath)) Diagnostic.Report(Severity.Error, Strings.Error_file_not_found, InPath);
+        return Task.CompletedTask;
     }
-
-    public record Context(string InputPath, string OutputPath);
 }

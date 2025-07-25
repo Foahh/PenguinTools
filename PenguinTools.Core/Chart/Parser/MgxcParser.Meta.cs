@@ -14,29 +14,29 @@ public partial class MgxcParser
 
         if (name == "titl")
         {
-            mgxc.Meta.Title = (string)data;
+            Mgxc.Meta.Title = (string)data;
         }
         else if (name == "sort")
         {
-            mgxc.Meta.SortName = (string)data;
+            Mgxc.Meta.SortName = (string)data;
         }
         else if (name == "arts")
         {
-            mgxc.Meta.Artist = (string)data;
+            Mgxc.Meta.Artist = (string)data;
         }
         else if (name == "genr")
         {
             var genre = (string)data;
-            var entry = asm.GenreNames.FirstOrDefault(e => e.Str.Equals(genre, StringComparison.Ordinal));
-            if (entry != null) mgxc.Meta.Genre = entry;
+            var entry = Assets.GenreNames.FirstOrDefault(e => e.Str.Equals(genre, StringComparison.Ordinal));
+            if (entry != null) Mgxc.Meta.Genre = entry;
         }
         else if (name == "dsgn")
         {
-            mgxc.Meta.Designer = (string)data;
+            Mgxc.Meta.Designer = (string)data;
         }
         else if (name == "diff")
         {
-            mgxc.Meta.Difficulty = (int)data switch
+            Mgxc.Meta.Difficulty = (int)data switch
             {
                 0 => Difficulty.Basic,
                 1 => Difficulty.Advanced,
@@ -46,14 +46,14 @@ public partial class MgxcParser
                 5 => Difficulty.Ultima,
                 _ => Difficulty.Master
             };
-            if (mgxc.Meta.Difficulty == Difficulty.WorldsEnd) mgxc.Meta.Stage = new Entry(0, "WORLD'S END0001_ノイズ");
+            if (Mgxc.Meta.Difficulty == Difficulty.WorldsEnd) Mgxc.Meta.Stage = new Entry(0, "WORLD'S END0001_ノイズ");
         }
         else if (name == "plvl")
         {
-            if (mgxc.Meta.Difficulty != Difficulty.WorldsEnd) return;
+            if (Mgxc.Meta.Difficulty != Difficulty.WorldsEnd) return;
             var trimmed = ((string)data).Trim('+');
             if (!int.TryParse(trimmed, out var num)) return;
-            mgxc.Meta.WeDifficulty = num switch
+            Mgxc.Meta.WeDifficulty = num switch
             {
                 1 => StarDifficulty.S1,
                 2 => StarDifficulty.S2,
@@ -65,56 +65,56 @@ public partial class MgxcParser
         }
         else if (name == "weat")
         {
-            var attr = asm.WeTagNames.FirstOrDefault(x => x.Str == (string)data);
-            if (attr != null) mgxc.Meta.WeTag = attr;
+            var attr = Assets.WeTagNames.FirstOrDefault(x => x.Str == (string)data);
+            if (attr != null) Mgxc.Meta.WeTag = attr;
         }
         else if (name == "cnst")
         {
-            if (mgxc.Meta.Difficulty == Difficulty.WorldsEnd) return;
-            mgxc.Meta.Level = data.Round(2);
+            if (Mgxc.Meta.Difficulty == Difficulty.WorldsEnd) return;
+            Mgxc.Meta.Level = data.Round(2);
         }
         else if (name == "sgid")
         {
-            mgxc.Meta.MgxcId = (string)data;
-            if (int.TryParse(mgxc.Meta.MgxcId, out var id)) mgxc.Meta.Id = id;
+            Mgxc.Meta.MgxcId = (string)data;
+            if (int.TryParse(Mgxc.Meta.MgxcId, out var id)) Mgxc.Meta.Id = id;
         }
         else if (name == "wvfn")
         {
-            mgxc.Meta.BgmFilePath = (string)data;
-            tasks.Add(Manipulate.IsAudioValidAsync(mgxc.Meta.FullBgmFilePath).ContinueWith(p =>
+            Mgxc.Meta.BgmFilePath = (string)data;
+            Tasks.Add(Manipulate.IsAudioValidAsync(Mgxc.Meta.FullBgmFilePath).ContinueWith(p =>
             {
                 if (p.Result.IsSuccess) return;
-                diag.Report(Severity.Warning, Strings.Error_invalid_audio, mgxc.Meta.FullBgmFilePath, target: p.Result);
-                mgxc.Meta.BgmFilePath = string.Empty;
+                Diagnostic.Report(Severity.Warning, Strings.Error_invalid_audio, Mgxc.Meta.FullBgmFilePath, target: p.Result);
+                Mgxc.Meta.BgmFilePath = string.Empty;
             }));
         }
         else if (name == "wvof")
         {
-            mgxc.Meta.BgmManualOffset = data.Round();
+            Mgxc.Meta.BgmManualOffset = data.Round();
         }
         else if (name == "wvp0")
         {
-            mgxc.Meta.BgmPreviewStart = data.Round();
+            Mgxc.Meta.BgmPreviewStart = data.Round();
         }
         else if (name == "wvp1")
         {
-            mgxc.Meta.BgmPreviewStop = data.Round();
+            Mgxc.Meta.BgmPreviewStop = data.Round();
         }
         else if (name == "jack")
         {
-            mgxc.Meta.JacketFilePath = (string)data;
-            tasks.Add(Manipulate.IsImageValidAsync(mgxc.Meta.FullJacketFilePath).ContinueWith(p =>
+            Mgxc.Meta.JacketFilePath = (string)data;
+            Tasks.Add(Manipulate.IsImageValidAsync(Mgxc.Meta.FullJacketFilePath).ContinueWith(p =>
             {
                 if (p.Result.IsSuccess) return;
-                diag.Report(Severity.Warning, Strings.Error_invalid_jk_image, mgxc.Meta.FullJacketFilePath, target: p.Result);
-                mgxc.Meta.JacketFilePath = string.Empty;
+                Diagnostic.Report(Severity.Warning, Strings.Error_invalid_jk_image, Mgxc.Meta.FullJacketFilePath, target: p.Result);
+                Mgxc.Meta.JacketFilePath = string.Empty;
             }));
         }
         else if (name == "bgfn")
         {
             var path = (string)data;
-            mgxc.Meta.BgiFilePath = path;
-            if (!string.IsNullOrWhiteSpace(path)) mgxc.Meta.IsCustomStage = true;
+            Mgxc.Meta.BgiFilePath = path;
+            if (!string.IsNullOrWhiteSpace(path)) Mgxc.Meta.IsCustomStage = true;
         }
         else if (name == "bgsc")
         {
@@ -144,7 +144,7 @@ public partial class MgxcParser
                 8 => "Purple",
                 _ => "Orange"
             };
-            mgxc.Meta.NotesFieldLine = asm.FieldLines.FirstOrDefault(x => x.Str == col) ?? mgxc.Meta.NotesFieldLine;
+            Mgxc.Meta.NotesFieldLine = Assets.FieldLines.FirstOrDefault(x => x.Str == col) ?? Mgxc.Meta.NotesFieldLine;
         }
         else if (name == "flbg")
         {
@@ -156,11 +156,11 @@ public partial class MgxcParser
         }
         else if (name == "mtil")
         {
-            mgxc.Meta.MainTil = (int)data;
+            Mgxc.Meta.MainTil = (int)data;
         }
         else if (name == "mbpm")
         {
-            mgxc.Meta.MainBpm = data.Round();
+            Mgxc.Meta.MainBpm = data.Round();
         }
         else if (name == "ttrl")
         {
@@ -168,7 +168,7 @@ public partial class MgxcParser
         }
         else if (name == "sofs")
         {
-            mgxc.Meta.BgmEnableBarOffset = Convert.ToBoolean((int)data);
+            Mgxc.Meta.BgmEnableBarOffset = System.Convert.ToBoolean((int)data);
         }
         else if (name == "uclk")
         {
@@ -212,7 +212,7 @@ public partial class MgxcParser
         }
         else if (name == "cmmt")
         {
-            mgxc.Meta.Comment = (string)data;
+            Mgxc.Meta.Comment = (string)data;
         }
         else if (name == "CTCK")
         {
@@ -233,7 +233,7 @@ public partial class MgxcParser
         else
         {
             var msg = string.Format(Strings.Diag_Unrecognized_meta, name, br.BaseStream.Position, data);
-            diag.Report(Severity.Information, msg);
+            Diagnostic.Report(Severity.Information, msg);
         }
     }
 }

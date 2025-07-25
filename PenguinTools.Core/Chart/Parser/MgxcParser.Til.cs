@@ -1,20 +1,21 @@
 ﻿using PenguinTools.Core.Chart.Models;
 using PenguinTools.Core.Resources;
-using mgxc = PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Core.Chart.Parser;
 
+using mg = Models.mgxc;
+
 public partial class MgxcParser
 {
-    private readonly Dictionary<int, List<mgxc.Note>> noteGroups = [];
-    private readonly Dictionary<int, List<mgxc.ScrollSpeedEvent>> tilGroups = [];
+    private readonly Dictionary<int, List<mg.Note>> noteGroups = [];
+    private readonly Dictionary<int, List<mg.ScrollSpeedEvent>> tilGroups = [];
 
     // thanks to @tångent 90°
-    protected void ProcessTil()
+    private void ProcessTil()
     {
-        GroupEventByTimeline(mgxc.Events);
-        GroupNoteByTimeline(mgxc.Notes);
-        MoveMainTimeline(mgxc.Meta.MainTil);
+        GroupEventByTimeline(Mgxc.Events);
+        GroupNoteByTimeline(Mgxc.Notes);
+        MoveMainTimeline(Mgxc.Meta.MainTil);
         ClearEmptyGroups();
         // TODO: Find conflicting note, compare priority and put them in separate group (SLA with larger TIL => larger priority when applying on note)
         PlaceSoflanArea();
@@ -27,18 +28,18 @@ public partial class MgxcParser
 
     private void FinalizeEvent()
     {
-        foreach (var e in mgxc.Events.Children.OfType<mgxc.SpeedEventBase>().ToList()) mgxc.Events.RemoveChild(e);
+        foreach (var e in Mgxc.Events.Children.OfType<mg.SpeedEventBase>().ToList()) Mgxc.Events.RemoveChild(e);
         foreach (var (tilId, events) in tilGroups)
         {
             foreach (var e in events)
             {
-                var newEvent = new mgxc.ScrollSpeedEvent
+                var newEvent = new mg.ScrollSpeedEvent
                 {
                     Tick = e.Tick,
                     Timeline = tilId,
                     Speed = e.Speed
                 };
-                mgxc.Events.AppendChild(newEvent);
+                Mgxc.Events.AppendChild(newEvent);
             }
         }
     }
@@ -57,32 +58,32 @@ public partial class MgxcParser
                 note.Timeline = id;
 
                 // magic optimization: when the crash is transparent, it is not necessary to add the SLA on the control joint
-                if (note is mgxc.AirCrashJoint { Parent: mgxc.AirCrash { Color: Color.NON }, Density.Original: 0x7FFFFFFF or 0 }) continue;
+                if (note is mg.AirCrashJoint { Parent: mg.AirCrash { Color: Color.NON }, Density.Original: 0x7FFFFFFF or 0 }) continue;
 
                 // find the speed that is just before the note
                 var prevTil = events.Where(p => p.Tick.Original <= note.Tick.Original).OrderByDescending(p => p.Tick).FirstOrDefault();
                 if (prevTil?.Speed is null) continue;
                 if (slaSet.Contains((note.Tick.Original, id, note.Lane, note.Width))) continue;
 
-                var head = new mgxc.SoflanArea
+                var head = new mg.SoflanArea
                 {
                     Tick = note.Tick,
                     Timeline = id,
                     Lane = note.Lane,
                     Width = note.Width
                 };
-                var tail = new mgxc.SoflanAreaJoint { Tick = note.Tick.Original + Time.SingleTick };
+                var tail = new mg.SoflanAreaJoint { Tick = note.Tick.Original + Time.SingleTick };
 
                 slaSet.Add((note.Tick.Original, id, note.Lane, note.Width));
                 head.AppendChild(tail);
-                mgxc.Notes.AppendChild(head);
+                Mgxc.Notes.AppendChild(head);
             }
         }
     }
 
-    protected void GroupEventByTimeline(mgxc.Event events)
+    private void GroupEventByTimeline(mg.Event events)
     {
-        foreach (var til in events.Children.OfType<mgxc.ScrollSpeedEvent>())
+        foreach (var til in events.Children.OfType<mg.ScrollSpeedEvent>())
         {
             var timelineId = til.Timeline;
             CreateGroup(timelineId);
@@ -90,7 +91,7 @@ public partial class MgxcParser
         }
     }
 
-    protected void GroupNoteByTimeline(mgxc.Note parent)
+    private void GroupNoteByTimeline(mg.Note parent)
     {
         if (parent.Children.Count == 0) return;
         foreach (var note in parent.Children)
@@ -102,18 +103,18 @@ public partial class MgxcParser
         }
     }
 
-    protected void MoveMainTimeline(int mainTil)
+    private void MoveMainTimeline(int mainTil)
     {
         if (!tilGroups.ContainsKey(mainTil))
         {
-            var msg = string.Format(Strings.Diag_main_timeline_not_found, mgxc.Meta.MainTil);
-            diag.Report(Severity.Information, msg);
+            var msg = string.Format(Strings.Diag_main_timeline_not_found, Mgxc.Meta.MainTil);
+            Diagnostic.Report(Severity.Information, msg);
             return;
         }
         SwapGroup(mainTil, 0);
     }
 
-    protected void ClearEmptyGroups()
+    private void ClearEmptyGroups()
     {
         foreach (var (id, events) in tilGroups.ToList())
         {
@@ -129,13 +130,13 @@ public partial class MgxcParser
         }
     }
 
-    protected void CreateGroup(int id)
+    private void CreateGroup(int id)
     {
         if (!tilGroups.ContainsKey(id)) tilGroups[id] = [];
         if (!noteGroups.ContainsKey(id)) noteGroups[id] = [];
     }
 
-    protected void SwapGroup(int aId, int bId)
+    private void SwapGroup(int aId, int bId)
     {
         if (aId == bId) return;
         CreateGroup(aId);
@@ -161,10 +162,10 @@ public partial class MgxcParser
         noteGroups[bId] = aNotes;
     }
 
-    protected void FindNoteViolations()
+    private void FindNoteViolations()
     {
-        var violations = new HashSet<mgxc.Note>();
-        var noteGroup = mgxc.Notes.Children.GroupBy(n => (n.Tick, n.Lane)).Where(g => g.Count() > 1);
+        var violations = new HashSet<mg.Note>();
+        var noteGroup = Mgxc.Notes.Children.GroupBy(n => (n.Tick, n.Lane)).Where(g => g.Count() > 1);
 
         foreach (var group in noteGroup)
         {
@@ -180,6 +181,6 @@ public partial class MgxcParser
             }
         }
 
-        foreach (var note in violations) diag.Report(Severity.Warning, Strings.Diag_note_overlapped_in_different_TIL, note.Tick.Original, note);
+        foreach (var note in violations) Diagnostic.Report(Severity.Warning, Strings.Diag_note_overlapped_in_different_TIL, note.Tick.Original, note);
     }
 }

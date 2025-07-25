@@ -4,14 +4,14 @@ using PenguinTools.Core.Resources;
 using System.ComponentModel;
 using System.IO;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-using mgxc = PenguinTools.Core.Chart.Models.mgxc;
+using mg = PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Models;
 
-public class BookItem(mgxc.Chart chart) : MetaModel
+public class BookItem(mg.Chart mgxc) : MetaModel
 {
     [Browsable(false)]
-    public override mgxc.Chart Chart { get; } = chart;
+    public override mg.Chart Mgxc { get; } = mgxc;
 
     [Browsable(false)]
     public string FileName => Path.GetFileName(Meta.FilePath);

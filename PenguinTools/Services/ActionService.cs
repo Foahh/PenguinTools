@@ -21,7 +21,7 @@ public partial class ActionService : ObservableObject
         return !IsBusy;
     }
 
-    public async Task RunAsync(Func<IDiagnostic, IProgress<string>, CancellationToken, Task> action, CancellationToken? externalToken = null)
+    public async Task RunAsync(Func<IDiagnostic, IProgress<string>?, CancellationToken, Task> action, CancellationToken ct = default)
     {
         if (!CanRun()) return;
         var diagnostics = new DiagnosticReporter();
@@ -39,13 +39,17 @@ public partial class ActionService : ObservableObject
 
         try
         {
-            using var cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken ?? CancellationToken.None);
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
             ip.Report(Strings.Status_starting);
             await Task.Run(() => action(diagnostics, progress, cts.Token), cts.Token);
             ip.Report(Strings.Status_done);
 
             SystemSounds.Exclamation.Play();
+        }
+        catch (OperationCanceledException)
+        {
+            // do nothing
         }
         catch (Exception ex)
         {
@@ -56,14 +60,13 @@ public partial class ActionService : ObservableObject
             IsBusy = false;
         }
 
+        if (!diagnostics.HasProblem) return;
+        if (diagnostics.HasError) ip.Report(Strings.Status_error);
+
         var model = new DiagnosticsWindowViewModel
         {
             Diagnostics = [..diagnostics.Diagnostics]
         };
-
-        if (!diagnostics.HasProblem) return;
-        if (diagnostics.HasError) ip.Report(Strings.Status_error);
-
         var window = new DiagnosticsWindow
         {
             DataContext = model,

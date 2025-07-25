@@ -3,7 +3,7 @@ using PenguinTools.Core.Resources;
 
 namespace PenguinTools.Core.Chart.Parser;
 
-using mgxc = Models.mgxc;
+using mg = Models.mgxc;
 
 internal enum NoteType : sbyte
 {
@@ -62,8 +62,8 @@ internal enum ExAttr : sbyte
 
 public partial class MgxcParser
 {
-    private mgxc.Note? lastNote;
-    private mgxc.Note? lastParentNote;
+    private mg.Note? lastNote;
+    private mg.Note? lastParentNote;
 
     private void ParseNote(BinaryReader br)
     {
@@ -79,17 +79,17 @@ public partial class MgxcParser
         var timelineId = br.ReadInt32();
         var optionValue = type == NoteType.AirCrush && longAttr == LongAttr.Begin ? br.ReadInt32() : 0;
 
-        mgxc.Note? note = null;
+        mg.Note? note = null;
         var isChildNote = false;
         var isPairNote = false;
 
         if (type == NoteType.Tap)
         {
-            note = new mgxc.Tap();
+            note = new mg.Tap();
         }
         else if (type == NoteType.ExTap)
         {
-            var exNote = new mgxc.ExTap();
+            var exNote = new mg.ExTap();
             exNote.Effect = direction switch
             {
                 Direction.Up => ExEffect.UP,
@@ -107,38 +107,38 @@ public partial class MgxcParser
         }
         else if (type == NoteType.Flick)
         {
-            note = new mgxc.Flick();
+            note = new mg.Flick();
         }
         else if (type == NoteType.Damage)
         {
-            note = new mgxc.Damage();
+            note = new mg.Damage();
         }
         else if (type == NoteType.Hold)
         {
             if (longAttr == LongAttr.Begin)
             {
-                note = new mgxc.Hold();
+                note = new mg.Hold();
             }
             else if (longAttr == LongAttr.End)
             {
-                note = new mgxc.HoldJoint();
+                note = new mg.HoldJoint();
                 isChildNote = true;
             }
             else
             {
-                var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mgxc.HoldJoint));
-                diag.Report(Severity.Warning, msg, tick, longAttr);
+                var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mg.HoldJoint));
+                Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
             }
         }
         else if (type == NoteType.Slide)
         {
             if (longAttr == LongAttr.Begin)
             {
-                note = new mgxc.Slide();
+                note = new mg.Slide();
             }
             else
             {
-                var exNote = new mgxc.SlideJoint();
+                var exNote = new mg.SlideJoint();
                 if (longAttr is LongAttr.Step or LongAttr.End)
                 {
                     exNote.Joint = Joint.D;
@@ -149,8 +149,8 @@ public partial class MgxcParser
                 }
                 else
                 {
-                    var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mgxc.SlideJoint));
-                    diag.Report(Severity.Warning, msg, tick, longAttr);
+                    var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mg.SlideJoint));
+                    Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
                 }
                 note = exNote;
                 isChildNote = true;
@@ -158,7 +158,7 @@ public partial class MgxcParser
         }
         else if (type == NoteType.Air)
         {
-            var exNote = new mgxc.Air();
+            var exNote = new mg.Air();
             switch (direction)
             {
                 case Direction.Up: exNote.Direction = AirDirection.IR; break;
@@ -177,8 +177,8 @@ public partial class MgxcParser
         {
             if (longAttr == LongAttr.Begin)
             {
-                var exNote = new mgxc.AirSlide();
-                if (lastNote is mgxc.Air oldLastNote)
+                var exNote = new mg.AirSlide();
+                if (lastNote is mg.Air oldLastNote)
                 {
                     lastNote.Parent?.RemoveChild(lastNote);
                     lastNote = oldLastNote.PairNote;
@@ -191,7 +191,7 @@ public partial class MgxcParser
             }
             else
             {
-                var exNote = new mgxc.AirSlideJoint();
+                var exNote = new mg.AirSlideJoint();
                 if (longAttr is LongAttr.Step or LongAttr.End)
                 {
                     exNote.Joint = Joint.D;
@@ -202,8 +202,8 @@ public partial class MgxcParser
                 }
                 else
                 {
-                    var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mgxc.AirSlideJoint));
-                    diag.Report(Severity.Warning, msg, tick, longAttr);
+                    var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mg.AirSlideJoint));
+                    Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
                 }
                 exNote.Height = height;
                 note = exNote;
@@ -236,7 +236,7 @@ public partial class MgxcParser
 
             if (longAttr == LongAttr.Begin)
             {
-                var exNote = new mgxc.AirCrash();
+                var exNote = new mg.AirCrash();
                 exNote.Color = color;
                 exNote.Height = height;
                 exNote.Density = optionValue;
@@ -244,11 +244,11 @@ public partial class MgxcParser
             }
             else
             {
-                var exNote = new mgxc.AirCrashJoint();
+                var exNote = new mg.AirCrashJoint();
                 if (longAttr is LongAttr.Step)
                 {
-                    var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mgxc.AirCrashJoint));
-                    diag.Report(Severity.Warning, msg, tick, longAttr);
+                    var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mg.AirCrashJoint));
+                    Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
                 }
                 exNote.Height = height;
                 note = exNote;
@@ -259,7 +259,7 @@ public partial class MgxcParser
         if (note == null)
         {
             var msg = string.Format(Strings.Error_Unrecognized_note_type, (int)type, br.BaseStream.Position);
-            diag.Report(Severity.Warning, msg, tick, type);
+            Diagnostic.Report(Severity.Warning, msg, tick, type);
             return;
         }
 
@@ -269,16 +269,16 @@ public partial class MgxcParser
         note.Timeline = timelineId;
 
         if (isChildNote) lastParentNote?.AppendChild(note);
-        else mgxc.Notes.AppendChild(note);
+        else Mgxc.Notes.AppendChild(note);
 
         if (isPairNote)
         {
             switch (lastNote)
             {
-                case mgxc.PositiveNote lastP when note is mgxc.NegativeNote newN:
+                case mg.PositiveNote lastP when note is mg.NegativeNote newN:
                     lastP.MakePair(newN);
                     break;
-                case mgxc.NegativeNote lastN when note is mgxc.PositiveNote newP:
+                case mg.NegativeNote lastN when note is mg.PositiveNote newP:
                     lastN.MakePair(newP);
                     break;
                 default:

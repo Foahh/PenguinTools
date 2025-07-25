@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32;
 using PenguinTools.Core;
-using PenguinTools.Core.Chart;
 using PenguinTools.Core.Chart.Converter;
 using PenguinTools.Core.Chart.Parser;
 using PenguinTools.Core.Resources;
@@ -11,10 +10,10 @@ namespace PenguinTools.ViewModels;
 
 public class ChartViewModel : WatchViewModel<ChartModel>
 {
-    protected async override Task Action()
+    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         if (Model == null) return;
-        var chart = Model.Chart;
+        var chart = Model.Mgxc;
         var meta = chart.Meta;
 
         var left = Model.Id is null ? Path.GetFileNameWithoutExtension(meta.FilePath) : $"{(int)Model.Id:0000}";
@@ -27,15 +26,23 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         };
         if (dlg.ShowDialog() != true) return;
 
-        var converter = new ChartConverter();
-        var options = new ChartConverter.Context(dlg.FileName, chart);
-        await ActionService.RunAsync(async (diag, p, ct) => await converter.ConvertAsync(options, diag, p, ct));
+
+        var converter = new ChartConverter(diag, prog)
+        {
+            OutPath = dlg.FileName,
+            Mgxc = chart
+        };
+        await converter.ConvertAsync(ct);
     }
 
-    protected async override Task<ChartModel> ReadModel(string path, IDiagnostic d, IProgress<string> p, CancellationToken ct = default)
+    protected async override Task<ChartModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(d, AssetManager);
-        var chart = await parser.ParseAsync(path, ct);
+        var parser = new MgxcParser(diag, prog)
+        {
+            Assets = AssetManager,
+            Path = path
+        };
+        var chart = await parser.ConvertAsync(ct);
         return new ChartModel(chart);
     }
 }

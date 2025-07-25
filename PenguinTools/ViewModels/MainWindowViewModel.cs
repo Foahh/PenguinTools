@@ -51,7 +51,7 @@ public partial class MainWindowViewModel : ViewModel
     }
 
     [RelayCommand(CanExecute = nameof(IsUpdateAvailable))]
-    public void DownloadUpdate()
+    private void DownloadUpdate()
     {
         if (string.IsNullOrWhiteSpace(DownloadUrl)) return;
         Process.Start(new ProcessStartInfo

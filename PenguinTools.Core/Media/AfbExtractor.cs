@@ -2,22 +2,22 @@
 
 namespace PenguinTools.Core.Media;
 
-public class AfbExtractor : IConverter<AfbExtractor.Options>
+public class AfbExtractor(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
-    public async Task ConvertAsync(Options ctx, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
+    public required string InPath { get; init; }
+    public required string OutFolder { get; init; }
+
+    protected async override Task ActionAsync(CancellationToken ct = default)
     {
-        if (!await CanConvertAsync(ctx, diag)) return;
-        progress?.Report(Strings.Status_extracting);
-        await Manipulate.ExtractDdsAsync(ctx.InputPath, ctx.DestinationFolder, ct);
+        Progress?.Report(Strings.Status_extracting);
+        await Manipulate.ExtractDdsAsync(InPath, OutFolder, ct);
         ct.ThrowIfCancellationRequested();
-        progress?.Report(Strings.Status_writing);
+        Progress?.Report(Strings.Status_writing);
     }
 
-    public Task<bool> CanConvertAsync(Options options, IDiagnostic diag)
+    protected override Task ValidateAsync(CancellationToken ct = default)
     {
-        if (!File.Exists(options.InputPath)) diag.Report(Severity.Error, Strings.Error_file_not_found, options.InputPath);
-        return Task.FromResult(!diag.HasError);
+        if (!File.Exists(InPath)) Diagnostic.Report(Severity.Error, Strings.Error_file_not_found, InPath);
+        return Task.CompletedTask;
     }
-
-    public record Options(string InputPath, string DestinationFolder);
 }

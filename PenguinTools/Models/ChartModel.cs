@@ -3,16 +3,16 @@ using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Resources;
 using System.ComponentModel;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-using mgxc = PenguinTools.Core.Chart.Models.mgxc;
+using mg = PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Models;
 
 [LocalizableCategoryOrder(nameof(Strings.Category_Song), 0, typeof(Strings))]
 [LocalizableCategoryOrder(nameof(Strings.Category_Chart), 1, typeof(Strings))]
-public class ChartModel(mgxc.Chart chart) : MetaModel
+public class ChartModel(mg.Chart mgxc) : MetaModel
 {
     [Browsable(false)]
-    public override mgxc.Chart Chart { get; } = chart;
+    public override mg.Chart Mgxc { get; } = mgxc;
 
     [PropertyOrder(0)]
     [LocalizableCategory(nameof(Strings.Category_Song), typeof(Strings))]

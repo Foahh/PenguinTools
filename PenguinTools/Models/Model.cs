@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using mgxc = PenguinTools.Core.Chart.Models.mgxc;
+using mg = PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Models;
 
@@ -111,8 +111,8 @@ public abstract class Model : ObservableValidator
 public abstract class MetaModel : Model
 {
     [Browsable(false)]
-    public abstract mgxc.Chart Chart { get; }
+    public abstract mg.Chart Mgxc { get; }
 
     [Browsable(false)]
-    public Meta Meta => Chart.Meta;
+    public Meta Meta => Mgxc.Meta;
 }

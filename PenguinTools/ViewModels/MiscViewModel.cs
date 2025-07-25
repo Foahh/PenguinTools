@@ -5,7 +5,6 @@ using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using System.Diagnostics;
 using System.IO;
-using System.Media;
 
 namespace PenguinTools.ViewModels;
 
@@ -49,11 +48,15 @@ public partial class MiscViewModel : ViewModel
         };
         if (saveDlg.ShowDialog() != true) return;
 
-        var extractor = new AfbExtractor();
-        var options = new AfbExtractor.Options(openDlg.FileName, saveDlg.FolderName);
-        await ActionService.RunAsync((diag, p, ct) => extractor.ConvertAsync(options, diag, p, ct));
-
-        SystemSounds.Exclamation.Play();
+        await ActionService.RunAsync((diag, prog, ct) =>
+        {
+            var extractor = new AfbExtractor(diag, prog)
+            {
+                InPath = openDlg.FileName,
+                OutFolder = saveDlg.FolderName
+            };
+            return extractor.ConvertAsync(ct);
+        });
     }
 
     [RelayCommand]
@@ -67,7 +70,6 @@ public partial class MiscViewModel : ViewModel
         };
         var result = openDlg.ShowDialog(App.MainWindow);
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) return;
-        await ActionService.RunAsync((diag, p, ct) => AssetManager.CollectAssetsAsync(openDlg.FolderName, p, ct));
-        SystemSounds.Exclamation.Play();
+        await ActionService.RunAsync((_, prog, ct) => AssetManager.CollectAssetsAsync(openDlg.FolderName, prog, ct));
     }
 }

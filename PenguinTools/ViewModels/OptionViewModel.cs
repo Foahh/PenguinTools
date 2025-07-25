@@ -2,7 +2,6 @@
 using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Core.Chart;
 using PenguinTools.Core.Chart.Converter;
 using PenguinTools.Core.Chart.Parser;
 using PenguinTools.Core.Media;
@@ -12,7 +11,6 @@ using PenguinTools.Core.Xml;
 using PenguinTools.Models;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Media;
 
 namespace PenguinTools.ViewModels;
 
@@ -38,34 +36,38 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         SelectedBookItem = null;
     }
 
-    protected async override Task<OptionModel> ReadModel(string path, IDiagnostic d, IProgress<string> p, CancellationToken ct = default)
+    protected async override Task<OptionModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
-        p.Report(Strings.Status_Searching);
+        prog?.Report(Strings.Status_Searching);
         var model = new OptionModel();
         await model.LoadAsync(path, ct);
 
         var ctx = new ProcessContext
         {
-            Diagnostic = d,
-            Progress = p,
+            Diagnostic = diag,
+            Progress = prog,
             CancellationToken = ct,
             BatchSize = model.BatchSize,
             WorkingDirectory = model.WorkingDirectory
         };
 
-        var walker = Directory.EnumerateFiles(path, FileGlob, SearchOption.AllDirectories);
+        var directoryWalker = Directory.EnumerateFiles(path, FileGlob, SearchOption.AllDirectories);
         var books = model.Books;
-        await BatchAsync(Strings.Status_Checked, walker, async (file, d) =>
+        await BatchAsync(Strings.Status_Checked, directoryWalker, async (filePath, innerDiag) =>
         {
             ct.ThrowIfCancellationRequested();
-            if (Path.GetExtension(file) != ".mgxc") return;
-            var parser = new MgxcParser(d, AssetManager);
-            var chart = await parser.ParseAsync(file, ct);
+            if (Path.GetExtension(filePath) != ".mgxc") return;
+            var parser = new MgxcParser(innerDiag)
+            {
+                Path = filePath,
+                Assets = AssetManager
+            };
+            var chart = await parser.ConvertAsync(ct);
             var meta = chart.Meta;
             var id = meta.Id ?? throw new DiagnosticException(Strings.Diag_file_ignored_due_to_id_missing);
             if (!books.TryGetValue(id, out var book)) books[id] = book = new Book();
             var item = new BookItem(chart);
-            if (book.Items.ContainsKey(meta.Difficulty)) d.Report(Severity.Warning, Strings.Diag_duplicate_id_and_difficulty, target: file);
+            if (book.Items.ContainsKey(meta.Difficulty)) innerDiag.Report(Severity.Warning, Strings.Diag_duplicate_id_and_difficulty);
             book.Items[meta.Difficulty] = item;
         }, ctx);
 
@@ -82,10 +84,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 continue;
             }
 
-            if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1) d.Report(Severity.Error, Strings.Diag_we_chart_must_be_unique_id, target: items);
-            var mainItems = items.Where(x => x.Chart.Meta.IsMain).ToArray();
-            if (mainItems.Length > 1) d.Report(Severity.Warning, Strings.Diag_more_than_one_chart_marked_main, target: mainItems);
-            else if (mainItems.Length == 0 && items.Length > 1) d.Report(Severity.Warning, Strings.Diag_no_chart_marked_main, target: mainItems);
+            if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1) diag.Report(Severity.Error, Strings.Diag_we_chart_must_be_unique_id, target: items);
+            var mainItems = items.Where(x => x.Mgxc.Meta.IsMain).ToArray();
+            if (mainItems.Length > 1) diag.Report(Severity.Warning, Strings.Diag_more_than_one_chart_marked_main, target: mainItems);
+            else if (mainItems.Length == 0 && items.Length > 1) diag.Report(Severity.Warning, Strings.Diag_no_chart_marked_main, target: mainItems);
 
             var mainItem = mainItems.FirstOrDefault() ?? mainItems.OrderByDescending(x => x.Difficulty).FirstOrDefault();
             if (mainItem == null)
@@ -98,12 +100,12 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         }
 
         ct.ThrowIfCancellationRequested();
-        p.Report(Strings.Status_done);
+        prog?.Report(Strings.Status_done);
 
         return model;
     }
 
-    protected async override Task Action()
+    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         var settings = Model;
         if (settings == null) return;
@@ -138,118 +140,130 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         var eventFolder = Path.Combine(path, "event");
         var releaseTagPath = Path.Combine(path, "releaseTag");
 
-        await ActionService.RunAsync(async (d, p, ct) =>
+        var weEntries = new ConcurrentBag<Entry>();
+        var ultEntries = new ConcurrentBag<Entry>();
+        await settings.SaveAsync(ModelPath, ct);
+
+        var ctx = new ProcessContext
         {
-            var weEntries = new ConcurrentBag<Entry>();
-            var ultEntries = new ConcurrentBag<Entry>();
-            await settings.SaveAsync(ModelPath, ct);
+            Diagnostic = diag,
+            Progress = prog,
+            CancellationToken = ct,
+            BatchSize = settings.BatchSize,
+            WorkingDirectory = settings.WorkingDirectory
+        };
 
-            var ctx = new ProcessContext
+        await BatchAsync(Strings.Status_Converted, settings, async (book, innerDiag) =>
+        {
+            var stage = book.Stage;
+            if (book.IsCustomStage && settings.ConvertBackground)
             {
-                Diagnostic = d,
-                Progress = p,
-                CancellationToken = ct,
-                BatchSize = settings.BatchSize,
-                WorkingDirectory = settings.WorkingDirectory
-            };
+                if (string.IsNullOrWhiteSpace(book.Meta.FullBgiFilePath)) throw new DiagnosticException(Strings.Error_background_file_is_not_set);
+                if (book.StageId is null) throw new DiagnosticException(Strings.Error_stage_id_is_not_set);
+                var stageConverter = new StageConverter(innerDiag)
+                {
+                    Assets = AssetManager,
+                    BackgroundPath = book.Meta.FullBgiFilePath,
+                    EffectPaths = [],
+                    StageId = book.StageId,
+                    OutFolder = stageFolder,
+                    NoteFieldLane = book.NotesFieldLine
+                };
+                stage = await stageConverter.ConvertAsync(ct);
+                ct.ThrowIfCancellationRequested();
+            }
 
-            var stageConverter = new StageConverter(AssetManager);
-            var jacketConverter = new JacketConverter();
-            var musicConverter = new MusicConverter();
-
-            await BatchAsync(Strings.Status_Converted, settings, async (book, d) =>
+            if (settings.ConvertChart || settings.ConvertJacket)
             {
-                var stage = book.Stage;
-                if (book.IsCustomStage && settings.ConvertBackground)
+                var metaMap = book.Items.ToDictionary(x => x.Key, x => x.Value.Meta);
+                var xml = new MusicXml(metaMap, book.Difficulty)
                 {
-                    if (string.IsNullOrWhiteSpace(book.Meta.FullBgiFilePath)) throw new DiagnosticException(Strings.Error_background_file_is_not_set);
-                    if (book.StageId is null) throw new DiagnosticException(Strings.Error_stage_id_is_not_set);
-                    var stageOpts = new StageConverter.Context(book.Meta.FullBgiFilePath, [], book.StageId, stageFolder, book.NotesFieldLine);
-                    await stageConverter.ConvertAsync(stageOpts, d, null, ct);
-                    if (d.HasError) throw new DiagnosticException(Strings.Error_Stage_Failed);
-                    stage = stageOpts.Result;
-                    ct.ThrowIfCancellationRequested();
-                }
+                    StageName = stage
+                };
+                var chartFolder = await xml.SaveDirectoryAsync(musicFolder);
 
-                if (settings.ConvertChart || settings.ConvertJacket)
+                if (settings.ConvertChart)
                 {
-                    var metaMap = book.Items.ToDictionary(x => x.Key, x => x.Value.Meta);
-                    var xml = new MusicXml(metaMap, book.Difficulty) { StageName = stage };
-                    var chartFolder = await xml.SaveDirectoryAsync(musicFolder);
-
-                    if (settings.ConvertChart)
+                    foreach (var (diff, item) in book.Items)
                     {
-                        var chartConverter = new ChartConverter();
-                        foreach (var (diff, item) in book.Items)
+                        if (item.Id is not { } songId) throw new DiagnosticException(Strings.Error_song_id_is_not_set);
+                        if (diff == Difficulty.WorldsEnd) weEntries.Add(new Entry(songId, book.Title));
+                        else if (diff == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
+                        var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
+                        var chartConverter = new ChartConverter(innerDiag)
                         {
-                            if (item.Id is not { } songId) throw new DiagnosticException(Strings.Error_song_id_is_not_set);
-                            if (diff == Difficulty.WorldsEnd) weEntries.Add(new Entry(songId, book.Title));
-                            else if (diff == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
-                            var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
-                            var chartOpts = new ChartConverter.Context(chartPath, item.Chart);
-                            await chartConverter.ConvertAsync(chartOpts, d, null, ct);
-                            if (d.HasError) throw new DiagnosticException(Strings.Error_Chart_Failed);
-                            ct.ThrowIfCancellationRequested();
-                        }
-                    }
-
-                    if (settings.ConvertJacket)
-                    {
-                        var jacketOpts = new JacketConverter.Context(book.Meta.FullJacketFilePath, Path.Combine(chartFolder, xml.JaketFile));
-                        await jacketConverter.ConvertAsync(jacketOpts, d, null, ct);
-                        if (d.HasError) throw new DiagnosticException(Strings.Error_Jacket_Failed);
+                            OutPath = chartPath,
+                            Mgxc = item.Mgxc
+                        };
+                        await chartConverter.ConvertAsync(ct);
                         ct.ThrowIfCancellationRequested();
                     }
                 }
 
-
-                if (settings.ConvertAudio)
+                if (settings.ConvertJacket)
                 {
-                    var musicOpts = new MusicConverter.Context(book.Meta, cueFileFolder);
-                    await musicConverter.ConvertAsync(musicOpts, d, null, ct);
-                    if (d.HasError) throw new DiagnosticException(Strings.Error_Music_Failed);
+                    var jacketConverter = new JacketConverter(innerDiag)
+                    {
+                        InPath = book.Meta.FullJacketFilePath,
+                        OutPath = Path.Combine(chartFolder, xml.JaketFile)
+                    };
+                    await jacketConverter.ConvertAsync(ct);
                     ct.ThrowIfCancellationRequested();
                 }
-            }, ctx, true);
-
-            if (settings.GenerateReleaseTagXml)
-            {
-                var releaseTagXml = ReleaseTag.Default;
-                await releaseTagXml.SaveDirectoryAsync(releaseTagPath);
             }
 
-            if (settings.GenerateEventXml && !ultEntries.IsEmpty)
+
+            if (settings.ConvertAudio)
             {
-                var eventXml = new EventXml(settings.UltimaEventId, EventXml.MusicType.Ultima, ultEntries.ToHashSet());
-                await eventXml.SaveDirectoryAsync(eventFolder);
+                var musicConverter = new MusicConverter(innerDiag)
+                {
+                    Meta = book.Meta,
+                    OutFolder = musicFolder,
+                };
+                await musicConverter.ConvertAsync(ct);
                 ct.ThrowIfCancellationRequested();
             }
+        }, ctx, true);
 
-            if (settings.GenerateEventXml && !weEntries.IsEmpty)
-            {
-                var eventXml = new EventXml(settings.WeEventId, EventXml.MusicType.WldEnd, weEntries.ToHashSet());
-                await eventXml.SaveDirectoryAsync(eventFolder);
-                ct.ThrowIfCancellationRequested();
-            }
-        });
+        if (settings.GenerateReleaseTagXml)
+        {
+            var releaseTagXml = ReleaseTag.Default;
+            await releaseTagXml.SaveDirectoryAsync(releaseTagPath);
+        }
 
-        SystemSounds.Exclamation.Play();
+        if (settings.GenerateEventXml && !ultEntries.IsEmpty)
+        {
+            var eventXml = new EventXml(settings.UltimaEventId, EventXml.MusicType.Ultima, ultEntries.ToHashSet());
+            await eventXml.SaveDirectoryAsync(eventFolder);
+            ct.ThrowIfCancellationRequested();
+        }
+
+        if (settings.GenerateEventXml && !weEntries.IsEmpty)
+        {
+            var eventXml = new EventXml(settings.WeEventId, EventXml.MusicType.WldEnd, weEntries.ToHashSet());
+            await eventXml.SaveDirectoryAsync(eventFolder);
+            ct.ThrowIfCancellationRequested();
+        }
     }
 
-    private async static Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, IDiagnostic, Task> action, Func<T, string> getPath, ProcessContext ctx, bool parallel = false)
+    private async static Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, IDiagnostic, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
     {
         var itemList = items as IList<T> ?? [..items];
         var total = itemList.Count;
         var completedCount = 0;
-        ctx.Progress.Report($"{prefix}: 0/{total}...");
+        main.Progress?.Report($"{prefix}: 0/{total}...");
 
         if (parallel)
         {
-            await Parallel.ForEachAsync(itemList, new ParallelOptions { CancellationToken = ctx.CancellationToken, MaxDegreeOfParallelism = ctx.BatchSize }, ProcessItemAsync);
+            await Parallel.ForEachAsync(itemList, new ParallelOptions
+            {
+                CancellationToken = main.CancellationToken,
+                MaxDegreeOfParallelism = main.BatchSize
+            }, ProcessItemAsync);
         }
         else
         {
-            foreach (var item in itemList) await ProcessItemAsync(item, ctx.CancellationToken);
+            foreach (var item in itemList) await ProcessItemAsync(item, main.CancellationToken);
         }
 
         async ValueTask ProcessItemAsync(T item, CancellationToken ct)
@@ -267,11 +281,11 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             finally
             {
                 var done = Interlocked.Increment(ref completedCount);
-                ctx.Progress.Report($"{prefix}: {done}/{total}...");
+                main.Progress?.Report($"{prefix}: {done}/{total}...");
                 foreach (var diagItem in ld.Diagnostics)
                 {
-                    diagItem.Path ??= Path.GetRelativePath(ctx.WorkingDirectory, getPath(item));
-                    ctx.Diagnostic.Report(diagItem);
+                    diagItem.Path ??= Path.GetRelativePath(main.WorkingDirectory, getPath(item));
+                    main.Diagnostic.Report(diagItem);
                 }
             }
         }
@@ -296,7 +310,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
     private class ProcessContext
     {
         public required IDiagnostic Diagnostic { get; init; }
-        public required IProgress<string> Progress { get; init; }
+        public required IProgress<string>? Progress { get; init; }
         public required CancellationToken CancellationToken { get; init; }
         public required int BatchSize { get; init; }
         public required string WorkingDirectory { get; init; }

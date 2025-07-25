@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Win32;
+using PenguinTools.Core;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using System.IO;
-using System.Media;
 
 namespace PenguinTools.ViewModels;
 
@@ -32,7 +32,7 @@ public partial class JacketViewModel : ActionViewModel
         return !string.IsNullOrWhiteSpace(JacketPath);
     }
 
-    protected async override Task Action()
+    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         var fileName = JacketId is null ? Path.GetFileNameWithoutExtension((string?)JacketPath) : $"{(int)JacketId:0000}";
         var dlg = new SaveFileDialog
@@ -42,10 +42,11 @@ public partial class JacketViewModel : ActionViewModel
         };
         if (dlg.ShowDialog() != true) return;
 
-        var converter = new JacketConverter();
-        var options = new JacketConverter.Context(JacketPath, dlg.FileName);
-        await ActionService.RunAsync((diag, p, ct) => converter.ConvertAsync(options, diag, p, ct));
-
-        SystemSounds.Exclamation.Play();
+        var converter = new JacketConverter(diag, prog)
+        {
+            InPath = JacketPath,
+            OutPath = dlg.FileName,
+        };
+        await converter.ConvertAsync(ct);
     }
 }

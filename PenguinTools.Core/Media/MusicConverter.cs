@@ -13,47 +13,53 @@ using VGAudio.Containers.Wave;
 
 namespace PenguinTools.Core.Media;
 
-public class MusicConverter : IConverter<MusicConverter.Context>
+public class MusicConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
     public ulong Key { get; set; } = 32931609366120192UL;
+    public required Meta Meta { get; init; }
+    public required string OutFolder { get; init; }
 
-    public Task<bool> CanConvertAsync(Context context, IDiagnostic diag)
+    protected override Task ValidateAsync(CancellationToken ct = default)
     {
-        if (context.Meta.Id is null) diag.Report(Severity.Error, Strings.Error_song_id_is_not_set);
-        if (context.Meta.BgmPreviewStop < context.Meta.BgmPreviewStart) diag.Report(Severity.Error, Strings.Error_preview_stop_greater_than_start);
-        var path = context.Meta.FullBgmFilePath;
-        if (!File.Exists(path)) diag.Report(Severity.Error, Strings.Error_file_not_found, path);
-        return Task.FromResult(!diag.HasError);
+        if (Meta.Id is null) Diagnostic.Report(Severity.Error, Strings.Error_song_id_is_not_set);
+        if (Meta.BgmPreviewStop < Meta.BgmPreviewStart) Diagnostic.Report(Severity.Error, Strings.Error_preview_stop_greater_than_start);
+        var path = Meta.FullBgmFilePath;
+        if (!File.Exists(path)) Diagnostic.Report(Severity.Error, Strings.Error_file_not_found, path);
+        return Task.CompletedTask;
     }
 
-    public async Task ConvertAsync(Context ctx, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
+    protected async override Task ActionAsync(CancellationToken ct = default)
     {
-        if (!await CanConvertAsync(ctx, diag)) return;
-        var meta = ctx.Meta;
-        var songId = meta.Id ?? throw new DiagnosticException(Strings.Error_song_id_is_not_set);
+        var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_song_id_is_not_set);
 
-        progress?.Report(Strings.Status_converting_audio);
-        if (meta.BgmPreviewStart > 120) diag.Report(Severity.Warning, Strings.Diag_pv_laterthan_120);
-        
-        var srcPath = meta.FullBgmFilePath;
+        Progress?.Report(Strings.Status_converting_audio);
+        if (Meta.BgmPreviewStart > 120) Diagnostic.Report(Severity.Warning, Strings.Diag_pv_laterthan_120);
+
+        var srcPath = Meta.FullBgmFilePath;
         var wavPath = ResourceUtils.GetTempPath($"c_{Path.GetFileNameWithoutExtension(srcPath)}.wav");
 
-        var ret = await Manipulate.NormalizeAsync(srcPath, wavPath, meta.BgmRealOffset, ct);
+        var ret = await Manipulate.NormalizeAsync(srcPath, wavPath, Meta.BgmRealOffset, ct);
         if (ret.IsNoOperation) wavPath = srcPath;
 
         ct.ThrowIfCancellationRequested();
 
         var xml = new CueFileXml(songId);
-        var outputDir = await xml.SaveDirectoryAsync(ctx.DestinationFolder);
+        var outputDir = await xml.SaveDirectoryAsync(OutFolder);
 
-        var pvStart = (double)meta.BgmPreviewStart;
-        var pvStop = (double)meta.BgmPreviewStop;
+        var pvStart = Meta.BgmPreviewStart;
+        var pvStop = Meta.BgmPreviewStop;
+        if (Meta.BgmEnableBarOffset)
+        {
+            pvStart += Meta.BgmRealOffset;
+            pvStop += Meta.BgmRealOffset;
+        }
+
         var acbPath = Path.Combine(outputDir, xml.AcbFile);
         var awbPath = Path.Combine(outputDir, xml.AwbFile);
 
         // Criware Build
         // Credits to Margrithm (https://margrithm.girlsband.party/)
-        
+
         var waveReader = new WaveReader();
 
         var wav = waveReader.ReadFormat(wavPath);
@@ -61,7 +67,7 @@ public class MusicConverter : IConverter<MusicConverter.Context>
         {
             throw new DiagnosticException(Strings.Error_audio_format_not_supported);
         }
-        
+
         ct.ThrowIfCancellationRequested();
 
         var hcaWriter = new HcaWriter();
@@ -76,9 +82,9 @@ public class MusicConverter : IConverter<MusicConverter.Context>
         await using var hcaStream = new MemoryStream();
         hcaWriter.WriteToStream(wav, hcaStream, config);
         hcaStream.Seek(0, SeekOrigin.Begin);
-        
+
         ct.ThrowIfCancellationRequested();
-        
+
         var cueSheetTable = new CriTable();
 
         cueSheetTable.Load(ResourceUtils.GetStream("dummy.acb"));
@@ -101,15 +107,21 @@ public class MusicConverter : IConverter<MusicConverter.Context>
         await using (var bw = new BinaryWriter(cmdStream, Encoding.Default, true))
         {
             cmdStream.Position = 3;
-            bw.WriteUInt32BigEndian((uint)(pvStart * 1000.0));
+            bw.WriteUInt32BigEndian((uint)(pvStart * 1000.0m));
             cmdStream.Position = 17;
-            bw.WriteUInt32BigEndian((uint)(pvStop * 1000.0));
+            bw.WriteUInt32BigEndian((uint)(pvStop * 1000.0m));
         }
         trackEventTable.Rows[1]["Command"] = cmdStream.ToArray();
         cueSheetTable.Rows[0]["TrackEventTable"] = trackEventTable.Save();
 
-        var awbEntry = new CriAfs2Entry { Stream = hcaStream };
-        var awbArchive = new CriAfs2Archive { awbEntry };
+        var awbEntry = new CriAfs2Entry
+        {
+            Stream = hcaStream
+        };
+        var awbArchive = new CriAfs2Archive
+        {
+            awbEntry
+        };
         await using var awbStream = File.Create(awbPath);
         awbArchive.Save(awbStream);
         awbStream.Position = 0;
@@ -133,8 +145,6 @@ public class MusicConverter : IConverter<MusicConverter.Context>
         await using var acbStream = File.Create(acbPath);
         cueSheetTable.Save(acbStream);
     }
-
-    public record Context(Meta Meta, string DestinationFolder);
 }
 
 file static class BinaryWriterExtensions

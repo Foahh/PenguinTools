@@ -1,8 +1,6 @@
 using PenguinTools.Core.Resources;
 using System.Diagnostics;
 using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace PenguinTools.Core.Media;
 
@@ -15,11 +13,6 @@ public enum ExitCode
 
 public class ProcessCommandResult
 {
-    public ExitCode ExitCode { get; }
-    public string StandardOutput { get; }
-    public string StandardError { get; }
-    public string Command { get; }
-
     internal ProcessCommandResult(Process proc, string stdout, string stderr)
     {
         ExitCode = (ExitCode)proc.ExitCode;
@@ -27,6 +20,11 @@ public class ProcessCommandResult
         StandardError = stderr.Trim();
         Command = $"{proc.StartInfo.FileName} {string.Join(" ", proc.StartInfo.ArgumentList)}";
     }
+
+    public ExitCode ExitCode { get; }
+    public string StandardOutput { get; }
+    public string StandardError { get; }
+    public string Command { get; }
 
     public bool IsSuccess => ExitCode is ExitCode.Success or ExitCode.NoOperation;
     public bool IsNoOperation => ExitCode == ExitCode.NoOperation;
@@ -55,9 +53,9 @@ public static class Manipulate
 
         using var proc = new Process();
         proc.StartInfo = psi;
-        
+
         proc.Start();
-        
+
         var stdoutTask = proc.StandardOutput.ReadToEndAsync(ct);
         var stderrTask = proc.StandardError.ReadToEndAsync(ct);
         await Task.WhenAll(proc.WaitForExitAsync(ct), stdoutTask, stderrTask);
@@ -111,9 +109,12 @@ public static class Manipulate
         var args = new List<string>
         {
             "cs",
-            "-b", bg,
-            "-s", stSrc,
-            "-d", stDst
+            "-b",
+            bg,
+            "-s",
+            stSrc,
+            "-d",
+            stDst
         };
         for (var i = 0; fxPaths is not null && i < fxPaths.Length && i < 4; i++)
         {

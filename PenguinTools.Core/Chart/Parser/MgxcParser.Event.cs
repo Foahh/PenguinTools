@@ -2,18 +2,18 @@
 
 namespace PenguinTools.Core.Chart.Parser;
 
-using mgxc = Models.mgxc;
+using mg = Models.mgxc;
 
 public partial class MgxcParser
 {
     private void ParseEvent(BinaryReader br)
     {
         var name = br.ReadUtf8String(4);
-        mgxc.Event? e = null;
+        mg.Event? e = null;
 
         if (name == "beat")
         {
-            e = new mgxc.BeatEvent
+            e = new mg.BeatEvent
             {
                 Bar = (int)br.ReadData(),
                 Numerator = (int)br.ReadData(),
@@ -22,7 +22,7 @@ public partial class MgxcParser
         }
         else if (name == "bpm ")
         {
-            e = new mgxc.BpmEvent
+            e = new mg.BpmEvent
             {
                 Tick = (int)br.ReadData(),
                 Bpm = br.ReadData().Round()
@@ -30,7 +30,7 @@ public partial class MgxcParser
         }
         else if (name == "smod")
         {
-            e = new mgxc.NoteSpeedEvent
+            e = new mg.NoteSpeedEvent
             {
                 Tick = (int)br.ReadData(),
                 Speed = br.ReadData().Round()
@@ -38,7 +38,7 @@ public partial class MgxcParser
         }
         else if (name == "til ")
         {
-            e = new mgxc.ScrollSpeedEvent
+            e = new mg.ScrollSpeedEvent
             {
                 Timeline = (int)br.ReadData(),
                 Tick = (int)br.ReadData(),
@@ -48,7 +48,7 @@ public partial class MgxcParser
         else if (name == "bmrk")
         {
             br.ReadBigData(); // hash
-            e = new mgxc.BookmarkEvent
+            e = new mg.BookmarkEvent
             {
                 Tick = (int)br.ReadData(),
                 Tag = (string)br.ReadBigData()
@@ -57,7 +57,7 @@ public partial class MgxcParser
         }
         else if (name == "mbkm")
         {
-            e = new mgxc.BreakingMarker
+            e = new mg.BreakingMarker
             {
                 Tick = (int)br.ReadData()
             };
@@ -66,10 +66,10 @@ public partial class MgxcParser
         if (e == null)
         {
             var msg = string.Format(Strings.Error_Unrecognized_event, name, br.BaseStream.Position);
-            throw new DiagnosticException(msg, mgxc);
+            throw new DiagnosticException(msg, Mgxc);
         }
 
-        mgxc.Events.AppendChild(e);
+        Mgxc.Events.AppendChild(e);
         br.ReadInt32(); // 00 00 00 00
     }
 }

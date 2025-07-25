@@ -4,51 +4,50 @@ using PenguinTools.Core.Xml;
 
 namespace PenguinTools.Core.Media;
 
-public class StageConverter(AssetManager asm) : IConverter<StageConverter.Context>
+public class StageConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase<Entry>(diag, prog)
 {
-    public async Task ConvertAsync(Context ctx, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
-    {
-        if (!await CanConvertAsync(ctx, diag)) return;
-        if (ctx.StageId is not { } stageId) throw new DiagnosticException(Strings.Error_stage_id_is_not_set);
+    public required AssetManager Assets { get; init; }
+    public required string BackgroundPath { get; init; }
+    public required string?[]? EffectPaths { get; init; }
+    public required int? StageId { get; init; }
+    public required string OutFolder { get; init; }
+    public required Entry NoteFieldLane { get; init; }
 
-        progress?.Report(Strings.Status_processing_background);
-        
-        var xml = new StageXml(stageId, ctx.NoteFieldLane);
-        ctx.Result = xml.Name;
-        var outputDir = await xml.SaveDirectoryAsync(ctx.DestinationFolder);
+    protected async override Task<Entry> ActionAsync(CancellationToken ct = default)
+    {
+        if (StageId is not { } stageId) throw new DiagnosticException(Strings.Error_stage_id_is_not_set);
+        Progress?.Report(Strings.Status_processing_background);
+
+        var xml = new StageXml(stageId, NoteFieldLane);
+        var outputDir = await xml.SaveDirectoryAsync(OutFolder);
 
         var nfPath = Path.Combine(outputDir, xml.NotesFieldFile);
         var stPath = Path.Combine(outputDir, xml.BaseFile);
-        await Manipulate.ConvertStageAsync(ctx.BgPath, ResourceUtils.GetTempPath("st_dummy.afb"),stPath, ctx.FxPaths, ct);
+        await Manipulate.ConvertStageAsync(BackgroundPath, ResourceUtils.GetTempPath("st_dummy.afb"), stPath, EffectPaths, ct);
         await ResourceUtils.CopyAsync("nf_dummy.afb", nfPath);
+
+        return xml.Name;
     }
 
-    public async Task<bool> CanConvertAsync(Context context, IDiagnostic diag)
+    protected async override Task ValidateAsync(CancellationToken ct = default)
     {
-        var duplicates = asm.StageNames.Where(p => p.Id == context.StageId);
-        foreach (var d in duplicates) diag.Report(Severity.Warning, string.Format(Strings.Diag_stage_already_exists, d, context.StageId));
+        var duplicates = Assets.StageNames.Where(p => p.Id == StageId);
+        foreach (var d in duplicates) Diagnostic.Report(Severity.Warning, string.Format(Strings.Diag_stage_already_exists, d, StageId));
 
-        if (context.StageId is null) diag.Report(Severity.Error, string.Format(Strings.Error_stage_id_is_not_set));
-        if (!File.Exists(context.BgPath)) diag.Report(Severity.Error, Strings.Error_file_not_found, context.BgPath);
+        if (StageId is null) Diagnostic.Report(Severity.Error, string.Format(Strings.Error_stage_id_is_not_set));
+        if (!File.Exists(BackgroundPath)) Diagnostic.Report(Severity.Error, Strings.Error_file_not_found, BackgroundPath);
 
-        var ret = await Manipulate.IsImageValidAsync(context.BgPath);
-        if (ret.IsFailure) diag.Report(Severity.Error, Strings.Error_invalid_bg_image, context.BgPath, target: ret);
-        if (context.FxPaths is not null)
+        var ret = await Manipulate.IsImageValidAsync(BackgroundPath, ct);
+        if (ret.IsFailure) Diagnostic.Report(Severity.Error, Strings.Error_invalid_bg_image, BackgroundPath, target: ret);
+        if (EffectPaths is not null)
         {
-            foreach (var p in context.FxPaths)
+            foreach (var p in EffectPaths)
             {
                 if (string.IsNullOrWhiteSpace(p)) continue;
-                if (!File.Exists(p)) diag.Report(Severity.Error, Strings.Error_file_not_found, p);
-                ret = await Manipulate.IsImageValidAsync(p);
-                if (ret.IsFailure) diag.Report(Severity.Error, Strings.Error_invalid_bg_fx_image, p, target: ret);
+                if (!File.Exists(p)) Diagnostic.Report(Severity.Error, Strings.Error_file_not_found, p);
+                ret = await Manipulate.IsImageValidAsync(p, ct);
+                if (ret.IsFailure) Diagnostic.Report(Severity.Error, Strings.Error_invalid_bg_fx_image, p, target: ret);
             }
         }
-
-        return !diag.HasError;
-    }
-
-    public record Context(string BgPath, string?[]? FxPaths, int? StageId, string DestinationFolder, Entry NoteFieldLane)
-    {
-        public Entry Result { get; set; } = Entry.Default;
     }
 }

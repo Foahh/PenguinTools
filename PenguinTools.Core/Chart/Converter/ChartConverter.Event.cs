@@ -2,17 +2,17 @@ using PenguinTools.Core.Chart.Models;
 
 namespace PenguinTools.Core.Chart.Converter;
 
-using mgxc = Models.mgxc;
+using mg = Models.mgxc;
 using c2s = Models.c2s;
 
 public partial class ChartConverter
 {
-    private void ConvertEvent(mgxc.Chart mgxc)
+    private void ConvertEvent(mg.Chart mgxc)
     {
         Time lastTick = mgxc.GetLastTick();
 
         var events = mgxc.Events.Children;
-        foreach (var e in events.OfType<mgxc.BpmEvent>().OrderBy(e => e.Tick))
+        foreach (var e in events.OfType<mg.BpmEvent>().OrderBy(e => e.Tick))
         {
             Events.Add(new c2s.Bpm
             {
@@ -21,7 +21,7 @@ public partial class ChartConverter
             });
         }
 
-        foreach (var e in events.OfType<mgxc.BeatEvent>().OrderBy(e => e.Tick))
+        foreach (var e in events.OfType<mg.BeatEvent>().OrderBy(e => e.Tick))
         {
             Events.Add(new c2s.Met
             {
@@ -31,11 +31,11 @@ public partial class ChartConverter
             });
         }
         
-        ConvertDcm([..events.OfType<mgxc.NoteSpeedEvent>().OrderBy(e => e.Tick)], lastTick);
-        ConvertSlp(mgxc, [..events.OfType<mgxc.ScrollSpeedEvent>().OrderBy(e => e.Tick)]);
+        ConvertDcm([..events.OfType<mg.NoteSpeedEvent>().OrderBy(e => e.Tick)], lastTick);
+        ConvertSlp(mgxc, [..events.OfType<mg.ScrollSpeedEvent>().OrderBy(e => e.Tick)]);
     }
 
-    private void ConvertDcm(List<mgxc.NoteSpeedEvent> events, Time lastTick)
+    private void ConvertDcm(List<mg.NoteSpeedEvent> events, Time lastTick)
     {
         if (events.Count <= 0) return;
         for (var i = 0; i < events.Count - 1; i++)
@@ -63,7 +63,7 @@ public partial class ChartConverter
         Events.Add(e);
     }
 
-    private void ConvertSlp(mgxc.Chart mgxc, List<mgxc.ScrollSpeedEvent> tilEvents)
+    private void ConvertSlp(mg.Chart mgxc, List<mg.ScrollSpeedEvent> tilEvents)
     {
         if (tilEvents.Count <= 0) return;
         var tilGroups = tilEvents.GroupBy(til => til.Timeline).ToDictionary(g => g.Key, g => g.ToList());

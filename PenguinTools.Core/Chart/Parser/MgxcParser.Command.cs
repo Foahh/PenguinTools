@@ -5,12 +5,12 @@ namespace PenguinTools.Core.Chart.Parser;
 
 public partial class MgxcParser
 {
-    protected void MetaEntryHandler(string name, string[] args, Action<Entry> setter, AssetType type)
+    private void MetaEntryHandler(string name, string[] args, Action<Entry> setter, AssetType type)
     {
         if (args.Length is < 1 or > 2)
         {
             var msg = string.Format(Strings.Diag_meta_override_argument_count_mismatch, name);
-            diag.Report(Severity.Warning, msg, target: args);
+            Diagnostic.Report(Severity.Warning, msg, target: args);
             return;
         }
 
@@ -20,18 +20,18 @@ public partial class MgxcParser
             var data = args.Length >= 3 ? args[2] : null;
             var newEntry = new Entry(newId, args[1], data ?? string.Empty);
             setter(newEntry);
-            asm.DefineEntry(type, newEntry);
+            Assets.DefineEntry(type, newEntry);
             return;
         }
 
         var value = args[0];
-        var entry = int.TryParse(value, out var id) ? asm[type].FirstOrDefault(e => e.Id == id) : null;
-        entry ??= asm[type].FirstOrDefault(e => e.Str.Equals(value, StringComparison.Ordinal));
+        var entry = int.TryParse(value, out var id) ? Assets[type].FirstOrDefault(e => e.Id == id) : null;
+        entry ??= Assets[type].FirstOrDefault(e => e.Str.Equals(value, StringComparison.Ordinal));
 
         if (entry == null)
         {
             var msg = string.Format(Strings.Diag_string_id_not_found, value, type.ToString());
-            diag.Report(Severity.Information, msg, target: args);
+            Diagnostic.Report(Severity.Information, msg, target: args);
         }
         else
         {
@@ -39,38 +39,38 @@ public partial class MgxcParser
         }
     }
 
-    protected void MetaGenreHandler(string[] args)
+    private void MetaGenreHandler(string[] args)
     {
-        MetaEntryHandler("genre", args, entry => mgxc.Meta.Genre = entry, AssetType.GenreNames);
+        MetaEntryHandler("genre", args, entry => Mgxc.Meta.Genre = entry, AssetType.GenreNames);
     }
 
-    protected void MetaStageHandler(string[] args)
+    private void MetaStageHandler(string[] args)
     {
         MetaEntryHandler("stage", args, Setter, AssetType.StageNames);
 
         void Setter(Entry entry)
         {
-            mgxc.Meta.Stage = entry;
-            mgxc.Meta.IsCustomStage = false;
+            Mgxc.Meta.Stage = entry;
+            Mgxc.Meta.IsCustomStage = false;
         }
     }
     
-    protected void MetaFieldLineHandler(string[] args)
+    private void MetaFieldLineHandler(string[] args)
     {
-        MetaEntryHandler("fline", args, entry => mgxc.Meta.NotesFieldLine = entry, AssetType.FieldLines);
+        MetaEntryHandler("fline", args, entry => Mgxc.Meta.NotesFieldLine = entry, AssetType.FieldLines);
     }
 
-    protected void MetaWeTagHandler(string[] args)
+    private void MetaWeTagHandler(string[] args)
     {
-        MetaEntryHandler("wetag", args, entry => mgxc.Meta.WeTag = entry, AssetType.WeTagNames);
+        MetaEntryHandler("wetag", args, entry => Mgxc.Meta.WeTag = entry, AssetType.WeTagNames);
     }
 
-    protected void MainHandler(string[] args)
+    private void MainHandler(string[] args)
     {
-        mgxc.Meta.IsMain = args.Length < 1 || ParseBool(args[0]);
+        Mgxc.Meta.IsMain = args.Length < 1 || ParseBool(args[0]);
     }
 
-    protected void MetaHandler(string[] args)
+    private void MetaHandler(string[] args)
     {
         var (name, value) = (args[0], args[1..]);
 
@@ -92,19 +92,19 @@ public partial class MgxcParser
                 MetaWeTagHandler(value);
                 break;
             default:
-                diag.Report(Severity.Warning, string.Format(Strings.Diag_unknown_tag, name), target: args);
+                Diagnostic.Report(Severity.Warning, string.Format(Strings.Diag_unknown_tag, name), target: args);
                 break;
         }
     }
 
-    protected void ProcessMetaCommand()
+    private void ProcessCommand()
     {
         var config = new Dictionary<string, Action<string[]>>
         {
             { "meta", MetaHandler }
         };
 
-        var lines = mgxc.Meta.Comment.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+        var lines = Mgxc.Meta.Comment.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var line in lines)
         {
@@ -125,12 +125,12 @@ public partial class MgxcParser
                 }
                 catch (Exception ex)
                 {
-                    diag.Report(ex);
+                    Diagnostic.Report(ex);
                 }
             }
             else
             {
-                diag.Report(
+                Diagnostic.Report(
                     Severity.Warning,
                     string.Format(Strings.Diag_unknown_tag, tagName),
                     target: parts
@@ -139,7 +139,7 @@ public partial class MgxcParser
         }
     }
 
-    protected static bool ParseBool(string str)
+    private static bool ParseBool(string str)
     {
         var value = str.ToLowerInvariant();
         if (value is "true" or "1" or "yes") return true;

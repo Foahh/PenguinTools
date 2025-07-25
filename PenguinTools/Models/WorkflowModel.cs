@@ -5,7 +5,7 @@ using PenguinTools.Core.Resources;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-using mgxc = PenguinTools.Core.Chart.Models.mgxc;
+using mg = PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Models;
 
@@ -16,14 +16,14 @@ namespace PenguinTools.Models;
 [LocalizableCategoryOrder(nameof(Strings.Category_Sync), 4, typeof(Strings))]
 public class WorkflowModel : MetaModel
 {
-    public WorkflowModel(mgxc.Chart chart)
+    public WorkflowModel(mg.Chart mgxc)
     {
-        Chart = chart;
+        Mgxc = mgxc;
         BgmInitialTimeSignature = new TimeSignatureModel(Meta);
     }
 
     [Browsable(false)]
-    public override mgxc.Chart Chart { get; }
+    public override mg.Chart Mgxc { get; }
 
     [PropertyOrder(0)]
     [LocalizableCategory(nameof(Strings.Category_Song), typeof(Strings))]

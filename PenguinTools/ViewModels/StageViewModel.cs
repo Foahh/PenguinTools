@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
+using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using System.IO;
-using System.Media;
 
 namespace PenguinTools.ViewModels;
 
@@ -43,7 +43,7 @@ public partial class StageViewModel : ActionViewModel
         return !string.IsNullOrWhiteSpace(BackgroundPath);
     }
 
-    protected async override Task Action()
+    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         var dlg = new OpenFolderDialog
         {
@@ -54,11 +54,17 @@ public partial class StageViewModel : ActionViewModel
         };
         if (dlg.ShowDialog() != true) return;
 
-        string?[] effectPaths = [EffectPath0, EffectPath1, EffectPath2, EffectPath3];
-        var options = new StageConverter.Context(BackgroundPath, effectPaths, StageId, dlg.FolderName, NoteFieldsLine);
-        var converter = new StageConverter(AssetManager);
-        await ActionService.RunAsync((diag, p, ct) => converter.ConvertAsync(options, diag, p, ct));
-        SystemSounds.Exclamation.Play();
+        var converter = new StageConverter(diag, prog)
+        {
+            Assets = AssetManager,
+            BackgroundPath = BackgroundPath,
+            EffectPaths = [EffectPath0, EffectPath1, EffectPath2, EffectPath3],
+            StageId = StageId,
+            OutFolder = dlg.FolderName,
+            NoteFieldLane = NoteFieldsLine
+        };
+
+        await converter.ConvertAsync(ct);
     }
 
     [RelayCommand]

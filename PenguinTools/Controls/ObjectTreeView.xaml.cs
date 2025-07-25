@@ -1,11 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using PenguinTools.Converters;
+﻿using PenguinTools.Converters;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace PenguinTools.Controls;
 
@@ -74,7 +72,10 @@ public class ObjectTreeNode
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
-        Converters = { new ExceptionJsonConverter<Exception>() },
+        Converters =
+        {
+            new ExceptionJsonConverter<Exception>()
+        },
         ReferenceHandler = ReferenceHandler.IgnoreCycles,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,

@@ -1,6 +1,4 @@
-﻿using PenguinTools.Core.Media;
-
-namespace PenguinTools.Core.Metadata;
+﻿namespace PenguinTools.Core.Metadata;
 
 public partial record Meta
 {

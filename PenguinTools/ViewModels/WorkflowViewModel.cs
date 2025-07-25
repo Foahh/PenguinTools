@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Core.Chart;
 using PenguinTools.Core.Chart.Converter;
 using PenguinTools.Core.Chart.Parser;
 using PenguinTools.Core.Media;
@@ -10,16 +9,15 @@ using PenguinTools.Core.Resources;
 using PenguinTools.Core.Xml;
 using PenguinTools.Models;
 using System.IO;
-using System.Media;
 
 namespace PenguinTools.ViewModels;
 
 public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 {
-    protected async override Task Action()
+    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         if (Model == null) return;
-        var chart = Model.Chart;
+        var chart = Model.Mgxc;
         var meta = chart.Meta;
         var songId = meta.Id ?? throw new DiagnosticException(Strings.Error_song_id_is_not_set);
         if (string.IsNullOrWhiteSpace(meta.FullBgmFilePath)) throw new DiagnosticException(Strings.Error_audio_file_is_not_set);
@@ -40,59 +38,74 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         if (dlg.ShowDialog() != true) return;
         var path = dlg.FolderName;
 
-        await ActionService.RunAsync(async (diag, p, ct) =>
+        var stage = meta.Stage;
+        if (meta.IsCustomStage)
         {
-            var stage = meta.Stage;
-            if (meta.IsCustomStage)
+            var stageConverter = new StageConverter(diag, prog)
             {
-                var stageConverter = new StageConverter(AssetManager);
-                var stageOpts = new StageConverter.Context(meta.FullBgiFilePath, [], meta.StageId, path, meta.NotesFieldLine);
-                await stageConverter.ConvertAsync(stageOpts, diag, p, ct);
-                if (diag.HasError) return;
-                ct.ThrowIfCancellationRequested();
-                stage = stageOpts.Result;
-            }
+                Assets = AssetManager,
+                BackgroundPath = meta.FullBgiFilePath,
+                EffectPaths = [],
+                StageId = meta.StageId,
+                OutFolder = path,
+                NoteFieldLane = meta.NotesFieldLine
+            };
+            stage = await stageConverter.ConvertAsync(ct);
+        }
 
-            var metaMap = new Dictionary<Difficulty, Meta> { [meta.Difficulty] = meta };
-            var xml = new MusicXml(metaMap, meta.Difficulty) { StageName = stage };
+        ct.ThrowIfCancellationRequested();
+        var metaMap = new Dictionary<Difficulty, Meta>
+        {
+            [meta.Difficulty] = meta
+        };
+        var xml = new MusicXml(metaMap, meta.Difficulty)
+        {
+            StageName = stage
+        };
 
-            if (meta is { Difficulty: Difficulty.WorldsEnd or Difficulty.Ultima, UnlockEventId: { } eventId })
-            {
-                var type = meta.Difficulty == Difficulty.WorldsEnd ? EventXml.MusicType.WldEnd : EventXml.MusicType.Ultima;
-                var eXml = new EventXml(eventId, type, [new Entry(songId, meta.Title)]);
-                await eXml.SaveDirectoryAsync(path);
-            }
+        if (meta is { Difficulty: Difficulty.WorldsEnd or Difficulty.Ultima, UnlockEventId: { } eventId })
+        {
+            var type = meta.Difficulty == Difficulty.WorldsEnd ? EventXml.MusicType.WldEnd : EventXml.MusicType.Ultima;
+            var eXml = new EventXml(eventId, type, [new Entry(songId, meta.Title)]);
+            await eXml.SaveDirectoryAsync(path);
+        }
 
-            var musicFolder = await xml.SaveDirectoryAsync(path);
+        var musicFolder = await xml.SaveDirectoryAsync(path);
+        var chartPath = Path.Combine(musicFolder, xml[meta.Difficulty].File);
 
-            var chartPath = Path.Combine(musicFolder, xml[meta.Difficulty].File);
-            var chartOpts = new ChartConverter.Context(chartPath, chart);
-            var musicOpts = new MusicConverter.Context(Model.Meta, path);
-            var jacketOpts = new JacketConverter.Context(meta.FullJacketFilePath, Path.Combine(musicFolder, xml.JaketFile));
+        var chartConverter = new ChartConverter(diag, prog)
+        {
+            OutPath = chartPath,
+            Mgxc = chart
+        };
+        await chartConverter.ConvertAsync(ct);
 
-            var chartConverter = new ChartConverter();
-            await chartConverter.ConvertAsync(chartOpts, diag, p, ct);
-            if (diag.HasError) return;
-            ct.ThrowIfCancellationRequested();
+        ct.ThrowIfCancellationRequested();
 
-            var jacketConverter = new JacketConverter();
-            await jacketConverter.ConvertAsync(jacketOpts, diag, p, ct);
-            if (diag.HasError) return;
-            ct.ThrowIfCancellationRequested();
+        var jacketConverter = new JacketConverter(diag, prog)
+        {
+            InPath = meta.FullJacketFilePath,
+            OutPath = Path.Combine(musicFolder, xml.JaketFile)
+        };
+        await jacketConverter.ConvertAsync(ct);
 
-            var musicConverter = new MusicConverter();
-            await musicConverter.ConvertAsync(musicOpts, diag, p, ct);
-            if (diag.HasError) return;
-            ct.ThrowIfCancellationRequested();
-        });
+        ct.ThrowIfCancellationRequested();
 
-        SystemSounds.Exclamation.Play();
+        var musicConverter = new MusicConverter(diag, prog)
+        {
+            Meta = Model.Meta,
+            OutFolder = path
+        };
+        await musicConverter.ConvertAsync(ct);
     }
 
-    protected async override Task<WorkflowModel> ReadModel(string path, IDiagnostic d, IProgress<string> p, CancellationToken ct = default)
+    protected async override Task<WorkflowModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(d, AssetManager);
-        var chart = await parser.ParseAsync(path, ct);
-        return new WorkflowModel(chart);
+        var parser = new MgxcParser(diag, prog)
+        {
+            Path = path,
+            Assets = AssetManager,
+        };
+        return new WorkflowModel(await parser.ConvertAsync(ct));
     }
 }

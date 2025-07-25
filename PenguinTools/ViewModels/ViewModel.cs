@@ -19,7 +19,7 @@ public abstract partial class ViewModel : ObservableObject
     public AssetManager AssetManager { get; } = App.Services.GetRequiredService<AssetManager>();
 
     protected static Dispatcher Dispatcher => Application.Current.Dispatcher;
-    
+
     [RelayCommand]
     private static void OpenWiki()
     {
@@ -42,7 +42,7 @@ public abstract class ActionViewModel : ViewModel
 {
     protected ActionViewModel()
     {
-        ActionCommand = new AsyncRelayCommand(Action, () => ActionService.CanRun() && CanRun());
+        ActionCommand = new AsyncRelayCommand(() => ActionService.RunAsync(Action), () => ActionService.CanRun() && CanRun());
         ActionService.PropertyChanged += (_, e) =>
         {
             OnPropertyChanged(e.PropertyName);
@@ -53,7 +53,7 @@ public abstract class ActionViewModel : ViewModel
     public IRelayCommand? ActionCommand { get; }
 
     protected abstract bool CanRun();
-    protected abstract Task Action();
+    protected abstract Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default);
 }
 
 public abstract class ReloadableActionViewModel : ActionViewModel
@@ -155,20 +155,20 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         LastModifiedTime = null;
     }
 
-    protected async Task ReadModelInternal(IDiagnostic diag, IProgress<string> p, CancellationToken ct = default)
+    protected async Task ReadModelInternal(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(ModelPath))
         {
             await Dispatcher.InvokeAsync(() => SetModel(Model, null));
             return;
         }
-        p.Report(Strings.Status_reading);
-        var model = await ReadModel(ModelPath, diag, p, ct);
+        prog?.Report(Strings.Status_reading);
+        var model = await ReadModel(ModelPath, diag, prog, ct);
         ct.ThrowIfCancellationRequested();
         await Dispatcher.InvokeAsync(() => SetModel(Model, model));
     }
 
-    protected abstract Task<TModel> ReadModel(string path, IDiagnostic d, IProgress<string> p, CancellationToken ct = default);
+    protected abstract Task<TModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default);
 
     protected virtual void SetModel(TModel? oldMode, TModel? newModel)
     {

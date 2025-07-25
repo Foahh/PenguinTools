@@ -6,34 +6,54 @@ using System.Text;
 
 namespace PenguinTools.Core.Chart.Converter;
 
-using mgxc = Models.mgxc;
+using mg = Models.mgxc;
 using c2s = Models.c2s;
 
-public partial class ChartConverter : IConverter<ChartConverter.Context>
+public partial class ChartConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
-    private IDiagnostic diag = new DiagnosticReporter();
+    public required string OutPath { get; init; }
+    public required mg.Chart Mgxc { get; init; }
+
     private List<c2s.Note> Notes { get; set; } = [];
     private List<c2s.Event> Events { get; set; } = [];
 
-    public async Task ConvertAsync(Context ctx, IDiagnostic diag, IProgress<string>? progress = null, CancellationToken ct = default)
+    protected async override Task ActionAsync(CancellationToken ct = default)
     {
-        Reset();
-        if (!await CanConvertAsync(ctx, this.diag)) return;
-        progress?.Report(Strings.Status_converting_chart);
-        this.diag = diag;
+        Progress?.Report(Strings.Status_converting_chart);
 
-        var mgxc = ctx.Chart;
-        diag.TimeCalculator = mgxc.GetCalculator();
+        Diagnostic.TimeCalculator = Mgxc.GetCalculator();
 
-        foreach (var note in mgxc.Notes.Children) ConvertNote(note);
-        ConvertEvent(mgxc);
+        foreach (var note in Mgxc.Notes.Children) ConvertNote(note);
+        ConvertEvent(Mgxc);
 
-        progress?.Report(Strings.Status_Validate);
-        ValidateChart();
+        // Post Validation
+        Progress?.Report(Strings.Status_Validate);
+        var allSlides = Notes.OfType<c2s.Slide>().ToList();
+        var allAirs = Notes.OfType<c2s.IPairable>().Where(p => p.Parent is c2s.Slide).Cast<c2s.Note>().ToList();
 
-        if (mgxc.Meta.BgmEnableBarOffset)
+        var airsLookup = allAirs.GroupBy(a => (a.Tick, a.Lane, a.Width)).ToDictionary(g => g.Key, g => g.Count());
+        var slidesLookup = allSlides.GroupBy(s => (s.EndTick, s.EndLane, s.EndWidth)).ToDictionary(g => g.Key, g => g.Count());
+
+        foreach (var (pos, airsCount) in airsLookup)
         {
-            var offset = (int)Math.Round((decimal)Time.MarResolution / mgxc.Meta.BgmInitialDenominator * mgxc.Meta.BgmInitialNumerator);
+            var slidesCount = slidesLookup.GetValueOrDefault(pos, 0);
+            if (airsCount >= slidesCount) continue;
+            Diagnostic.Report(Severity.Information, Strings.Overlapping_Air_Parent_Slide, pos.Tick.Original);
+        }
+
+        foreach (var longNote1 in Notes.OfType<c2s.LongNote>())
+        {
+            var length = longNote1.Length.Original;
+            if (length >= Time.SingleTick) continue;
+
+            var tick = longNote1.Tick.Original;
+            var msg = string.Format(Strings.Diag_set_length_smaller_than_unit, length, Time.SingleTick);
+            Diagnostic.Report(Severity.Warning, msg, tick, longNote1);
+        }
+
+        if (Mgxc.Meta.BgmEnableBarOffset)
+        {
+            var offset = (int)Math.Round((decimal)Time.MarResolution / Mgxc.Meta.BgmInitialDenominator * Mgxc.Meta.BgmInitialNumerator);
             foreach (var e in Events.Where(e => e.Tick.Original != 0)) e.Tick = e.Tick.Original + offset;
             foreach (var n in Notes)
             {
@@ -42,7 +62,7 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
             }
         }
 
-        progress?.Report(Strings.Status_writing);
+        Progress?.Report(Strings.Status_writing);
 
         var sb = new StringBuilder();
         sb.AppendLine("VERSION\t1.13.00\t1.13.00");
@@ -50,9 +70,9 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
         sb.AppendLine("SEQUENCEID\t0");
         sb.AppendLine("DIFFICULT\t0");
         sb.AppendLine("LEVEL\t0.0");
-        sb.AppendLine($"CREATOR\t{mgxc.Meta.Designer}");
-        sb.AppendLine($"BPM_DEF\t{mgxc.Meta.MainBpm:F3}\t{mgxc.Meta.MainBpm:F3}\t{mgxc.Meta.MainBpm:F3}\t{mgxc.Meta.MainBpm:F3}");
-        sb.AppendLine($"MET_DEF\t{mgxc.Meta.BgmInitialDenominator}\t{mgxc.Meta.BgmInitialNumerator}");
+        sb.AppendLine($"CREATOR\t{Mgxc.Meta.Designer}");
+        sb.AppendLine($"BPM_DEF\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}");
+        sb.AppendLine($"MET_DEF\t{Mgxc.Meta.BgmInitialDenominator}\t{Mgxc.Meta.BgmInitialNumerator}");
         sb.AppendLine("RESOLUTION\t384");
         sb.AppendLine("CLK_DEF\t384");
         sb.AppendLine("PROGJUDGE_BPM\t240.000");
@@ -68,7 +88,7 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
             }
             catch (Exception ex)
             {
-                this.diag.Report(Severity.Error, ex.Message, e.Tick.Original, e);
+                Diagnostic.Report(Severity.Error, ex.Message, e.Tick.Original, e);
             }
         }
         sb.AppendLine();
@@ -80,52 +100,11 @@ public partial class ChartConverter : IConverter<ChartConverter.Context>
             }
             catch (Exception ex)
             {
-                this.diag.Report(Severity.Error, ex.Message, n.Tick.Original, n);
+                Diagnostic.Report(Severity.Error, ex.Message, n.Tick.Original, n);
             }
         }
 
-        if (this.diag.HasError) return;
-        await File.WriteAllTextAsync(ctx.Destination, sb.ToString(), ct);
+        if (Diagnostic.HasError) return;
+        await File.WriteAllTextAsync(OutPath, sb.ToString(), ct);
     }
-
-    public Task<bool> CanConvertAsync(Context context, IDiagnostic diag)
-    {
-        return Task.FromResult(true);
-    }
-
-    private void Reset()
-    {
-        pMap.Clear();
-        nMap.Clear();
-        Notes = [];
-        Events = [];
-    }
-
-    protected void ValidateChart()
-    {
-        var allSlides = Notes.OfType<c2s.Slide>().ToList();
-        var allAirs = Notes.OfType<c2s.IPairable>().Where(p => p.Parent is c2s.Slide).Cast<c2s.Note>().ToList();
-
-        var airsLookup = allAirs.GroupBy(a => (a.Tick, a.Lane, a.Width)).ToDictionary(g => g.Key, g => g.Count());
-        var slidesLookup = allSlides.GroupBy(s => (s.EndTick, s.EndLane, s.EndWidth)).ToDictionary(g => g.Key, g => g.Count());
-
-        foreach (var (pos, airsCount) in airsLookup)
-        {
-            var slidesCount = slidesLookup.GetValueOrDefault(pos, 0);
-            if (airsCount >= slidesCount) continue;
-            diag.Report(Severity.Information, Strings.Overlapping_Air_Parent_Slide, pos.Tick.Original);
-        }
-
-        foreach (var longNote in Notes.OfType<c2s.LongNote>())
-        {
-            var length = longNote.Length.Original;
-            if (length >= Time.SingleTick) continue;
-
-            var tick = longNote.Tick.Original;
-            var msg = string.Format(Strings.Diag_set_length_smaller_than_unit, length, Time.SingleTick);
-            diag.Report(Severity.Warning, msg, tick, longNote);
-        }
-    }
-
-    public record Context(string Destination, mgxc.Chart Chart);
 }
