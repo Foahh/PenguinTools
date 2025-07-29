@@ -25,14 +25,17 @@ public class MusicXml : XmlElement<MusicXml>
     public MusicXml(Dictionary<Difficulty, Meta> metaMap, Difficulty mainDiff)
     {
         var main = metaMap[mainDiff] ?? throw new DiagnosticException("Main meta is null");
-        var songId = main.Id ?? throw new DiagnosticException(Strings.Error_song_id_is_not_set);
+        var songId = main.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
         DataName = $"music{songId:0000}";
         ExType = main.Difficulty == Difficulty.WorldsEnd ? 2 : 0;
         Name = new Entry(songId, main.Title);
         SortName = main.SortName;
         ArtistName = new Entry(songId, main.Artist);
-        GenreNames = new List<Entry> { main.Genre };
+        GenreNames = new List<Entry>
+        {
+            main.Genre
+        };
         JaketFile = $"CHU_UI_Jacket_{songId:0000}.dds";
         EnableUltima = main.Difficulty == Difficulty.Ultima;
         ReleaseDate = main.ReleaseDate.ToString("yyyyMMdd");
@@ -85,7 +88,10 @@ public class MusicXml : XmlElement<MusicXml>
     public Entry ArtistName { get; set; } = Entry.Default;
 
     [XmlElement("genreNames")]
-    public EntryCollection GenreNames { get; set; } = new List<Entry> { Entry.Default };
+    public EntryCollection GenreNames { get; set; } = new List<Entry>
+    {
+        Entry.Default
+    };
 
     [XmlElement("worksName")]
     public Entry WorksName { get; set; } = Entry.Default;

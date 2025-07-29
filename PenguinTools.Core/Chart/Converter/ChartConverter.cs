@@ -19,7 +19,7 @@ public partial class ChartConverter(IDiagnostic diag, IProgress<string>? prog = 
 
     protected async override Task ActionAsync(CancellationToken ct = default)
     {
-        Progress?.Report(Strings.Status_converting_chart);
+        Progress?.Report(Strings.Status_Converting_chart);
 
         Diagnostic.TimeCalculator = Mgxc.GetCalculator();
 
@@ -38,7 +38,7 @@ public partial class ChartConverter(IDiagnostic diag, IProgress<string>? prog = 
         {
             var slidesCount = slidesLookup.GetValueOrDefault(pos, 0);
             if (airsCount >= slidesCount) continue;
-            Diagnostic.Report(Severity.Information, Strings.Overlapping_Air_Parent_Slide, pos.Tick.Original);
+            Diagnostic.Report(Severity.Information, Strings.Mg_Overlapping_air_parent_slide, pos.Tick.Original);
         }
 
         foreach (var longNote1 in Notes.OfType<c2s.LongNote>())
@@ -47,7 +47,7 @@ public partial class ChartConverter(IDiagnostic diag, IProgress<string>? prog = 
             if (length >= Time.SingleTick) continue;
 
             var tick = longNote1.Tick.Original;
-            var msg = string.Format(Strings.Diag_set_length_smaller_than_unit, length, Time.SingleTick);
+            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, Time.SingleTick);
             Diagnostic.Report(Severity.Warning, msg, tick, longNote1);
         }
 
@@ -62,7 +62,7 @@ public partial class ChartConverter(IDiagnostic diag, IProgress<string>? prog = 
             }
         }
 
-        Progress?.Report(Strings.Status_writing);
+        Progress?.Report(Strings.Status_Writing);
 
         var sb = new StringBuilder();
         sb.AppendLine("VERSION\t1.13.00\t1.13.00");

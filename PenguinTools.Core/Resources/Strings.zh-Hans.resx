@@ -1,65 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
-                Microsoft ResX Schema 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
                 
-                Version 2.0
-                
-                The primary goals of this format is to allow a simple XML format 
-                that is mostly human readable. The generation and parsing of the 
-                various data types are done through the TypeConverter classes 
-                associated with the data types.
-                
-                Example:
-                
-                ... ado.net/XML headers & schema ...
-                <resheader name="resmimetype">text/microsoft-resx</resheader>
-                <resheader name="version">2.0</resheader>
-                <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-                <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-                <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-                <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-                <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-                    <value>[base64 mime encoded serialized .NET Framework object]</value>
-                </data>
-                <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-                    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-                    <comment>This is a comment</comment>
-                </data>
-                            
-                There are any number of "resheader" rows that contain simple 
-                name/value pairs.
-                
-                Each data row contains a name, and value. The row also contains a 
-                type or mimetype. Type corresponds to a .NET class that support 
-                text/value conversion through the TypeConverter architecture. 
-                Classes that don't support this are serialized and stored with the 
-                mimetype set.
-                
-                The mimetype is used for serialized objects, and tells the 
-                ResXResourceReader how to depersist the object. This is currently not 
-                extensible. For a given mimetype the value must be set accordingly:
-                
-                Note - application/x-microsoft.net.object.binary.base64 is the format 
-                that the ResXResourceWriter will generate, however the reader can 
-                read any of the formats listed below.
-                
-                mimetype: application/x-microsoft.net.object.binary.base64
-                value   : The object must be serialized with 
-                        : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-                        : and then encoded with base64 encoding.
-                
-                mimetype: application/x-microsoft.net.object.soap.base64
-                value   : The object must be serialized with 
-                        : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-                        : and then encoded with base64 encoding.
-            
-                mimetype: application/x-microsoft.net.object.bytearray.base64
-                value   : The object must be serialized into a byte array 
-                        : using a System.ComponentModel.TypeConverter
-                        : and then encoded with base64 encoding.
-                -->
-  <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root" xmlns="">
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -112,286 +113,80 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>
-            System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b77a5c561934e089
-        </value>
+      <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      </value>
   </resheader>
   <resheader name="writer">
-    <value>
-            System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b77a5c561934e089
-        </value>
+      <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      </value>
   </resheader>
-  <data name="Error_file_not_found" xml:space="preserve">
-        <value>未找到指定的文件。</value>
-    </data>
-  <data name="Status_converting" xml:space="preserve">
-    <value>正在转换...</value>
-</data>
-  <data name="Status_writing" xml:space="preserve">
-    <value>正在写入...</value>
-</data>
-  <data name="Error_song_id_is_not_set" xml:space="preserve">
-    <value>未设置歌曲 ID。</value>
-</data>
-  <data name="Error_audio_file_is_not_set" xml:space="preserve">
-    <value>未设置音频文件。</value>
-</data>
-  <data name="Error_jacket_file_is_not_set" xml:space="preserve">
-    <value>未设置封面文件。</value>
-</data>
-  <data name="Status_reading" xml:space="preserve">
-    <value>正在读取...</value>
-  </data>
-  <data name="Status_converting_chart" xml:space="preserve">
-    <value>正在转换谱面...</value>
-</data>
-  <data name="Error_stage_id_is_not_set" xml:space="preserve">
-    <value>未设置背景 ID。</value>
-  </data>
-  <data name="Status_converting_jacket" xml:space="preserve">
-    <value>正在转换封面...</value>
-</data>
-  <data name="Status_converting_audio" xml:space="preserve">
-    <value>正在转换音频...</value>
-</data>
-  <data name="Error_background_file_is_not_set" xml:space="preserve">
-        <value>未设置背景文件。</value>
-    </data>
-  <data name="Status_Validate" xml:space="preserve">
-        <value>正在验证...</value>
-    </data>
-  <data name="Error_invalid_audio" xml:space="preserve">
-        <value>音频格式无效。</value>
-    </data>
-  <data name="Error_invalid_bg_fx_image" xml:space="preserve">
-        <value>无法读取雪花图片，格式无效。</value>
-    </data>
-  <data name="Error_invalid_bg_image" xml:space="preserve">
-        <value>无法读取背景图片，格式无效。</value>
-    </data>
-  <data name="Status_processing_effects" xml:space="preserve">
-    <value>正在处理效果...</value>
-</data>
-  <data name="Status_processing_background" xml:space="preserve">
-    <value>正在处理背景...</value>
-</data>
-  <data name="Error_no_chunks_found" xml:space="preserve">
-    <value>未在文件中找到任何 {0} 块。</value>
-</data>
-  <data name="Diag_stage_already_exists" xml:space="preserve">
-    <value>已经存在 ID 为 {1} 的背景类型 {0}。</value>
-  </data>
-  <data name="Status_extracting" xml:space="preserve">
-    <value>正在提取...</value>
-</data>
-  <data name="Status_merging" xml:space="preserve">
-    <value>正在合并...</value>
-</data>
-  <data name="Status_parsing" xml:space="preserve">
-        <value>正在读取...</value>
-    </data>
-  <data name="Error_invalid_AirSlide_parent" xml:space="preserve">
-    <value>指定的 AirSlide 父级无效。</value>
-</data>
-  <data name="Error_invalid_Air_parent" xml:space="preserve">
-    <value>指定的 Air 父级无效。</value>
-</data>
-  <data name="Error_soflanArea_has_no_tail" xml:space="preserve">
-    <value>SoflanArea 缺少尾部节点。</value>
-</data>
-  <data name="Error_hold_has_no_tail" xml:space="preserve">
-    <value>Hold 缺少尾部节点。</value>
-</data>
-  <data name="Error_BPM_change_event_not_found_at_0" xml:space="preserve">
-        <value>开头未找到 BPM 事件。</value>
-    </data>
-  <data name="Diag_time_Signature_event_not_found_at_0" xml:space="preserve">
-    <value>开头未找到节拍事件。将默认使用 4/4 拍。</value>
-</data>
-  <data name="Diag_main_timeline_not_found" xml:space="preserve">
-    <value>未找到基准时间轴 {0}。已创建一个速度为 1.0 的新时间轴。</value>
-  </data>
-  <data name="Diag_note_overlapped_in_different_TIL" xml:space="preserve">
-    <value>当前物件与其他时间轴中的物件存在重叠。这可能导致该物件的流速出现问题。</value>
-  </data>
-  <data name="Error_pairing_notes_incompatible" xml:space="preserve">
-    <value>物件之间不兼容，无法配对。</value>
-</data>
-  <data name="Diag_set_length_smaller_than_unit" xml:space="preserve">
-        <value>此物件的长度为 {0}。可能是由于原始物件中存在间距小于 {1} 的节点。</value>
-    </data>
-  <data name="Error_air_parent_null" xml:space="preserve">
-        <value>Air的父级不能为 null。</value>
-    </data>
-  <data name="Error_air_slide_parent_null" xml:space="preserve">
-        <value>AirSlide的父级不能为 null。</value>
-    </data>
-  <data name="Diag_concurrent_ex_effects" xml:space="preserve">
-        <value>同一时间上存在多个不同的 EX 效果：{0}。游戏可能只会显示其中一个。</value>
-    </data>
-  <data name="Overlapping_Air_Parent_Slide" xml:space="preserve">
-        <value>由于同一时间内存在多个重叠的 Slide 节点，无法确定 Air 应从哪个 Slide 节点开始。</value>
-    </data>
-  <data name="Diag_Unrecognized_meta" xml:space="preserve">
-    <value>未知属性标记 {0}，文件位置 0x{1:X2}，数据：{2}。</value>
-  </data>
-  <data name="Error_Unrecognized_event" xml:space="preserve">
-    <value>未知事件标记 {0}，文件位置 0x{1:X2}。</value>
-  </data>
-  <data name="Error_Unrecognized_data_type" xml:space="preserve">
-    <value>未知数据类型 {0}，文件位置 0x{1:X2}。</value>
-  </data>
-  <data name="Diag_Invalid_joint_type_note" xml:space="preserve">
-    <value>{0} 的节点类型无效。</value>
-  </data>
-  <data name="Error_Invalid_Header" xml:space="preserve">
-    <value>谱面文件中的起始头 {0} 无法匹配于 {1}。</value>
-  </data>
-  <data name="Error_Unrecognized_note_type" xml:space="preserve">
-    <value>未知物件类型 {0}，文件位置 0x{1:X2}。</value>
-  </data>
-  <data name="Error_Size_Incompatible" xml:space="preserve">
-    <value>预期为 {1} 读取 {0} 字节，但实际只获取到 {2}。</value>
-  </data>
-  <data name="Error_preview_stop_greater_than_start" xml:space="preserve">
-    <value>预览结束时间必须大于开始时间。</value>
-</data>
-  <data name="Status_normalizing" xml:space="preserve">
-        <value>正在标准化...</value>
-    </data>
-  <data name="Diag_chart_modified" xml:space="preserve">
-    <value>该谱面自上次打开后已被修改，但仍将使用旧的谱面属性。</value>
-  </data>
-  <data name="Diag_no_sortname_provided" xml:space="preserve">
-    <value>未提供排序名称。已根据标题自动生成新的排序名称。</value>
-  </data>
-  <data name="Diag_first_argument_must_int" xml:space="preserve">
-    <value>第一个参数必须是有效的整数。</value>
-  </data>
-  <data name="Diag_string_id_not_found" xml:space="preserve">
-    <value>未能在 "{1}" 中找到指定的 StringID（id / str / data）{0}。请检查输入内容或执行“读取游戏素材”。如果想使用自定义 StringID，请同时提供两者 (例如 "#meta ... [ID] [String]")。</value>
-  </data>
-  <data name="Diag_unknown_tag" xml:space="preserve">
-    <value>未知标记'{0}'。</value>
-  </data>
-  <data name="Status_idle" xml:space="preserve">
-        <value>空闲中</value>
-    </data>
-  <data name="Status_starting" xml:space="preserve">
-    <value>正在启动...</value>
-</data>
-  <data name="Status_done" xml:space="preserve">
-        <value>已完成</value>
-    </data>
-  <data name="Status_error" xml:space="preserve">
-        <value>发生错误</value>
-    </data>
-  <data name="Status_collecting" xml:space="preserve">
-    <value>正在读取...</value>
-</data>
-  <data name="Status_saving" xml:space="preserve">
-    <value>正在保存...</value>
-</data>
-  <data name="Error_Unhandled" xml:space="preserve">
-        <value>爆！</value>
-    </data>
-  <data name="Filefilter_image" xml:space="preserve">
-    <value>图像文件 (*.png;*.jpg;*.jpeg;*.webp)|*.png;*.jpg;*.jpeg;*.webp</value>
-</data>
-  <data name="Filefilter_sound" xml:space="preserve">
-    <value>音频文件 (*.wav;*.ogg;*.mp3)|*.wav;*.ogg;*.mp3</value>
-</data>
-  <data name="Filefilter_afb" xml:space="preserve">
-    <value>Afb 纹理文件 (*.afb)|*.afb</value>
-</data>
-  <data name="Filefilter_c2s" xml:space="preserve">
-    <value>Chunithm 谱面文件 (*.c2s)|*.c2s</value>
-</data>
-  <data name="Filefilter_dds" xml:space="preserve">
-    <value>DirectDraw Surface 文件 (*.dds)|*.dds</value>
-</data>
-  <data name="Filefilter_exe" xml:space="preserve">
-    <value>可执行文件 (*.exe)|*.exe</value>
-</data>
-  <data name="Filefilter_mgxc" xml:space="preserve">
-    <value>Margrete 谱面文件 (*.mgxc)|*.mgxc</value>
-</data>
-  <data name="Status_Searching" xml:space="preserve">
-    <value>搜寻中...</value>
-  </data>
-  <data name="Diag_meta_override_argument_count_mismatch" xml:space="preserve">
-    <value>'#override {0}' 要求1个参数或2个参数。</value>
-  </data>
-  <data name="Error_invalid_sample_rate_48000" xml:space="preserve">
-    <value>无效的采样率: {0}，需要 48000 Hz。</value>
-  </data>
-  <data name="Diag_pv_laterthan_120" xml:space="preserve">
-    <value>音频预览起始时间超过 120 秒。可能导致在游戏在选择此歌曲时卡顿。</value>
-  </data>
-  <data name="Status_Convert_cue_file" xml:space="preserve">
-    <value>正在转换音轨...</value>
-  </data>
   <data name="Button_Convert" xml:space="preserve">
     <value>转换</value>
-</data>
+  </data>
   <data name="Label_Message" xml:space="preserve">
     <value>信息</value>
   </data>
   <data name="Label_Jacket_ID" xml:space="preserve">
     <value>封面 ID</value>
-</data>
+  </data>
   <data name="Label_Parameters" xml:space="preserve">
     <value>参数</value>
-</data>
-  <data name="Button_open_temp_directory" xml:space="preserve">
+  </data>
+    <data name="Button_Open_temp_directory" xml:space="preserve">
     <value>打开临时目录</value>
-</data>
-  <data name="Button_extract_dds_from_afb" xml:space="preserve">
+  </data>
+    <data name="Button_Extract_dds_from_afb" xml:space="preserve">
     <value>从 *.afb 提取 *.dds</value>
-</data>
+  </data>
   <data name="Button_Recollect_A000" xml:space="preserve">
     <value>读取游戏素材</value>
   </data>
   <data name="Label_Not_Available" xml:space="preserve">
     <value>未提供</value>
-</data>
+  </data>
   <data name="Label_Stage_ID" xml:space="preserve">
     <value>背景 ID</value>
-</data>
+  </data>
   <data name="Label_Effects" xml:space="preserve">
     <value>雪花 (256×256)</value>
-</data>
+  </data>
   <data name="Label_NotesField_Line_Color" xml:space="preserve">
-        <value>轨道线颜色</value>
-    </data>
+    <value>轨道线颜色</value>
+  </data>
   <data name="Button_Clear" xml:space="preserve">
     <value>清除</value>
-</data>
+  </data>
   <data name="Button_Generate" xml:space="preserve">
     <value>生成</value>
-</data>
+  </data>
   <data name="Label_Chart" xml:space="preserve">
-        <value>谱面: </value>
-    </data>
+    <value>谱面: </value>
+  </data>
+    <data name="Label_Folder" xml:space="preserve">
+    <value>文件夹: </value>
+  </data>
   <data name="Title_Diagnostics" xml:space="preserve">
     <value>诊断</value>
-</data>
-  <data name="Title_select_the_input_file" xml:space="preserve">
+  </data>
+    <data name="Title_Select_the_input_file" xml:space="preserve">
     <value>选择输入文件</value>
-</data>
-  <data name="Title_select_the_output_folder" xml:space="preserve">
+  </data>
+    <data name="Title_Select_the_output_folder" xml:space="preserve">
     <value>选择输出文件夹</value>
-</data>
-  <data name="Title_select_the_A000_folder" xml:space="preserve">
+  </data>
+    <data name="Title_Select_the_game_folder" xml:space="preserve">
     <value>选择游戏文件夹</value>
   </data>
   <data name="Title_Error" xml:space="preserve">
     <value>错误</value>
-</data>
+  </data>
   <data name="Tab_Workflow" xml:space="preserve">
     <value>大杂烩</value>
+  </data>
+    <data name="Tab_Option" xml:space="preserve">
+    <value>大批量</value>
   </data>
   <data name="Tab_Chart" xml:space="preserve">
     <value>谱面</value>
@@ -408,272 +203,239 @@
   <data name="Tab_Misc" xml:space="preserve">
     <value>其他</value>
   </data>
-  <data name="Label_StackTrace" xml:space="preserve">
-    <value>堆栈</value>
-  </data>
-  <data name="UpdateCheck_Failed" xml:space="preserve">
+    <data name="Update_Failed" xml:space="preserve">
     <value>检查更新失败</value>
-</data>
-  <data name="UpdateCheck_Already_Latest" xml:space="preserve">
+  </data>
+    <data name="Update_Already_Latest" xml:space="preserve">
     <value>当前已是最新版本</value>
-</data>
-  <data name="UpdateCheck_New_Version_Available" xml:space="preserve">
+  </data>
+    <data name="Update_New_Version_Available" xml:space="preserve">
     <value>发现新版本 {0}（点击查看）</value>
-</data>
-  <data name="UpdateCheck_Checking" xml:space="preserve">
+  </data>
+    <data name="Update_Checking" xml:space="preserve">
     <value>正在检查更新...</value>
-</data>
-  <data name="UpdateCheck_Tooltip" xml:space="preserve">
+  </data>
+    <data name="Update_Tooltip" xml:space="preserve">
     <value>点击检查最新版本</value>
-</data>
+  </data>
+    <data name="Button_Copy_Exception" xml:space="preserve">
+    <value>复制错误</value>
+  </data>
   <data name="Button_Close" xml:space="preserve">
-        <value>关闭</value>
-    </data>
-  <data name="Button_Copy_Exception" xml:space="preserve">
-        <value>复制错误</value>
-    </data>
+    <value>关闭</value>
+  </data>
   <data name="Label_Background" xml:space="preserve">
     <value>背景 (1920×1080): </value>
   </data>
   <data name="Label_Path" xml:space="preserve">
-        <value>路径</value>
-    </data>
-  <data name="Label_Details" xml:space="preserve">
-    <value>详细</value>
-  </data>
-  <data name="Compatible_with_Margrete" xml:space="preserve">
-        <value>兼容 Margrete {0}</value>
-    </data>
-  <data name="Label_Folder" xml:space="preserve">
-        <value>文件夹: </value>
-    </data>
-  <data name="Tab_Option" xml:space="preserve">
-    <value>大批量</value>
+    <value>路径</value>
   </data>
   <data name="Label_Time" xml:space="preserve">
     <value>时间</value>
   </data>
-  <data name="Button_Reload" xml:space="preserve">
-    <value>重载</value>
+    <data name="Label_Details" xml:space="preserve">
+    <value>详细</value>
   </data>
-  <data name="Diag_file_ignored_due_to_id_missing" xml:space="preserve">
-    <value>该文件因缺少歌曲 ID 而被忽略。请在Margrete中为歌曲 ID 设置一个数字。</value>
+    <data name="Window_Title" xml:space="preserve">
+    <value>{0} {1}</value>
   </data>
-  <data name="Diag_duplicate_id_and_difficulty" xml:space="preserve">
-    <value>相同 ID 和难度的多个谱面存在，将使用最后扫描到的文件。</value>
-  </data>
-  <data name="Error_no_charts_are_found_directory" xml:space="preserve">
+    <data name="Error_No_charts_are_found_directory" xml:space="preserve">
     <value>该目录中未找到任何谱面文件。</value>
   </data>
-  <data name="Diag_we_chart_must_be_unique_id" xml:space="preserve">
-        <value>World's End 谱面必须使用独立 Song ID，否则其他难度谱面将无法在普通分类中显示。</value>
-    </data>
-  <data name="Diag_more_than_one_chart_marked_main" xml:space="preserve">
+    <data name="Warn_We_chart_must_be_unique_id" xml:space="preserve">
+    <value>World's End 谱面必须使用独立 Song ID，否则其他难度谱面将无法在普通分类中显示。</value>
+  </data>
+    <data name="Warn_More_than_one_chart_marked_main" xml:space="preserve">
     <value>该歌曲 ID 下的多个谱面已在注释 (Comment) 中被标记为 “#meta main”。基准难度将会设置为首个找到的此标签的谱面。</value>
   </data>
-  <data name="Diag_no_chart_marked_main" xml:space="preserve">
+    <data name="Warn_No_chart_marked_main" xml:space="preserve">
     <value>该歌曲ID下没有谱面被标记为“基准难度”，将默认选择难度最高的谱面。如需明确指定基准难度，请在目标谱面的注释 (Comment) 中添加 #meta main 标签。</value>
   </data>
-  <data name="Alert_edit_notice" xml:space="preserve">
+    <data name="Button_Reload" xml:space="preserve">
+    <value>重载</value>
+  </data>
+    <data name="Button_Help" xml:space="preserve">
+    <value>帮助</value>
+  </data>
+    <data name="Alert_Edit_notice" xml:space="preserve">
     <value>请事先在 Margrete 中编辑谱面属性。</value>
   </data>
   <data name="Label_Properties" xml:space="preserve">
-        <value>属性</value>
-    </data>
+    <value>属性</value>
+  </data>
   <data name="Label_Image" xml:space="preserve">
-        <value>图片: </value>
-    </data>
+    <value>图片: </value>
+  </data>
   <data name="Label_Audio" xml:space="preserve">
-        <value>音频: </value>
-    </data>
+    <value>音频: </value>
+  </data>
   <data name="Label_Settings" xml:space="preserve">
-        <value>设置</value>
-    </data>
+    <value>设置</value>
+  </data>
   <data name="Label_Preview" xml:space="preserve">
-        <value>预览</value>
-    </data>
-  <data name="Alert_file_changed" xml:space="preserve">
-        <value>文件已于 {0:HH:mm:ss} 修改。重新加载以使用最新版本。</value>
-    </data>
-  <data name="Message_discard_changes" xml:space="preserve">
-        <value>是否放弃更改？</value>
-    </data>
-  <data name="Error_Chart_Failed" xml:space="preserve">
-        <value>转换谱面失败。</value>
-    </data>
-  <data name="Error_Jacket_Failed" xml:space="preserve">
-        <value>转换封面失败。</value>
-    </data>
-  <data name="Error_Music_Failed" xml:space="preserve">
-        <value>转换音乐失败。</value>
-    </data>
-  <data name="Error_Stage_Failed" xml:space="preserve">
-        <value>转换背景失败。</value>
-    </data>
+    <value>预览</value>
+  </data>
+    <data name="Alert_File_changed" xml:space="preserve">
+    <value>文件已于 {0:HH:mm:ss} 修改。重新加载以使用最新版本。</value>
+  </data>
   <data name="Category_Song" xml:space="preserve">
     <value>歌曲</value>
-</data>
+  </data>
   <data name="Display_SongId" xml:space="preserve">
     <value>歌曲 ID</value>
-</data>
+  </data>
   <data name="Description_SongId" xml:space="preserve">
-        <value>歌曲 ID 将从 Margrete 的 ID 自动转换。</value>
-    </data>
+    <value>歌曲 ID 将从 Margrete 的 ID 自动转换。</value>
+  </data>
   <data name="Display_Title" xml:space="preserve">
     <value>歌曲标题</value>
-</data>
+  </data>
   <data name="Display_SortName" xml:space="preserve">
     <value>排序名称</value>
-</data>
+  </data>
   <data name="Description_SortName" xml:space="preserve">
     <value>用于游戏中歌曲列表的排序。</value>
-</data>
+  </data>
   <data name="Display_Artist" xml:space="preserve">
     <value>艺术家</value>
-</data>
+  </data>
   <data name="Category_BGM" xml:space="preserve">
     <value>音乐</value>
-</data>
+  </data>
   <data name="Display_BgmPreviewStart" xml:space="preserve">
     <value>预览起始时间（秒）</value>
-</data>
+  </data>
   <data name="Display_BgmPreviewStop" xml:space="preserve">
     <value>预览结束时间（秒）</value>
-</data>
+  </data>
   <data name="Display_BgmFile" xml:space="preserve">
     <value>背景音乐文件</value>
-</data>
+  </data>
   <data name="Description_BgmFile" xml:space="preserve">
-        <value>为了减少游戏与 Margrete 之间的音频延迟差异，建议优先使用采样率为 48000Hz 的 .wav 或 .ogg 音频文件。</value>
-    </data>
+    <value>为了减少游戏与 Margrete 之间的音频延迟差异，建议优先使用采样率为 48000Hz 的 .wav 或 .ogg 音频文件。</value>
+  </data>
   <data name="Category_Sync" xml:space="preserve">
     <value>同步</value>
-</data>
+  </data>
   <data name="Display_RealOffset" xml:space="preserve">
-        <value>实际偏移（秒）</value>
-    </data>
+    <value>实际偏移（秒）</value>
+  </data>
   <data name="Description_RealOffset" xml:space="preserve">
-        <value>最终应用的时间偏移量（秒）。正值表示延迟播放，负值表示提前播放。</value>
-    </data>
+    <value>最终应用的时间偏移量（秒）。正值表示延迟播放，负值表示提前播放。</value>
+  </data>
   <data name="Display_ManualOffset" xml:space="preserve">
     <value>手动偏移（秒）</value>
-</data>
+  </data>
+    <data name="Description_ManualOffset" xml:space="preserve">
+    <value>请在 Margrete 中设置此项目。用户设置的时间偏移量（秒）。正值表示延迟播放，负值表示提前播放。</value>
+  </data>
   <data name="Display_InsertBlankMeasure" xml:space="preserve">
-        <value>开头添加空白小节</value>
-    </data>
+    <value>开头添加空白小节</value>
+  </data>
   <data name="Description_InsertBlankMeasure" xml:space="preserve">
     <value>请在 Margrete 中设置此项目 (Insert a blank bar before the first measure)。启用后将在谱面和音乐开头添加一个空白小节。</value>
-</data>
+  </data>
   <data name="Display_BgmInitialBpm" xml:space="preserve">
     <value>初始 BPM</value>
-</data>
+  </data>
   <data name="Description_BgmInitialBpm" xml:space="preserve">
     <value>谱面起始 BPM 值，用于计算实际偏移量。</value>
-</data>
+  </data>
   <data name="Display_BgmInitialTimeSignature" xml:space="preserve">
     <value>初始拍号</value>
-</data>
+  </data>
   <data name="Description_BgmInitialTimeSignature" xml:space="preserve">
-        <value>谱面起始拍号（小节节拍数/音符时值），用于计算实际偏移量。</value>
-    </data>
+    <value>谱面起始拍号（小节节拍数/音符时值），用于计算实际偏移量。</value>
+  </data>
   <data name="Display_Numerator" xml:space="preserve">
     <value>拍号分子</value>
-</data>
+  </data>
   <data name="Display_Denominator" xml:space="preserve">
     <value>拍号分母</value>
-</data>
+  </data>
   <data name="Category_Chart" xml:space="preserve">
     <value>谱面</value>
-</data>
+  </data>
   <data name="Display_Designer" xml:space="preserve">
     <value>谱面作者</value>
-</data>
+  </data>
   <data name="Display_Difficulty" xml:space="preserve">
     <value>难度类别</value>
-</data>
+  </data>
+    <data name="Display_UnlockEventID" xml:space="preserve">
+    <value>谱面解锁事件 ID</value>
+  </data>
+    <data name="Description_UnlockEventID" xml:space="preserve">
+    <value>用于解锁该谱面的事件 ID。如果不填写此项，将不会生成对应的 Event.xml 文件。</value>
+  </data>
   <data name="Display_Level" xml:space="preserve">
     <value>难度定数</value>
-</data>
+  </data>
   <data name="Display_ReleaseDate" xml:space="preserve">
     <value>发布时间</value>
-</data>
+  </data>
   <data name="Display_DisplayBPM" xml:space="preserve">
-        <value>显示 BPM</value>
-    </data>
-  <data name="Display_UnlockEventID" xml:space="preserve">
-        <value>谱面解锁事件 ID</value>
-    </data>
-  <data name="Description_UnlockEventID" xml:space="preserve">
-        <value>用于解锁该谱面的事件 ID。如果不填写此项，将不会生成对应的 Event.xml 文件。</value>
-    </data>
-  <data name="Display_WorldsEndTag" xml:space="preserve">
-    <value>World's End 类型</value>
-</data>
-  <data name="Display_WorldsEndDifficulty" xml:space="preserve">
-    <value>World's End 星级</value>
-</data>
-  <data name="Category_Display" xml:space="preserve">
-    <value>素材</value>
-</data>
-  <data name="Display_JacketFile" xml:space="preserve">
-    <value>封面图片</value>
-</data>
-  <data name="Display_BackgroundFile" xml:space="preserve">
-    <value>背景图片</value>
-</data>
-  <data name="Display_BackgroundStage" xml:space="preserve">
-    <value>背景类型</value>
-</data>
-  <data name="Description_ManualOffset" xml:space="preserve">
-        <value>请在 Margrete 中设置此项目。用户设置的时间偏移量（秒）。正值表示延迟播放，负值表示提前播放。</value>
-    </data>
-  <data name="Category_Misc" xml:space="preserve">
-  <value>其他</value>
-</data>
-  <data name="Display_IsCustomStage" xml:space="preserve">
-        <value>使用自定义背景</value>
-    </data>
-  <data name="Display_StageId" xml:space="preserve">
-        <value>背景 ID</value>
-    </data>
-  <data name="Display_NotesFieldLine" xml:space="preserve">
-        <value>轨道线颜色</value>
-    </data>
-  <data name="Description_DisplayBPM" xml:space="preserve">
-        <value>选曲界面中显示的BPM</value>
-    </data>
-  <data name="Display_Tick" xml:space="preserve">
-        <value>时间</value>
-    </data>
-  <data name="Display_MainTil" xml:space="preserve">
+    <value>显示 BPM</value>
+  </data>
+    <data name="Display_MainTil" xml:space="preserve">
     <value>基准时间轴</value>
   </data>
-  <data name="Description_MainTil" xml:space="preserve">
+    <data name="Description_MainTil" xml:space="preserve">
     <value>请在 Margrete 中设置此项目 (Base timeline)。决定哪个时间轴将会影响小节线下落速度及AIR动画速度。默认值为0。</value>
   </data>
+  <data name="Display_WorldsEndTag" xml:space="preserve">
+    <value>World's End 类型</value>
+  </data>
+  <data name="Display_WorldsEndDifficulty" xml:space="preserve">
+    <value>World's End 星级</value>
+  </data>
+  <data name="Category_Display" xml:space="preserve">
+    <value>素材</value>
+  </data>
+  <data name="Display_JacketFile" xml:space="preserve">
+    <value>封面图片</value>
+  </data>
+  <data name="Display_BackgroundFile" xml:space="preserve">
+    <value>背景图片</value>
+  </data>
+  <data name="Display_BackgroundStage" xml:space="preserve">
+    <value>背景类型</value>
+  </data>
+  <data name="Category_Misc" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="Display_IsCustomStage" xml:space="preserve">
+    <value>使用自定义背景</value>
+  </data>
+  <data name="Display_StageId" xml:space="preserve">
+    <value>背景 ID</value>
+  </data>
+  <data name="Display_NotesFieldLine" xml:space="preserve">
+    <value>轨道线颜色</value>
+  </data>
+  <data name="Description_DisplayBPM" xml:space="preserve">
+    <value>选曲界面中显示的BPM</value>
+  </data>
   <data name="Display_FilePath" xml:space="preserve">
-        <value>文件路径</value>
-    </data>
+    <value>文件路径</value>
+  </data>
   <data name="Description_BackgroundStage" xml:space="preserve">
-        <value>该项用于设定游戏中的背景。如需快速设置，请在谱面属性的注释 (Comment) 中添加 “#meta stage [StringID]” (将 [StringID] 替换为背景的 ID 或名称)。</value>
-    </data>
+    <value>该项用于设定游戏中的背景。如需快速设置，请在谱面属性的注释 (Comment) 中添加 “#meta stage [StringID]” (将 [StringID] 替换为背景的 ID 或名称)。</value>
+  </data>
+    <data name="Category_Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
   <data name="Display_MainDifficulty" xml:space="preserve">
     <value>参考基准</value>
   </data>
   <data name="Description_MainDifficulty" xml:space="preserve">
     <value>用于指定哪个难度下的谱面属性将会被作为基准。</value>
   </data>
-  <data name="Category_Settings" xml:space="preserve">
-    <value>设置</value>
-  </data>
   <data name="Display_OptionName" xml:space="preserve">
     <value>Option 名称</value>
   </data>
   <data name="Display_ConvertChart" xml:space="preserve">
     <value>转换谱面</value>
-  </data>
-  <data name="Display_GenerateMusicXml" xml:space="preserve">
-    <value>生成 Music.xml</value>
   </data>
   <data name="Display_ConvertAudio" xml:space="preserve">
     <value>转换音频</value>
@@ -687,6 +449,9 @@
   <data name="Display_GenerateEventXml" xml:space="preserve">
     <value>生成 Event.xml</value>
   </data>
+    <data name="Display_ReleaseTagXml" xml:space="preserve">
+    <value>生成 ReleaseTag.xml</value>
+  </data>
   <data name="Display_UltimaEventId" xml:space="preserve">
     <value>Ultima 解锁事件 ID</value>
   </data>
@@ -696,92 +461,226 @@
   <data name="Description_UnlockEventIDOption" xml:space="preserve">
     <value>用于解锁这些谱面的事件 ID。</value>
   </data>
-  <data name="Description_NormalizeBgm" xml:space="preserve">
-        <value>将音乐格式转为 16-bit, 48kHz PCM，并自动统一音量大小。如果文件已经是这个格式，可以关闭此功能。如需快速设置，请在谱面属性的注释 (Comment) 中添加 “#meta normalize false”。</value>
-    </data>
-  <data name="Display_NormalizeBgm" xml:space="preserve">
-    <value>标准化音频格式</value>
-  </data>
   <data name="Description_Genre" xml:space="preserve">
     <value>如需快速设置，请在谱面属性的注释 (Comment) 中添加 “#meta genre [StringID]” (将 [StringID] 替换为背景的 ID 或名称)。</value>
   </data>
   <data name="Display_Genre" xml:space="preserve">
     <value>流派</value>
   </data>
-  <data name="Error_but_nobody_came" xml:space="preserve">
+    <data name="Error_Noop" xml:space="preserve">
     <value>* 但是没有人来。</value>
-  </data>
-  <data name="Status_convert_progress" xml:space="preserve">
-    <value>转换 {0}/{1}...</value>
   </data>
   <data name="Display_BatchSize" xml:space="preserve">
     <value>同时转换任务数</value>
-</data>
-  <data name="Status_Converted" xml:space="preserve">
-        <value>已转换</value>
-    </data>
-  <data name="Status_Converted_Audio" xml:space="preserve">
-        <value>音源已转换</value>
-    </data>
-  <data name="Status_Checked" xml:space="preserve">
-        <value>已检查</value>
-    </data>
-  <data name="Error_invalid_jk_image" xml:space="preserve">
-        <value>无法读取封面图片，格式无效。</value>
-    </data>
-  <data name="Display_ReleaseTagXml" xml:space="preserve">
-    <value>生成 ReleaseTag.xml</value>
   </data>
-  <data name="Error_interop_Jacket" xml:space="preserve">
-    <value>封面转换时发生了未知错误。</value>
+    <data name="Error_File_not_found" xml:space="preserve">
+    <value>未找到指定的文件。</value>
   </data>
-  <data name="Error_interop_bg" xml:space="preserve">
-    <value>背景转换时发生了未知错误。</value>
+    <data name="Status_Writing" xml:space="preserve">
+    <value>正在写入...</value>
   </data>
-  <data name="Error_iinterop_afb" xml:space="preserve">
-    <value>afb 提取时发生了未知错误。</value>
+    <data name="Error_Song_id_is_not_set" xml:space="preserve">
+    <value>未设置歌曲 ID。</value>
   </data>
-  <data name="Error_no_audio_stream" xml:space="preserve">
-    <value>文件中未找到音频流。</value>
+    <data name="Error_Audio_file_is_not_set" xml:space="preserve">
+    <value>未设置音频文件。</value>
   </data>
-  <data name="Error_audio_format_not_supported" xml:space="preserve">
+    <data name="Error_Jacket_file_is_not_set" xml:space="preserve">
+    <value>未设置封面文件。</value>
+  </data>
+    <data name="Status_Reading" xml:space="preserve">
+    <value>正在读取...</value>
+  </data>
+    <data name="Status_Converting_chart" xml:space="preserve">
+    <value>正在转换谱面...</value>
+  </data>
+    <data name="Error_Stage_id_is_not_set" xml:space="preserve">
+    <value>未设置背景 ID。</value>
+  </data>
+    <data name="Error_Background_file_is_not_set" xml:space="preserve">
+    <value>未设置背景文件。</value>
+  </data>
+    <data name="Status_Converting_jacket" xml:space="preserve">
+    <value>正在转换封面...</value>
+  </data>
+    <data name="Status_Converting_audio" xml:space="preserve">
+    <value>正在转换音频...</value>
+  </data>
+    <data name="Status_Validate" xml:space="preserve">
+    <value>正在验证...</value>
+  </data>
+    <data name="Error_Invalid_bg_image" xml:space="preserve">
+    <value>无法读取背景图片，格式无效。</value>
+  </data>
+    <data name="Error_Invalid_jk_image" xml:space="preserve">
+    <value>无法读取封面图片，格式无效。</value>
+  </data>
+    <data name="Error_Invalid_bg_fx_image" xml:space="preserve">
+    <value>无法读取雪花图片，格式无效。</value>
+  </data>
+    <data name="Error_Invalid_audio" xml:space="preserve">
+    <value>音频格式无效。</value>
+  </data>
+    <data name="Status_Convert_background" xml:space="preserve">
+    <value>正在转换背景...</value>
+  </data>
+    <data name="Warn_Stage_already_exists" xml:space="preserve">
+    <value>已经存在 ID 为 {1} 的背景类型 {0}。</value>
+  </data>
+    <data name="Status_Extracting" xml:space="preserve">
+    <value>正在提取...</value>
+  </data>
+    <data name="MgCrit_Invalid_AirSlide_parent" xml:space="preserve">
+    <value>指定的 AirSlide 父级无效。</value>
+  </data>
+    <data name="MgCrit_Invalid_Air_parent" xml:space="preserve">
+    <value>指定的 Air 父级无效。</value>
+  </data>
+    <data name="MgCrit_SoflanArea_has_no_tail" xml:space="preserve">
+    <value>SoflanArea 缺少尾部节点。</value>
+  </data>
+    <data name="MgCrit_Hold_has_no_tail" xml:space="preserve">
+    <value>Hold 缺少尾部节点。</value>
+  </data>
+    <data name="Mg_Head_BPM_not_found" xml:space="preserve">
+    <value>开头未找到 BPM 事件。</value>
+  </data>
+    <data name="Mg_Head_Time_Signature_event_not_found" xml:space="preserve">
+    <value>开头未找到节拍事件。将默认使用 4/4 拍。</value>
+  </data>
+    <data name="Mg_Main_timeline_not_found" xml:space="preserve">
+    <value>未找到基准时间轴 {0}。已创建一个速度为 1.0 的新时间轴。</value>
+  </data>
+    <data name="Mg_Note_overlapped_in_different_TIL" xml:space="preserve">
+    <value>当前物件与其他时间轴中的物件存在重叠。这可能导致该物件的流速出现问题。</value>
+  </data>
+    <data name="MgCrit_Pairing_notes_incompatible" xml:space="preserve">
+    <value>物件之间不兼容，无法配对。</value>
+  </data>
+    <data name="MgCrit_Air_parent_null" xml:space="preserve">
+    <value>Air的父级不能为 null。</value>
+  </data>
+    <data name="MgCrit_Air_slide_parent_null" xml:space="preserve">
+    <value>AirSlide的父级不能为 null。</value>
+  </data>
+    <data name="Mg_Length_smaller_than_unit" xml:space="preserve">
+    <value>此物件的长度为 {0}。可能是由于原始物件中存在间距小于 1/{1} 的节点。</value>
+  </data>
+    <data name="Mg_Overlapping_air_parent_slide" xml:space="preserve">
+    <value>由于同一时间内存在多个重叠的 Slide 节点，无法确定 Air 应从哪个 Slide 节点开始。请尝试在时间上隔开两者。</value>
+  </data>
+    <data name="Mg_Unrecognized_meta" xml:space="preserve">
+    <value>未知属性标记 {0}，文件位置 0x{1:X2}，数据：{2}。</value>
+  </data>
+    <data name="MgCrit_Unrecognized_event" xml:space="preserve">
+    <value>未知事件标记 {0}，文件位置 0x{1:X2}。</value>
+  </data>
+    <data name="MgCrit_Unrecognized_data_type" xml:space="preserve">
+    <value>未知数据类型 {0}，文件位置 0x{1:X2}。</value>
+  </data>
+    <data name="Error_Invalid_Header" xml:space="preserve">
+    <value>谱面文件中的起始头 {0} 无法匹配于 {1}。</value>
+  </data>
+    <data name="Mg_Invalid_joint_type_note" xml:space="preserve">
+    <value>{0} 的节点类型无效。</value>
+  </data>
+    <data name="Mg_Unrecognized_note_type" xml:space="preserve">
+    <value>未知物件类型 {0}，文件位置 0x{1:X2}。</value>
+  </data>
+    <data name="Error_Size_Incompatible" xml:space="preserve">
+    <value>预期为 {1} 读取 {0} 字节，但实际只获取到 {2}。</value>
+  </data>
+    <data name="Error_Preview_stop_greater_than_start" xml:space="preserve">
+    <value>预览结束时间必须大于开始时间。</value>
+  </data>
+    <data name="Mg_No_sortname_provided" xml:space="preserve">
+    <value>未提供排序名称。已根据标题自动生成新的排序名称。</value>
+  </data>
+    <data name="Mg_Meta_override_argument_count_mismatch" xml:space="preserve">
+    <value>'#override {0}' 要求1个参数或2个参数。</value>
+  </data>
+    <data name="Mg_String_id_not_found" xml:space="preserve">
+    <value>未能在 "{1}" 中找到指定的 StringID（id / str / data）{0}。请检查输入内容或执行“读取游戏素材”。如果想使用自定义 StringID，请同时提供两者 (例如 "#meta ... [ID] [String]")。</value>
+  </data>
+    <data name="Mg_Unknown_tag" xml:space="preserve">
+    <value>未知标记'{0}'。</value>
+  </data>
+    <data name="Status_Starting" xml:space="preserve">
+    <value>正在启动...</value>
+  </data>
+    <data name="Status_Done" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+    <data name="Status_Error" xml:space="preserve">
+    <value>发生错误</value>
+  </data>
+    <data name="Status_collecting" xml:space="preserve">
+    <value>正在读取...</value>
+  </data>
+    <data name="Status_Saving" xml:space="preserve">
+    <value>正在保存...</value>
+  </data>
+    <data name="Status_Idle" xml:space="preserve">
+    <value>空闲中</value>
+  </data>
+    <data name="Error_Unhandled" xml:space="preserve">
+    <value>爆！</value>
+  </data>
+    <data name="Filefilter_image" xml:space="preserve">
+    <value>图像文件 (*.png;*.jpg;*.jpeg;*.webp)|*.png;*.jpg;*.jpeg;*.webp</value>
+  </data>
+    <data name="Filefilter_sound" xml:space="preserve">
+    <value>音频文件 (*.wav;*.ogg;*.mp3)|*.wav;*.ogg;*.mp3</value>
+  </data>
+    <data name="Filefilter_afb" xml:space="preserve">
+    <value>Afb 纹理文件 (*.afb)|*.afb</value>
+  </data>
+    <data name="Filefilter_c2s" xml:space="preserve">
+    <value>Chunithm 谱面文件 (*.c2s)|*.c2s</value>
+  </data>
+    <data name="Filefilter_dds" xml:space="preserve">
+    <value>DirectDraw Surface 文件 (*.dds)|*.dds</value>
+  </data>
+    <data name="Filefilter_exe" xml:space="preserve">
+    <value>可执行文件 (*.exe)|*.exe</value>
+  </data>
+    <data name="Filefilter_mgxc" xml:space="preserve">
+    <value>Margrete 谱面文件 (*.mgxc)|*.mgxc</value>
+  </data>
+    <data name="Status_Searching" xml:space="preserve">
+    <value>搜寻中...</value>
+  </data>
+    <data name="Warn_Preview_later_than_120" xml:space="preserve">
+    <value>音频预览起始时间超过 120 秒。可能导致在游戏在选择此歌曲时卡顿。</value>
+  </data>
+    <data name="Status_Converted" xml:space="preserve">
+    <value>已转换</value>
+  </data>
+    <data name="Status_Checked" xml:space="preserve">
+    <value>已检查</value>
+  </data>
+    <data name="Error_Audio_format_not_supported" xml:space="preserve">
     <value>不支持的音频格式，仅支持wav格式（pcm_s16le 48000Hz）。</value>
   </data>
-  <data name="Error_ffmpeg_failed" xml:space="preserve">
-    <value>ffmpeg 错误退出: {0}</value>
-  </data>
-  <data name="Error_ffprobe_failed" xml:space="preserve">
-    <value>ffprobe 错误退出: {0}</value>
-  </data>
-  <data name="Error_ffprobe_failed_parse" xml:space="preserve">
-    <value>读取 ffprobe 数据失败：{0}
-输出：{1}</value>
-  </data>
-  <data name="Error_ffmpeg_failed_parse" xml:space="preserve">
-    <value>读取 ffmpeg 数据失败：{0}</value>
-  </data>
-  <data name="Button_copy" xml:space="preserve">
+    <data name="Button_Copy" xml:space="preserve">
     <value>复制</value>
   </data>
-  <data name="HintW_title" xml:space="preserve">
-    <value>缺少必要组件</value>
-  </data>
-  <data name="HintW_body_1" xml:space="preserve">
-    <value>未能系统环境中检测到 ffmpeg.exe 和 ffprobe.exe。</value>
-  </data>
-  <data name="HintW_body_2" xml:space="preserve">
-    <value>请安装 FFmpeg 以正常使用本工具。</value>
-  </data>
-  <data name="HintW_body_3" xml:space="preserve">
-    <value>具体安装说明，请参阅文档。</value>
-  </data>
-  <data name="HintW_open" xml:space="preserve">
-    <value>打开文档</value>
-  </data>
-  <data name="Error_Mua_command_failed" xml:space="preserve">
+    <data name="Error_Command_failed" xml:space="preserve">
     <value>命令执行失败。</value>
   </data>
-  <data name="Button_Help" xml:space="preserve">
-    <value>帮助</value>
+    <data name="Link_Documentation" xml:space="preserve">
+    <value>https://github.com/Foahh/PenguinTools/wiki/%E4%B8%AD%E6%96%87</value>
+  </data>
+    <data name="Error_File_ignored_due_to_id_missing" xml:space="preserve">
+    <value>该文件因缺少歌曲 ID 而被忽略。请在Margrete中为歌曲 ID 设置一个数字。</value>
+  </data>
+    <data name="Mg_First_argument_must_int" xml:space="preserve">
+    <value>第一个参数必须是有效的整数。</value>
+  </data>
+    <data name="Warn_Duplicate_id_and_difficulty" xml:space="preserve">
+    <value>相同 ID 和难度的多个谱面存在，将使用最后扫描到的文件。</value>
+  </data>
+    <data name="Mg_Concurrent_ex_effects" xml:space="preserve">
+    <value>同一时间上存在多个不同的 EX 效果：{0}。游戏可能只会显示其中一个。</value>
   </data>
 </root>

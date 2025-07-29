@@ -48,7 +48,7 @@ public partial class StageViewModel : ActionViewModel
         var dlg = new OpenFolderDialog
         {
             InitialDirectory = Path.GetDirectoryName((string?)BackgroundPath),
-            Title = Strings.Title_select_the_output_folder,
+            Title = Strings.Title_Select_the_output_folder,
             Multiselect = false,
             ValidateNames = true
         };

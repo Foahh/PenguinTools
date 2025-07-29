@@ -84,7 +84,7 @@ public partial class MgxcParser
             Tasks.Add(Manipulate.IsAudioValidAsync(Mgxc.Meta.FullBgmFilePath).ContinueWith(p =>
             {
                 if (p.Result.IsSuccess) return;
-                Diagnostic.Report(Severity.Warning, Strings.Error_invalid_audio, Mgxc.Meta.FullBgmFilePath, target: p.Result);
+                Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_audio, Mgxc.Meta.FullBgmFilePath, target: p.Result);
                 Mgxc.Meta.BgmFilePath = string.Empty;
             }));
         }
@@ -106,7 +106,7 @@ public partial class MgxcParser
             Tasks.Add(Manipulate.IsImageValidAsync(Mgxc.Meta.FullJacketFilePath).ContinueWith(p =>
             {
                 if (p.Result.IsSuccess) return;
-                Diagnostic.Report(Severity.Warning, Strings.Error_invalid_jk_image, Mgxc.Meta.FullJacketFilePath, target: p.Result);
+                Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_jk_image, Mgxc.Meta.FullJacketFilePath, target: p.Result);
                 Mgxc.Meta.JacketFilePath = string.Empty;
             }));
         }
@@ -232,7 +232,7 @@ public partial class MgxcParser
         }
         else
         {
-            var msg = string.Format(Strings.Diag_Unrecognized_meta, name, br.BaseStream.Position, data);
+            var msg = string.Format(Strings.Mg_Unrecognized_meta, name, br.BaseStream.Position, data);
             Diagnostic.Report(Severity.Information, msg);
         }
     }

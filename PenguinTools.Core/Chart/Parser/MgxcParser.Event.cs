@@ -65,7 +65,7 @@ public partial class MgxcParser
 
         if (e == null)
         {
-            var msg = string.Format(Strings.Error_Unrecognized_event, name, br.BaseStream.Position);
+            var msg = string.Format(Strings.MgCrit_Unrecognized_event, name, br.BaseStream.Position);
             throw new DiagnosticException(msg, Mgxc);
         }
 

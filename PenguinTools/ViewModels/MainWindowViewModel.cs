@@ -34,17 +34,17 @@ public partial class MainWindowViewModel : ViewModel
     [RelayCommand]
     public async Task UpdateCheck()
     {
-        UpdateStatus = Strings.UpdateCheck_Checking;
+        UpdateStatus = Strings.Update_Checking;
         try
         {
             var (result, url) = await updateService.CheckForUpdatesAsync();
             LatestVersion = result;
             DownloadUrl = url;
-            UpdateStatus = IsUpdateAvailable ? string.Format(Strings.UpdateCheck_New_Version_Available, LatestVersion.ToString(3)) : Strings.UpdateCheck_Already_Latest;
+            UpdateStatus = IsUpdateAvailable ? string.Format(Strings.Update_New_Version_Available, LatestVersion.ToString(3)) : Strings.Update_Already_Latest;
         }
         catch
         {
-            UpdateStatus = Strings.UpdateCheck_Failed;
+            UpdateStatus = Strings.Update_Failed;
             LatestVersion = null;
             DownloadUrl = null;
         }

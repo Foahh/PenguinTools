@@ -61,7 +61,7 @@ public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null
         if (string.IsNullOrWhiteSpace(Mgxc.Meta.SortName))
         {
             Mgxc.Meta.SortName = GetSortName(Mgxc.Meta.Title);
-            Diagnostic.Report(Severity.Information, Strings.Diag_no_sortname_provided);
+            Diagnostic.Report(Severity.Information, Strings.Mg_No_sortname_provided);
         }
 
         if (Mgxc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(Mgxc.Meta.FullBgiFilePath))
@@ -70,7 +70,7 @@ public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null
             {
                 if (p.Result.IsSuccess) return;
                 Mgxc.Meta.IsCustomStage = false;
-                Diagnostic.Report(Severity.Warning, Strings.Error_invalid_bg_image, Mgxc.Meta.FullBgiFilePath, target: p.Result);
+                Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_bg_image, Mgxc.Meta.FullBgiFilePath, target: p.Result);
                 Mgxc.Meta.BgiFilePath = string.Empty;
             }));
         }
@@ -79,7 +79,7 @@ public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null
     private void ProcessEvent()
     {
         var bpmEvents = Mgxc.Events.Children.OfType<mg.BpmEvent>().OrderBy(e => e.Tick).ToList();
-        if (bpmEvents.Count <= 0 || bpmEvents[0].Tick.Original != 0) throw new DiagnosticException(Strings.Error_BPM_change_event_not_found_at_0);
+        if (bpmEvents.Count <= 0 || bpmEvents[0].Tick.Original != 0) throw new DiagnosticException(Strings.Mg_Head_BPM_not_found);
 
         var beatEvents = Mgxc.Events.Children.OfType<mg.BeatEvent>().OrderBy(e => e.Bar).ToList();
         if (beatEvents.Count <= 0 || beatEvents[0].Bar != 0)
@@ -91,7 +91,7 @@ public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null
                 Denominator = 4
             }, bpmEvents.FirstOrDefault());
             beatEvents = [..Mgxc.Events.Children.OfType<mg.BeatEvent>().OrderBy(e => e.Bar)];
-            Diagnostic.Report(Severity.Information, Strings.Diag_time_Signature_event_not_found_at_0);
+            Diagnostic.Report(Severity.Information, Strings.Mg_Head_Time_Signature_event_not_found);
         }
 
         var initBeat = beatEvents[0];
@@ -145,7 +145,7 @@ public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null
         {
             if (effects.Count <= 1) continue;
             var str = string.Join(", ", effects.Select(e => e.ToString()));
-            var msg = string.Format(Strings.Diag_concurrent_ex_effects, str);
+            var msg = string.Format(Strings.Mg_Concurrent_ex_effects, str);
             Diagnostic.Report(Severity.Information, msg, tick.Original);
         }
     }

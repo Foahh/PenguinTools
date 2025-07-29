@@ -33,7 +33,7 @@ public class ProcessCommandResult
     internal void ThrowIfFailed()
     {
         if (!IsFailure) return;
-        throw new DiagnosticException(Strings.Error_Mua_command_failed, this);
+        throw new DiagnosticException(Strings.Error_Command_failed, this);
     }
 }
 

@@ -13,7 +13,7 @@ public partial class ActionService : ObservableObject
     protected static Dispatcher Dispatcher => Application.Current.Dispatcher;
 
     [ObservableProperty] public partial bool IsBusy { get; set; }
-    [ObservableProperty] public partial string Status { get; set; } = Strings.Status_idle;
+    [ObservableProperty] public partial string Status { get; set; } = Strings.Status_Idle;
     [ObservableProperty] public partial DateTime StatusTime { get; set; } = DateTime.Now;
 
     public bool CanRun()
@@ -41,9 +41,9 @@ public partial class ActionService : ObservableObject
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
-            ip.Report(Strings.Status_starting);
+            ip.Report(Strings.Status_Starting);
             await Task.Run(() => action(diagnostics, progress, cts.Token), cts.Token);
-            ip.Report(Strings.Status_done);
+            ip.Report(Strings.Status_Done);
 
             SystemSounds.Exclamation.Play();
         }
@@ -61,7 +61,7 @@ public partial class ActionService : ObservableObject
         }
 
         if (!diagnostics.HasProblem) return;
-        if (diagnostics.HasError) ip.Report(Strings.Status_error);
+        if (diagnostics.HasError) ip.Report(Strings.Status_Error);
 
         var model = new DiagnosticsWindowViewModel
         {

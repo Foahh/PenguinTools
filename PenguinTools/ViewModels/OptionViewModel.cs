@@ -64,14 +64,14 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             };
             var chart = await parser.ConvertAsync(ct);
             var meta = chart.Meta;
-            var id = meta.Id ?? throw new DiagnosticException(Strings.Diag_file_ignored_due_to_id_missing);
+            var id = meta.Id ?? throw new DiagnosticException(Strings.Error_File_ignored_due_to_id_missing);
             if (!books.TryGetValue(id, out var book)) books[id] = book = new Book();
             var item = new BookItem(chart);
-            if (book.Items.ContainsKey(meta.Difficulty)) innerDiag.Report(Severity.Warning, Strings.Diag_duplicate_id_and_difficulty);
+            if (book.Items.ContainsKey(meta.Difficulty)) innerDiag.Report(Severity.Warning, Strings.Warn_Duplicate_id_and_difficulty);
             book.Items[meta.Difficulty] = item;
         }, ctx);
 
-        if (books.Count <= 0) throw new DiagnosticException(Strings.Error_no_charts_are_found_directory);
+        if (books.Count <= 0) throw new DiagnosticException(Strings.Error_No_charts_are_found_directory);
         ct.ThrowIfCancellationRequested();
 
         foreach (var (id, book) in books.ToList())
@@ -84,10 +84,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 continue;
             }
 
-            if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1) diag.Report(Severity.Error, Strings.Diag_we_chart_must_be_unique_id, target: items);
+            if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1) diag.Report(Severity.Warning, Strings.Warn_We_chart_must_be_unique_id, target: items);
             var mainItems = items.Where(x => x.Mgxc.Meta.IsMain).ToArray();
-            if (mainItems.Length > 1) diag.Report(Severity.Warning, Strings.Diag_more_than_one_chart_marked_main, target: mainItems);
-            else if (mainItems.Length == 0 && items.Length > 1) diag.Report(Severity.Warning, Strings.Diag_no_chart_marked_main, target: mainItems);
+            if (mainItems.Length > 1) diag.Report(Severity.Warning, Strings.Warn_More_than_one_chart_marked_main, target: mainItems);
+            else if (mainItems.Length == 0 && items.Length > 1) diag.Report(Severity.Warning, Strings.Warn_No_chart_marked_main, target: mainItems);
 
             var mainItem = mainItems.FirstOrDefault() ?? mainItems.OrderByDescending(x => x.Difficulty).FirstOrDefault();
             if (mainItem == null)
@@ -100,7 +100,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         }
 
         ct.ThrowIfCancellationRequested();
-        prog?.Report(Strings.Status_done);
+        prog?.Report(Strings.Status_Done);
 
         return model;
     }
@@ -109,10 +109,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
     {
         var settings = Model;
         if (settings == null) return;
-        if (!settings.CanExecute) throw new DiagnosticException(Strings.Error_but_nobody_came);
+        if (!settings.CanExecute) throw new DiagnosticException(Strings.Error_Noop);
 
         var books = settings.Books;
-        if (books.Count == 0) throw new DiagnosticException(Strings.Error_no_charts_are_found_directory);
+        if (books.Count == 0) throw new DiagnosticException(Strings.Error_No_charts_are_found_directory);
 
         var initialDirectory = settings.WorkingDirectory;
         if (string.IsNullOrWhiteSpace(initialDirectory) || !Directory.Exists(initialDirectory))
@@ -124,7 +124,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         var dlg = new OpenFolderDialog
         {
             ClientGuid = new Guid("C81454B6-EA09-41D6-90B2-4BD4FB3D5449"),
-            Title = Strings.Title_select_the_output_folder,
+            Title = Strings.Title_Select_the_output_folder,
             Multiselect = false,
             ValidateNames = true,
             InitialDirectory = initialDirectory
@@ -158,8 +158,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             var stage = book.Stage;
             if (book.IsCustomStage && settings.ConvertBackground)
             {
-                if (string.IsNullOrWhiteSpace(book.Meta.FullBgiFilePath)) throw new DiagnosticException(Strings.Error_background_file_is_not_set);
-                if (book.StageId is null) throw new DiagnosticException(Strings.Error_stage_id_is_not_set);
+                if (string.IsNullOrWhiteSpace(book.Meta.FullBgiFilePath)) throw new DiagnosticException(Strings.Error_Background_file_is_not_set);
+                if (book.StageId is null) throw new DiagnosticException(Strings.Error_Stage_id_is_not_set);
                 var stageConverter = new StageConverter(innerDiag)
                 {
                     Assets = AssetManager,
@@ -186,7 +186,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 {
                     foreach (var (diff, item) in book.Items)
                     {
-                        if (item.Id is not { } songId) throw new DiagnosticException(Strings.Error_song_id_is_not_set);
+                        if (item.Id is not { } songId) throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
                         if (diff == Difficulty.WorldsEnd) weEntries.Add(new Entry(songId, book.Title));
                         else if (diff == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
                         var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);

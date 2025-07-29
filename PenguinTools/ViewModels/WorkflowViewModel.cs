@@ -19,19 +19,19 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         if (Model == null) return;
         var chart = Model.Mgxc;
         var meta = chart.Meta;
-        var songId = meta.Id ?? throw new DiagnosticException(Strings.Error_song_id_is_not_set);
-        if (string.IsNullOrWhiteSpace(meta.FullBgmFilePath)) throw new DiagnosticException(Strings.Error_audio_file_is_not_set);
-        if (string.IsNullOrWhiteSpace(meta.FullJacketFilePath)) throw new DiagnosticException(Strings.Error_jacket_file_is_not_set);
+        var songId = meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
+        if (string.IsNullOrWhiteSpace(meta.FullBgmFilePath)) throw new DiagnosticException(Strings.Error_Audio_file_is_not_set);
+        if (string.IsNullOrWhiteSpace(meta.FullJacketFilePath)) throw new DiagnosticException(Strings.Error_Jacket_file_is_not_set);
         if (meta.IsCustomStage)
         {
-            if (string.IsNullOrWhiteSpace(meta.FullBgiFilePath)) throw new DiagnosticException(Strings.Error_background_file_is_not_set);
-            if (meta.StageId is null) throw new DiagnosticException(Strings.Error_stage_id_is_not_set);
+            if (string.IsNullOrWhiteSpace(meta.FullBgiFilePath)) throw new DiagnosticException(Strings.Error_Background_file_is_not_set);
+            if (meta.StageId is null) throw new DiagnosticException(Strings.Error_Stage_id_is_not_set);
         }
 
         var dlg = new OpenFolderDialog
         {
             InitialDirectory = Path.GetDirectoryName((string?)ModelPath),
-            Title = Strings.Title_select_the_output_folder,
+            Title = Strings.Title_Select_the_output_folder,
             Multiselect = false,
             ValidateNames = true
         };

@@ -125,7 +125,7 @@ public partial class ChartConverter
 
     private void ProcessAirSlide(mg.AirSlide airSlide)
     {
-        if (airSlide.PairNote?.PairNote != airSlide) throw new DiagnosticException(Strings.Error_invalid_AirSlide_parent, airSlide, airSlide.Tick.Original);
+        if (airSlide.PairNote?.PairNote != airSlide) throw new DiagnosticException(Strings.MgCrit_Invalid_AirSlide_parent, airSlide, airSlide.Tick.Original);
 
         var parent = pMap.GetValueOrDefault(airSlide.PairNote);
         var joints = airSlide.Children.OfType<mg.AirSlideJoint>().Prepend(airSlide.AsChild()).ToList();
@@ -157,7 +157,7 @@ public partial class ChartConverter
 
     private void ProcessAir(mg.Air airNote)
     {
-        if (airNote.PairNote?.PairNote != airNote) throw new DiagnosticException(Strings.Error_invalid_Air_parent, airNote, airNote.Tick.Original);
+        if (airNote.PairNote?.PairNote != airNote) throw new DiagnosticException(Strings.MgCrit_Invalid_Air_parent, airNote, airNote.Tick.Original);
 
         var note = CreateNote<mg.NegativeNote, c2s.Air>(nMap, airNote, x =>
         {
@@ -195,7 +195,7 @@ public partial class ChartConverter
 
     private void ProcessSoflanArea(mg.SoflanArea sla)
     {
-        if (sla.LastChild is not mg.SoflanAreaJoint tail) throw new DiagnosticException(Strings.Error_soflanArea_has_no_tail, sla, sla.Tick.Original);
+        if (sla.LastChild is not mg.SoflanAreaJoint tail) throw new DiagnosticException(Strings.MgCrit_SoflanArea_has_no_tail, sla, sla.Tick.Original);
 
         CreateNote<c2s.Sla>(sla, x =>
         {
@@ -205,7 +205,7 @@ public partial class ChartConverter
 
     private void ProcessHold(mg.Hold hold)
     {
-        if (hold.LastChild is not mg.HoldJoint tail) throw new DiagnosticException(Strings.Error_hold_has_no_tail, hold, hold.Tick.Original);
+        if (hold.LastChild is not mg.HoldJoint tail) throw new DiagnosticException(Strings.MgCrit_Hold_has_no_tail, hold, hold.Tick.Original);
 
         var note = CreateNote<c2s.Hold>(hold, x =>
         {
@@ -215,6 +215,4 @@ public partial class ChartConverter
         pMap[tail] = note;
         TryPairingNegative(tail);
     }
-
-
 }

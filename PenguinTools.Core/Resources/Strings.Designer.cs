@@ -62,18 +62,18 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Please edit the properties of charts in Margrete first..
         /// </summary>
-        public static string Alert_edit_notice {
+        public static string Alert_Edit_notice {
             get {
-                return ResourceManager.GetString("Alert_edit_notice", resourceCulture);
+                return ResourceManager.GetString("Alert_Edit_notice", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to This file has been modified on {0:HH:mm:ss}. Reload to use the latest version..
         /// </summary>
-        public static string Alert_file_changed {
+        public static string Alert_File_changed {
             get {
-                return ResourceManager.GetString("Alert_file_changed", resourceCulture);
+                return ResourceManager.GetString("Alert_File_changed", resourceCulture);
             }
         }
         
@@ -107,9 +107,9 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Copy.
         /// </summary>
-        public static string Button_copy {
+        public static string Button_Copy {
             get {
-                return ResourceManager.GetString("Button_copy", resourceCulture);
+                return ResourceManager.GetString("Button_Copy", resourceCulture);
             }
         }
         
@@ -125,9 +125,9 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Extract *.dds from *.afb.
         /// </summary>
-        public static string Button_extract_dds_from_afb {
+        public static string Button_Extract_dds_from_afb {
             get {
-                return ResourceManager.GetString("Button_extract_dds_from_afb", resourceCulture);
+                return ResourceManager.GetString("Button_Extract_dds_from_afb", resourceCulture);
             }
         }
         
@@ -152,9 +152,9 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Open Temp Directory.
         /// </summary>
-        public static string Button_open_temp_directory {
+        public static string Button_Open_temp_directory {
             get {
-                return ResourceManager.GetString("Button_open_temp_directory", resourceCulture);
+                return ResourceManager.GetString("Button_Open_temp_directory", resourceCulture);
             }
         }
         
@@ -236,15 +236,6 @@ namespace PenguinTools.Core.Resources {
         public static string Category_Sync {
             get {
                 return ResourceManager.GetString("Category_Sync", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Compatible w/ Margrete {0}.
-        /// </summary>
-        public static string Compatible_with_Margrete {
-            get {
-                return ResourceManager.GetString("Compatible_with_Margrete", resourceCulture);
             }
         }
         
@@ -339,15 +330,6 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Converts BGM files to 16-bit, 48kHz PCM .wav format and normalizes loudness. You can disable this if your files are already in the correct format. To quickly set it up, include &quot;#meta normalize false&quot; in the chart comment..
-        /// </summary>
-        public static string Description_NormalizeBgm {
-            get {
-                return ResourceManager.GetString("Description_NormalizeBgm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This value represents the calculated offset (in seconds) applied to the song. Positive values indicate a delay, while negative values indicate an advance..
         /// </summary>
         public static string Description_RealOffset {
@@ -389,186 +371,6 @@ namespace PenguinTools.Core.Resources {
         public static string Description_UnlockEventIDOption {
             get {
                 return ResourceManager.GetString("Description_UnlockEventIDOption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The chart has been modified since it was last opened. However, the old chart property will still be used..
-        /// </summary>
-        public static string Diag_chart_modified {
-            get {
-                return ResourceManager.GetString("Diag_chart_modified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Different EX effects coexist at the same tick: {0}. The game may only display one of these..
-        /// </summary>
-        public static string Diag_concurrent_ex_effects {
-            get {
-                return ResourceManager.GetString("Diag_concurrent_ex_effects", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Multiple charts with the same song ID and difficulty exist, the last scanned file will be used..
-        /// </summary>
-        public static string Diag_duplicate_id_and_difficulty {
-            get {
-                return ResourceManager.GetString("Diag_duplicate_id_and_difficulty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This file is ignored since Song ID is missing. Set a number for Song Id in Margrete..
-        /// </summary>
-        public static string Diag_file_ignored_due_to_id_missing {
-            get {
-                return ResourceManager.GetString("Diag_file_ignored_due_to_id_missing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First argument must be a valid integer..
-        /// </summary>
-        public static string Diag_first_argument_must_int {
-            get {
-                return ResourceManager.GetString("Diag_first_argument_must_int", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid joint type for {0}..
-        /// </summary>
-        public static string Diag_Invalid_joint_type_note {
-            get {
-                return ResourceManager.GetString("Diag_Invalid_joint_type_note", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There was no events found on main TIL {0}..
-        /// </summary>
-        public static string Diag_main_timeline_not_found {
-            get {
-                return ResourceManager.GetString("Diag_main_timeline_not_found", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;#override {0}&apos; requires at one argument or two arguments..
-        /// </summary>
-        public static string Diag_meta_override_argument_count_mismatch {
-            get {
-                return ResourceManager.GetString("Diag_meta_override_argument_count_mismatch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Multiple charts for this Song ID have been tagged with “#meta main” in their comments. The first chart found with this tag will be set as the baseline difficulty..
-        /// </summary>
-        public static string Diag_more_than_one_chart_marked_main {
-            get {
-                return ResourceManager.GetString("Diag_more_than_one_chart_marked_main", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No baseline difficulty for this Song ID. Selecting the highest-difficulty chart by default. To choose a baseline difficulty explicitly, add `#meta main` to the comment of the chart..
-        /// </summary>
-        public static string Diag_no_chart_marked_main {
-            get {
-                return ResourceManager.GetString("Diag_no_chart_marked_main", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No SortName was provided. A new SortName has been generated from the Title..
-        /// </summary>
-        public static string Diag_no_sortname_provided {
-            get {
-                return ResourceManager.GetString("Diag_no_sortname_provided", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The note overlaps with note in other TILs. This may cause problems in the scroll speed of this note..
-        /// </summary>
-        public static string Diag_note_overlapped_in_different_TIL {
-            get {
-                return ResourceManager.GetString("Diag_note_overlapped_in_different_TIL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The preview start time is set later than 120 seconds. This may cause the game to freeze when selecting the song..
-        /// </summary>
-        public static string Diag_pv_laterthan_120 {
-            get {
-                return ResourceManager.GetString("Diag_pv_laterthan_120", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The length of this note is {0}. This might be due to nodes in the original note having spacing less than {1}..
-        /// </summary>
-        public static string Diag_set_length_smaller_than_unit {
-            get {
-                return ResourceManager.GetString("Diag_set_length_smaller_than_unit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Stage {0} with ID {1} already exists..
-        /// </summary>
-        public static string Diag_stage_already_exists {
-            get {
-                return ResourceManager.GetString("Diag_stage_already_exists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified StringID (id or str) {0} could not be found in &apos;{1}&apos;. Please check your input or run &quot;Recollect Game Assets&quot; to refresh the database. If you want to use your custom StringID, please provide both (i.e. &quot;#meta ... [ID] [String]&quot;)..
-        /// </summary>
-        public static string Diag_string_id_not_found {
-            get {
-                return ResourceManager.GetString("Diag_string_id_not_found", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No Time Signature event was found at bar 0. Defaulting to a 4/4 time signature..
-        /// </summary>
-        public static string Diag_time_Signature_event_not_found_at_0 {
-            get {
-                return ResourceManager.GetString("Diag_time_Signature_event_not_found_at_0", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown tag &apos;{0}&apos;..
-        /// </summary>
-        public static string Diag_unknown_tag {
-            get {
-                return ResourceManager.GetString("Diag_unknown_tag", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown property mark {0} at file position 0x{1:X2}, data: {2}..
-        /// </summary>
-        public static string Diag_Unrecognized_meta {
-            get {
-                return ResourceManager.GetString("Diag_Unrecognized_meta", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to World&apos;s End chart must use unique Song ID; otherwise, other difficulty charts will not display under common song categories..
-        /// </summary>
-        public static string Diag_we_chart_must_be_unique_id {
-            get {
-                return ResourceManager.GetString("Diag_we_chart_must_be_unique_id", resourceCulture);
             }
         }
         
@@ -744,15 +546,6 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generate Music.xml.
-        /// </summary>
-        public static string Display_GenerateMusicXml {
-            get {
-                return ResourceManager.GetString("Display_GenerateMusicXml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Genre.
         /// </summary>
         public static string Display_Genre {
@@ -821,15 +614,6 @@ namespace PenguinTools.Core.Resources {
         public static string Display_ManualOffset {
             get {
                 return ResourceManager.GetString("Display_ManualOffset", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Normalize Bgm Format.
-        /// </summary>
-        public static string Display_NormalizeBgm {
-            get {
-                return ResourceManager.GetString("Display_NormalizeBgm", resourceCulture);
             }
         }
         
@@ -915,15 +699,6 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tick.
-        /// </summary>
-        public static string Display_Tick {
-            get {
-                return ResourceManager.GetString("Display_Tick", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Title.
         /// </summary>
         public static string Display_Title {
@@ -978,201 +753,83 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parent of Air cannot be null..
-        /// </summary>
-        public static string Error_air_parent_null {
-            get {
-                return ResourceManager.GetString("Error_air_parent_null", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Parent of AirSlide cannot be null..
-        /// </summary>
-        public static string Error_air_slide_parent_null {
-            get {
-                return ResourceManager.GetString("Error_air_slide_parent_null", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Audio file is not set..
         /// </summary>
-        public static string Error_audio_file_is_not_set {
+        public static string Error_Audio_file_is_not_set {
             get {
-                return ResourceManager.GetString("Error_audio_file_is_not_set", resourceCulture);
+                return ResourceManager.GetString("Error_Audio_file_is_not_set", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Unsupported audio format. Only wav (pcm_s16le at 48,000 Hz) is supported..
         /// </summary>
-        public static string Error_audio_format_not_supported {
+        public static string Error_Audio_format_not_supported {
             get {
-                return ResourceManager.GetString("Error_audio_format_not_supported", resourceCulture);
+                return ResourceManager.GetString("Error_Audio_format_not_supported", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Background File is not set..
         /// </summary>
-        public static string Error_background_file_is_not_set {
+        public static string Error_Background_file_is_not_set {
             get {
-                return ResourceManager.GetString("Error_background_file_is_not_set", resourceCulture);
+                return ResourceManager.GetString("Error_Background_file_is_not_set", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No BPM change event was found at tick 0..
+        ///   Looks up a localized string similar to Command execution failed..
         /// </summary>
-        public static string Error_BPM_change_event_not_found_at_0 {
+        public static string Error_Command_failed {
             get {
-                return ResourceManager.GetString("Error_BPM_change_event_not_found_at_0", resourceCulture);
+                return ResourceManager.GetString("Error_Command_failed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to * But nobody came..
+        ///   Looks up a localized string similar to This file is ignored since Song ID is missing. Set a number for Song Id in Margrete..
         /// </summary>
-        public static string Error_but_nobody_came {
+        public static string Error_File_ignored_due_to_id_missing {
             get {
-                return ResourceManager.GetString("Error_but_nobody_came", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Chart conversion failed..
-        /// </summary>
-        public static string Error_Chart_Failed {
-            get {
-                return ResourceManager.GetString("Error_Chart_Failed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ffmpeg failed with error: {0}.
-        /// </summary>
-        public static string Error_ffmpeg_failed {
-            get {
-                return ResourceManager.GetString("Error_ffmpeg_failed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to parse data from ffmpeg output: {0}.
-        /// </summary>
-        public static string Error_ffmpeg_failed_parse {
-            get {
-                return ResourceManager.GetString("Error_ffmpeg_failed_parse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ffprobe failed with error: {0}.
-        /// </summary>
-        public static string Error_ffprobe_failed {
-            get {
-                return ResourceManager.GetString("Error_ffprobe_failed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to parse data from ffprobe: {0}
-        ///Output: {1}.
-        /// </summary>
-        public static string Error_ffprobe_failed_parse {
-            get {
-                return ResourceManager.GetString("Error_ffprobe_failed_parse", resourceCulture);
+                return ResourceManager.GetString("Error_File_ignored_due_to_id_missing", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The specified file was not found..
         /// </summary>
-        public static string Error_file_not_found {
+        public static string Error_File_not_found {
             get {
-                return ResourceManager.GetString("Error_file_not_found", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Hold is missing a tail..
-        /// </summary>
-        public static string Error_hold_has_no_tail {
-            get {
-                return ResourceManager.GetString("Error_hold_has_no_tail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown error occurred during afb extraction..
-        /// </summary>
-        public static string Error_iinterop_afb {
-            get {
-                return ResourceManager.GetString("Error_iinterop_afb", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown error occurred during background conversion..
-        /// </summary>
-        public static string Error_interop_bg {
-            get {
-                return ResourceManager.GetString("Error_interop_bg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown error occurred during jacket conversion..
-        /// </summary>
-        public static string Error_interop_Jacket {
-            get {
-                return ResourceManager.GetString("Error_interop_Jacket", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified Air parent is invalid..
-        /// </summary>
-        public static string Error_invalid_Air_parent {
-            get {
-                return ResourceManager.GetString("Error_invalid_Air_parent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified AirSlide parent is invalid..
-        /// </summary>
-        public static string Error_invalid_AirSlide_parent {
-            get {
-                return ResourceManager.GetString("Error_invalid_AirSlide_parent", resourceCulture);
+                return ResourceManager.GetString("Error_File_not_found", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid audio format..
         /// </summary>
-        public static string Error_invalid_audio {
+        public static string Error_Invalid_audio {
             get {
-                return ResourceManager.GetString("Error_invalid_audio", resourceCulture);
+                return ResourceManager.GetString("Error_Invalid_audio", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid effect image format..
         /// </summary>
-        public static string Error_invalid_bg_fx_image {
+        public static string Error_Invalid_bg_fx_image {
             get {
-                return ResourceManager.GetString("Error_invalid_bg_fx_image", resourceCulture);
+                return ResourceManager.GetString("Error_Invalid_bg_fx_image", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid background image format..
         /// </summary>
-        public static string Error_invalid_bg_image {
+        public static string Error_Invalid_bg_image {
             get {
-                return ResourceManager.GetString("Error_invalid_bg_image", resourceCulture);
+                return ResourceManager.GetString("Error_Invalid_bg_image", resourceCulture);
             }
         }
         
@@ -1188,99 +845,45 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Invalid jacket image format..
         /// </summary>
-        public static string Error_invalid_jk_image {
+        public static string Error_Invalid_jk_image {
             get {
-                return ResourceManager.GetString("Error_invalid_jk_image", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid sample rate: {0}, required is 48000Hz..
-        /// </summary>
-        public static string Error_invalid_sample_rate_48000 {
-            get {
-                return ResourceManager.GetString("Error_invalid_sample_rate_48000", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Jacket conversion failed..
-        /// </summary>
-        public static string Error_Jacket_Failed {
-            get {
-                return ResourceManager.GetString("Error_Jacket_Failed", resourceCulture);
+                return ResourceManager.GetString("Error_Invalid_jk_image", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Jacket file is not set..
         /// </summary>
-        public static string Error_jacket_file_is_not_set {
+        public static string Error_Jacket_file_is_not_set {
             get {
-                return ResourceManager.GetString("Error_jacket_file_is_not_set", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command execution failed..
-        /// </summary>
-        public static string Error_Mua_command_failed {
-            get {
-                return ResourceManager.GetString("Error_Mua_command_failed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Music conversion failed..
-        /// </summary>
-        public static string Error_Music_Failed {
-            get {
-                return ResourceManager.GetString("Error_Music_Failed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No audio streams found in the file..
-        /// </summary>
-        public static string Error_no_audio_stream {
-            get {
-                return ResourceManager.GetString("Error_no_audio_stream", resourceCulture);
+                return ResourceManager.GetString("Error_Jacket_file_is_not_set", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to No charts are found in the directory..
         /// </summary>
-        public static string Error_no_charts_are_found_directory {
+        public static string Error_No_charts_are_found_directory {
             get {
-                return ResourceManager.GetString("Error_no_charts_are_found_directory", resourceCulture);
+                return ResourceManager.GetString("Error_No_charts_are_found_directory", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No {0} chunks were found in the input file..
+        ///   Looks up a localized string similar to * But nobody came..
         /// </summary>
-        public static string Error_no_chunks_found {
+        public static string Error_Noop {
             get {
-                return ResourceManager.GetString("Error_no_chunks_found", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Note are incompatible for pairing..
-        /// </summary>
-        public static string Error_pairing_notes_incompatible {
-            get {
-                return ResourceManager.GetString("Error_pairing_notes_incompatible", resourceCulture);
+                return ResourceManager.GetString("Error_Noop", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The preview stop time must be greater than the start time..
         /// </summary>
-        public static string Error_preview_stop_greater_than_start {
+        public static string Error_Preview_stop_greater_than_start {
             get {
-                return ResourceManager.GetString("Error_preview_stop_greater_than_start", resourceCulture);
+                return ResourceManager.GetString("Error_Preview_stop_greater_than_start", resourceCulture);
             }
         }
         
@@ -1294,38 +897,20 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The SoflanArea is missing a tail..
-        /// </summary>
-        public static string Error_soflanArea_has_no_tail {
-            get {
-                return ResourceManager.GetString("Error_soflanArea_has_no_tail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Song ID is not set..
         /// </summary>
-        public static string Error_song_id_is_not_set {
+        public static string Error_Song_id_is_not_set {
             get {
-                return ResourceManager.GetString("Error_song_id_is_not_set", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Stage conversion failed..
-        /// </summary>
-        public static string Error_Stage_Failed {
-            get {
-                return ResourceManager.GetString("Error_Stage_Failed", resourceCulture);
+                return ResourceManager.GetString("Error_Song_id_is_not_set", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Stage ID is not set..
         /// </summary>
-        public static string Error_stage_id_is_not_set {
+        public static string Error_Stage_id_is_not_set {
             get {
-                return ResourceManager.GetString("Error_stage_id_is_not_set", resourceCulture);
+                return ResourceManager.GetString("Error_Stage_id_is_not_set", resourceCulture);
             }
         }
         
@@ -1335,33 +920,6 @@ namespace PenguinTools.Core.Resources {
         public static string Error_Unhandled {
             get {
                 return ResourceManager.GetString("Error_Unhandled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown type {0} at file position 0x{1:X2}..
-        /// </summary>
-        public static string Error_Unrecognized_data_type {
-            get {
-                return ResourceManager.GetString("Error_Unrecognized_data_type", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown event mark {0} at file position0x{1:X2}..
-        /// </summary>
-        public static string Error_Unrecognized_event {
-            get {
-                return ResourceManager.GetString("Error_Unrecognized_event", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown note type {0} at file position 0x{1:X2}..
-        /// </summary>
-        public static string Error_Unrecognized_note_type {
-            get {
-                return ResourceManager.GetString("Error_Unrecognized_note_type", resourceCulture);
             }
         }
         
@@ -1425,51 +983,6 @@ namespace PenguinTools.Core.Resources {
         public static string Filefilter_sound {
             get {
                 return ResourceManager.GetString("Filefilter_sound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not detect ffmpeg.exe and ffprobe.exe in system environment..
-        /// </summary>
-        public static string HintW_body_1 {
-            get {
-                return ResourceManager.GetString("HintW_body_1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please install FFmpeg to using this application..
-        /// </summary>
-        public static string HintW_body_2 {
-            get {
-                return ResourceManager.GetString("HintW_body_2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to For detailed installation instructions, please see documentation..
-        /// </summary>
-        public static string HintW_body_3 {
-            get {
-                return ResourceManager.GetString("HintW_body_3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open Documentation.
-        /// </summary>
-        public static string HintW_open {
-            get {
-                return ResourceManager.GetString("HintW_open", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Required Components Missing.
-        /// </summary>
-        public static string HintW_title {
-            get {
-                return ResourceManager.GetString("HintW_title", resourceCulture);
             }
         }
         
@@ -1618,15 +1131,6 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stack Trace.
-        /// </summary>
-        public static string Label_StackTrace {
-            get {
-                return ResourceManager.GetString("Label_StackTrace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Stage ID.
         /// </summary>
         public static string Label_Stage_ID {
@@ -1654,20 +1158,218 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you want to discard the changes?.
+        ///   Looks up a localized string similar to Different EX effects coexist at the same tick: {0}. The game may only display one of these..
         /// </summary>
-        public static string Message_discard_changes {
+        public static string Mg_Concurrent_ex_effects {
             get {
-                return ResourceManager.GetString("Message_discard_changes", resourceCulture);
+                return ResourceManager.GetString("Mg_Concurrent_ex_effects", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Due to multiple overlapping Slide nodes existing simultaneously, it is unknown to determine from which Slide node the Air should start..
+        ///   Looks up a localized string similar to First argument must be a valid integer..
         /// </summary>
-        public static string Overlapping_Air_Parent_Slide {
+        public static string Mg_First_argument_must_int {
             get {
-                return ResourceManager.GetString("Overlapping_Air_Parent_Slide", resourceCulture);
+                return ResourceManager.GetString("Mg_First_argument_must_int", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No BPM change event was found at tick 0..
+        /// </summary>
+        public static string Mg_Head_BPM_not_found {
+            get {
+                return ResourceManager.GetString("Mg_Head_BPM_not_found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Time Signature event was found at bar 0. Defaulting to a 4/4 time signature..
+        /// </summary>
+        public static string Mg_Head_Time_Signature_event_not_found {
+            get {
+                return ResourceManager.GetString("Mg_Head_Time_Signature_event_not_found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid joint type for {0}..
+        /// </summary>
+        public static string Mg_Invalid_joint_type_note {
+            get {
+                return ResourceManager.GetString("Mg_Invalid_joint_type_note", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The length of this note is {0}. This might be due to nodes in the original note having spacing less than {1}..
+        /// </summary>
+        public static string Mg_Length_smaller_than_unit {
+            get {
+                return ResourceManager.GetString("Mg_Length_smaller_than_unit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was no events found on main TIL {0}..
+        /// </summary>
+        public static string Mg_Main_timeline_not_found {
+            get {
+                return ResourceManager.GetString("Mg_Main_timeline_not_found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;#override {0}&apos; requires at one argument or two arguments..
+        /// </summary>
+        public static string Mg_Meta_override_argument_count_mismatch {
+            get {
+                return ResourceManager.GetString("Mg_Meta_override_argument_count_mismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No SortName was provided. A new SortName has been generated from the Title..
+        /// </summary>
+        public static string Mg_No_sortname_provided {
+            get {
+                return ResourceManager.GetString("Mg_No_sortname_provided", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The note overlaps with note in other TILs. This may cause problems in the scroll speed of this note..
+        /// </summary>
+        public static string Mg_Note_overlapped_in_different_TIL {
+            get {
+                return ResourceManager.GetString("Mg_Note_overlapped_in_different_TIL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Due to multiple overlapping Slide nodes existing simultaneously, it is unknown to determine from which Slide node the Air should start. Please try to space them apart in single ticks..
+        /// </summary>
+        public static string Mg_Overlapping_air_parent_slide {
+            get {
+                return ResourceManager.GetString("Mg_Overlapping_air_parent_slide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified StringID (id or str) {0} could not be found in &apos;{1}&apos;. Please check your input or run &quot;Recollect Game Assets&quot; to refresh the database. If you want to use your custom StringID, please provide both (i.e. &quot;#meta ... [ID] [String]&quot;)..
+        /// </summary>
+        public static string Mg_String_id_not_found {
+            get {
+                return ResourceManager.GetString("Mg_String_id_not_found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown tag &apos;{0}&apos;..
+        /// </summary>
+        public static string Mg_Unknown_tag {
+            get {
+                return ResourceManager.GetString("Mg_Unknown_tag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown property mark {0} at file position 0x{1:X2}, data: {2}..
+        /// </summary>
+        public static string Mg_Unrecognized_meta {
+            get {
+                return ResourceManager.GetString("Mg_Unrecognized_meta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown note type {0} at file position 0x{1:X2}..
+        /// </summary>
+        public static string Mg_Unrecognized_note_type {
+            get {
+                return ResourceManager.GetString("Mg_Unrecognized_note_type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parent of Air cannot be null..
+        /// </summary>
+        public static string MgCrit_Air_parent_null {
+            get {
+                return ResourceManager.GetString("MgCrit_Air_parent_null", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parent of AirSlide cannot be null..
+        /// </summary>
+        public static string MgCrit_Air_slide_parent_null {
+            get {
+                return ResourceManager.GetString("MgCrit_Air_slide_parent_null", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Hold is missing a tail..
+        /// </summary>
+        public static string MgCrit_Hold_has_no_tail {
+            get {
+                return ResourceManager.GetString("MgCrit_Hold_has_no_tail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified Air parent is invalid..
+        /// </summary>
+        public static string MgCrit_Invalid_Air_parent {
+            get {
+                return ResourceManager.GetString("MgCrit_Invalid_Air_parent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified AirSlide parent is invalid..
+        /// </summary>
+        public static string MgCrit_Invalid_AirSlide_parent {
+            get {
+                return ResourceManager.GetString("MgCrit_Invalid_AirSlide_parent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Note are incompatible for pairing..
+        /// </summary>
+        public static string MgCrit_Pairing_notes_incompatible {
+            get {
+                return ResourceManager.GetString("MgCrit_Pairing_notes_incompatible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The SoflanArea is missing a tail..
+        /// </summary>
+        public static string MgCrit_SoflanArea_has_no_tail {
+            get {
+                return ResourceManager.GetString("MgCrit_SoflanArea_has_no_tail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown type {0} at file position 0x{1:X2}..
+        /// </summary>
+        public static string MgCrit_Unrecognized_data_type {
+            get {
+                return ResourceManager.GetString("MgCrit_Unrecognized_data_type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown event mark {0} at file position0x{1:X2}..
+        /// </summary>
+        public static string MgCrit_Unrecognized_event {
+            get {
+                return ResourceManager.GetString("MgCrit_Unrecognized_event", resourceCulture);
             }
         }
         
@@ -1690,20 +1392,11 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Converting Track....
+        ///   Looks up a localized string similar to Converting Background....
         /// </summary>
-        public static string Status_Convert_cue_file {
+        public static string Status_Convert_background {
             get {
-                return ResourceManager.GetString("Status_Convert_cue_file", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Converting {0}/{1}....
-        /// </summary>
-        public static string Status_convert_progress {
-            get {
-                return ResourceManager.GetString("Status_convert_progress", resourceCulture);
+                return ResourceManager.GetString("Status_Convert_background", resourceCulture);
             }
         }
         
@@ -1717,146 +1410,83 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Audio Converted.
-        /// </summary>
-        public static string Status_Converted_Audio {
-            get {
-                return ResourceManager.GetString("Status_Converted_Audio", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Converting....
-        /// </summary>
-        public static string Status_converting {
-            get {
-                return ResourceManager.GetString("Status_converting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Converting Audio....
         /// </summary>
-        public static string Status_converting_audio {
+        public static string Status_Converting_audio {
             get {
-                return ResourceManager.GetString("Status_converting_audio", resourceCulture);
+                return ResourceManager.GetString("Status_Converting_audio", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Converting Chart....
         /// </summary>
-        public static string Status_converting_chart {
+        public static string Status_Converting_chart {
             get {
-                return ResourceManager.GetString("Status_converting_chart", resourceCulture);
+                return ResourceManager.GetString("Status_Converting_chart", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Converting Jacket....
         /// </summary>
-        public static string Status_converting_jacket {
+        public static string Status_Converting_jacket {
             get {
-                return ResourceManager.GetString("Status_converting_jacket", resourceCulture);
+                return ResourceManager.GetString("Status_Converting_jacket", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Done.
         /// </summary>
-        public static string Status_done {
+        public static string Status_Done {
             get {
-                return ResourceManager.GetString("Status_done", resourceCulture);
+                return ResourceManager.GetString("Status_Done", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
-        public static string Status_error {
+        public static string Status_Error {
             get {
-                return ResourceManager.GetString("Status_error", resourceCulture);
+                return ResourceManager.GetString("Status_Error", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Extracting....
         /// </summary>
-        public static string Status_extracting {
+        public static string Status_Extracting {
             get {
-                return ResourceManager.GetString("Status_extracting", resourceCulture);
+                return ResourceManager.GetString("Status_Extracting", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Idle.
         /// </summary>
-        public static string Status_idle {
+        public static string Status_Idle {
             get {
-                return ResourceManager.GetString("Status_idle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Merging....
-        /// </summary>
-        public static string Status_merging {
-            get {
-                return ResourceManager.GetString("Status_merging", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Normalizing....
-        /// </summary>
-        public static string Status_normalizing {
-            get {
-                return ResourceManager.GetString("Status_normalizing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Parsing....
-        /// </summary>
-        public static string Status_parsing {
-            get {
-                return ResourceManager.GetString("Status_parsing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Processing Background....
-        /// </summary>
-        public static string Status_processing_background {
-            get {
-                return ResourceManager.GetString("Status_processing_background", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Processing Effects....
-        /// </summary>
-        public static string Status_processing_effects {
-            get {
-                return ResourceManager.GetString("Status_processing_effects", resourceCulture);
+                return ResourceManager.GetString("Status_Idle", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Reading....
         /// </summary>
-        public static string Status_reading {
+        public static string Status_Reading {
             get {
-                return ResourceManager.GetString("Status_reading", resourceCulture);
+                return ResourceManager.GetString("Status_Reading", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Saving....
         /// </summary>
-        public static string Status_saving {
+        public static string Status_Saving {
             get {
-                return ResourceManager.GetString("Status_saving", resourceCulture);
+                return ResourceManager.GetString("Status_Saving", resourceCulture);
             }
         }
         
@@ -1872,9 +1502,9 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Starting....
         /// </summary>
-        public static string Status_starting {
+        public static string Status_Starting {
             get {
-                return ResourceManager.GetString("Status_starting", resourceCulture);
+                return ResourceManager.GetString("Status_Starting", resourceCulture);
             }
         }
         
@@ -1890,9 +1520,9 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Writing....
         /// </summary>
-        public static string Status_writing {
+        public static string Status_Writing {
             get {
-                return ResourceManager.GetString("Status_writing", resourceCulture);
+                return ResourceManager.GetString("Status_Writing", resourceCulture);
             }
         }
         
@@ -1980,72 +1610,126 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Select the game folder.
         /// </summary>
-        public static string Title_select_the_A000_folder {
+        public static string Title_Select_the_game_folder {
             get {
-                return ResourceManager.GetString("Title_select_the_A000_folder", resourceCulture);
+                return ResourceManager.GetString("Title_Select_the_game_folder", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Select the input file.
         /// </summary>
-        public static string Title_select_the_input_file {
+        public static string Title_Select_the_input_file {
             get {
-                return ResourceManager.GetString("Title_select_the_input_file", resourceCulture);
+                return ResourceManager.GetString("Title_Select_the_input_file", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Select the output folder.
         /// </summary>
-        public static string Title_select_the_output_folder {
+        public static string Title_Select_the_output_folder {
             get {
-                return ResourceManager.GetString("Title_select_the_output_folder", resourceCulture);
+                return ResourceManager.GetString("Title_Select_the_output_folder", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Already the latest version.
         /// </summary>
-        public static string UpdateCheck_Already_Latest {
+        public static string Update_Already_Latest {
             get {
-                return ResourceManager.GetString("UpdateCheck_Already_Latest", resourceCulture);
+                return ResourceManager.GetString("Update_Already_Latest", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Checking for updates....
         /// </summary>
-        public static string UpdateCheck_Checking {
+        public static string Update_Checking {
             get {
-                return ResourceManager.GetString("UpdateCheck_Checking", resourceCulture);
+                return ResourceManager.GetString("Update_Checking", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Update check failed.
         /// </summary>
-        public static string UpdateCheck_Failed {
+        public static string Update_Failed {
             get {
-                return ResourceManager.GetString("UpdateCheck_Failed", resourceCulture);
+                return ResourceManager.GetString("Update_Failed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to New version {0} available (Click to View).
         /// </summary>
-        public static string UpdateCheck_New_Version_Available {
+        public static string Update_New_Version_Available {
             get {
-                return ResourceManager.GetString("UpdateCheck_New_Version_Available", resourceCulture);
+                return ResourceManager.GetString("Update_New_Version_Available", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Click to check for updates.
         /// </summary>
-        public static string UpdateCheck_Tooltip {
+        public static string Update_Tooltip {
             get {
-                return ResourceManager.GetString("UpdateCheck_Tooltip", resourceCulture);
+                return ResourceManager.GetString("Update_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple charts with the same song ID and difficulty exist, the last scanned file will be used..
+        /// </summary>
+        public static string Warn_Duplicate_id_and_difficulty {
+            get {
+                return ResourceManager.GetString("Warn_Duplicate_id_and_difficulty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multiple charts for this Song ID have been tagged with “#meta main” in their comments. The first chart found with this tag will be set as the baseline difficulty..
+        /// </summary>
+        public static string Warn_More_than_one_chart_marked_main {
+            get {
+                return ResourceManager.GetString("Warn_More_than_one_chart_marked_main", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No baseline difficulty for this Song ID. Selecting the highest-difficulty chart by default. To choose a baseline difficulty explicitly, add `#meta main` to the comment of the chart..
+        /// </summary>
+        public static string Warn_No_chart_marked_main {
+            get {
+                return ResourceManager.GetString("Warn_No_chart_marked_main", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The preview start time is set later than 120 seconds. This may cause the game to freeze when selecting the song..
+        /// </summary>
+        public static string Warn_Preview_later_than_120 {
+            get {
+                return ResourceManager.GetString("Warn_Preview_later_than_120", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stage {0} with ID {1} already exists..
+        /// </summary>
+        public static string Warn_Stage_already_exists {
+            get {
+                return ResourceManager.GetString("Warn_Stage_already_exists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to World&apos;s End chart must use unique Song ID; otherwise, other difficulty charts will not display under common song categories..
+        /// </summary>
+        public static string Warn_We_chart_must_be_unique_id {
+            get {
+                return ResourceManager.GetString("Warn_We_chart_must_be_unique_id", resourceCulture);
             }
         }
         

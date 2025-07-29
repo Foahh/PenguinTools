@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:parser="clr-namespace:PenguinTools.Core.Chart.Parser;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
     xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     MinWidth="380"
@@ -27,7 +26,7 @@
                 Path="{Binding ModelPath}"
                 Required="True" />
 
-            <local:Alert Margin="0,8,0,0" Message="{x:Static res:Strings.Alert_edit_notice}" />
+            <local:Alert Margin="0,8,0,0" Message="{x:Static res:Strings.Alert_Edit_notice}" />
 
             <GroupBox Margin="0,4,0,0" Header="{x:Static res:Strings.Label_Properties}">
                 <Grid>
@@ -51,7 +50,7 @@
             <local:Alert
                 Margin="0,8,0,0"
                 Level="Warning"
-                Message="{Binding LastModifiedTime, StringFormat={x:Static res:Strings.Alert_file_changed}}">
+                Message="{Binding LastModifiedTime, StringFormat={x:Static res:Strings.Alert_File_changed}}">
                 <b:Interaction.Behaviors>
                     <behaviors:HideIfNullValueBehavior Value="{Binding LastModifiedTime}" />
                 </b:Interaction.Behaviors>

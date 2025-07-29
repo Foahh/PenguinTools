@@ -72,7 +72,10 @@ public partial class MgxcParser
                     Lane = note.Lane,
                     Width = note.Width
                 };
-                var tail = new mg.SoflanAreaJoint { Tick = note.Tick.Original + Time.SingleTick };
+                var tail = new mg.SoflanAreaJoint
+                {
+                    Tick = note.Tick.Original + Time.SingleTick
+                };
 
                 slaSet.Add((note.Tick.Original, id, note.Lane, note.Width));
                 head.AppendChild(tail);
@@ -107,7 +110,7 @@ public partial class MgxcParser
     {
         if (!tilGroups.ContainsKey(mainTil))
         {
-            var msg = string.Format(Strings.Diag_main_timeline_not_found, Mgxc.Meta.MainTil);
+            var msg = string.Format(Strings.Mg_Main_timeline_not_found, Mgxc.Meta.MainTil);
             Diagnostic.Report(Severity.Information, msg);
             return;
         }
@@ -181,6 +184,6 @@ public partial class MgxcParser
             }
         }
 
-        foreach (var note in violations) Diagnostic.Report(Severity.Warning, Strings.Diag_note_overlapped_in_different_TIL, note.Tick.Original, note);
+        foreach (var note in violations) Diagnostic.Report(Severity.Warning, Strings.Mg_Note_overlapped_in_different_TIL, note.Tick.Original, note);
     }
 }

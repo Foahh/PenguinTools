@@ -28,7 +28,7 @@ public partial class MiscViewModel : ViewModel
     {
         var openDlg = new OpenFileDialog
         {
-            Title = Strings.Title_select_the_input_file,
+            Title = Strings.Title_Select_the_input_file,
             Filter = Strings.Filefilter_afb,
             CheckFileExists = true,
             AddExtension = true,
@@ -42,7 +42,7 @@ public partial class MiscViewModel : ViewModel
         {
             FolderName = Path.GetFileNameWithoutExtension(openDlg.FileName),
             InitialDirectory = baseDir != null ? new DirectoryInfo(baseDir).Name : null,
-            Title = Strings.Title_select_the_output_folder,
+            Title = Strings.Title_Select_the_output_folder,
             Multiselect = false,
             ValidateNames = true
         };
@@ -64,7 +64,7 @@ public partial class MiscViewModel : ViewModel
     {
         var openDlg = new OpenFolderDialog
         {
-            Title = Strings.Title_select_the_A000_folder,
+            Title = Strings.Title_Select_the_game_folder,
             Multiselect = false,
             ValidateNames = true
         };

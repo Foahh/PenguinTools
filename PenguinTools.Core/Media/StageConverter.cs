@@ -15,8 +15,8 @@ public class StageConverter(IDiagnostic diag, IProgress<string>? prog = null) : 
 
     protected async override Task<Entry> ActionAsync(CancellationToken ct = default)
     {
-        if (StageId is not { } stageId) throw new DiagnosticException(Strings.Error_stage_id_is_not_set);
-        Progress?.Report(Strings.Status_processing_background);
+        if (StageId is not { } stageId) throw new DiagnosticException(Strings.Error_Stage_id_is_not_set);
+        Progress?.Report(Strings.Status_Convert_background);
 
         var xml = new StageXml(stageId, NoteFieldLane);
         var outputDir = await xml.SaveDirectoryAsync(OutFolder);
@@ -32,21 +32,21 @@ public class StageConverter(IDiagnostic diag, IProgress<string>? prog = null) : 
     protected async override Task ValidateAsync(CancellationToken ct = default)
     {
         var duplicates = Assets.StageNames.Where(p => p.Id == StageId);
-        foreach (var d in duplicates) Diagnostic.Report(Severity.Warning, string.Format(Strings.Diag_stage_already_exists, d, StageId));
+        foreach (var d in duplicates) Diagnostic.Report(Severity.Warning, string.Format(Strings.Warn_Stage_already_exists, d, StageId));
 
-        if (StageId is null) Diagnostic.Report(Severity.Error, string.Format(Strings.Error_stage_id_is_not_set));
-        if (!File.Exists(BackgroundPath)) Diagnostic.Report(Severity.Error, Strings.Error_file_not_found, BackgroundPath);
+        if (StageId is null) Diagnostic.Report(Severity.Error, string.Format(Strings.Error_Stage_id_is_not_set));
+        if (!File.Exists(BackgroundPath)) Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, BackgroundPath);
 
         var ret = await Manipulate.IsImageValidAsync(BackgroundPath, ct);
-        if (ret.IsFailure) Diagnostic.Report(Severity.Error, Strings.Error_invalid_bg_image, BackgroundPath, target: ret);
+        if (ret.IsFailure) Diagnostic.Report(Severity.Error, Strings.Error_Invalid_bg_image, BackgroundPath, target: ret);
         if (EffectPaths is not null)
         {
             foreach (var p in EffectPaths)
             {
                 if (string.IsNullOrWhiteSpace(p)) continue;
-                if (!File.Exists(p)) Diagnostic.Report(Severity.Error, Strings.Error_file_not_found, p);
+                if (!File.Exists(p)) Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, p);
                 ret = await Manipulate.IsImageValidAsync(p, ct);
-                if (ret.IsFailure) Diagnostic.Report(Severity.Error, Strings.Error_invalid_bg_fx_image, p, target: ret);
+                if (ret.IsFailure) Diagnostic.Report(Severity.Error, Strings.Error_Invalid_bg_fx_image, p, target: ret);
             }
         }
     }

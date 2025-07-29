@@ -9,14 +9,14 @@ public partial class MgxcParser
     {
         if (args.Length is < 1 or > 2)
         {
-            var msg = string.Format(Strings.Diag_meta_override_argument_count_mismatch, name);
+            var msg = string.Format(Strings.Mg_Meta_override_argument_count_mismatch, name);
             Diagnostic.Report(Severity.Warning, msg, target: args);
             return;
         }
 
         if (args.Length >= 2)
         {
-            var newId = int.TryParse(args[0], out var parsedId) ? parsedId : throw new DiagnosticException(Strings.Diag_first_argument_must_int);
+            var newId = int.TryParse(args[0], out var parsedId) ? parsedId : throw new DiagnosticException(Strings.Mg_First_argument_must_int);
             var data = args.Length >= 3 ? args[2] : null;
             var newEntry = new Entry(newId, args[1], data ?? string.Empty);
             setter(newEntry);
@@ -30,7 +30,7 @@ public partial class MgxcParser
 
         if (entry == null)
         {
-            var msg = string.Format(Strings.Diag_string_id_not_found, value, type.ToString());
+            var msg = string.Format(Strings.Mg_String_id_not_found, value, type.ToString());
             Diagnostic.Report(Severity.Information, msg, target: args);
         }
         else
@@ -54,7 +54,7 @@ public partial class MgxcParser
             Mgxc.Meta.IsCustomStage = false;
         }
     }
-    
+
     private void MetaFieldLineHandler(string[] args)
     {
         MetaEntryHandler("fline", args, entry => Mgxc.Meta.NotesFieldLine = entry, AssetType.FieldLines);
@@ -92,7 +92,7 @@ public partial class MgxcParser
                 MetaWeTagHandler(value);
                 break;
             default:
-                Diagnostic.Report(Severity.Warning, string.Format(Strings.Diag_unknown_tag, name), target: args);
+                Diagnostic.Report(Severity.Warning, string.Format(Strings.Mg_Unknown_tag, name), target: args);
                 break;
         }
     }
@@ -101,7 +101,9 @@ public partial class MgxcParser
     {
         var config = new Dictionary<string, Action<string[]>>
         {
-            { "meta", MetaHandler }
+            {
+                "meta", MetaHandler
+            }
         };
 
         var lines = Mgxc.Meta.Comment.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
@@ -132,7 +134,7 @@ public partial class MgxcParser
             {
                 Diagnostic.Report(
                     Severity.Warning,
-                    string.Format(Strings.Diag_unknown_tag, tagName),
+                    string.Format(Strings.Mg_Unknown_tag, tagName),
                     target: parts
                 );
             }

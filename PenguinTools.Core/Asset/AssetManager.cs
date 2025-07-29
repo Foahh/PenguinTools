@@ -18,10 +18,10 @@ public class AssetManager : INotifyPropertyChanged
 
     // Asset Dictionary that merges all assets from various sources below
     public AssetDictionary MergeAssets { get; }
-    
+
     // Assets embedded in the assembly, used for default values and initial setup.
     private AssetDictionary HardAssets { get; }
-    
+
     // Assets loaded from the result of AssetDictionary.CollectAsync.
     private AssetDictionary PlusAssets { get; }
 
@@ -43,7 +43,7 @@ public class AssetManager : INotifyPropertyChanged
         PlusAssets.MergeWith(await AssetDictionary.CollectAsync(workDir, ct));
         PlusAssets.SubtractWith(HardAssets);
 
-        progress?.Report(Strings.Status_saving);
+        progress?.Report(Strings.Status_Saving);
         await PlusAssets.SaveAsync("assets.json", ct);
 
         Merge();

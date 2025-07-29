@@ -30,7 +30,7 @@
 
             <TreeView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Click="MenuItem_OnClick" Header="{x:Static resources:Strings.Button_copy}" />
+                    <MenuItem Click="MenuItem_OnClick" Header="{x:Static resources:Strings.Button_Copy}" />
                 </ContextMenu>
             </TreeView.ContextMenu>
         </TreeView>

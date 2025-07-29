@@ -21,19 +21,19 @@ public class MusicConverter(IDiagnostic diag, IProgress<string>? prog = null) : 
 
     protected override Task ValidateAsync(CancellationToken ct = default)
     {
-        if (Meta.Id is null) Diagnostic.Report(Severity.Error, Strings.Error_song_id_is_not_set);
-        if (Meta.BgmPreviewStop < Meta.BgmPreviewStart) Diagnostic.Report(Severity.Error, Strings.Error_preview_stop_greater_than_start);
+        if (Meta.Id is null) Diagnostic.Report(Severity.Error, Strings.Error_Song_id_is_not_set);
+        if (Meta.BgmPreviewStop < Meta.BgmPreviewStart) Diagnostic.Report(Severity.Error, Strings.Error_Preview_stop_greater_than_start);
         var path = Meta.FullBgmFilePath;
-        if (!File.Exists(path)) Diagnostic.Report(Severity.Error, Strings.Error_file_not_found, path);
+        if (!File.Exists(path)) Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, path);
         return Task.CompletedTask;
     }
 
     protected async override Task ActionAsync(CancellationToken ct = default)
     {
-        var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_song_id_is_not_set);
+        var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
-        Progress?.Report(Strings.Status_converting_audio);
-        if (Meta.BgmPreviewStart > 120) Diagnostic.Report(Severity.Warning, Strings.Diag_pv_laterthan_120);
+        Progress?.Report(Strings.Status_Converting_audio);
+        if (Meta.BgmPreviewStart > 120) Diagnostic.Report(Severity.Warning, Strings.Warn_Preview_later_than_120);
 
         var srcPath = Meta.FullBgmFilePath;
         var wavPath = ResourceUtils.GetTempPath($"c_{Path.GetFileNameWithoutExtension(srcPath)}.wav");
@@ -65,7 +65,7 @@ public class MusicConverter(IDiagnostic diag, IProgress<string>? prog = null) : 
         var wav = waveReader.ReadFormat(wavPath);
         if (wav.ChannelCount != 2 || wav.SampleRate != 48000)
         {
-            throw new DiagnosticException(Strings.Error_audio_format_not_supported);
+            throw new DiagnosticException(Strings.Error_Audio_format_not_supported);
         }
 
         ct.ThrowIfCancellationRequested();

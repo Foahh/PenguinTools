@@ -9,15 +9,15 @@ public class AfbExtractor(IDiagnostic diag, IProgress<string>? prog = null) : Co
 
     protected async override Task ActionAsync(CancellationToken ct = default)
     {
-        Progress?.Report(Strings.Status_extracting);
+        Progress?.Report(Strings.Status_Extracting);
         await Manipulate.ExtractDdsAsync(InPath, OutFolder, ct);
         ct.ThrowIfCancellationRequested();
-        Progress?.Report(Strings.Status_writing);
+        Progress?.Report(Strings.Status_Writing);
     }
 
     protected override Task ValidateAsync(CancellationToken ct = default)
     {
-        if (!File.Exists(InPath)) Diagnostic.Report(Severity.Error, Strings.Error_file_not_found, InPath);
+        if (!File.Exists(InPath)) Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, InPath);
         return Task.CompletedTask;
     }
 }

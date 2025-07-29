@@ -32,7 +32,7 @@
                 <TextBlock
                     Cursor="{Binding IsUpdateAvailable, Converter={StaticResource BoolHandCursorConverter}}"
                     Text="{Binding UpdateStatus}"
-                    ToolTip="{x:Static res:Strings.UpdateCheck_Tooltip}">
+                    ToolTip="{x:Static res:Strings.Update_Tooltip}">
                     <TextBlock.InputBindings>
                         <MouseBinding Command="{Binding DownloadUpdateCommand}" MouseAction="LeftClick" />
                     </TextBlock.InputBindings>

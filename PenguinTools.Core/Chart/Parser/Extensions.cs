@@ -49,7 +49,7 @@ internal static class Extensions
             3 => br.ReadDouble(),
             2 => br.ReadInt32(),
             1 or 0 => (int)attr,
-            _ => throw new DiagnosticException(string.Format(Strings.Error_Unrecognized_data_type, type, br.BaseStream.Position))
+            _ => throw new DiagnosticException(string.Format(Strings.MgCrit_Unrecognized_data_type, type, br.BaseStream.Position))
         };
     }
 
@@ -58,7 +58,7 @@ internal static class Extensions
         var type = br.ReadInt32();
         var attr = br.ReadInt32();
         if (type == 4) return br.ReadUtf8String(attr);
-        var msg = string.Format(Strings.Error_Unrecognized_data_type, type, br.BaseStream.Position);
+        var msg = string.Format(Strings.MgCrit_Unrecognized_data_type, type, br.BaseStream.Position);
         throw new DiagnosticException(msg);
     }
 

@@ -23,12 +23,12 @@ public class MusicViewModel : WatchViewModel<MusicModel>
 
     protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
-        if (Model?.Id is null) throw new DiagnosticException(Strings.Error_song_id_is_not_set);
+        if (Model?.Id is null) throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
         var dlg = new OpenFolderDialog
         {
             InitialDirectory = Path.GetDirectoryName((string?)ModelPath),
-            Title = Strings.Title_select_the_output_folder,
+            Title = Strings.Title_Select_the_output_folder,
             Multiselect = false,
             ValidateNames = true
         };

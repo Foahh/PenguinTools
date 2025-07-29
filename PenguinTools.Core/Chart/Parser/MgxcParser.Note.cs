@@ -126,7 +126,7 @@ public partial class MgxcParser
             }
             else
             {
-                var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mg.HoldJoint));
+                var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(mg.HoldJoint));
                 Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
             }
         }
@@ -149,7 +149,7 @@ public partial class MgxcParser
                 }
                 else
                 {
-                    var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mg.SlideJoint));
+                    var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(mg.SlideJoint));
                     Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
                 }
                 note = exNote;
@@ -202,7 +202,7 @@ public partial class MgxcParser
                 }
                 else
                 {
-                    var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mg.AirSlideJoint));
+                    var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(mg.AirSlideJoint));
                     Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
                 }
                 exNote.Height = height;
@@ -247,7 +247,7 @@ public partial class MgxcParser
                 var exNote = new mg.AirCrashJoint();
                 if (longAttr is LongAttr.Step)
                 {
-                    var msg = string.Format(Strings.Diag_Invalid_joint_type_note, typeof(mg.AirCrashJoint));
+                    var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(mg.AirCrashJoint));
                     Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
                 }
                 exNote.Height = height;
@@ -255,10 +255,18 @@ public partial class MgxcParser
                 isChildNote = true;
             }
         }
+        else if (type == NoteType.Click)
+        {
+            return;
+        }
+        else if (type == NoteType.Last)
+        {
+            return;
+        }
 
         if (note == null)
         {
-            var msg = string.Format(Strings.Error_Unrecognized_note_type, (int)type, br.BaseStream.Position);
+            var msg = string.Format(Strings.Mg_Unrecognized_note_type, (int)type, br.BaseStream.Position);
             Diagnostic.Report(Severity.Warning, msg, tick, type);
             return;
         }
@@ -282,7 +290,11 @@ public partial class MgxcParser
                     lastN.MakePair(newP);
                     break;
                 default:
-                    throw new DiagnosticException(Strings.Error_pairing_notes_incompatible, new[] { note, lastNote }, note.Tick.Original);
+                    throw new DiagnosticException(Strings.MgCrit_Pairing_notes_incompatible, new[]
+                    {
+                        note,
+                        lastNote
+                    }, note.Tick.Original);
             }
         }
 

@@ -162,7 +162,7 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
             await Dispatcher.InvokeAsync(() => SetModel(Model, null));
             return;
         }
-        prog?.Report(Strings.Status_reading);
+        prog?.Report(Strings.Status_Reading);
         var model = await ReadModel(ModelPath, diag, prog, ct);
         ct.ThrowIfCancellationRequested();
         await Dispatcher.InvokeAsync(() => SetModel(Model, model));
