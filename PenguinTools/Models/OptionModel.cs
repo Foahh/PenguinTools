@@ -3,6 +3,7 @@ using PenguinTools.Attributes;
 using PenguinTools.Core.Resources;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Text.Json.Serialization;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
@@ -85,6 +86,15 @@ public partial class OptionModel : Model
 
     [Browsable(false)]
     public string WorkingDirectory { get; set; } = string.Empty;
+
+    public string OptionDirectory
+    {
+        get
+        {
+            var folder = Path.GetFileName(WorkingDirectory);
+            return folder == OptionName ? WorkingDirectory : Path.Combine(WorkingDirectory, OptionName);
+        }
+    }
 
     [Browsable(false)]
     [JsonIgnore]

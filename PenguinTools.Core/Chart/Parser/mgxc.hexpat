@@ -2,7 +2,7 @@
 
 import std.sys;
 
-struct Data {
+struct Field {
     s16 type;
 
     if (type == 0x04) {
@@ -22,7 +22,7 @@ struct Data {
     }
 };
 
-struct BigData {
+struct WideField {
     s32 type;
     s32 attr;
     char data[attr];
@@ -30,43 +30,49 @@ struct BigData {
 
 struct Meta {
     char name[4];
-    Data data;
+    Field data;
 };
 
 struct Event {
     char name[4];
 
     if (name == "beat") {
-        Data bar;
-        Data numerator;
-        Data denominator;
+        Field bar;
+        Field numerator;
+        Field denominator;
     }
 
     if (name == "bpm ") {
-        Data tick;
-        Data bpm;
+        Field tick;
+        Field bpm;
     }
 
     if (name == "til ") {
-        Data tilId;
-        Data tick;
-        Data speed;
+        Field tilId;
+        Field tick;
+        Field speed;
     }
 
     if (name == "bmrk") {
-        BigData hash;
-        Data tick;
-        BigData tag;
-        BigData rgb;
+        WideField hash;
+        Field tick;
+        WideField tag;
+        WideField rgb;
     }
 
     if (name == "mbkm") {
-        Data beat;
+        Field beat;
     }
 
     if (name == "smod") {
-        Data tick;
-        Data speed;
+        Field tick;
+        Field speed;
+    }
+
+    if (name == "rimg") {
+        Field;
+        Field;
+        WideField;
     }
 
     s32;
@@ -149,8 +155,8 @@ struct Note {
 #define ERROR "ERROR"
 
 u16 NUM_META = 40;
-u16 NUM_EVNT = 7;
-u16 NUM_NOTE = 53;
+u16 NUM_EVNT = 4;
+u16 NUM_NOTE = 0;
 
 struct Mgxc {
     char header[4];          // 4D 47 58 43

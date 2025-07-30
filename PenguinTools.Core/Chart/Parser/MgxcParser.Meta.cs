@@ -10,7 +10,7 @@ public partial class MgxcParser
     private void ParseMeta(BinaryReader br)
     {
         var name = br.ReadUtf8String(4);
-        var data = br.ReadData();
+        var data = br.ReadField();
 
         if (name == "titl")
         {
@@ -81,12 +81,15 @@ public partial class MgxcParser
         else if (name == "wvfn")
         {
             Mgxc.Meta.BgmFilePath = (string)data;
-            Tasks.Add(Manipulate.IsAudioValidAsync(Mgxc.Meta.FullBgmFilePath).ContinueWith(p =>
+            if (!string.IsNullOrWhiteSpace(Mgxc.Meta.BgmFilePath))
             {
-                if (p.Result.IsSuccess) return;
-                Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_audio, Mgxc.Meta.FullBgmFilePath, target: p.Result);
-                Mgxc.Meta.BgmFilePath = string.Empty;
-            }));
+                Tasks.Add(Manipulate.IsAudioValidAsync(Mgxc.Meta.FullBgmFilePath).ContinueWith(p =>
+                {
+                    if (p.IsCompletedSuccessfully) return;
+                    Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_audio, Mgxc.Meta.FullBgmFilePath);
+                    Mgxc.Meta.BgmFilePath = string.Empty;
+                }));
+            }
         }
         else if (name == "wvof")
         {
@@ -103,12 +106,15 @@ public partial class MgxcParser
         else if (name == "jack")
         {
             Mgxc.Meta.JacketFilePath = (string)data;
-            Tasks.Add(Manipulate.IsImageValidAsync(Mgxc.Meta.FullJacketFilePath).ContinueWith(p =>
+            if (!string.IsNullOrWhiteSpace(Mgxc.Meta.JacketFilePath))
             {
-                if (p.Result.IsSuccess) return;
-                Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_jk_image, Mgxc.Meta.FullJacketFilePath, target: p.Result);
-                Mgxc.Meta.JacketFilePath = string.Empty;
-            }));
+                Tasks.Add(Manipulate.IsImageValidAsync(Mgxc.Meta.FullJacketFilePath).ContinueWith(p =>
+                {
+                    if (p.IsCompletedSuccessfully) return;
+                    Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_jk_image, Mgxc.Meta.FullJacketFilePath);
+                    Mgxc.Meta.JacketFilePath = string.Empty;
+                }));
+            }
         }
         else if (name == "bgfn")
         {
@@ -168,7 +174,7 @@ public partial class MgxcParser
         }
         else if (name == "sofs")
         {
-            Mgxc.Meta.BgmEnableBarOffset = System.Convert.ToBoolean((int)data);
+            Mgxc.Meta.BgmEnableBarOffset = Convert.ToBoolean((int)data);
         }
         else if (name == "uclk")
         {

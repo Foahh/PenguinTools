@@ -1,5 +1,6 @@
 ﻿using PenguinTools.Core.Asset;
 using PenguinTools.Core.Resources;
+using System.Globalization;
 
 namespace PenguinTools.Core.Chart.Parser;
 
@@ -9,14 +10,14 @@ public partial class MgxcParser
     {
         if (args.Length is < 1 or > 2)
         {
-            var msg = string.Format(Strings.Mg_Meta_override_argument_count_mismatch, name);
+            var msg = string.Format(Strings.Mg_Meta_Argument_count_min_one, name);
             Diagnostic.Report(Severity.Warning, msg, target: args);
             return;
         }
 
         if (args.Length >= 2)
         {
-            var newId = int.TryParse(args[0], out var parsedId) ? parsedId : throw new DiagnosticException(Strings.Mg_First_argument_must_int);
+            var newId = int.TryParse(args[0], out var parsedId) ? parsedId : throw new DiagnosticException(Strings.Mg_Meta_First_argument_must_int);
             var data = args.Length >= 3 ? args[2] : null;
             var newEntry = new Entry(newId, args[1], data ?? string.Empty);
             setter(newEntry);
@@ -70,6 +71,24 @@ public partial class MgxcParser
         Mgxc.Meta.IsMain = args.Length < 1 || ParseBool(args[0]);
     }
 
+    private void MetaDateHandler(string[] args)
+    {
+        if (args.Length < 1)
+        {
+            var msg = string.Format(Strings.Mg_Meta_Argument_count_min_one, "date");
+            Diagnostic.Report(Severity.Warning, msg, target: args);
+            return;
+        }
+
+        if (!DateTime.TryParseExact(args[0], "yyyyMMdd", null, DateTimeStyles.None, out var date))
+        {
+            Diagnostic.Report(Severity.Warning, Strings.Mg_Meta_Invalid_date, target: args);
+            return;
+        }
+
+        Mgxc.Meta.ReleaseDate = date;
+    }
+
     private void MetaHandler(string[] args)
     {
         var (name, value) = (args[0], args[1..]);
@@ -91,8 +110,11 @@ public partial class MgxcParser
             case "wetag":
                 MetaWeTagHandler(value);
                 break;
+            case "date":
+                MetaDateHandler(value);
+                break;
             default:
-                Diagnostic.Report(Severity.Warning, string.Format(Strings.Mg_Unknown_tag, name), target: args);
+                Diagnostic.Report(Severity.Warning, string.Format(Strings.Mg_Meta_Unknown_tag, name), target: args);
                 break;
         }
     }
@@ -134,7 +156,7 @@ public partial class MgxcParser
             {
                 Diagnostic.Report(
                     Severity.Warning,
-                    string.Format(Strings.Mg_Unknown_tag, tagName),
+                    string.Format(Strings.Mg_Meta_Unknown_tag, tagName),
                     target: parts
                 );
             }

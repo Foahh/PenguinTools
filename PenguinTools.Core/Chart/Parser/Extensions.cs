@@ -30,7 +30,6 @@ internal static class Extensions
     public static string ReadUtf8String(this BinaryReader br, int length)
     {
         if (length > 128) return Encoding.UTF8.GetString(br.ReadBytes(length));
-        // use stackalloc for small strings
         Span<byte> buffer = stackalloc byte[length];
         var read = br.Read(buffer);
         if (read == length) return Encoding.UTF8.GetString(buffer);
@@ -38,7 +37,7 @@ internal static class Extensions
         throw new DiagnosticException(msg);
     }
 
-    public static object ReadData(this BinaryReader br)
+    public static object ReadField(this BinaryReader br)
     {
         var type = br.ReadInt16();
         var attr = br.ReadInt16();
@@ -53,7 +52,7 @@ internal static class Extensions
         };
     }
 
-    public static object ReadBigData(this BinaryReader br)
+    public static object ReadWideField(this BinaryReader br)
     {
         var type = br.ReadInt32();
         var attr = br.ReadInt32();

@@ -239,8 +239,8 @@
     <data name="Window_Title" xml:space="preserve">
     <value>{0} {1}</value>
   </data>
-    <data name="Error_No_charts_are_found_directory" xml:space="preserve">
-    <value>该目录中未找到任何谱面文件。</value>
+  <data name="Error_No_charts_are_found_directory" xml:space="preserve">
+    <value>该目录中未找到任何有效的谱面文件。</value>
   </data>
     <data name="Warn_We_chart_must_be_unique_id" xml:space="preserve">
     <value>World's End 谱面必须使用独立 Song ID，否则其他难度谱面将无法在普通分类中显示。</value>
@@ -584,7 +584,7 @@
     <data name="Mg_Invalid_joint_type_note" xml:space="preserve">
     <value>{0} 的节点类型无效。</value>
   </data>
-    <data name="Mg_Unrecognized_note_type" xml:space="preserve">
+  <data name="Mg_Unrecognized_note" xml:space="preserve">
     <value>未知物件类型 {0}，文件位置 0x{1:X2}。</value>
   </data>
     <data name="Error_Size_Incompatible" xml:space="preserve">
@@ -596,13 +596,13 @@
     <data name="Mg_No_sortname_provided" xml:space="preserve">
     <value>未提供排序名称。已根据标题自动生成新的排序名称。</value>
   </data>
-    <data name="Mg_Meta_override_argument_count_mismatch" xml:space="preserve">
-    <value>'#override {0}' 要求1个参数或2个参数。</value>
+  <data name="Mg_Meta_Argument_count_min_one" xml:space="preserve">
+    <value>命令 '{0}' 至少需要1个参数。</value>
   </data>
     <data name="Mg_String_id_not_found" xml:space="preserve">
     <value>未能在 "{1}" 中找到指定的 StringID（id / str / data）{0}。请检查输入内容或执行“读取游戏素材”。如果想使用自定义 StringID，请同时提供两者 (例如 "#meta ... [ID] [String]")。</value>
   </data>
-    <data name="Mg_Unknown_tag" xml:space="preserve">
+  <data name="Mg_Meta_Unknown_tag" xml:space="preserve">
     <value>未知标记'{0}'。</value>
   </data>
     <data name="Status_Starting" xml:space="preserve">
@@ -674,7 +674,7 @@
     <data name="Error_File_ignored_due_to_id_missing" xml:space="preserve">
     <value>该文件因缺少歌曲 ID 而被忽略。请在Margrete中为歌曲 ID 设置一个数字。</value>
   </data>
-    <data name="Mg_First_argument_must_int" xml:space="preserve">
+  <data name="Mg_Meta_First_argument_must_int" xml:space="preserve">
     <value>第一个参数必须是有效的整数。</value>
   </data>
     <data name="Warn_Duplicate_id_and_difficulty" xml:space="preserve">
@@ -682,5 +682,8 @@
   </data>
     <data name="Mg_Concurrent_ex_effects" xml:space="preserve">
     <value>同一时间上存在多个不同的 EX 效果：{0}。游戏可能只会显示其中一个。</value>
+  </data>
+  <data name="Mg_Meta_Invalid_date" xml:space="preserve">
+    <value>无效的日期格式，需要为 "YYYYMMDD"</value>
   </data>
 </root>

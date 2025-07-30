@@ -41,6 +41,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         prog?.Report(Strings.Status_Searching);
         var model = new OptionModel();
         await model.LoadAsync(path, ct);
+        if (string.IsNullOrWhiteSpace(model.WorkingDirectory) || !Directory.Exists(model.WorkingDirectory))
+        {
+            model.WorkingDirectory = path;
+        }
 
         var ctx = new ProcessContext
         {
@@ -131,8 +135,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         };
         if (dlg.ShowDialog() != true) return;
         settings.WorkingDirectory = dlg.FolderName;
-        var folderName = Path.GetFileName(settings.WorkingDirectory);
-        var path = folderName == settings.OptionName ? settings.WorkingDirectory : Path.Combine(settings.WorkingDirectory, settings.OptionName);
+        var path = settings.OptionDirectory;
 
         var musicFolder = Path.Combine(path, "music");
         var stageFolder = Path.Combine(path, "stage");
@@ -218,7 +221,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 var musicConverter = new MusicConverter(innerDiag)
                 {
                     Meta = book.Meta,
-                    OutFolder = musicFolder,
+                    OutFolder = cueFileFolder,
                 };
                 await musicConverter.ConvertAsync(ct);
                 ct.ThrowIfCancellationRequested();

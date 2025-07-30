@@ -585,7 +585,7 @@
   <data name="Mg_Invalid_joint_type_note" xml:space="preserve">
     <value>Invalid joint type for {0}.</value>
   </data>
-  <data name="Mg_Unrecognized_note_type" xml:space="preserve">
+  <data name="Mg_Unrecognized_note" xml:space="preserve">
     <value>Unknown note type {0} at file position 0x{1:X2}.</value>
   </data>
   <data name="Error_Size_Incompatible" xml:space="preserve">
@@ -597,13 +597,13 @@
   <data name="Mg_No_sortname_provided" xml:space="preserve">
     <value>No SortName was provided. A new SortName has been generated from the Title.</value>
   </data>
-  <data name="Mg_Meta_override_argument_count_mismatch" xml:space="preserve">
-    <value>'#override {0}' requires at one argument or two arguments.</value>
+  <data name="Mg_Meta_Argument_count_min_one" xml:space="preserve">
+    <value>Command '{0}' requires at least one argument.</value>
   </data>
   <data name="Mg_String_id_not_found" xml:space="preserve">
     <value>The specified StringID (id or str) {0} could not be found in '{1}'. Please check your input or run "Recollect Game Assets" to refresh the database. If you want to use your custom StringID, please provide both (i.e. "#meta ... [ID] [String]").</value>
   </data>
-  <data name="Mg_Unknown_tag" xml:space="preserve">
+  <data name="Mg_Meta_Unknown_tag" xml:space="preserve">
     <value>Unknown tag '{0}'.</value>
   </data>
   <data name="Status_Starting" xml:space="preserve">
@@ -675,7 +675,7 @@
   <data name="Error_File_ignored_due_to_id_missing" xml:space="preserve">
     <value>This file is ignored since Song ID is missing. Set a number for Song Id in Margrete.</value>
   </data>
-  <data name="Mg_First_argument_must_int" xml:space="preserve">
+  <data name="Mg_Meta_First_argument_must_int" xml:space="preserve">
     <value>First argument must be a valid integer.</value>
   </data>
   <data name="Warn_Duplicate_id_and_difficulty" xml:space="preserve">
@@ -683,5 +683,8 @@
   </data>
   <data name="Mg_Concurrent_ex_effects" xml:space="preserve">
     <value>Different EX effects coexist at the same tick: {0}. The game may only display one of these.</value>
+  </data>
+  <data name="Mg_Meta_Invalid_date" xml:space="preserve">
+    <value>Invalid date format. Expected 'YYYYMMDD'.</value>
   </data>
 </root>

@@ -68,9 +68,9 @@ public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null
         {
             Tasks.Add(Manipulate.IsImageValidAsync(Mgxc.Meta.FullBgiFilePath).ContinueWith(p =>
             {
-                if (p.Result.IsSuccess) return;
+                if (p.IsCompletedSuccessfully) return;
                 Mgxc.Meta.IsCustomStage = false;
-                Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_bg_image, Mgxc.Meta.FullBgiFilePath, target: p.Result);
+                Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_bg_image, Mgxc.Meta.FullBgiFilePath, target: p);
                 Mgxc.Meta.BgiFilePath = string.Empty;
             }));
         }

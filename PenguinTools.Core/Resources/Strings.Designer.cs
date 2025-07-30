@@ -1167,15 +1167,6 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to First argument must be a valid integer..
-        /// </summary>
-        public static string Mg_First_argument_must_int {
-            get {
-                return ResourceManager.GetString("Mg_First_argument_must_int", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No BPM change event was found at tick 0..
         /// </summary>
         public static string Mg_Head_BPM_not_found {
@@ -1221,11 +1212,38 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;#override {0}&apos; requires at one argument or two arguments..
+        ///   Looks up a localized string similar to Command &apos;{0}&apos; requires at least one argument..
         /// </summary>
-        public static string Mg_Meta_override_argument_count_mismatch {
+        public static string Mg_Meta_Argument_count_min_one {
             get {
-                return ResourceManager.GetString("Mg_Meta_override_argument_count_mismatch", resourceCulture);
+                return ResourceManager.GetString("Mg_Meta_Argument_count_min_one", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First argument must be a valid integer..
+        /// </summary>
+        public static string Mg_Meta_First_argument_must_int {
+            get {
+                return ResourceManager.GetString("Mg_Meta_First_argument_must_int", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid date format. Expected &apos;YYYYMMDD&apos;..
+        /// </summary>
+        public static string Mg_Meta_Invalid_date {
+            get {
+                return ResourceManager.GetString("Mg_Meta_Invalid_date", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown tag &apos;{0}&apos;..
+        /// </summary>
+        public static string Mg_Meta_Unknown_tag {
+            get {
+                return ResourceManager.GetString("Mg_Meta_Unknown_tag", resourceCulture);
             }
         }
         
@@ -1266,15 +1284,6 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknown tag &apos;{0}&apos;..
-        /// </summary>
-        public static string Mg_Unknown_tag {
-            get {
-                return ResourceManager.GetString("Mg_Unknown_tag", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unknown property mark {0} at file position 0x{1:X2}, data: {2}..
         /// </summary>
         public static string Mg_Unrecognized_meta {
@@ -1286,9 +1295,9 @@ namespace PenguinTools.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Unknown note type {0} at file position 0x{1:X2}..
         /// </summary>
-        public static string Mg_Unrecognized_note_type {
+        public static string Mg_Unrecognized_note {
             get {
-                return ResourceManager.GetString("Mg_Unrecognized_note_type", resourceCulture);
+                return ResourceManager.GetString("Mg_Unrecognized_note", resourceCulture);
             }
         }
         
