@@ -29,12 +29,14 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <DockPanel
             Grid.Row="0"
             Margin="8"
             VerticalAlignment="Top">
+
             <ListView
                 MinHeight="100"
                 MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource PercentageConverter}, ConverterParameter=0.6}"
@@ -60,13 +62,16 @@
                                         <Image.Style>
                                             <Style TargetType="Image">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static common:Severity.Error}">
+                                                    <DataTrigger Binding="{Binding Severity}"
+                                                                 Value="{x:Static common:Severity.Error}">
                                                         <Setter Property="Source" Value="{StaticResource ErrorIcon}" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static common:Severity.Warning}">
+                                                    <DataTrigger Binding="{Binding Severity}"
+                                                                 Value="{x:Static common:Severity.Warning}">
                                                         <Setter Property="Source" Value="{StaticResource WarningIcon}" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static common:Severity.Information}">
+                                                    <DataTrigger Binding="{Binding Severity}"
+                                                                 Value="{x:Static common:Severity.Information}">
                                                         <Setter Property="Source" Value="{StaticResource InfoIcon}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -130,11 +135,19 @@
             <controls:ObjectTreeView SelectedObject="{Binding SelectedDiagnostic}" />
         </GroupBox>
 
-        <StackPanel Grid.Row="2" Style="{StaticResource ActionPanelStyle}">
+        <controls:Alert
+            Grid.Row="2"
+            Margin="0,8,0,0"
+            Level="Information"
+            Message="{x:Static res:Strings.Alert_Diagnostic_report}">
+        </controls:Alert>
+
+        <StackPanel Grid.Row="3" Style="{StaticResource ActionPanelStyle}">
             <Button Content="OK" IsDefault="True">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
-                        <i:CallMethodAction MethodName="Close" TargetObject="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+                        <i:CallMethodAction MethodName="Close"
+                                            TargetObject="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>

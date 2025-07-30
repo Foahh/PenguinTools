@@ -60,6 +60,15 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please send it to the developer if you don&apos;t understand..
+        /// </summary>
+        public static string Alert_Diagnostic_report {
+            get {
+                return ResourceManager.GetString("Alert_Diagnostic_report", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please edit the properties of charts in Margrete first..
         /// </summary>
         public static string Alert_Edit_notice {

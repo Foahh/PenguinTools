@@ -687,4 +687,7 @@
   <data name="Mg_Meta_Invalid_date" xml:space="preserve">
     <value>Invalid date format. Expected 'YYYYMMDD'.</value>
   </data>
+  <data name="Alert_Diagnostic_report" xml:space="preserve">
+    <value>Please send it to the developer if you don't understand.</value>
+  </data>
 </root>

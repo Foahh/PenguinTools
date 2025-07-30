@@ -686,4 +686,7 @@
   <data name="Mg_Meta_Invalid_date" xml:space="preserve">
     <value>无效的日期格式，需要为 "YYYYMMDD"</value>
   </data>
+  <data name="Alert_Diagnostic_report" xml:space="preserve">
+    <value>如果不了解问题的原因，请查阅文档或询问开发者。</value>
+  </data>
 </root>
