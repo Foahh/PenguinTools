@@ -205,13 +205,21 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
                 if (settings.ConvertJacket)
                 {
-                    var jacketConverter = new JacketConverter(innerDiag)
+                    var jacketPath = book.Meta.FullJacketFilePath;
+                    if (File.Exists(jacketPath))
                     {
-                        InPath = book.Meta.FullJacketFilePath,
-                        OutPath = Path.Combine(chartFolder, xml.JaketFile)
-                    };
-                    await jacketConverter.ConvertAsync(ct);
-                    ct.ThrowIfCancellationRequested();
+                        var jacketConverter = new JacketConverter(innerDiag)
+                        {
+                            InPath = jacketPath,
+                            OutPath = Path.Combine(chartFolder, xml.JaketFile)
+                        };
+                        await jacketConverter.ConvertAsync(ct);
+                        ct.ThrowIfCancellationRequested();
+                    }
+                    else
+                    {
+                        innerDiag.Report(Severity.Warning, Strings.Error_Jacket_file_not_found, target: jacketPath);
+                    }
                 }
             }
 

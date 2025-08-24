@@ -74,7 +74,7 @@ public class ObjectTreeNode
     {
         Converters =
         {
-            new ExceptionJsonConverter<Exception>()
+            new ExceptionJsonConverter()
         },
         ReferenceHandler = ReferenceHandler.IgnoreCycles,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,

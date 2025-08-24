@@ -482,13 +482,7 @@
     <data name="Error_Song_id_is_not_set" xml:space="preserve">
     <value>未设置歌曲 ID。</value>
   </data>
-    <data name="Error_Audio_file_is_not_set" xml:space="preserve">
-    <value>未设置音频文件。</value>
-  </data>
-    <data name="Error_Jacket_file_is_not_set" xml:space="preserve">
-    <value>未设置封面文件。</value>
-  </data>
-    <data name="Status_Reading" xml:space="preserve">
+  <data name="Status_Reading" xml:space="preserve">
     <value>正在读取...</value>
   </data>
     <data name="Status_Converting_chart" xml:space="preserve">
@@ -692,7 +686,19 @@
   <data name="Unit_Tick" xml:space="preserve">
     <value>{0} 刻</value>
   </data>
-  <data name="Error_ConverterBase_Cancelled" xml:space="preserve">
-    <value>已取消执行：{0}。</value>
+  <data name="Error_Jacket_file_not_found" xml:space="preserve">
+    <value>未找到封面文件。</value>
+  </data>
+  <data name="Error_Operation_cancelled_for" xml:space="preserve">
+    <value>操作已取消：{0}。</value>
+  </data>
+  <data name="Error_Effect_file_not_found" xml:space="preserve">
+    <value>未找到背景效果文件。</value>
+  </data>
+  <data name="Error_Background_file_not_found" xml:space="preserve">
+    <value>未找到背景图片文件。</value>
+  </data>
+  <data name="Error_Audio_file_not_found" xml:space="preserve">
+    <value>未找到音频文件。</value>
   </data>
 </root>

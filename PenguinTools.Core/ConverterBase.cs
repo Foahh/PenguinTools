@@ -11,9 +11,9 @@ public abstract class ConverterBase(Diagnoster diag, IProgress<string>? prog = n
     public virtual async Task ConvertAsync(CancellationToken ct = default)
     {
         await ValidateAsync(ct);
-        if (Diagnostic.HasError) throw new OperationCanceledException(string.Format(Strings.Error_ConverterBase_Cancelled, ConverterName));
+        if (Diagnostic.HasError) throw new OperationCanceledException(string.Format(Strings.Error_Operation_cancelled_for, ConverterName));
         await ActionAsync(ct);
-        if (Diagnostic.HasError) throw new OperationCanceledException(string.Format(Strings.Error_ConverterBase_Cancelled, ConverterName));
+        if (Diagnostic.HasError) throw new OperationCanceledException(string.Format(Strings.Error_Operation_cancelled_for, ConverterName));
     }
 
     protected abstract Task ActionAsync(CancellationToken ct = default);
@@ -29,9 +29,9 @@ public abstract class ConverterBase<TResult>(Diagnoster diag, IProgress<string>?
     public override async Task<TResult> ConvertAsync(CancellationToken ct = default)
     {
         await ValidateAsync(ct);
-        if (Diagnostic.HasError) throw new OperationCanceledException(string.Format(Strings.Error_ConverterBase_Cancelled, ConverterName));
+        if (Diagnostic.HasError) throw new OperationCanceledException(string.Format(Strings.Error_Operation_cancelled_for, ConverterName));
         var result = await ActionAsync(ct);
-        if (Diagnostic.HasError) throw new OperationCanceledException(string.Format(Strings.Error_ConverterBase_Cancelled, ConverterName));
+        if (Diagnostic.HasError) throw new OperationCanceledException(string.Format(Strings.Error_Operation_cancelled_for, ConverterName));
         return result;
     }
 

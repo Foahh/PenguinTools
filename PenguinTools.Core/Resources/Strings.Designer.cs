@@ -762,11 +762,11 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Audio file is not set..
+        ///   Looks up a localized string similar to The specified audio file was not found..
         /// </summary>
-        public static string Error_Audio_file_is_not_set {
+        public static string Error_Audio_file_not_found {
             get {
-                return ResourceManager.GetString("Error_Audio_file_is_not_set", resourceCulture);
+                return ResourceManager.GetString("Error_Audio_file_not_found", resourceCulture);
             }
         }
         
@@ -789,6 +789,15 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified background image file was not found..
+        /// </summary>
+        public static string Error_Background_file_not_found {
+            get {
+                return ResourceManager.GetString("Error_Background_file_not_found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Command execution failed..
         /// </summary>
         public static string Error_Command_failed {
@@ -798,11 +807,11 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Operation cancelled for: {0}.
+        ///   Looks up a localized string similar to The specified background effect file was not found..
         /// </summary>
-        public static string Error_ConverterBase_Cancelled {
+        public static string Error_Effect_file_not_found {
             get {
-                return ResourceManager.GetString("Error_ConverterBase_Cancelled", resourceCulture);
+                return ResourceManager.GetString("Error_Effect_file_not_found", resourceCulture);
             }
         }
         
@@ -870,11 +879,11 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Jacket file is not set..
+        ///   Looks up a localized string similar to The specified jacket file was not found..
         /// </summary>
-        public static string Error_Jacket_file_is_not_set {
+        public static string Error_Jacket_file_not_found {
             get {
-                return ResourceManager.GetString("Error_Jacket_file_is_not_set", resourceCulture);
+                return ResourceManager.GetString("Error_Jacket_file_not_found", resourceCulture);
             }
         }
         
@@ -893,6 +902,15 @@ namespace PenguinTools.Core.Resources {
         public static string Error_Noop {
             get {
                 return ResourceManager.GetString("Error_Noop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation cancelled: {0}..
+        /// </summary>
+        public static string Error_Operation_cancelled_for {
+            get {
+                return ResourceManager.GetString("Error_Operation_cancelled_for", resourceCulture);
             }
         }
         

@@ -474,20 +474,23 @@
   <data name="Display_BatchSize" xml:space="preserve">
     <value>Batch Process Size</value>
   </data>
-  <data name="Error_File_not_found" xml:space="preserve">
-    <value>The specified file was not found.</value>
+  <data name="Error_Jacket_file_not_found" xml:space="preserve">
+    <value>The specified jacket file was not found.</value>
+  </data>
+  <data name="Error_Audio_file_not_found" xml:space="preserve">
+    <value>The specified audio file was not found.</value>
+  </data>
+  <data name="Error_Background_file_not_found" xml:space="preserve">
+    <value>The specified background image file was not found.</value>
+  </data>
+  <data name="Error_Effect_file_not_found" xml:space="preserve">
+    <value>The specified background effect file was not found.</value>
   </data>
   <data name="Status_Writing" xml:space="preserve">
     <value>Writing...</value>
   </data>
   <data name="Error_Song_id_is_not_set" xml:space="preserve">
     <value>Song ID is not set.</value>
-  </data>
-  <data name="Error_Audio_file_is_not_set" xml:space="preserve">
-    <value>Audio file is not set.</value>
-  </data>
-  <data name="Error_Jacket_file_is_not_set" xml:space="preserve">
-    <value>Jacket file is not set.</value>
   </data>
   <data name="Status_Reading" xml:space="preserve">
     <value>Reading...</value>
@@ -693,7 +696,10 @@
   <data name="Unit_Tick" xml:space="preserve">
     <value>{0} Tick</value>
   </data>
-  <data name="Error_ConverterBase_Cancelled" xml:space="preserve">
-    <value>Operation cancelled for: {0}</value>
+  <data name="Error_Operation_cancelled_for" xml:space="preserve">
+    <value>Operation cancelled: {0}.</value>
+  </data>
+  <data name="Error_File_not_found" xml:space="preserve">
+    <value>The specified file was not found.</value>
   </data>
 </root>

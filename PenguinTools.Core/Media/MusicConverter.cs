@@ -24,7 +24,7 @@ public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : C
         if (Meta.Id is null) Diagnostic.Report(Severity.Error, Strings.Error_Song_id_is_not_set);
         if (Meta.BgmPreviewStop < Meta.BgmPreviewStart) Diagnostic.Report(Severity.Error, Strings.Error_Preview_stop_greater_than_start);
         var path = Meta.FullBgmFilePath;
-        if (!File.Exists(path)) Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, path);
+        if (!File.Exists(path)) Diagnostic.Report(Severity.Error, Strings.Error_Audio_file_not_found, path);
         return Task.CompletedTask;
     }
 

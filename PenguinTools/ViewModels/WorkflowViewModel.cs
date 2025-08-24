@@ -20,8 +20,8 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var chart = Model.Mgxc;
         var meta = chart.Meta;
         var songId = meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
-        if (string.IsNullOrWhiteSpace(meta.FullBgmFilePath)) throw new DiagnosticException(Strings.Error_Audio_file_is_not_set);
-        if (string.IsNullOrWhiteSpace(meta.FullJacketFilePath)) throw new DiagnosticException(Strings.Error_Jacket_file_is_not_set);
+        if (string.IsNullOrWhiteSpace(meta.FullBgmFilePath)) throw new DiagnosticException(Strings.Error_Audio_file_not_found);
+        if (string.IsNullOrWhiteSpace(meta.FullJacketFilePath)) throw new DiagnosticException(Strings.Error_Jacket_file_not_found);
         if (meta.IsCustomStage)
         {
             if (string.IsNullOrWhiteSpace(meta.FullBgiFilePath)) throw new DiagnosticException(Strings.Error_Background_file_is_not_set);

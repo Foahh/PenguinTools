@@ -35,7 +35,7 @@ public class StageConverter(Diagnoster diag, IProgress<string>? prog = null) : C
         foreach (var d in duplicates) Diagnostic.Report(Severity.Warning, string.Format(Strings.Warn_Stage_already_exists, d, StageId));
 
         if (StageId is null) Diagnostic.Report(Severity.Error, string.Format(Strings.Error_Stage_id_is_not_set));
-        if (!File.Exists(BackgroundPath)) Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, BackgroundPath);
+        if (!File.Exists(BackgroundPath)) Diagnostic.Report(Severity.Error, Strings.Error_Background_file_not_found, BackgroundPath);
 
         var ret = await Manipulate.IsImageValidAsync(BackgroundPath, ct);
         if (ret.IsFailure) Diagnostic.Report(Severity.Error, Strings.Error_Invalid_bg_image, BackgroundPath, target: ret);
@@ -44,7 +44,7 @@ public class StageConverter(Diagnoster diag, IProgress<string>? prog = null) : C
             foreach (var p in EffectPaths)
             {
                 if (string.IsNullOrWhiteSpace(p)) continue;
-                if (!File.Exists(p)) Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, p);
+                if (!File.Exists(p)) Diagnostic.Report(Severity.Error, Strings.Error_Effect_file_not_found, p);
                 ret = await Manipulate.IsImageValidAsync(p, ct);
                 if (ret.IsFailure) Diagnostic.Report(Severity.Error, Strings.Error_Invalid_bg_fx_image, p, target: ret);
             }

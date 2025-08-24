@@ -17,7 +17,7 @@ public class JacketConverter(Diagnoster diag, IProgress<string>? prog = null) : 
 
     protected override Task ValidateAsync(CancellationToken ct = default)
     {
-        if (!File.Exists(InPath)) Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, InPath);
+        if (!File.Exists(InPath)) Diagnostic.Report(Severity.Error, Strings.Error_Jacket_file_not_found, InPath);
         return Task.CompletedTask;
     }
 }
