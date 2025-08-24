@@ -17,6 +17,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135"/>
+        <PackageReference Include="MinVer" Version="6.0.0" PrivateAssets="all"/>
         <PackageReference Include="Swordfish.NET.CollectionsV3" Version="3.3.16" />
     </ItemGroup>
 
@@ -50,6 +51,10 @@
       <Resource Include="Resources\information.png" />
       <Resource Include="Resources\warning.png" />
     </ItemGroup>
+
+    <PropertyGroup>
+        <MinVerTagPrefix>v</MinVerTagPrefix>
+    </PropertyGroup>
 
     <Import Project="..\Version.props"/>
 </Project>

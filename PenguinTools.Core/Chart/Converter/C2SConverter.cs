@@ -9,7 +9,7 @@ namespace PenguinTools.Core.Chart.Converter;
 using mg = Models.mgxc;
 using c2s = Models.c2s;
 
-public partial class ChartConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
+public partial class C2SConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
     public required string OutPath { get; init; }
     public required mg.Chart Mgxc { get; init; }
@@ -17,7 +17,7 @@ public partial class ChartConverter(IDiagnostic diag, IProgress<string>? prog = 
     private List<c2s.Note> Notes { get; set; } = [];
     private List<c2s.Event> Events { get; set; } = [];
 
-    protected async override Task ActionAsync(CancellationToken ct = default)
+    protected override async Task ActionAsync(CancellationToken ct = default)
     {
         Progress?.Report(Strings.Status_Converting_chart);
 
@@ -47,7 +47,7 @@ public partial class ChartConverter(IDiagnostic diag, IProgress<string>? prog = 
             if (length >= Time.SingleTick) continue;
 
             var tick = longNote1.Tick.Original;
-            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, Time.SingleTick);
+            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, Time.MarResolution / Time.SingleTick);
             Diagnostic.Report(Severity.Warning, msg, tick, longNote1);
         }
 

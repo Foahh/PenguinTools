@@ -7,7 +7,7 @@ public class AfbExtractor(IDiagnostic diag, IProgress<string>? prog = null) : Co
     public required string InPath { get; init; }
     public required string OutFolder { get; init; }
 
-    protected async override Task ActionAsync(CancellationToken ct = default)
+    protected override async Task ActionAsync(CancellationToken ct = default)
     {
         Progress?.Report(Strings.Status_Extracting);
         await Manipulate.ExtractDdsAsync(InPath, OutFolder, ct);

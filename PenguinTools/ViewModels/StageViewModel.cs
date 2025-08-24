@@ -43,7 +43,7 @@ public partial class StageViewModel : ActionViewModel
         return !string.IsNullOrWhiteSpace(BackgroundPath);
     }
 
-    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         var dlg = new OpenFolderDialog
         {

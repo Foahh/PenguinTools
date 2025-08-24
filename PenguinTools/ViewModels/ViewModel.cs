@@ -76,7 +76,7 @@ public abstract class ReloadableActionViewModel : ActionViewModel
 
 public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel where TModel : Model
 {
-    private FileSystemWatcher? fileWatcher;
+    private FileSystemWatcher? _fileWatcher;
 
     protected WatchViewModel()
     {
@@ -104,18 +104,18 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
 
     private void InitializeWatcher(string value)
     {
-        if (fileWatcher != null)
+        if (_fileWatcher != null)
         {
-            fileWatcher.Changed -= OnFileChanged;
-            fileWatcher.Dispose();
-            fileWatcher = null;
+            _fileWatcher.Changed -= OnFileChanged;
+            _fileWatcher.Dispose();
+            _fileWatcher = null;
         }
 
         if (string.IsNullOrEmpty(value)) return;
 
         if (Directory.Exists(value))
         {
-            fileWatcher = new FileSystemWatcher(value, FileGlob)
+            _fileWatcher = new FileSystemWatcher(value, FileGlob)
             {
                 IncludeSubdirectories = true,
                 NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.CreationTime
@@ -127,15 +127,15 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
             var directory = Path.GetDirectoryName(value);
             var fileName = Path.GetFileName(value);
             if (string.IsNullOrEmpty(directory) || string.IsNullOrEmpty(fileName)) return;
-            fileWatcher = new FileSystemWatcher(directory, fileName)
+            _fileWatcher = new FileSystemWatcher(directory, fileName)
             {
                 NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.CreationTime
             };
         }
 
-        if (fileWatcher == null) return;
-        fileWatcher.Changed += OnFileChanged;
-        fileWatcher.EnableRaisingEvents = true;
+        if (_fileWatcher == null) return;
+        _fileWatcher.Changed += OnFileChanged;
+        _fileWatcher.EnableRaisingEvents = true;
     }
 
     private void OnFileChanged(object sender, FileSystemEventArgs e)
@@ -180,7 +180,7 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         return Model != null;
     }
 
-    protected async override Task Reload()
+    protected override async Task Reload()
     {
         await ActionService.RunAsync(ReadModelInternal);
     }

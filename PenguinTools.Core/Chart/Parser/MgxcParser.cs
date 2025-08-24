@@ -11,10 +11,10 @@ using mg = Models.mgxc;
 
 public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase<mg.Chart>(diag, prog)
 {
-    private const string HEADER_MGXC = "MGXC"; // 4D 47 58 43
-    private const string HEADER_META = "meta"; // 6D 65 74 61
-    private const string HEADER_EVNT = "evnt"; // 65 76 6E 74
-    private const string HEADER_DAT2 = "dat2"; // 64 61 74 32
+    private const string HeaderMgxc = "MGXC"; // 4D 47 58 43
+    private const string HeaderMeta = "meta"; // 6D 65 74 61
+    private const string HeaderEvnt = "evnt"; // 65 76 6E 74
+    private const string HeaderDat2 = "dat2"; // 64 61 74 32
 
     public required string Path { get; init; }
     public required AssetManager Assets { get; init; }
@@ -22,7 +22,7 @@ public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null
     private List<Task> Tasks { get; } = [];
     private mg.Chart Mgxc { get; } = new();
 
-    protected async override Task<mg.Chart> ActionAsync(CancellationToken ct = default)
+    protected override async Task<mg.Chart> ActionAsync(CancellationToken ct = default)
     {
         Mgxc.Meta.FilePath = Path;
 
@@ -30,18 +30,18 @@ public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null
         using var br = new BinaryReader(fs);
 
         var header = br.ReadUtf8String(4);
-        if (header != HEADER_MGXC) throw new DiagnosticException(string.Format(Strings.Error_Invalid_Header, header, HEADER_MGXC));
+        if (header != HeaderMgxc) throw new DiagnosticException(string.Format(Strings.Error_Invalid_Header, header, HeaderMgxc));
 
         br.ReadInt32(); // MGXC Block Size
         br.ReadInt32(); // unknown
 
-        br.ReadBlock(HEADER_META, ParseMeta);
+        br.ReadBlock(HeaderMeta, ParseMeta);
 
-        br.ReadBlock(HEADER_EVNT, ParseEvent);
+        br.ReadBlock(HeaderEvnt, ParseEvent);
 
         Diagnostic.TimeCalculator = Mgxc.GetCalculator();
 
-        br.ReadBlock(HEADER_DAT2, ParseNote);
+        br.ReadBlock(HeaderDat2, ParseNote);
 
         ProcessEvent();
 

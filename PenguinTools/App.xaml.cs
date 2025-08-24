@@ -18,9 +18,9 @@ public partial class App : Application
     public static readonly Version Version = Assembly.GetExecutingAssembly().GetName().Version ?? throw new InvalidOperationException("Failed to retrieve application version");
     public static readonly DateTime BuildDate = BuildDateAttribute.GetAssemblyBuildDate();
 
-    private IHost host = null!;
+    private IHost _host = null!;
     internal new static Window MainWindow => Services.GetRequiredService<MainWindow>();
-    internal static IServiceProvider Services => ((App)Current).host.Services;
+    internal static IServiceProvider Services => ((App)Current)._host.Services;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -33,7 +33,7 @@ public partial class App : Application
 
         ResourceUtils.Initialize();
 
-        host = Host.CreateDefaultBuilder().ConfigureServices((_, services) =>
+        _host = Host.CreateDefaultBuilder().ConfigureServices((_, services) =>
         {
             services.AddSingleton<MainWindow>();
             services.AddSingleton<ActionService>();
@@ -49,7 +49,7 @@ public partial class App : Application
             services.AddTransient<OptionViewModel>();
         }).Build();
 
-        host.Start();
+        _host.Start();
 
         var window = Services.GetRequiredService<MainWindow>();
         window.Show();
@@ -65,6 +65,6 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         ResourceUtils.Release();
-        host.Dispose();
+        _host.Dispose();
     }
 }

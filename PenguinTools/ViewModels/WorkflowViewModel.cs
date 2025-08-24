@@ -14,7 +14,7 @@ namespace PenguinTools.ViewModels;
 
 public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 {
-    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         if (Model == null) return;
         var chart = Model.Mgxc;
@@ -73,7 +73,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var musicFolder = await xml.SaveDirectoryAsync(path);
         var chartPath = Path.Combine(musicFolder, xml[meta.Difficulty].File);
 
-        var chartConverter = new ChartConverter(diag, prog)
+        var chartConverter = new C2SConverter(diag, prog)
         {
             OutPath = chartPath,
             Mgxc = chart
@@ -99,7 +99,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         await musicConverter.ConvertAsync(ct);
     }
 
-    protected async override Task<WorkflowModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task<WorkflowModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         var parser = new MgxcParser(diag, prog)
         {

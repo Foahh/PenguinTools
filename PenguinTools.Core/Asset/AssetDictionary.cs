@@ -21,12 +21,12 @@ public enum AssetType
 
 public class AssetDictionary
 {
-    private readonly Dictionary<AssetType, SortedSet<Entry>> database;
+    private readonly Dictionary<AssetType, SortedSet<Entry>> _database;
 
-    public IReadOnlySet<Entry> GenreNames => database[AssetType.GenreNames];
-    public IReadOnlySet<Entry> FieldLines => database[AssetType.FieldLines];
-    public IReadOnlySet<Entry> StageNames => database[AssetType.StageNames];
-    public IReadOnlySet<Entry> WeTagNames => database[AssetType.WeTagNames];
+    public IReadOnlySet<Entry> GenreNames => _database[AssetType.GenreNames];
+    public IReadOnlySet<Entry> FieldLines => _database[AssetType.FieldLines];
+    public IReadOnlySet<Entry> StageNames => _database[AssetType.StageNames];
+    public IReadOnlySet<Entry> WeTagNames => _database[AssetType.WeTagNames];
 
     private static readonly JsonSerializerOptions Options = new()
     {
@@ -37,8 +37,8 @@ public class AssetDictionary
 
     public AssetDictionary()
     {
-        database = new Dictionary<AssetType, SortedSet<Entry>>();
-        foreach (var type in Enum.GetValues<AssetType>()) database[type] = [];
+        _database = new Dictionary<AssetType, SortedSet<Entry>>();
+        foreach (var type in Enum.GetValues<AssetType>()) _database[type] = [];
     }
 
     public AssetDictionary(string path) : this()
@@ -66,7 +66,7 @@ public class AssetDictionary
     {
         foreach (var (assetType, sourceSet) in databases)
         {
-            database[assetType].UnionWith(sourceSet);
+            _database[assetType].UnionWith(sourceSet);
         }
     }
     
@@ -74,9 +74,9 @@ public class AssetDictionary
     {
         foreach (var db in databases)
         {
-            foreach (var (assetType, sourceSet) in db.database)
+            foreach (var (assetType, sourceSet) in db._database)
             {
-                database[assetType].UnionWith(sourceSet);
+                _database[assetType].UnionWith(sourceSet);
             }
         }
     }
@@ -85,22 +85,22 @@ public class AssetDictionary
     {
         foreach (var db in databases)
         {
-            foreach (var (assetType, sourceSet) in db.database)
+            foreach (var (assetType, sourceSet) in db._database)
             {
-                database[assetType].ExceptWith(sourceSet);
+                _database[assetType].ExceptWith(sourceSet);
             }
         }
     }
 
     public async Task SaveAsync(string path, CancellationToken ct = default)
     {
-        var json = JsonSerializer.Serialize(database, Options);
+        var json = JsonSerializer.Serialize(_database, Options);
         await File.WriteAllTextAsync(path, json, ct);
     }
 
     public void Clear()
     {
-        foreach (var set in database.Values)
+        foreach (var set in _database.Values)
         {
             set.Clear();
         }
@@ -108,13 +108,13 @@ public class AssetDictionary
 
     public SortedSet<Entry> this[AssetType type]
     {
-        get => database[type];
-        set => database[type] = value;
+        get => _database[type];
+        set => _database[type] = value;
     }
 
     #region Collect
 
-    public async static Task<Dictionary<AssetType, SortedSet<Entry>>> CollectAsync(string workDir, CancellationToken ct = default)
+    public static async Task<Dictionary<AssetType, SortedSet<Entry>>> CollectAsync(string workDir, CancellationToken ct = default)
     {
         var specs = new (string FileName, string EntryName)[]
         {
@@ -126,7 +126,7 @@ public class AssetDictionary
         return await CollectManyAsync(workDir, specs, ct);
     }
 
-    private async static Task<List<Entry>> ReadEntriesAsync(string path, string entryName, CancellationToken ct = default)
+    private static async Task<List<Entry>> ReadEntriesAsync(string path, string entryName, CancellationToken ct = default)
     {
         var entries = new List<Entry>();
         XDocument doc;
@@ -181,7 +181,7 @@ public class AssetDictionary
         return entries;
     }
 
-    private async static Task<SortedSet<Entry>> CollectOneAsync(string root, string fileName, string entryName, CancellationToken ct = default)
+    private static async Task<SortedSet<Entry>> CollectOneAsync(string root, string fileName, string entryName, CancellationToken ct = default)
     {
         var result = new SortedSet<Entry>();
         var walker = Directory.EnumerateFiles(root, fileName, SearchOption.AllDirectories);
@@ -194,7 +194,7 @@ public class AssetDictionary
         return result;
     }
 
-    public async static Task<Dictionary<AssetType, SortedSet<Entry>>> CollectManyAsync(string root, IEnumerable<(string FileName, string EntryName)> specs, CancellationToken ct = default)
+    public static async Task<Dictionary<AssetType, SortedSet<Entry>>> CollectManyAsync(string root, IEnumerable<(string FileName, string EntryName)> specs, CancellationToken ct = default)
     {
         var aggregated = new Dictionary<string, SortedSet<Entry>>();
 

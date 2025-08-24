@@ -11,17 +11,17 @@ public interface IUpdateService
 
 public class GitHubUpdateService : IUpdateService
 {
-    private readonly HttpClient httpClient;
+    private readonly HttpClient _httpClient;
 
     public GitHubUpdateService()
     {
-        httpClient = new HttpClient();
-        httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(App.Name, App.Version.ToString()));
+        _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(App.Name, App.Version.ToString()));
     }
 
     public async Task<(Version Version, string Url)> CheckForUpdatesAsync()
     {
-        var response = await httpClient.GetAsync("https://api.github.com/repos/Foahh/PenguinTools/releases/latest");
+        var response = await _httpClient.GetAsync("https://api.github.com/repos/Foahh/PenguinTools/releases/latest");
         if (!response.IsSuccessStatusCode) throw new OperationCanceledException("Could not retrieve release information from GitHub.");
 
         var jsonContent = await response.Content.ReadAsStringAsync();

@@ -88,7 +88,7 @@ public static class ResourceUtils
 
     #region Resources
     
-    public async static Task CopyAsync(string resourceName, string destinationPath)
+    public static async Task CopyAsync(string resourceName, string destinationPath)
     {
         if (string.IsNullOrWhiteSpace(resourceName)) throw new ArgumentNullException(nameof(resourceName));
         if (string.IsNullOrWhiteSpace(destinationPath)) throw new ArgumentNullException(nameof(destinationPath));

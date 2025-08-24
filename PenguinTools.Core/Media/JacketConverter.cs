@@ -7,7 +7,7 @@ public class JacketConverter(IDiagnostic diag, IProgress<string>? prog = null) :
     public required string InPath { get; init; }
     public required string OutPath { get; init; }
 
-    protected async override Task ActionAsync(CancellationToken ct = default)
+    protected override async Task ActionAsync(CancellationToken ct = default)
     {
         Progress?.Report(Strings.Status_Converting_jacket);
         ct.ThrowIfCancellationRequested();

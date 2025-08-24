@@ -1653,6 +1653,15 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} Tick.
+        /// </summary>
+        public static string Unit_Tick {
+            get {
+                return ResourceManager.GetString("Unit_Tick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Already the latest version.
         /// </summary>
         public static string Update_Already_Latest {

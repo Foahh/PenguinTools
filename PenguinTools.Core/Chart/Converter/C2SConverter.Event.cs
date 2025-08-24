@@ -5,7 +5,7 @@ namespace PenguinTools.Core.Chart.Converter;
 using mg = Models.mgxc;
 using c2s = Models.c2s;
 
-public partial class ChartConverter
+public partial class C2SConverter
 {
     private void ConvertEvent(mg.Chart mgxc)
     {

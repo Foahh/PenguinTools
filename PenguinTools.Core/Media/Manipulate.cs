@@ -39,7 +39,7 @@ public class ProcessCommandResult
 
 public static class Manipulate
 {
-    private async static Task<ProcessCommandResult> RunAsync(IEnumerable<string> args, CancellationToken ct = default)
+    private static async Task<ProcessCommandResult> RunAsync(IEnumerable<string> args, CancellationToken ct = default)
     {
         var psi = new ProcessStartInfo
         {
@@ -63,7 +63,7 @@ public static class Manipulate
         return new ProcessCommandResult(proc, await stdoutTask, await stderrTask);
     }
 
-    public async static Task<ProcessCommandResult> NormalizeAsync(string src, string dst, decimal offset, CancellationToken ct = default)
+    public static async Task<ProcessCommandResult> NormalizeAsync(string src, string dst, decimal offset, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(src)) throw new ArgumentNullException(nameof(src));
         if (string.IsNullOrWhiteSpace(dst)) throw new ArgumentNullException(nameof(dst));
@@ -79,19 +79,19 @@ public static class Manipulate
         return ret;
     }
 
-    public async static Task<ProcessCommandResult> IsAudioValidAsync(string src, CancellationToken ct = default)
+    public static async Task<ProcessCommandResult> IsAudioValidAsync(string src, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(src)) throw new ArgumentNullException(nameof(src));
         return await RunAsync(["ai", "-s", src], ct);
     }
 
-    public async static Task<ProcessCommandResult> IsImageValidAsync(string src, CancellationToken ct = default)
+    public static async Task<ProcessCommandResult> IsImageValidAsync(string src, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(src)) throw new ArgumentNullException(nameof(src));
         return await RunAsync(["ii", "-s", src], ct);
     }
 
-    public async static Task ConvertJacketAsync(string src, string dst, CancellationToken ct = default)
+    public static async Task ConvertJacketAsync(string src, string dst, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(src)) throw new ArgumentNullException(nameof(src));
         if (string.IsNullOrWhiteSpace(dst)) throw new ArgumentNullException(nameof(dst));
@@ -100,7 +100,7 @@ public static class Manipulate
         ret.ThrowIfFailed();
     }
 
-    public async static Task ConvertStageAsync(string bg, string stSrc, string stDst, string?[]? fxPaths, CancellationToken ct = default)
+    public static async Task ConvertStageAsync(string bg, string stSrc, string stDst, string?[]? fxPaths, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(bg)) throw new ArgumentNullException(nameof(bg));
         if (string.IsNullOrWhiteSpace(stSrc)) throw new ArgumentNullException(nameof(stSrc));
@@ -128,7 +128,7 @@ public static class Manipulate
         ret.ThrowIfFailed();
     }
 
-    public async static Task ExtractDdsAsync(string src, string dst, CancellationToken ct = default)
+    public static async Task ExtractDdsAsync(string src, string dst, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(src)) throw new ArgumentNullException(nameof(src));
         if (string.IsNullOrWhiteSpace(dst)) throw new ArgumentNullException(nameof(dst));

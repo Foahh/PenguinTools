@@ -7,8 +7,8 @@ using mg = Models.mgxc;
 
 public partial class MgxcParser
 {
-    private readonly Dictionary<int, List<mg.Note>> noteGroups = [];
-    private readonly Dictionary<int, List<mg.ScrollSpeedEvent>> tilGroups = [];
+    private readonly Dictionary<int, List<mg.Note>> _noteGroups = [];
+    private readonly Dictionary<int, List<mg.ScrollSpeedEvent>> _tilGroups = [];
 
     // thanks to @tångent 90°
     private void ProcessTil()
@@ -22,14 +22,14 @@ public partial class MgxcParser
         FinalizeEvent();
         FindNoteViolations();
 
-        tilGroups.Clear();
-        noteGroups.Clear();
+        _tilGroups.Clear();
+        _noteGroups.Clear();
     }
 
     private void FinalizeEvent()
     {
         foreach (var e in Mgxc.Events.Children.OfType<mg.SpeedEventBase>().ToList()) Mgxc.Events.RemoveChild(e);
-        foreach (var (tilId, events) in tilGroups)
+        foreach (var (tilId, events) in _tilGroups)
         {
             foreach (var e in events)
             {
@@ -47,12 +47,12 @@ public partial class MgxcParser
     private void PlaceSoflanArea()
     {
 
-        foreach (var tils in tilGroups.Values.ToList()) tils.Sort((a, b) => a.Tick.CompareTo(b.Tick));
+        foreach (var tils in _tilGroups.Values.ToList()) tils.Sort((a, b) => a.Tick.CompareTo(b.Tick));
         var slaSet = new HashSet<(int Tick, int Timeline, int Lane, int Width)>();
-        foreach (var (id, notes) in noteGroups)
+        foreach (var (id, notes) in _noteGroups)
         {
             if (id == 0) continue;
-            var events = tilGroups[id];
+            var events = _tilGroups[id];
             foreach (var note in notes)
             {
                 note.Timeline = id;
@@ -90,7 +90,7 @@ public partial class MgxcParser
         {
             var timelineId = til.Timeline;
             CreateGroup(timelineId);
-            tilGroups[timelineId].Add(til);
+            _tilGroups[timelineId].Add(til);
         }
     }
 
@@ -102,13 +102,13 @@ public partial class MgxcParser
             GroupNoteByTimeline(note);
             var timeline = note.Timeline;
             CreateGroup(timeline);
-            noteGroups[timeline].Add(note);
+            _noteGroups[timeline].Add(note);
         }
     }
 
     private void MoveMainTimeline(int mainTil)
     {
-        if (!tilGroups.ContainsKey(mainTil))
+        if (!_tilGroups.ContainsKey(mainTil))
         {
             var msg = string.Format(Strings.Mg_Main_timeline_not_found, Mgxc.Meta.MainTil);
             Diagnostic.Report(Severity.Information, msg);
@@ -119,24 +119,24 @@ public partial class MgxcParser
 
     private void ClearEmptyGroups()
     {
-        foreach (var (id, events) in tilGroups.ToList())
+        foreach (var (id, events) in _tilGroups.ToList())
         {
-            var mappedNotes = noteGroups[id];
+            var mappedNotes = _noteGroups[id];
             var maxTick = mappedNotes.Select(p => p.Tick).Append(0).Max();
-            if (mappedNotes.Count == 0) tilGroups.Remove(id);
+            if (mappedNotes.Count == 0) _tilGroups.Remove(id);
             else if (events.Count > 0 && maxTick.Original > 0) events.RemoveAll(p => p.Tick.Original > maxTick.Original + Time.SingleTick);
         }
 
-        foreach (var (id, notes) in noteGroups.ToList())
+        foreach (var (id, notes) in _noteGroups.ToList())
         {
-            if (notes.Count == 0) noteGroups.Remove(id);
+            if (notes.Count == 0) _noteGroups.Remove(id);
         }
     }
 
     private void CreateGroup(int id)
     {
-        if (!tilGroups.ContainsKey(id)) tilGroups[id] = [];
-        if (!noteGroups.ContainsKey(id)) noteGroups[id] = [];
+        if (!_tilGroups.ContainsKey(id)) _tilGroups[id] = [];
+        if (!_noteGroups.ContainsKey(id)) _noteGroups[id] = [];
     }
 
     private void SwapGroup(int aId, int bId)
@@ -145,24 +145,24 @@ public partial class MgxcParser
         CreateGroup(aId);
         CreateGroup(bId);
 
-        var aEvents = tilGroups[aId];
-        var bEvents = tilGroups[bId];
-        tilGroups.Remove(aId);
-        tilGroups.Remove(bId);
+        var aEvents = _tilGroups[aId];
+        var bEvents = _tilGroups[bId];
+        _tilGroups.Remove(aId);
+        _tilGroups.Remove(bId);
         foreach (var e in aEvents) e.Timeline = bId;
         foreach (var e in bEvents) e.Timeline = aId;
-        tilGroups[aId] = bEvents;
-        tilGroups[bId] = aEvents;
+        _tilGroups[aId] = bEvents;
+        _tilGroups[bId] = aEvents;
 
-        var aNotes = noteGroups[aId];
-        var bNotes = noteGroups[bId];
+        var aNotes = _noteGroups[aId];
+        var bNotes = _noteGroups[bId];
         foreach (var n in aNotes) n.Timeline = bId;
         foreach (var n in bNotes) n.Timeline = aId;
 
-        noteGroups.Remove(aId);
-        noteGroups.Remove(bId);
-        noteGroups[aId] = bNotes;
-        noteGroups[bId] = aNotes;
+        _noteGroups.Remove(aId);
+        _noteGroups.Remove(bId);
+        _noteGroups[aId] = bNotes;
+        _noteGroups[bId] = aNotes;
     }
 
     private void FindNoteViolations()

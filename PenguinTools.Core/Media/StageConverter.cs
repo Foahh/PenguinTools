@@ -13,7 +13,7 @@ public class StageConverter(IDiagnostic diag, IProgress<string>? prog = null) : 
     public required string OutFolder { get; init; }
     public required Entry NoteFieldLane { get; init; }
 
-    protected async override Task<Entry> ActionAsync(CancellationToken ct = default)
+    protected override async Task<Entry> ActionAsync(CancellationToken ct = default)
     {
         if (StageId is not { } stageId) throw new DiagnosticException(Strings.Error_Stage_id_is_not_set);
         Progress?.Report(Strings.Status_Convert_background);
@@ -29,7 +29,7 @@ public class StageConverter(IDiagnostic diag, IProgress<string>? prog = null) : 
         return xml.Name;
     }
 
-    protected async override Task ValidateAsync(CancellationToken ct = default)
+    protected override async Task ValidateAsync(CancellationToken ct = default)
     {
         var duplicates = Assets.StageNames.Where(p => p.Id == StageId);
         foreach (var d in duplicates) Diagnostic.Report(Severity.Warning, string.Format(Strings.Warn_Stage_already_exists, d, StageId));

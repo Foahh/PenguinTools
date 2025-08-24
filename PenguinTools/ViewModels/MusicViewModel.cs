@@ -21,7 +21,7 @@ public class MusicViewModel : WatchViewModel<MusicModel>
         return !string.IsNullOrWhiteSpace(ModelPath);
     }
 
-    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         if (Model?.Id is null) throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 

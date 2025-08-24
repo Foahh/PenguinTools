@@ -7,14 +7,14 @@ namespace PenguinTools.Core.Chart.Converter;
 using mg = Models.mgxc;
 using c2s = Models.c2s;
 
-public partial class ChartConverter
+public partial class C2SConverter
 {
-    private readonly Dictionary<mg.NegativeNote, c2s.Note> nMap = [];
-    private readonly Dictionary<mg.PositiveNote, c2s.Note> pMap = [];
+    private readonly Dictionary<mg.NegativeNote, c2s.Note> _nMap = [];
+    private readonly Dictionary<mg.PositiveNote, c2s.Note> _pMap = [];
 
     private void TryPairingNegative(mg.PositiveNote source)
     {
-        if (source.PairNote != null && nMap.TryGetValue(source.PairNote, out var pair) && pair is c2s.IPairable children)
+        if (source.PairNote != null && _nMap.TryGetValue(source.PairNote, out var pair) && pair is c2s.IPairable children)
         {
             children.Parent = pair;
         }
@@ -22,7 +22,7 @@ public partial class ChartConverter
 
     private void TryPairingPositive(mg.NegativeNote source)
     {
-        if (source.PairNote != null && pMap.TryGetValue(source.PairNote, out var pair) && pair is c2s.IPairable children)
+        if (source.PairNote != null && _pMap.TryGetValue(source.PairNote, out var pair) && pair is c2s.IPairable children)
         {
             children.Parent = pair;
         }
@@ -70,16 +70,16 @@ public partial class ChartConverter
                 ProcessSoflanArea(sla);
                 break;
             case mg.Tap tap:
-                CreateNote<mg.PositiveNote, c2s.Tap>(pMap, tap);
+                CreateNote<mg.PositiveNote, c2s.Tap>(_pMap, tap);
                 break;
             case mg.ExTap exTap:
-                CreateNote<mg.PositiveNote, c2s.ExTap>(pMap, exTap, x => x.Effect = exTap.Effect);
+                CreateNote<mg.PositiveNote, c2s.ExTap>(_pMap, exTap, x => x.Effect = exTap.Effect);
                 break;
             case mg.Flick flick:
-                CreateNote<mg.PositiveNote, c2s.Flick>(pMap, flick);
+                CreateNote<mg.PositiveNote, c2s.Flick>(_pMap, flick);
                 break;
             case mg.Damage damage:
-                CreateNote<mg.PositiveNote, c2s.Damage>(pMap, damage);
+                CreateNote<mg.PositiveNote, c2s.Damage>(_pMap, damage);
                 break;
             case mg.Hold hold:
                 ProcessHold(hold);
@@ -127,7 +127,7 @@ public partial class ChartConverter
     {
         if (airSlide.PairNote?.PairNote != airSlide) throw new DiagnosticException(Strings.MgCrit_Invalid_AirSlide_parent, airSlide, airSlide.Tick.Original);
 
-        var parent = pMap.GetValueOrDefault(airSlide.PairNote);
+        var parent = _pMap.GetValueOrDefault(airSlide.PairNote);
         var joints = airSlide.Children.OfType<mg.AirSlideJoint>().Prepend(airSlide.AsChild()).ToList();
         for (var i = 0; i < joints.Count - 1; i++)
         {
@@ -149,7 +149,7 @@ public partial class ChartConverter
             // pair the first joint with ground note
             if (i == 0)
             {
-                nMap[airSlide] = parent;
+                _nMap[airSlide] = parent;
                 TryPairingPositive(airSlide);
             }
         }
@@ -159,13 +159,13 @@ public partial class ChartConverter
     {
         if (airNote.PairNote?.PairNote != airNote) throw new DiagnosticException(Strings.MgCrit_Invalid_Air_parent, airNote, airNote.Tick.Original);
 
-        var note = CreateNote<mg.NegativeNote, c2s.Air>(nMap, airNote, x =>
+        var note = CreateNote<mg.NegativeNote, c2s.Air>(_nMap, airNote, x =>
         {
-            x.Parent = pMap.GetValueOrDefault(airNote.PairNote);
+            x.Parent = _pMap.GetValueOrDefault(airNote.PairNote);
             x.Direction = airNote.Direction;
             x.Color = airNote.Color;
         });
-        nMap[airNote] = note;
+        _nMap[airNote] = note;
     }
 
     private void ProcessSlide(mg.Slide slide)
@@ -187,7 +187,7 @@ public partial class ChartConverter
             // pair the last joint with air
             if (i == joints.Count - 2)
             {
-                pMap[next] = note;
+                _pMap[next] = note;
                 TryPairingNegative(next);
             }
         }
@@ -212,7 +212,7 @@ public partial class ChartConverter
             x.EndTick = tail.Tick;
             x.Effect = hold.Effect;
         });
-        pMap[tail] = note;
+        _pMap[tail] = note;
         TryPairingNegative(tail);
     }
 }

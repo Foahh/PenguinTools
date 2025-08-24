@@ -28,7 +28,7 @@ public class MusicConverter(IDiagnostic diag, IProgress<string>? prog = null) : 
         return Task.CompletedTask;
     }
 
-    protected async override Task ActionAsync(CancellationToken ct = default)
+    protected override async Task ActionAsync(CancellationToken ct = default)
     {
         var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 

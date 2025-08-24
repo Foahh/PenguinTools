@@ -689,4 +689,7 @@
   <data name="Alert_Diagnostic_report" xml:space="preserve">
     <value>如果不了解问题的原因，请查阅文档或询问开发者。</value>
   </data>
+  <data name="Unit_Tick" xml:space="preserve">
+    <value>{0} 刻</value>
+  </data>
 </root>

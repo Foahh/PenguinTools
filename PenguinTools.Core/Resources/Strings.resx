@@ -690,4 +690,7 @@
   <data name="Alert_Diagnostic_report" xml:space="preserve">
     <value>Please send it to the developer if you don't understand.</value>
   </data>
+  <data name="Unit_Tick" xml:space="preserve">
+    <value>{0} Tick</value>
+  </data>
 </root>

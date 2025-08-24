@@ -8,11 +8,11 @@ namespace PenguinTools.ViewModels;
 
 public partial class MainWindowViewModel : ViewModel
 {
-    private readonly IUpdateService updateService;
+    private readonly IUpdateService _updateService;
 
     public MainWindowViewModel(IUpdateService updateService)
     {
-        this.updateService = updateService;
+        this._updateService = updateService;
         ActionService.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
     }
 
@@ -37,7 +37,7 @@ public partial class MainWindowViewModel : ViewModel
         UpdateStatus = Strings.Update_Checking;
         try
         {
-            var (result, url) = await updateService.CheckForUpdatesAsync();
+            var (result, url) = await _updateService.CheckForUpdatesAsync();
             LatestVersion = result;
             DownloadUrl = url;
             UpdateStatus = IsUpdateAvailable ? string.Format(Strings.Update_New_Version_Available, LatestVersion.ToString(3)) : Strings.Update_Already_Latest;

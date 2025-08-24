@@ -10,7 +10,7 @@ namespace PenguinTools.ViewModels;
 
 public class ChartViewModel : WatchViewModel<ChartModel>
 {
-    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         if (Model == null) return;
         var chart = Model.Mgxc;
@@ -27,7 +27,7 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         if (dlg.ShowDialog() != true) return;
 
 
-        var converter = new ChartConverter(diag, prog)
+        var converter = new C2SConverter(diag, prog)
         {
             OutPath = dlg.FileName,
             Mgxc = chart
@@ -35,7 +35,7 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         await converter.ConvertAsync(ct);
     }
 
-    protected async override Task<ChartModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task<ChartModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         var parser = new MgxcParser(diag, prog)
         {

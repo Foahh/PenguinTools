@@ -5,7 +5,7 @@ public abstract class ConverterBase(IDiagnostic diag, IProgress<string>? prog = 
     protected IDiagnostic Diagnostic { get; } = diag;
     protected IProgress<string>? Progress { get; } = prog;
 
-    public async virtual Task ConvertAsync(CancellationToken ct = default)
+    public virtual async Task ConvertAsync(CancellationToken ct = default)
     {
         await ValidateAsync(ct);
         if (Diagnostic.HasError) throw new OperationCanceledException();
@@ -23,7 +23,7 @@ public abstract class ConverterBase(IDiagnostic diag, IProgress<string>? prog = 
 
 public abstract class ConverterBase<TResult>(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
-    public async override Task<TResult> ConvertAsync(CancellationToken ct = default)
+    public override async Task<TResult> ConvertAsync(CancellationToken ct = default)
     {
         await ValidateAsync(ct);
         if (Diagnostic.HasError) throw new OperationCanceledException();
@@ -32,5 +32,5 @@ public abstract class ConverterBase<TResult>(IDiagnostic diag, IProgress<string>
         return result;
     }
 
-    protected override abstract Task<TResult> ActionAsync(CancellationToken ct = default);
+    protected abstract override Task<TResult> ActionAsync(CancellationToken ct = default);
 }

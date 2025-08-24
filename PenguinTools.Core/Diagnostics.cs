@@ -1,5 +1,6 @@
 ﻿using PenguinTools.Core.Chart;
 using System.Collections.Concurrent;
+using PenguinTools.Core.Resources;
 
 namespace PenguinTools.Core;
 
@@ -25,7 +26,7 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
     {
         get
         {
-            if (TimeCalculator is null || Time is null) return Time?.ToString();
+            if (TimeCalculator is null || Time is null) return string.Format(Strings.Unit_Tick, Time);
             var pos = TimeCalculator.GetPositionFromTick(Time.Value);
             return pos.ToString();
         }
@@ -70,23 +71,23 @@ public interface IDiagnostic
 
 public class DiagnosticReporter : IDiagnostic
 {
-    private readonly ConcurrentBag<Diagnostic> diags = [];
-    public IReadOnlyCollection<Diagnostic> Diagnostics => diags;
+    private readonly ConcurrentBag<Diagnostic> _diags = [];
+    public IReadOnlyCollection<Diagnostic> Diagnostics => _diags;
 
-    public bool HasProblem => !diags.IsEmpty;
-    public bool HasError => diags.Any(d => d.Severity == Severity.Error);
+    public bool HasProblem => !_diags.IsEmpty;
+    public bool HasError => _diags.Any(d => d.Severity == Severity.Error);
 
     public TimeCalculator? TimeCalculator { get; set; }
 
     public void Report(Diagnostic item)
     {
         item.TimeCalculator = TimeCalculator;
-        diags.Add(item);
+        _diags.Add(item);
     }
 
     public void Report(Exception ex)
     {
-        if (ex is DiagnosticException dEx) diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target) { RelatedException = dEx });
+        if (ex is DiagnosticException dEx) _diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target) { RelatedException = dEx });
         Report(new Diagnostic(Severity.Error, ex.Message) { RelatedException = ex });
     }
 

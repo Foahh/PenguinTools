@@ -36,7 +36,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         SelectedBookItem = null;
     }
 
-    protected async override Task<OptionModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task<OptionModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         prog?.Report(Strings.Status_Searching);
         var model = new OptionModel();
@@ -109,7 +109,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         return model;
     }
 
-    protected async override Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         var settings = Model;
         if (settings == null) return;
@@ -193,7 +193,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                         if (diff == Difficulty.WorldsEnd) weEntries.Add(new Entry(songId, book.Title));
                         else if (diff == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
                         var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
-                        var chartConverter = new ChartConverter(innerDiag)
+                        var chartConverter = new C2SConverter(innerDiag)
                         {
                             OutPath = chartPath,
                             Mgxc = item.Mgxc
@@ -249,7 +249,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         }
     }
 
-    private async static Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, IDiagnostic, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
+    private static async Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, IDiagnostic, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
     {
         var itemList = items as IList<T> ?? [..items];
         var total = itemList.Count;

@@ -62,8 +62,8 @@ internal enum ExAttr : sbyte
 
 public partial class MgxcParser
 {
-    private mg.Note? lastNote;
-    private mg.Note? lastParentNote;
+    private mg.Note? _lastNote;
+    private mg.Note? _lastParentNote;
 
     private void ParseNote(BinaryReader br)
     {
@@ -178,10 +178,10 @@ public partial class MgxcParser
             if (longAttr == LongAttr.Begin)
             {
                 var exNote = new mg.AirSlide();
-                if (lastNote is mg.Air oldLastNote)
+                if (_lastNote is mg.Air oldLastNote)
                 {
-                    lastNote.Parent?.RemoveChild(lastNote);
-                    lastNote = oldLastNote.PairNote;
+                    _lastNote.Parent?.RemoveChild(_lastNote);
+                    _lastNote = oldLastNote.PairNote;
                     exNote.Color = oldLastNote.Color;
                 }
 
@@ -276,12 +276,12 @@ public partial class MgxcParser
         note.Width = width;
         note.Timeline = timelineId;
 
-        if (isChildNote) lastParentNote?.AppendChild(note);
+        if (isChildNote) _lastParentNote?.AppendChild(note);
         else Mgxc.Notes.AppendChild(note);
 
         if (isPairNote)
         {
-            switch (lastNote)
+            switch (_lastNote)
             {
                 case mg.PositiveNote lastP when note is mg.NegativeNote newN:
                     lastP.MakePair(newN);
@@ -293,13 +293,13 @@ public partial class MgxcParser
                     throw new DiagnosticException(Strings.MgCrit_Pairing_notes_incompatible, new[]
                     {
                         note,
-                        lastNote
+                        _lastNote
                     }, note.Tick.Original);
             }
         }
 
-        if (!isChildNote) lastParentNote = note;
+        if (!isChildNote) _lastParentNote = note;
 
-        lastNote = note;
+        _lastNote = note;
     }
 }
