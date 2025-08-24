@@ -798,6 +798,15 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Operation cancelled for: {0}.
+        /// </summary>
+        public static string Error_ConverterBase_Cancelled {
+            get {
+                return ResourceManager.GetString("Error_ConverterBase_Cancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This file is ignored since Song ID is missing. Set a number for Song Id in Margrete..
         /// </summary>
         public static string Error_File_ignored_due_to_id_missing {

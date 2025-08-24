@@ -692,4 +692,7 @@
   <data name="Unit_Tick" xml:space="preserve">
     <value>{0} 刻</value>
   </data>
+  <data name="Error_ConverterBase_Cancelled" xml:space="preserve">
+    <value>已取消执行：{0}。</value>
+  </data>
 </root>

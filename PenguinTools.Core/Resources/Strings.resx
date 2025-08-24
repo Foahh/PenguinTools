@@ -693,4 +693,7 @@
   <data name="Unit_Tick" xml:space="preserve">
     <value>{0} Tick</value>
   </data>
+  <data name="Error_ConverterBase_Cancelled" xml:space="preserve">
+    <value>Operation cancelled for: {0}</value>
+  </data>
 </root>
