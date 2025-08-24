@@ -15,8 +15,7 @@ public partial class DiagnosticsWindow
 
 public partial class DiagnosticsWindowViewModel : ObservableObject
 {
-    [ObservableProperty]
-    public partial string Title { get; set; } = Strings.Title_Diagnostics;
+    [ObservableProperty] public partial string Title { get; set; } = $"{Strings.Title_Diagnostics} v{App.Version.ToString(3)} ({App.BuildDate.ToShortDateString()})";
 
     [ObservableProperty]
     public partial ConcurrentObservableSortedSet<Diagnostic>? Diagnostics { get; set; }

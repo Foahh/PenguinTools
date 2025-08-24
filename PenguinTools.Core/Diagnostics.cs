@@ -26,7 +26,8 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
     {
         get
         {
-            if (TimeCalculator is null || Time is null) return string.Format(Strings.Unit_Tick, Time);
+            if (Time is null) return null;
+            if (TimeCalculator is null) return string.Format(Strings.Unit_Tick, Time);
             var pos = TimeCalculator.GetPositionFromTick(Time.Value);
             return pos.ToString();
         }
