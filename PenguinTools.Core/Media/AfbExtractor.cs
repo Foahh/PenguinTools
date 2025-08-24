@@ -2,7 +2,7 @@
 
 namespace PenguinTools.Core.Media;
 
-public class AfbExtractor(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
+public class AfbExtractor(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
     public required string InPath { get; init; }
     public required string OutFolder { get; init; }

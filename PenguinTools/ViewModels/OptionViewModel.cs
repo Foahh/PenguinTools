@@ -36,7 +36,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         SelectedBookItem = null;
     }
 
-    protected override async Task<OptionModel> ReadModel(string path, IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task<OptionModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         prog?.Report(Strings.Status_Searching);
         var model = new OptionModel();
@@ -109,7 +109,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         return model;
     }
 
-    protected override async Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         var settings = Model;
         if (settings == null) return;
@@ -249,7 +249,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         }
     }
 
-    private static async Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, IDiagnostic, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
+    private static async Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, Diagnoster, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
     {
         var itemList = items as IList<T> ?? [..items];
         var total = itemList.Count;
@@ -271,7 +271,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         async ValueTask ProcessItemAsync(T item, CancellationToken ct)
         {
-            var ld = new DiagnosticReporter();
+            var ld = new Diagnoster();
             try
             {
                 await action(item, ld);
@@ -294,12 +294,12 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         }
     }
 
-    private static Task BatchAsync(string prefix, OptionModel model, Func<Book, IDiagnostic, Task> action, ProcessContext ctx, bool parallel = false)
+    private static Task BatchAsync(string prefix, OptionModel model, Func<Book, Diagnoster, Task> action, ProcessContext ctx, bool parallel = false)
     {
         return ProcessItemsAsync(prefix, model.Books.Values, action, b => b.Meta.FilePath, ctx, parallel);
     }
 
-    private static Task BatchAsync(string prefix, IEnumerable<string> items, Func<string, IDiagnostic, Task> action, ProcessContext ctx)
+    private static Task BatchAsync(string prefix, IEnumerable<string> items, Func<string, Diagnoster, Task> action, ProcessContext ctx)
     {
         return ProcessItemsAsync(prefix, items, action, item => item, ctx, true);
     }
@@ -312,7 +312,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
     private class ProcessContext
     {
-        public required IDiagnostic Diagnostic { get; init; }
+        public required Diagnoster Diagnostic { get; init; }
         public required IProgress<string>? Progress { get; init; }
         public required CancellationToken CancellationToken { get; init; }
         public required int BatchSize { get; init; }

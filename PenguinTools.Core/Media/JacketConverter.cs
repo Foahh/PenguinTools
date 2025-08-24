@@ -2,7 +2,7 @@
 
 namespace PenguinTools.Core.Media;
 
-public class JacketConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
+public class JacketConverter(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
     public required string InPath { get; init; }
     public required string OutPath { get; init; }

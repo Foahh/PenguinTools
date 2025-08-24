@@ -13,7 +13,7 @@ using VGAudio.Containers.Wave;
 
 namespace PenguinTools.Core.Media;
 
-public class MusicConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
+public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
     public ulong Key { get; set; } = 32931609366120192UL;
     public required Meta Meta { get; init; }

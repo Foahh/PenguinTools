@@ -21,10 +21,10 @@ public partial class ActionService : ObservableObject
         return !IsBusy;
     }
 
-    public async Task RunAsync(Func<IDiagnostic, IProgress<string>?, CancellationToken, Task> action, CancellationToken ct = default)
+    public async Task RunAsync(Func<Diagnoster, IProgress<string>?, CancellationToken, Task> action, CancellationToken ct = default)
     {
         if (!CanRun()) return;
-        var diagnostics = new DiagnosticReporter();
+        var diagnostics = new Diagnoster();
         IsBusy = true;
 
         var progress = new Progress<string>(s =>

@@ -9,7 +9,7 @@ namespace PenguinTools.Core.Chart.Parser;
 
 using mg = Models.mgxc;
 
-public partial class MgxcParser(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase<mg.Chart>(diag, prog)
+public partial class MgxcParser(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase<mg.Chart>(diag, prog)
 {
     private const string HeaderMgxc = "MGXC"; // 4D 47 58 43
     private const string HeaderMeta = "meta"; // 6D 65 74 61

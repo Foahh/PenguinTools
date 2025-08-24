@@ -32,7 +32,7 @@ public partial class JacketViewModel : ActionViewModel
         return !string.IsNullOrWhiteSpace(JacketPath);
     }
 
-    protected override async Task Action(IDiagnostic diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
         var fileName = JacketId is null ? Path.GetFileNameWithoutExtension((string?)JacketPath) : $"{(int)JacketId:0000}";
         var dlg = new SaveFileDialog

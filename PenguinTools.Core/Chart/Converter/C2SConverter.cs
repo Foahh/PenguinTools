@@ -9,7 +9,7 @@ namespace PenguinTools.Core.Chart.Converter;
 using mg = Models.mgxc;
 using c2s = Models.c2s;
 
-public partial class C2SConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
+public partial class C2SConverter(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
     public required string OutPath { get; init; }
     public required mg.Chart Mgxc { get; init; }

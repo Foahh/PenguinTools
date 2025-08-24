@@ -1,8 +1,8 @@
 ﻿namespace PenguinTools.Core;
 
-public abstract class ConverterBase(IDiagnostic diag, IProgress<string>? prog = null)
+public abstract class ConverterBase(Diagnoster diag, IProgress<string>? prog = null)
 {
-    protected IDiagnostic Diagnostic { get; } = diag;
+    protected Diagnoster Diagnostic { get; } = diag;
     protected IProgress<string>? Progress { get; } = prog;
 
     public virtual async Task ConvertAsync(CancellationToken ct = default)
@@ -21,7 +21,7 @@ public abstract class ConverterBase(IDiagnostic diag, IProgress<string>? prog = 
     }
 }
 
-public abstract class ConverterBase<TResult>(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
+public abstract class ConverterBase<TResult>(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
     public override async Task<TResult> ConvertAsync(CancellationToken ct = default)
     {

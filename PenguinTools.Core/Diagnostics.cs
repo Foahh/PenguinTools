@@ -58,19 +58,7 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
     #endregion
 }
 
-public interface IDiagnostic
-{
-    bool HasProblem { get; }
-    bool HasError { get; }
-    TimeCalculator? TimeCalculator { get; set; }
-
-    void Report(Diagnostic item);
-    void Report(Exception ex);
-    void Report(Severity severity, string message, string? path = null, object? target = null);
-    void Report(Severity severity, string message, int tick, object? target = null);
-}
-
-public class DiagnosticReporter : IDiagnostic
+public class Diagnoster
 {
     private readonly ConcurrentBag<Diagnostic> _diags = [];
     public IReadOnlyCollection<Diagnostic> Diagnostics => _diags;
@@ -82,7 +70,7 @@ public class DiagnosticReporter : IDiagnostic
 
     public void Report(Diagnostic item)
     {
-        item.TimeCalculator = TimeCalculator;
+        if (item.TimeCalculator == null) item.TimeCalculator = TimeCalculator;
         _diags.Add(item);
     }
 

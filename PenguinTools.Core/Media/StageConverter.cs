@@ -4,7 +4,7 @@ using PenguinTools.Core.Xml;
 
 namespace PenguinTools.Core.Media;
 
-public class StageConverter(IDiagnostic diag, IProgress<string>? prog = null) : ConverterBase<Entry>(diag, prog)
+public class StageConverter(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase<Entry>(diag, prog)
 {
     public required AssetManager Assets { get; init; }
     public required string BackgroundPath { get; init; }
