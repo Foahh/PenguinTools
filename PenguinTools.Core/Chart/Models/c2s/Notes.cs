@@ -33,21 +33,21 @@ public class ExTap : Note
 public class Hold : ExTapableLongNote
 {
     public override string Id => $"H{Effect.GetMark()}D";
-    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Result}{Effect.GetKind()}";
+    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Scaled}{Effect.GetKind()}";
 }
 
 public class Sla : Note
 {
     public Time Length { get; set; }
     public override string Id => "SLA";
-    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Result}\t{Timeline}";
+    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Scaled}\t{Timeline}";
 }
 
 public class Slide : ExTapableLongNote
 {
     public Joint Joint { get; set; }
     public override string Id => $"S{Effect.GetMark()}{Joint}";
-    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Result}\t{EndLane}\t{EndWidth}\tSLD{Effect.GetKind()}";
+    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Scaled}\t{EndLane}\t{EndWidth}\tSLD{Effect.GetKind()}";
 }
 
 public interface IPairable
@@ -73,7 +73,7 @@ public class AirSlide : LongHeightNote, IPairable
     public Color Color { get; set; } = Color.DEF;
 
     public override string Id => $"AS{Joint}";
-    [JsonIgnore] public override string Text => $"{base.Text}\t{ParentId}\t{Height.Result:F1}\t{Length.Result}\t{EndLane}\t{EndWidth}\t{EndHeight.Result:F1}\t{Color}";
+    [JsonIgnore] public override string Text => $"{base.Text}\t{ParentId}\t{Height.Result:F1}\t{Length.Scaled}\t{EndLane}\t{EndWidth}\t{EndHeight.Result:F1}\t{Color}";
     public Note? Parent { get; set; }
     [JsonIgnore] public string ParentId => Parent?.Id ?? throw new DiagnosticException(Strings.MgCrit_Air_slide_parent_null, this, Tick.Original);
 }
@@ -84,5 +84,5 @@ public class AirCrash : LongHeightNote
     public Color Color { get; set; } = Color.DEF;
 
     public override string Id => "ALD";
-    [JsonIgnore] public override string Text => $"{base.Text}\t{Density.Result}\t{Height.Result:F1}\t{Length.Result}\t{EndLane}\t{EndWidth}\t{EndHeight.Result:F1}\t{Color}";
+    [JsonIgnore] public override string Text => $"{base.Text}\t{Density.Scaled}\t{Height.Result:F1}\t{Length.Scaled}\t{EndLane}\t{EndWidth}\t{EndHeight.Result:F1}\t{Color}";
 }

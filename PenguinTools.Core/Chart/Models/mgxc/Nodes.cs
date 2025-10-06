@@ -156,12 +156,6 @@ public class Note : TimeNode<Note>
     public virtual int Width { get; set; } = 1;
     public int Timeline { get; set; }
 
-    public bool IsInside(Note other, out bool isSmaller)
-    {
-        isSmaller = Width < other.Width;
-        return Tick.Original == other.Tick.Original && Lane + Width <= other.Lane + other.Width;
-    }
-
     public bool IsViolate(Note other)
     {
         return !ReferenceEquals(this, other) && Tick.Original == other.Tick.Original && Lane == other.Lane && Width == other.Width && Timeline != other.Timeline;

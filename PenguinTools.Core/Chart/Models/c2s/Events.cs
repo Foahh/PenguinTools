@@ -34,7 +34,7 @@ public class Slp : SpeedEventBase
 {
     public virtual int Timeline { get; set; } = -1;
     public override string Id => "SLP";
-    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Result}\t{Speed:F6}\t{Timeline}";
+    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Scaled}\t{Speed:F6}\t{Timeline}";
 }
 
 
@@ -42,11 +42,11 @@ public class Slp : SpeedEventBase
 public class Sfl : SpeedEventBase
 {
     public override string Id => "SFL";
-    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Result}\t{Speed:F6}";
+    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Scaled}\t{Speed:F6}";
 }
 
 public class Dcm : SpeedEventBase
 {
     public override string Id => "DCM";
-    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Result}\t{Speed:F6}";
+    [JsonIgnore] public override string Text => $"{base.Text}\t{Length.Scaled}\t{Speed:F6}";
 }
