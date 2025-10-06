@@ -101,12 +101,12 @@ public partial class C2SConverter
 
     private void ProcessAirCrash(mg.AirCrash airCrash)
     {
-        var joints = airCrash.Children.OfType<mg.AirCrashJoint>().Prepend(airCrash.AsChild()).ToList();
+        var joints = airCrash.Children.OfType<mg.AirCrashJoint>().Prepend(airCrash.AsChild()).ToArray();
 
         var density = airCrash.Density;
         if (density.Original >= 0x7FFFFFFF) density = (airCrash.GetLastTick() - airCrash.Tick.Original) * 2;
 
-        for (var i = 0; i < joints.Count - 1; i++)
+        for (var i = 0; i < joints.Length - 1; i++)
         {
             var curr = joints[i];
             var next = joints[i + 1];
@@ -128,8 +128,8 @@ public partial class C2SConverter
         if (airSlide.PairNote?.PairNote != airSlide) throw new DiagnosticException(Strings.MgCrit_Invalid_AirSlide_parent, airSlide, airSlide.Tick.Original);
 
         var parent = _pMap.GetValueOrDefault(airSlide.PairNote);
-        var joints = airSlide.Children.OfType<mg.AirSlideJoint>().Prepend(airSlide.AsChild()).ToList();
-        for (var i = 0; i < joints.Count - 1; i++)
+        var joints = airSlide.Children.OfType<mg.AirSlideJoint>().Prepend(airSlide.AsChild()).ToArray();
+        for (var i = 0; i < joints.Length - 1; i++)
         {
             var prev = parent;
             var curr = joints[i];
@@ -170,8 +170,8 @@ public partial class C2SConverter
 
     private void ProcessSlide(mg.Slide slide)
     {
-        var joints = slide.Children.OfType<mg.SlideJoint>().Prepend(slide.AsChild()).ToList();
-        for (var i = 0; i < joints.Count - 1; i++)
+        var joints = slide.Children.OfType<mg.SlideJoint>().Prepend(slide.AsChild()).ToArray();
+        for (var i = 0; i < joints.Length - 1; i++)
         {
             var curr = joints[i];
             var next = joints[i + 1];
@@ -185,7 +185,7 @@ public partial class C2SConverter
                 x.Effect = index == 0 ? slide.Effect : null;
             });
             // pair the last joint with air
-            if (i == joints.Count - 2)
+            if (i == joints.Length - 2)
             {
                 _pMap[next] = note;
                 TryPairingNegative(next);

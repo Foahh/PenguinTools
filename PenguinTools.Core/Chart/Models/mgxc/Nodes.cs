@@ -195,7 +195,7 @@ public class Note : TimeNode<Note>
         });
 
         // move negative notes after the paired positive notes
-        foreach (var child in Children.OfType<NegativeNote>().ToList())
+        foreach (var child in Children.OfType<NegativeNote>().ToArray())
         {
             if (child.PairNote == null) continue;
             Note? pair = child.PairNote;

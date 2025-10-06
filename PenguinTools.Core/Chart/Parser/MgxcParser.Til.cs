@@ -28,7 +28,7 @@ public partial class MgxcParser
 
     private void FinalizeEvent()
     {
-        foreach (var e in Mgxc.Events.Children.OfType<mg.SpeedEventBase>().ToList()) Mgxc.Events.RemoveChild(e);
+        foreach (var e in Mgxc.Events.Children.OfType<mg.SpeedEventBase>().ToArray()) Mgxc.Events.RemoveChild(e);
         foreach (var (tilId, events) in _tilGroups)
         {
             foreach (var e in events)
@@ -47,7 +47,7 @@ public partial class MgxcParser
     private void PlaceSoflanArea()
     {
 
-        foreach (var tils in _tilGroups.Values.ToList()) tils.Sort((a, b) => a.Tick.CompareTo(b.Tick));
+        foreach (var tils in _tilGroups.Values.ToArray()) tils.Sort((a, b) => a.Tick.CompareTo(b.Tick));
         var slaSet = new HashSet<(int Tick, int Timeline, int Lane, int Width)>();
         foreach (var (id, notes) in _noteGroups)
         {
@@ -119,7 +119,7 @@ public partial class MgxcParser
 
     private void ClearEmptyGroups()
     {
-        foreach (var (id, events) in _tilGroups.ToList())
+        foreach (var (id, events) in _tilGroups.ToArray())
         {
             var mappedNotes = _noteGroups[id];
             var maxTick = mappedNotes.Select(p => p.Tick).Append(0).Max();
@@ -127,7 +127,7 @@ public partial class MgxcParser
             else if (events.Count > 0 && maxTick.Original > 0) events.RemoveAll(p => p.Tick.Original > maxTick.Original + Time.SingleTick);
         }
 
-        foreach (var (id, notes) in _noteGroups.ToList())
+        foreach (var (id, notes) in _noteGroups.ToArray())
         {
             if (notes.Count == 0) _noteGroups.Remove(id);
         }
@@ -172,10 +172,10 @@ public partial class MgxcParser
 
         foreach (var group in noteGroup)
         {
-            var notesInGroup = group.ToList();
-            for (var i = 0; i < notesInGroup.Count; i++)
+            var notesInGroup = group.ToArray();
+            for (var i = 0; i < notesInGroup.Length; i++)
             {
-                for (var j = i + 1; j < notesInGroup.Count; j++)
+                for (var j = i + 1; j < notesInGroup.Length; j++)
                 {
                     if (!notesInGroup[i].IsViolate(notesInGroup[j])) continue;
                     violations.Add(notesInGroup[i]);

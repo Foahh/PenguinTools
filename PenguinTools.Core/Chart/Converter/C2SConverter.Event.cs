@@ -66,15 +66,15 @@ public partial class C2SConverter
     private void ConvertSlp(mg.Chart mgxc, List<mg.ScrollSpeedEvent> tilEvents)
     {
         if (tilEvents.Count <= 0) return;
-        var tilGroups = tilEvents.GroupBy(til => til.Timeline).ToDictionary(g => g.Key, g => g.ToList());
+        var tilGroups = tilEvents.GroupBy(til => til.Timeline).ToDictionary(g => g.Key, g => g.ToArray());
         var convertSlp = new List<c2s.Slp>();
 
         foreach (var (id, grouped) in tilGroups)
         {
             Time lastTilTick = mgxc.GetLastTick(p => p.Timeline == id);
 
-            if (grouped.Count <= 0) continue;
-            for (var i = 0; i < grouped.Count - 1; i++)
+            if (grouped.Length <= 0) continue;
+            for (var i = 0; i < grouped.Length - 1; i++)
             {
                 var curr = grouped[i];
                 var next = grouped[i + 1];

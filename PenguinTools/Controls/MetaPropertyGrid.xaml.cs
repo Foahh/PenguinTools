@@ -34,7 +34,7 @@ public partial class MetaPropertyGrid : MyPropertyGrid
     private void RestorePropertyGrid()
     {
         var currentDefs = new HashSet<PropertyDefinition>(PropertyDefinitions);
-        var defsToAdd = _hidden.Where(def => !currentDefs.Contains(def)).ToList();
+        var defsToAdd = _hidden.Where(def => !currentDefs.Contains(def)).ToArray();
         foreach (var def in defsToAdd) PropertyDefinitions.Add(def);
         _hidden.Clear();
     }
@@ -67,7 +67,7 @@ public partial class MetaPropertyGrid : MyPropertyGrid
     {
         if (names.Length == 0) return;
         var nameSet = new HashSet<string>(names, StringComparer.Ordinal);
-        var toRemove = PropertyDefinitions.Where(def => def.TargetProperties.Cast<string>().Any(nameSet.Contains)).ToList();
+        var toRemove = PropertyDefinitions.Where(def => def.TargetProperties.Cast<string>().Any(nameSet.Contains)).ToArray();
         foreach (var def in toRemove.Where(def => _hidden.Add(def))) PropertyDefinitions.Remove(def);
     }
 }

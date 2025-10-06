@@ -28,8 +28,8 @@ public partial class C2SConverter(Diagnoster diag, IProgress<string>? prog = nul
 
         // Post Validation
         Progress?.Report(Strings.Status_Validate);
-        var allSlides = Notes.OfType<c2s.Slide>().ToList();
-        var allAirs = Notes.OfType<c2s.IPairable>().Where(p => p.Parent is c2s.Slide).Cast<c2s.Note>().ToList();
+        var allSlides = Notes.OfType<c2s.Slide>();
+        var allAirs = Notes.OfType<c2s.IPairable>().Where(p => p.Parent is c2s.Slide).Cast<c2s.Note>();
 
         var airsLookup = allAirs.GroupBy(a => (a.Tick, a.Lane, a.Width)).ToDictionary(g => g.Key, g => g.Count());
         var slidesLookup = allSlides.GroupBy(s => (s.EndTick, s.EndLane, s.EndWidth)).ToDictionary(g => g.Key, g => g.Count());
@@ -41,14 +41,14 @@ public partial class C2SConverter(Diagnoster diag, IProgress<string>? prog = nul
             Diagnostic.Report(Severity.Information, Strings.Mg_Overlapping_air_parent_slide, pos.Tick.Original);
         }
 
-        foreach (var longNote1 in Notes.OfType<c2s.LongNote>())
+        foreach (var longNote in Notes.OfType<c2s.LongNote>())
         {
-            var length = longNote1.Length.Original;
+            var length = longNote.Length.Original;
             if (length >= Time.SingleTick) continue;
 
-            var tick = longNote1.Tick.Original;
+            var tick = longNote.Tick.Original;
             var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, Time.MarResolution / Time.SingleTick);
-            Diagnostic.Report(Severity.Warning, msg, tick, longNote1);
+            Diagnostic.Report(Severity.Warning, msg, tick, longNote);
         }
 
         if (Mgxc.Meta.BgmEnableBarOffset)

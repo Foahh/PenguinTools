@@ -7,61 +7,83 @@ using PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Core.Chart;
 
-public class TimeCalculator
-{
-    public TimeCalculator(int resolution, IEnumerable<BeatEvent> beatEvents)
+    public class TimeCalculator
     {
-        BarTick = resolution;
-        TimeSignatures = beatEvents.Where(e => e.Bar >= 0).OrderBy(x => x.Tick).ToList();
-    }
+        private readonly int _barTick;
+        private readonly BeatEvent[] _timeSignatures;
+        private readonly int[] _measureLengths;
+        private readonly int[] _cumulativeBars;
 
-    private int BarTick { get; }
-    private List<BeatEvent> TimeSignatures { get; }
-
-    public Position GetPositionFromTick(int tick)
-    {
-        foreach (var ts in TimeSignatures.AsEnumerable().Reverse())
+        public TimeCalculator(int resolution, IEnumerable<BeatEvent> beatEvents)
         {
-            if (tick < ts.Tick.Original) continue;
-            var measureLength = GetMeasureLength(ts);
+            _barTick = resolution;
+
+            _timeSignatures = beatEvents.Where(e => e.Bar >= 0).OrderBy(x => x.Tick).ToArray();
+            _measureLengths = new int[_timeSignatures.Length];
+            _cumulativeBars = new int[_timeSignatures.Length];
+
+            var barCount = 0;
+            for (var i = 0; i < _timeSignatures.Length; i++)
+            {
+                var ts = _timeSignatures[i];
+                _measureLengths[i] = GetMeasureLength(ts);
+
+                if (i > 0)
+                {
+                    var prev = _timeSignatures[i - 1];
+                    var ticksUnderCurrent = ts.Tick.Original - prev.Tick.Original;
+                    var prevMeasureLength = _measureLengths[i - 1];
+                    barCount += ticksUnderCurrent / prevMeasureLength;
+                }
+                _cumulativeBars[i] = barCount;
+            }
+        }
+
+        public Position GetPositionFromTick(int tick)
+        {
+            var idx = FindTimeSignatureIndex(tick);
+            var ts = _timeSignatures[idx];
+            var measureLength = _measureLengths[idx];
+
             var delta = tick - ts.Tick.Original;
-            var barsSinceThisSignature = delta / measureLength;
+            var barsSince = delta / measureLength;
             var remainder = delta % measureLength;
-            var totalBarsBefore = CalculateBarsBefore(ts);
-            var beatTick = (double)BarTick / ts.Denominator;
+
+            var totalBarsBefore = _cumulativeBars[idx];
+            var beatTick = (double)_barTick / ts.Denominator;
             var beatIndex = (int)(remainder / beatTick);
             var tickOffset = (int)(remainder % beatTick);
-            return new Position(totalBarsBefore + barsSinceThisSignature + 1, beatIndex + 1, tickOffset);
-        }
-        throw new InvalidOperationException();
-    }
 
-    private int CalculateBarsBefore(BeatEvent signature)
-    {
-        var barsCount = 0;
-        var tss = TimeSignatures.ToList();
-        for (var i = 0; i < tss.Count; i++)
+            return new Position(totalBarsBefore + barsSince + 1, beatIndex + 1, tickOffset);
+        }
+
+        private int FindTimeSignatureIndex(int tick)
         {
-            var ts = tss[i];
-            if (ts == signature) break;
-            var measureLength = GetMeasureLength(ts);
-            var nextTick = i < tss.Count - 1 ? tss[i + 1].Tick.Original : signature.Tick.Original;
-            var ticksUnderCurrent = nextTick - ts.Tick.Original;
-            barsCount += ticksUnderCurrent / measureLength;
+            int low = 0, high = _timeSignatures.Length - 1;
+            while (low <= high)
+            {
+                var mid = (low + high) / 2;
+                if (_timeSignatures[mid].Tick.Original <= tick)
+                {
+                    if (mid == _timeSignatures.Length - 1 || _timeSignatures[mid + 1].Tick.Original > tick)
+                        return mid;
+                    low = mid + 1;
+                }
+                else
+                {
+                    high = mid - 1;
+                }
+            }
+            throw new InvalidOperationException($"Tick {tick} is before all time signatures.");
         }
-        return barsCount;
-    }
 
-    private int GetMeasureLength(BeatEvent ts)
-    {
-        return (int)(BarTick / (double)ts.Denominator * ts.Numerator);
-    }
-
-    public record Position(int BarIndex, int BeatIndex, int TickOffset)
-    {
-        public override string ToString()
+        private int GetMeasureLength(BeatEvent ts)
         {
-            return $"{BarIndex}:{BeatIndex}.{TickOffset}";
+            return (int)(_barTick / (double)ts.Denominator * ts.Numerator);
+        }
+
+        public readonly record struct Position(int BarIndex, int BeatIndex, int TickOffset)
+        {
+            public override string ToString() => $"{BarIndex}:{BeatIndex}.{TickOffset}";
         }
     }
-}

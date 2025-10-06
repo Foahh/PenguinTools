@@ -17,10 +17,12 @@ public class Chart
     public TimeCalculator GetCalculator()
     {
         var beatEvents = Events.Children.OfType<BeatEvent>().OrderBy(e => e.Bar).ToList();
-        if (beatEvents.FirstOrDefault()?.Bar != 0)
+        var firstEvent = beatEvents.FirstOrDefault();
+        if (firstEvent is not { Bar: 0 })
         {
-            Events.InsertBefore(new BeatEvent { Bar = 0, Numerator = 4, Denominator = 4 }, beatEvents.FirstOrDefault());
-            beatEvents = [..Events.Children.OfType<BeatEvent>().OrderBy(e => e.Bar)];
+            var newEvent = new BeatEvent { Bar = 0, Numerator = 4, Denominator = 4 };
+            Events.InsertBefore(newEvent, firstEvent);
+            beatEvents.Insert(0, newEvent);
         }
         return new TimeCalculator(Time.MarResolution, beatEvents);
     }

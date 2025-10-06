@@ -78,19 +78,16 @@ public partial class MgxcParser(Diagnoster diag, IProgress<string>? prog = null)
 
     private void ProcessEvent()
     {
-        var bpmEvents = Mgxc.Events.Children.OfType<mg.BpmEvent>().OrderBy(e => e.Tick).ToList();
-        if (bpmEvents.Count <= 0 || bpmEvents[0].Tick.Original != 0) throw new DiagnosticException(Strings.Mg_Head_BPM_not_found);
+        var bpmEvents = Mgxc.Events.Children.OfType<mg.BpmEvent>().OrderBy(e => e.Tick).ToArray();
+        if (bpmEvents.Length <= 0 || bpmEvents[0].Tick.Original != 0) throw new DiagnosticException(Strings.Mg_Head_BPM_not_found);
 
         var beatEvents = Mgxc.Events.Children.OfType<mg.BeatEvent>().OrderBy(e => e.Bar).ToList();
-        if (beatEvents.Count <= 0 || beatEvents[0].Bar != 0)
+        var firstBeatEvent = beatEvents.FirstOrDefault();
+        if (firstBeatEvent is not { Bar: 0 })
         {
-            Mgxc.Events.InsertBefore(new mg.BeatEvent
-            {
-                Bar = 0,
-                Numerator = 4,
-                Denominator = 4
-            }, bpmEvents.FirstOrDefault());
-            beatEvents = [..Mgxc.Events.Children.OfType<mg.BeatEvent>().OrderBy(e => e.Bar)];
+            var newEvent = new mg.BeatEvent { Bar = 0, Numerator = 4, Denominator = 4 };
+            Mgxc.Events.InsertBefore(newEvent, firstBeatEvent);
+            beatEvents.Insert(0, newEvent);
             Diagnostic.Report(Severity.Information, Strings.Mg_Head_Time_Signature_event_not_found);
         }
 

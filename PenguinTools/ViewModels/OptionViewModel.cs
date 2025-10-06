@@ -78,7 +78,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         if (books.Count <= 0) throw new DiagnosticException(Strings.Error_No_charts_are_found_directory);
         ct.ThrowIfCancellationRequested();
 
-        foreach (var (id, book) in books.ToList())
+        foreach (var (id, book) in books.ToArray())
         {
             ct.ThrowIfCancellationRequested();
             var items = book.Items.Values.ToArray();
