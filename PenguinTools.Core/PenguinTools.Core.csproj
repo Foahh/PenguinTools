@@ -5,7 +5,7 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
-    <Import Project="..\Version.props" />
+    <Import Project="..\Common.props" />
 
     <ItemGroup>
         <EmbeddedResource Include="Resources\assets.json" LogicalName="assets.json" />
