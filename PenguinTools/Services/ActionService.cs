@@ -5,13 +5,12 @@ using PenguinTools.Core.Resources;
 using System.Media;
 using System.Windows;
 using System.Windows.Threading;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PenguinTools.Services;
 
 public partial class ActionService : ObservableObject
 {
-    protected static Dispatcher Dispatcher => Application.Current.Dispatcher;
-
     [ObservableProperty] public partial bool IsBusy { get; set; }
     [ObservableProperty] public partial string Status { get; set; } = Strings.Status_Idle;
     [ObservableProperty] public partial DateTime StatusTime { get; set; } = DateTime.Now;
@@ -29,7 +28,7 @@ public partial class ActionService : ObservableObject
 
         var progress = new Progress<string>(s =>
         {
-            Dispatcher.InvokeAsync(() =>
+            Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 Status = s;
                 StatusTime = DateTime.Now;
@@ -70,7 +69,7 @@ public partial class ActionService : ObservableObject
         var window = new DiagnosticsWindow
         {
             DataContext = model,
-            Owner = App.MainWindow
+            Owner = App.ServiceProvider.GetRequiredService<MainWindow>()
         };
         window.ShowDialog();
     }

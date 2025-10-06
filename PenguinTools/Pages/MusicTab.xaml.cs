@@ -9,6 +9,6 @@ public partial class MusicTab : UserControl
     public MusicTab()
     {
         InitializeComponent();
-        DataContext = App.Services.GetRequiredService<MusicViewModel>();
+        DataContext = App.ServiceProvider.GetRequiredService<MusicViewModel>();
     }
 }

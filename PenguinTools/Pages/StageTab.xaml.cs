@@ -9,6 +9,6 @@ public partial class StageTab : UserControl
     public StageTab()
     {
         InitializeComponent();
-        DataContext = App.Services.GetRequiredService<StageViewModel>();
+        DataContext = App.ServiceProvider.GetRequiredService<StageViewModel>();
     }
 }

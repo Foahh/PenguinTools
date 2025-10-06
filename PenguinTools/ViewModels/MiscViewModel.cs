@@ -5,6 +5,7 @@ using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PenguinTools.ViewModels;
 
@@ -26,6 +27,8 @@ public partial class MiscViewModel : ViewModel
     [RelayCommand]
     private async Task ExtractAfbFile()
     {
+        var window = App.ServiceProvider.GetRequiredService<MainWindow>();
+        
         var openDlg = new OpenFileDialog
         {
             Title = Strings.Title_Select_the_input_file,
@@ -34,7 +37,7 @@ public partial class MiscViewModel : ViewModel
             AddExtension = true,
             ValidateNames = true
         };
-        var result = openDlg.ShowDialog(App.MainWindow);
+        var result = openDlg.ShowDialog(window);
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FileName)) return;
 
         var baseDir = Path.GetDirectoryName(openDlg.FileName);
@@ -62,13 +65,14 @@ public partial class MiscViewModel : ViewModel
     [RelayCommand]
     private async Task CollectAsset()
     {
+        var window = App.ServiceProvider.GetRequiredService<MainWindow>();
         var openDlg = new OpenFolderDialog
         {
             Title = Strings.Title_Select_the_game_folder,
             Multiselect = false,
             ValidateNames = true
         };
-        var result = openDlg.ShowDialog(App.MainWindow);
+        var result = openDlg.ShowDialog(window);
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) return;
         await ActionService.RunAsync((_, prog, ct) => AssetManager.CollectAssetsAsync(openDlg.FolderName, prog, ct));
     }

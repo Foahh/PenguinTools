@@ -9,6 +9,6 @@ public partial class WorkflowTab : UserControl
     public WorkflowTab()
     {
         InitializeComponent();
-        DataContext = App.Services.GetRequiredService<WorkflowViewModel>();
+        DataContext = App.ServiceProvider.GetRequiredService<WorkflowViewModel>();
     }
 }

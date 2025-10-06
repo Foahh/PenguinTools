@@ -9,6 +9,6 @@ public partial class ChartTab : UserControl
     public ChartTab()
     {
         InitializeComponent();
-        DataContext = App.Services.GetRequiredService<ChartViewModel>();
+        DataContext = App.ServiceProvider.GetRequiredService<ChartViewModel>();
     }
 }

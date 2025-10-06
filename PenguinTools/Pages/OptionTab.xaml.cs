@@ -12,7 +12,7 @@ public partial class OptionTab : UserControl
     public OptionTab()
     {
         InitializeComponent();
-        DataContext = App.Services.GetRequiredService<OptionViewModel>();
+        DataContext = App.ServiceProvider.GetRequiredService<OptionViewModel>();
     }
 
     private void TreeViewItem_Expanded(object sender, RoutedEventArgs e)

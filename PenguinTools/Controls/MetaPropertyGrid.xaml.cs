@@ -23,7 +23,7 @@ public partial class MetaPropertyGrid : MyPropertyGrid
         };
     }
 
-    public AssetManager AssetManager => App.Services.GetRequiredService<AssetManager>();
+    public AssetManager AssetManager => App.ServiceProvider.GetRequiredService<AssetManager>();
 
     private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

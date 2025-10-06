@@ -9,6 +9,6 @@ public partial class JacketTab : UserControl
     public JacketTab()
     {
         InitializeComponent();
-        DataContext = App.Services.GetRequiredService<JacketViewModel>();
+        DataContext = App.ServiceProvider.GetRequiredService<JacketViewModel>();
     }
 }

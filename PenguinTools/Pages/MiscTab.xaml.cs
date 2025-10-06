@@ -9,6 +9,6 @@ public partial class MiscTab : UserControl
     public MiscTab()
     {
         InitializeComponent();
-        DataContext = App.Services.GetRequiredService<MiscViewModel>();
+        DataContext = App.ServiceProvider.GetRequiredService<MiscViewModel>();
     }
 }

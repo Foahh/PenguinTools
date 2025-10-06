@@ -15,8 +15,8 @@ namespace PenguinTools.ViewModels;
 
 public abstract partial class ViewModel : ObservableObject
 {
-    public ActionService ActionService { get; } = App.Services.GetRequiredService<ActionService>();
-    public AssetManager AssetManager { get; } = App.Services.GetRequiredService<AssetManager>();
+    public ActionService ActionService { get; } = App.ServiceProvider.GetRequiredService<ActionService>();
+    public AssetManager AssetManager { get; } = App.ServiceProvider.GetRequiredService<AssetManager>();
 
     protected static Dispatcher Dispatcher => Application.Current.Dispatcher;
 

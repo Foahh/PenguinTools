@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PenguinTools.Controls;
 
@@ -64,6 +65,7 @@ public partial class FileFolderPicker : UserControl
     [RelayCommand]
     private void BrowseFile()
     {
+        var window = App.ServiceProvider.GetRequiredService<MainWindow>();
         string? path;
         bool? result;
 
@@ -77,7 +79,7 @@ public partial class FileFolderPicker : UserControl
                 AddExtension = true,
                 ValidateNames = true
             };
-            result = dlg.ShowDialog(App.MainWindow);
+            result = dlg.ShowDialog(window);
             path = dlg.FileName;
         }
         else if (Mode == PickerMode.Folder)
@@ -88,7 +90,7 @@ public partial class FileFolderPicker : UserControl
                 ValidateNames = true,
                 Multiselect = false
             };
-            result = dlg.ShowDialog(App.MainWindow);
+            result = dlg.ShowDialog(window);
             path = dlg.FolderName;
         }
         else throw new InvalidOperationException("Invalid PickerMode");
