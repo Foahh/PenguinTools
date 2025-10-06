@@ -116,9 +116,13 @@ public partial class MgxcParser(Diagnoster diag, IProgress<string>? prog = null)
     {
         if (Mgxc.Notes.Children.Count <= 0) return;
 
-        var noteGroup = Mgxc.Notes.Children.OfType<mg.ExTapableNote>().GroupBy(note => (note.Tick, note.Lane, note.Width)).ToDictionary(g => g.Key, g => g.ToList());
+        var noteGroup = Mgxc.Notes.Children
+            .OfType<mg.ExTapableNote>()
+            .GroupBy(note => note.Tick)
+            .ToDictionary(g => g.Key, g => g.ToArray());
+
         var exEffects = new Dictionary<Time, HashSet<ExEffect>>();
-        var remove = new List<mg.ExTap>();
+        var tbRemoved = new HashSet<mg.ExTap>();
 
         foreach (var exTap in Mgxc.Notes.Children.OfType<mg.ExTap>())
         {
@@ -128,13 +132,22 @@ public partial class MgxcParser(Diagnoster diag, IProgress<string>? prog = null)
                 exEffects[exTap.Tick] = effectSet;
             }
             effectSet.Add(exTap.Effect);
+            
+            if (!noteGroup.TryGetValue(exTap.Tick, out var notesAtTick)) continue;
 
-            var key = (exTap.Tick, exTap.Lane, exTap.Width);
-            if (!noteGroup.TryGetValue(key, out var matchingNotes)) continue;
-            foreach (var note in matchingNotes) note.Effect = exTap.Effect;
-            if (exTap.Children.Count <= 0 && exTap.PairNote == null) remove.Add(exTap);
+            foreach (var note in notesAtTick)
+            {
+                var covering = exTap.Lane <= note.Lane && exTap.Lane + exTap.Width >= note.Lane + note.Width;
+                if (!covering) { continue; }
+
+                note.Effect = exTap.Effect;
+
+                var overlapping = exTap.Lane == note.Lane && exTap.Width == note.Width;
+                if (overlapping && exTap.Children.Count <= 0 && exTap.PairNote == null) tbRemoved.Add(exTap);
+            }
         }
-        foreach (var exTap in remove) Mgxc.Notes.RemoveChild(exTap);
+
+        foreach (var exTap in tbRemoved) Mgxc.Notes.RemoveChild(exTap);
 
         Mgxc.Notes.Sort();
 
