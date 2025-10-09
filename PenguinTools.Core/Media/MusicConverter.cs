@@ -46,8 +46,8 @@ public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : C
         var xml = new CueFileXml(songId);
         var outputDir = await xml.SaveDirectoryAsync(OutFolder);
 
-        var pvStart = Meta.BgmPreviewStart;
-        var pvStop = Meta.BgmPreviewStop;
+        var pvStart = Math.Clamp(Meta.BgmPreviewStart, 0, int.MaxValue);
+        var pvStop = Math.Clamp(Meta.BgmPreviewStop, 0, int.MaxValue);
         if (Meta.BgmEnableBarOffset)
         {
             pvStart += Meta.BgmRealOffset;

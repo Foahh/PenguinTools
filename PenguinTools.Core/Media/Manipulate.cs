@@ -4,30 +4,23 @@ using System.Globalization;
 
 namespace PenguinTools.Core.Media;
 
-public enum ExitCode
-{
-    Success = 0,
-    Failure = 1,
-    NoOperation = 2
-}
-
 public class ProcessCommandResult
 {
     internal ProcessCommandResult(Process proc, string stdout, string stderr)
     {
-        ExitCode = (ExitCode)proc.ExitCode;
+        ExitCode = (InterExitCode)proc.ExitCode;
         StandardOutput = stdout.Trim();
         StandardError = stderr.Trim();
         Command = $"{proc.StartInfo.FileName} {string.Join(" ", proc.StartInfo.ArgumentList)}";
     }
 
-    public ExitCode ExitCode { get; }
+    public InterExitCode ExitCode { get; }
     public string StandardOutput { get; }
     public string StandardError { get; }
     public string Command { get; }
 
-    public bool IsSuccess => ExitCode is ExitCode.Success or ExitCode.NoOperation;
-    public bool IsNoOperation => ExitCode == ExitCode.NoOperation;
+    public bool IsSuccess => ExitCode is InterExitCode.Success or InterExitCode.NoOperation;
+    public bool IsNoOperation => ExitCode == InterExitCode.NoOperation;
     public bool IsFailure => !IsSuccess;
 
     internal void ThrowIfFailed()

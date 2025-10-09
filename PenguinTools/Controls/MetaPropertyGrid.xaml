@@ -52,14 +52,10 @@
         <xctk:EditorTemplateDefinition>
             <xctk:EditorTemplateDefinition.TargetProperties>
                 <system:String>AudioOffset</system:String>
-                <system:String>PreviewStart</system:String>
-                <system:String>PreviewStop</system:String>
                 <system:String>BgmRealOffset</system:String>
                 <system:String>BgmOffset</system:String>
                 <system:String>BgmInitialBpm</system:String>
                 <system:String>MainBpm</system:String>
-                <system:String>BgmPreviewStart</system:String>
-                <system:String>BgmPreviewStop</system:String>
             </xctk:EditorTemplateDefinition.TargetProperties>
             <xctk:EditorTemplateDefinition.EditingTemplate>
                 <DataTemplate>
@@ -72,7 +68,28 @@
                 </DataTemplate>
             </xctk:EditorTemplateDefinition.EditingTemplate>
         </xctk:EditorTemplateDefinition>
-
+        
+        <xctk:EditorTemplateDefinition>
+            <xctk:EditorTemplateDefinition.TargetProperties>
+                <system:String>PreviewStart</system:String>
+                <system:String>PreviewStop</system:String>
+                <system:String>BgmPreviewStart</system:String>
+                <system:String>BgmPreviewStop</system:String>
+            </xctk:EditorTemplateDefinition.TargetProperties>
+            <xctk:EditorTemplateDefinition.EditingTemplate>
+                <DataTemplate>
+                    <xctk:DecimalUpDown
+                        Minimum="0"
+                        Maximum="2147483647"
+                        FormatString="F6"
+                        Increment="1"
+                        IsEnabled="{Binding Path=IsReadOnly, Converter={StaticResource InvertBoolConverter}}"
+                        ShowButtonSpinner="{Binding Path=IsReadOnly, Converter={StaticResource InvertBoolConverter}}"
+                        Value="{Binding Path=DataContext.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ContentControl}}" />
+                </DataTemplate>
+            </xctk:EditorTemplateDefinition.EditingTemplate>
+        </xctk:EditorTemplateDefinition>
+        
         <xctk:EditorTemplateDefinition>
             <xctk:EditorTemplateDefinition.TargetProperties>
                 <system:String>WeTag</system:String>
