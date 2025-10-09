@@ -4,16 +4,16 @@ using System.Text.Json;
 
 namespace PenguinTools.Services;
 
-public interface IUpdateService
+public interface IReleaseService
 {
     Task<(Version Version, string Url)> CheckForUpdatesAsync();
 }
 
-public class GitHubUpdateService : IUpdateService
+public class GitHubReleaseService : IReleaseService
 {
     private readonly HttpClient _httpClient;
 
-    public GitHubUpdateService()
+    public GitHubReleaseService()
     {
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(App.Name, App.Version.ToString()));
