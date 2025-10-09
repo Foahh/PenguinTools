@@ -1,12 +1,12 @@
-﻿using PenguinTools.Core.Metadata;
+﻿using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
+using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Resources;
 using PenguinTools.Core.Xml;
 using SonicAudioLib.Archives;
 using SonicAudioLib.CriMw;
-using System.Buffers.Binary;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
 using VGAudio.Codecs.CriHca;
 using VGAudio.Containers.Hca;
 using VGAudio.Containers.Wave;
@@ -21,10 +21,16 @@ public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : C
 
     protected override Task ValidateAsync(CancellationToken ct = default)
     {
-        if (Meta.Id is null) Diagnostic.Report(Severity.Error, Strings.Error_Song_id_is_not_set);
-        if (Meta.BgmPreviewStop < Meta.BgmPreviewStart) Diagnostic.Report(Severity.Error, Strings.Error_Preview_stop_greater_than_start);
+        if (Meta.Id is null) { Diagnostic.Report(Severity.Error, Strings.Error_Song_id_is_not_set); }
+
+        if (Meta.BgmPreviewStop < Meta.BgmPreviewStart)
+        {
+            Diagnostic.Report(Severity.Error, Strings.Error_Preview_stop_greater_than_start);
+        }
+
         var path = Meta.FullBgmFilePath;
-        if (!File.Exists(path)) Diagnostic.Report(Severity.Error, Strings.Error_Audio_file_not_found, path);
+        if (!File.Exists(path)) { Diagnostic.Report(Severity.Error, Strings.Error_Audio_file_not_found, path); }
+
         return Task.CompletedTask;
     }
 
@@ -33,13 +39,13 @@ public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : C
         var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
         Progress?.Report(Strings.Status_Converting_audio);
-        if (Meta.BgmPreviewStart > 120) Diagnostic.Report(Severity.Warning, Strings.Warn_Preview_later_than_120);
+        if (Meta.BgmPreviewStart > 120) { Diagnostic.Report(Severity.Warning, Strings.Warn_Preview_later_than_120); }
 
         var srcPath = Meta.FullBgmFilePath;
-        var wavPath = ResourceUtils.GetTempPath($"c_{Path.GetFileNameWithoutExtension(srcPath)}.wav");
+        var wavPath = Resourcer.GetTempPath($"c_{Path.GetFileNameWithoutExtension(srcPath)}.wav");
 
         var ret = await Manipulate.NormalizeAsync(srcPath, wavPath, Meta.BgmRealOffset, ct);
-        if (ret.IsNoOperation) wavPath = srcPath;
+        if (ret.IsNoOperation) { wavPath = srcPath; }
 
         ct.ThrowIfCancellationRequested();
 
@@ -87,7 +93,7 @@ public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : C
 
         var cueSheetTable = new CriTable();
 
-        cueSheetTable.Load(ResourceUtils.GetStream("dummy.acb"));
+        cueSheetTable.Load(Resourcer.GetStream("dummy.acb"));
         cueSheetTable.Rows[0]["Name"] = xml.DataName;
 
         var cueTable = new CriTable();

@@ -1,0 +1,19 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path=".gitmodules" />
+    <File Path="Common.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="THIRD-PARTY-NOTICES.md" />
+  </Folder>
+  <Project Path="External/SonicAudioTools/Source/SonicAudioLib/SonicAudioLib.csproj" />
+  <Project Path="External/vgaudio/src/VGAudio/VGAudio.csproj" />
+  <Project Path="PenguinTools.Core/PenguinTools.Core.csproj" />
+  <Project Path="PenguinTools/PenguinTools.csproj" />
+</Solution>

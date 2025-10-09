@@ -1,51 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Common.props"/>
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>$(DotNetVersion)</TargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
-    <Import Project="..\Common.props" />
-
     <ItemGroup>
-        <EmbeddedResource Include="Resources\assets.json" LogicalName="assets.json" />
-        <EmbeddedResource Include="Resources\dummy.acb">
-            <LogicalName>dummy.acb</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Resources\st_dummy.afb">
-            <LogicalName>st_dummy.afb</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Resources\nf_dummy.afb">
-            <LogicalName>nf_dummy.afb</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\Release\mua.exe">
-            <LogicalName>mua.exe</LogicalName>
-            <Link>Resources\mua.exe</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\External\muautils\LICENSE">
-            <LogicalName>mua.LICENSE.txt</LogicalName>
-            <Link>Resources\mua.LICENSE.txt</Link>
-        </EmbeddedResource>
         <EmbeddedResource Update="Resources\Strings.resx">
-          <Generator>PublicResXFileCodeGenerator</Generator>
-          <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-          <SubType>Designer</SubType>
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+            <SubType>Designer</SubType>
         </EmbeddedResource>
         <EmbeddedResource Update="Resources\Strings.zh-Hans.resx">
-          <DependentUpon>Strings.resx</DependentUpon>
+            <DependentUpon>Strings.resx</DependentUpon>
         </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\External\SonicAudioTools\Source\SonicAudioLib\SonicAudioLib.csproj" />
-        <ProjectReference Include="..\External\VGAudio\src\VGAudio\VGAudio.csproj" />
+        <Compile Update="Resources\Strings.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Strings.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Resources\Strings.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>Strings.resx</DependentUpon>
-      </Compile>
+      <ProjectReference Include="..\External\SonicAudioTools\Source\SonicAudioLib\SonicAudioLib.csproj" />
+      <ProjectReference Include="..\External\vgaudio\src\VGAudio\VGAudio.csproj" />
     </ItemGroup>
 </Project>

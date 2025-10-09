@@ -1,15 +1,15 @@
-﻿using PenguinTools.Core.Resources;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using PenguinTools.Core.Resources;
 
 namespace PenguinTools.Core.Asset;
 
 public class AssetManager : INotifyPropertyChanged
 {
-    public AssetManager()
+    public AssetManager(Stream hardAssets)
     {
         MergeAssets = new AssetDictionary();
-        HardAssets = new AssetDictionary(ResourceUtils.GetStream("assets.json"));
+        HardAssets = new AssetDictionary(hardAssets);
         PlusAssets = new AssetDictionary("assets.json");
         UserAssets = new AssetDictionary();
         Merge();
@@ -34,9 +34,10 @@ public class AssetManager : INotifyPropertyChanged
     public IReadOnlySet<Entry> StageNames => MergeAssets.StageNames;
     public IReadOnlySet<Entry> WeTagNames => MergeAssets.WeTagNames;
 
-    public async Task CollectAssetsAsync(string workDir, IProgress<string>? progress = null, CancellationToken ct = default)
+    public async Task CollectAssetsAsync(string workDir, IProgress<string>? progress = null,
+        CancellationToken ct = default)
     {
-        if (!Directory.Exists(workDir)) return;
+        if (!Directory.Exists(workDir)) { return; }
 
         progress?.Report(Strings.Status_collecting);
 

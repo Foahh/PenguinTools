@@ -1,32 +1,30 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Diagnostics;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PenguinTools.Core.Resources;
 using PenguinTools.Services;
-using System.Diagnostics;
 
 namespace PenguinTools.ViewModels;
 
 public partial class MainWindowViewModel : ViewModel
 {
-    private readonly IUpdateService _updateService;
+    private readonly IReleaseService _releaseService;
 
-    public MainWindowViewModel(IUpdateService updateService)
+    public MainWindowViewModel(IReleaseService releaseService)
     {
-        this._updateService = updateService;
+        _releaseService = releaseService;
         ActionService.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
     }
 
     public bool IsUpdateAvailable => LatestVersion != null && LatestVersion > App.Version;
 
-    [ObservableProperty]
-    public partial string? DownloadUrl { get; set; }
+    [ObservableProperty] public partial string? DownloadUrl { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DownloadUpdateCommand))]
     public partial Version? LatestVersion { get; set; }
 
-    [ObservableProperty]
-    public partial string UpdateStatus { get; set; } = string.Empty;
+    [ObservableProperty] public partial string UpdateStatus { get; set; } = string.Empty;
 
     public string Status => ActionService.Status;
     public DateTime StatusTime => ActionService.StatusTime;
@@ -37,10 +35,12 @@ public partial class MainWindowViewModel : ViewModel
         UpdateStatus = Strings.Update_Checking;
         try
         {
-            var (result, url) = await _updateService.CheckForUpdatesAsync();
+            var (result, url) = await _releaseService.CheckForUpdatesAsync();
             LatestVersion = result;
             DownloadUrl = url;
-            UpdateStatus = IsUpdateAvailable ? string.Format(Strings.Update_New_Version_Available, LatestVersion.ToString(3)) : Strings.Update_Already_Latest;
+            UpdateStatus = IsUpdateAvailable
+                ? string.Format(Strings.Update_New_Version_Available, LatestVersion.ToString(3))
+                : Strings.Update_Already_Latest;
         }
         catch
         {
@@ -53,7 +53,8 @@ public partial class MainWindowViewModel : ViewModel
     [RelayCommand(CanExecute = nameof(IsUpdateAvailable))]
     private void DownloadUpdate()
     {
-        if (string.IsNullOrWhiteSpace(DownloadUrl)) return;
+        if (string.IsNullOrWhiteSpace(DownloadUrl)) { return; }
+
         Process.Start(new ProcessStartInfo
         {
             FileName = DownloadUrl,

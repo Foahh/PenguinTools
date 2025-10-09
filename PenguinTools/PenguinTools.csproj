@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Common.props"/>
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0-windows</TargetFramework>
+        <TargetFramework>$(DotNetVersion)-windows</TargetFramework>
         <UseWPF>true</UseWPF>
         <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
         <AssemblyName>PenguinTools</AssemblyName>
@@ -12,10 +13,10 @@
 
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
-        <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+        <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9"/>
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135"/>
-        <PackageReference Include="Swordfish.NET.CollectionsV3" Version="3.3.16" />
+        <PackageReference Include="Swordfish.NET.CollectionsV3" Version="3.3.16"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -31,6 +32,23 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>FileFilterStrings.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\Release\mua.exe">
+            <LogicalName>mua.exe</LogicalName>
+            <Link>Resources\mua.exe</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\External\muautils\LICENSE">
+            <LogicalName>mua.LICENSE.txt</LogicalName>
+            <Link>Resources\mua.LICENSE.txt</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\assets.json">
+            <LogicalName>assets.json</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\nf_dummy.afb">
+            <LogicalName>nf_dummy.afb</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\st_dummy.afb">
+            <LogicalName>st_dummy.afb</LogicalName>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -40,18 +58,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj" />
+        <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Resource Include="Resources\error.png" />
-      <Resource Include="Resources\information.png" />
-      <Resource Include="Resources\warning.png" />
+        <Resource Include="Resources\error.png"/>
+        <Resource Include="Resources\information.png"/>
+        <Resource Include="Resources\warning.png"/>
     </ItemGroup>
 
     <PropertyGroup>
         <MinVerTagPrefix>v</MinVerTagPrefix>
     </PropertyGroup>
-
-    <Import Project="..\Common.props"/>
 </Project>

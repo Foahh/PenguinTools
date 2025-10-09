@@ -10,5 +10,6 @@
         <Version>1.6.10</Version>
         <FileVersion>$(Version)</FileVersion>
         <AssemblyVersion>$(Version)</AssemblyVersion>
+        <DotNetVersion>net9.0</DotNetVersion>
     </PropertyGroup>
 </Project>

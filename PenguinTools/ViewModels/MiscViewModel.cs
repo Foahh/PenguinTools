@@ -1,11 +1,11 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Diagnostics;
+using System.IO;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
-using System.Diagnostics;
-using System.IO;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace PenguinTools.ViewModels;
 
@@ -14,7 +14,7 @@ public partial class MiscViewModel : ViewModel
     [RelayCommand]
     private static void OpenTempDirectory()
     {
-        var path = ResourceUtils.TempWorkPath;
+        var path = Resourcer.TempWorkPath;
 
         Process.Start(new ProcessStartInfo
         {
@@ -28,7 +28,7 @@ public partial class MiscViewModel : ViewModel
     private async Task ExtractAfbFile()
     {
         var window = App.ServiceProvider.GetRequiredService<MainWindow>();
-        
+
         var openDlg = new OpenFileDialog
         {
             Title = Strings.Title_Select_the_input_file,
@@ -38,7 +38,7 @@ public partial class MiscViewModel : ViewModel
             ValidateNames = true
         };
         var result = openDlg.ShowDialog(window);
-        if (result is not true || string.IsNullOrWhiteSpace(openDlg.FileName)) return;
+        if (result is not true || string.IsNullOrWhiteSpace(openDlg.FileName)) { return; }
 
         var baseDir = Path.GetDirectoryName(openDlg.FileName);
         var saveDlg = new OpenFolderDialog
@@ -49,7 +49,7 @@ public partial class MiscViewModel : ViewModel
             Multiselect = false,
             ValidateNames = true
         };
-        if (saveDlg.ShowDialog() != true) return;
+        if (saveDlg.ShowDialog() != true) { return; }
 
         await ActionService.RunAsync((diag, prog, ct) =>
         {
@@ -73,7 +73,8 @@ public partial class MiscViewModel : ViewModel
             ValidateNames = true
         };
         var result = openDlg.ShowDialog(window);
-        if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) return;
+        if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) { return; }
+
         await ActionService.RunAsync((_, prog, ct) => AssetManager.CollectAssetsAsync(openDlg.FolderName, prog, ct));
     }
 }
