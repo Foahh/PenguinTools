@@ -54,13 +54,16 @@ public abstract class ExTapableLongNote : LongNote
 
 public static class EffectExtension
 {
-    public static char GetMark(this ExEffect? e)
+    extension(ExEffect? e)
     {
-        return e != null ? 'X' : 'L';
-    }
+        public char GetMark()
+        {
+            return e != null ? 'X' : 'L';
+        }
 
-    public static string GetKind(this ExEffect? e)
-    {
-        return e != null ? $"\t{e}" : "";
+        public string GetKind()
+        {
+            return e != null ? $"\t{e}" : "";
+        }
     }
 }

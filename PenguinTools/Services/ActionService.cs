@@ -4,7 +4,6 @@ using PenguinTools.Core;
 using PenguinTools.Core.Resources;
 using System.Media;
 using System.Windows;
-using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace PenguinTools.Services;

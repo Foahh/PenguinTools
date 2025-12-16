@@ -9,6 +9,8 @@ public partial record Meta
 
     public bool IsMain { get; set; } = true; // used in option convert
 
+    public string FileName => Path.GetFileName(FilePath);
+
     private string GetFullPath(string path)
     {
         if (string.IsNullOrWhiteSpace(path) || Path.IsPathRooted(path)) return path;

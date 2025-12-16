@@ -14,7 +14,7 @@ public partial class MetaPropertyGrid : MyPropertyGrid
     public MetaPropertyGrid()
     {
         InitializeComponent();
-        SelectedObjectChanged += (s, e) =>
+        SelectedObjectChanged += (_, e) =>
         {
             if (e.OldValue is Model oldModel) oldModel.PropertyChanged -= Model_PropertyChanged;
             if (e.NewValue is not Model newModel) return;

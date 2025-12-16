@@ -13,13 +13,13 @@ public class MusicModel : Model
 {
     public MusicModel()
     {
-        PropertyChanged += (s, e) =>
+        PropertyChanged += (_, e) =>
         {
             if (e.PropertyName != nameof(BgmOffset) && e.PropertyName != nameof(BgmEnableBarOffset) && e.PropertyName != nameof(BgmInitialBpm) && e.PropertyName != nameof(BgmInitialTimeSignature)) return;
             OnPropertyChanged(nameof(RealOffset));
         };
         BgmInitialTimeSignature = new TimeSignatureModel(Meta);
-        BgmInitialTimeSignature.PropertyChanged += (s, e) =>
+        BgmInitialTimeSignature.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName != nameof(TimeSignatureModel.Numerator) && e.PropertyName != nameof(TimeSignatureModel.Denominator)) return;
             OnPropertyChanged(nameof(BgmInitialTimeSignature));

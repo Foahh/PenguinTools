@@ -1,17 +1,16 @@
 ﻿<local:MyPropertyGrid
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    mc:Ignorable="d"
     x:Class="PenguinTools.Controls.MetaPropertyGrid"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:attributes="clr-namespace:PenguinTools.Attributes"
     xmlns:converters="clr-namespace:PenguinTools.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    d:DesignHeight="300"
-    d:DesignWidth="300"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
     <local:MyPropertyGrid.Resources>
         <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
         <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
@@ -41,10 +40,10 @@
             <xctk:EditorTemplateDefinition.EditingTemplate>
                 <DataTemplate>
                     <CheckBox
-                        Margin="2,0"
                         IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         IsEnabled="{Binding Path=IsReadOnly, Converter={StaticResource InvertBoolConverter}}"
-                        IsThreeState="False" />
+                        IsThreeState="False"
+                        Margin="2,0" />
                 </DataTemplate>
             </xctk:EditorTemplateDefinition.EditingTemplate>
         </xctk:EditorTemplateDefinition>
@@ -68,7 +67,7 @@
                 </DataTemplate>
             </xctk:EditorTemplateDefinition.EditingTemplate>
         </xctk:EditorTemplateDefinition>
-        
+
         <xctk:EditorTemplateDefinition>
             <xctk:EditorTemplateDefinition.TargetProperties>
                 <system:String>PreviewStart</system:String>
@@ -79,17 +78,17 @@
             <xctk:EditorTemplateDefinition.EditingTemplate>
                 <DataTemplate>
                     <xctk:DecimalUpDown
-                        Minimum="0"
-                        Maximum="2147483647"
                         FormatString="F6"
                         Increment="1"
                         IsEnabled="{Binding Path=IsReadOnly, Converter={StaticResource InvertBoolConverter}}"
+                        Maximum="2147483647"
+                        Minimum="0"
                         ShowButtonSpinner="{Binding Path=IsReadOnly, Converter={StaticResource InvertBoolConverter}}"
                         Value="{Binding Path=DataContext.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ContentControl}}" />
                 </DataTemplate>
             </xctk:EditorTemplateDefinition.EditingTemplate>
         </xctk:EditorTemplateDefinition>
-        
+
         <xctk:EditorTemplateDefinition>
             <xctk:EditorTemplateDefinition.TargetProperties>
                 <system:String>WeTag</system:String>

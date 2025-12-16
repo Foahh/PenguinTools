@@ -15,7 +15,7 @@ public class ModelJsonTypeInfoResolver : IJsonTypeInfoResolver
 {
     private static readonly DefaultJsonTypeInfoResolver DefaultResolver = new();
 
-    public JsonTypeInfo? GetTypeInfo(Type type, JsonSerializerOptions options)
+    public JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
     {
         var info = DefaultResolver.GetTypeInfo(type, options);
 

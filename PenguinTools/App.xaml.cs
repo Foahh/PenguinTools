@@ -38,7 +38,6 @@ public partial class App : Application
         Resourcer.Save("st_dummy.afb");
         Resourcer.Save("mua.exe");
         Resourcer.Save("mua.LICENSE.txt");
-        Resourcer.Save("cri.exe");
 
         var services = new ServiceCollection();
 
@@ -65,7 +64,7 @@ public partial class App : Application
         var window = ServiceProvider.GetRequiredService<MainWindow>();
         window.Show();
 
-        DispatcherUnhandledException += (s, ex) =>
+        DispatcherUnhandledException += (_, ex) =>
         {
             var errorWindow = new ExceptionWindow { StackTrace = ex.Exception.ToString() };
             errorWindow.ShowDialog();

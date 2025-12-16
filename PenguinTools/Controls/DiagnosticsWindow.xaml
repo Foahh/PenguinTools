@@ -1,24 +1,24 @@
 ﻿<Window
+    Height="600"
+    MinHeight="300"
+    MinWidth="400"
+    Style="{DynamicResource DialogWindowStyle}"
+    Title="{Binding Title}"
+    Width="800"
+    WindowStartupLocation="CenterOwner"
+    d:DataContext="{d:DesignInstance controls:DiagnosticsWindowViewModel}"
+    mc:Ignorable="d"
     x:Class="PenguinTools.Controls.DiagnosticsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="clr-namespace:PenguinTools.Behaviors"
-    xmlns:common="clr-namespace:PenguinTools.Core;assembly=PenguinTools.Core"
     xmlns:controls="clr-namespace:PenguinTools.Controls"
     xmlns:converters="clr-namespace:PenguinTools.Converters"
+    xmlns:core="clr-namespace:PenguinTools.Core;assembly=PenguinTools.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
-    Title="{Binding Title}"
-    Width="800"
-    Height="600"
-    MinWidth="400"
-    MinHeight="300"
-    d:DataContext="{d:DesignInstance controls:DiagnosticsWindowViewModel}"
-    Style="{DynamicResource DialogWindowStyle}"
-    WindowStartupLocation="CenterOwner"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Window.Resources>
         <converters:PercentageConverter x:Key="PercentageConverter" />
@@ -38,16 +38,16 @@
             VerticalAlignment="Top">
 
             <ListView
-                MinHeight="100"
-                MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource PercentageConverter}, ConverterParameter=0.6}"
-                VerticalAlignment="Top"
                 AlternationCount="1000"
                 ItemsSource="{Binding Diagnostics}"
+                MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource PercentageConverter}, ConverterParameter=0.6}"
+                MinHeight="100"
                 ScrollViewer.CanContentScroll="True"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 SelectedItem="{Binding SelectedDiagnostic}"
-                SelectionMode="Single">
+                SelectionMode="Single"
+                VerticalAlignment="Top">
 
                 <ListView.View>
                     <GridView>
@@ -55,23 +55,20 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Image
-                                        Width="12"
                                         Height="12"
                                         HorizontalAlignment="Center"
-                                        VerticalAlignment="Center">
+                                        VerticalAlignment="Center"
+                                        Width="12">
                                         <Image.Style>
                                             <Style TargetType="Image">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Severity}"
-                                                                 Value="{x:Static common:Severity.Error}">
+                                                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static core:Severity.Error}">
                                                         <Setter Property="Source" Value="{StaticResource ErrorIcon}" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Severity}"
-                                                                 Value="{x:Static common:Severity.Warning}">
+                                                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static core:Severity.Warning}">
                                                         <Setter Property="Source" Value="{StaticResource WarningIcon}" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Severity}"
-                                                                 Value="{x:Static common:Severity.Information}">
+                                                    <DataTrigger Binding="{Binding Severity}" Value="{x:Static core:Severity.Information}">
                                                         <Setter Property="Source" Value="{StaticResource InfoIcon}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -82,27 +79,27 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="{Binding TimeColumnWidth}" Header="{x:Static res:Strings.Label_Time}">
+                        <GridViewColumn Header="{x:Static res:Strings.Label_Time}" Width="{Binding TimeColumnWidth}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock
                                         HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        TextWrapping="Wrap">
+                                        TextWrapping="Wrap"
+                                        VerticalAlignment="Center">
                                         <TextBlock Text="{Binding FormattedTime}" />
                                     </TextBlock>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="{Binding PathColumnWidth}" Header="{x:Static res:Strings.Label_Path}">
+                        <GridViewColumn Header="{x:Static res:Strings.Label_Path}" Width="{Binding PathColumnWidth}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock
                                         HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
                                         Text="{Binding Path}"
-                                        TextWrapping="Wrap" />
+                                        TextWrapping="Wrap"
+                                        VerticalAlignment="Center" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -112,9 +109,9 @@
                                 <DataTemplate>
                                     <TextBlock
                                         HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
                                         Text="{Binding Message}"
-                                        TextWrapping="Wrap" />
+                                        TextWrapping="Wrap"
+                                        VerticalAlignment="Center" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -125,10 +122,10 @@
 
         <GroupBox
             Grid.Row="1"
-            MinHeight="100"
-            MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource PercentageConverter}, ConverterParameter=0.4}"
+            Header="{x:Static res:Strings.Label_Details}"
             Margin="8,0,8,0"
-            Header="{x:Static res:Strings.Label_Details}">
+            MaxHeight="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource PercentageConverter}, ConverterParameter=0.4}"
+            MinHeight="100">
             <i:Interaction.Behaviors>
                 <behaviors:HideIfNullValueBehavior Value="{Binding SelectedDiagnostic}" />
             </i:Interaction.Behaviors>
@@ -137,17 +134,15 @@
 
         <controls:Alert
             Grid.Row="2"
-            Margin="0,8,0,0"
             Level="Information"
-            Message="{x:Static res:Strings.Alert_Diagnostic_report}">
-        </controls:Alert>
+            Margin="0,8,0,0"
+            Message="{x:Static res:Strings.Alert_Diagnostic_report}" />
 
         <StackPanel Grid.Row="3" Style="{StaticResource ActionPanelStyle}">
             <Button Content="OK" IsDefault="True">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
-                        <i:CallMethodAction MethodName="Close"
-                                            TargetObject="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+                        <i:CallMethodAction MethodName="Close" TargetObject="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
