@@ -5,6 +5,7 @@ using PenguinTools.Core.Resources;
 using System.Media;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using PenguinTools.Views;
 
 namespace PenguinTools.Services;
 

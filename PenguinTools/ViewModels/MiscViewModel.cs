@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
+using PenguinTools.Views;
 
 namespace PenguinTools.ViewModels;
 

@@ -8,6 +8,7 @@ using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Services;
 using PenguinTools.ViewModels;
+using PenguinTools.Views;
 
 namespace PenguinTools;
 

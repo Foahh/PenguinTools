@@ -3,7 +3,7 @@
     MinWidth="380"
     d:DataContext="{d:DesignInstance Type=viewModels:OptionViewModel}"
     mc:Ignorable="d"
-    x:Class="PenguinTools.Pages.OptionTab"
+    x:Class="PenguinTools.Views.OptionTab"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:behaviors="clr-namespace:PenguinTools.Behaviors"

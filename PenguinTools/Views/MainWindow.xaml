@@ -4,14 +4,14 @@
     SizeToContent="WidthAndHeight"
     d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
     mc:Ignorable="d"
-    x:Class="PenguinTools.MainWindow"
+    x:Class="PenguinTools.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:converters="clr-namespace:PenguinTools.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pages="clr-namespace:PenguinTools.Pages"
     xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
+    xmlns:views="clr-namespace:PenguinTools.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Window.Resources>
@@ -43,28 +43,28 @@
         <TabControl Margin="8">
             <TabItem Header="{x:Static res:Strings.Tab_Option}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <pages:OptionTab />
+                    <views:OptionTab />
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Song}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <pages:WorkflowTab />
+                    <views:WorkflowTab />
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Chart}">
-                <pages:ChartTab />
+                <views:ChartTab />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Jacket}">
-                <pages:JacketTab />
+                <views:JacketTab />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Music}">
-                <pages:MusicTab />
+                <views:MusicTab />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Stage}">
-                <pages:StageTab />
+                <views:StageTab />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Misc}">
-                <pages:MiscTab />
+                <views:MiscTab />
             </TabItem>
         </TabControl>
     </DockPanel>

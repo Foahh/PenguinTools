@@ -1,8 +1,8 @@
-﻿using PenguinTools.Core.Resources;
+﻿using System.Windows;
+using PenguinTools.Core.Resources;
 using PenguinTools.ViewModels;
-using System.Windows;
 
-namespace PenguinTools;
+namespace PenguinTools.Views;
 
 public partial class MainWindow : Window
 {

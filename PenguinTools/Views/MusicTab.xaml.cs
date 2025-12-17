@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.ViewModels;
-using System.Windows.Controls;
 
-namespace PenguinTools.Pages;
+namespace PenguinTools.Views;
 
 public partial class MusicTab : UserControl
 {

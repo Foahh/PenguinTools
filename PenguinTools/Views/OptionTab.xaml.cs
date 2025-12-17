@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Windows;
+using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Models;
 using PenguinTools.ViewModels;
-using System.Windows;
-using System.Windows.Controls;
 
-namespace PenguinTools.Pages;
+namespace PenguinTools.Views;
 
 public partial class OptionTab : UserControl
 {

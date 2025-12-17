@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using PenguinTools.Views;
 
 namespace PenguinTools.Controls;
 
