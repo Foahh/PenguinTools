@@ -1,25 +1,25 @@
 ﻿<Window
+    MaxHeight="810"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight"
+    d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
+    mc:Ignorable="d"
     x:Class="PenguinTools.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:PenguinTools.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="clr-namespace:PenguinTools.Pages"
-    xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
     xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
-    d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
-    ResizeMode="NoResize"
-    MaxHeight="810"
-    SizeToContent="WidthAndHeight"
-    mc:Ignorable="d">
+    xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Window.Resources>
         <converters:BoolHandCursorConverter x:Key="BoolHandCursorConverter" />
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
-        <StatusBar Padding="2,0" DockPanel.Dock="Bottom">
+        <StatusBar DockPanel.Dock="Bottom" Padding="2,0">
             <StatusBarItem>
                 <TextBlock Text="{Binding StatusTime, StringFormat='{}{0:HH:mm:ss}'}" />
             </StatusBarItem>
@@ -46,7 +46,7 @@
                     <pages:OptionTab />
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="{x:Static res:Strings.Tab_Workflow}">
+            <TabItem Header="{x:Static res:Strings.Tab_Song}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <pages:WorkflowTab />
                 </ScrollViewer>

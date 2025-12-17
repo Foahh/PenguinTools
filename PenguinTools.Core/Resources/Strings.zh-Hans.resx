@@ -182,11 +182,11 @@
   <data name="Title_Error" xml:space="preserve">
     <value>错误</value>
   </data>
-  <data name="Tab_Workflow" xml:space="preserve">
-    <value>大杂烩</value>
+  <data name="Tab_Song" xml:space="preserve">
+    <value>曲目</value>
   </data>
     <data name="Tab_Option" xml:space="preserve">
-    <value>大批量</value>
+    <value>曲包</value>
   </data>
   <data name="Tab_Chart" xml:space="preserve">
     <value>谱面</value>

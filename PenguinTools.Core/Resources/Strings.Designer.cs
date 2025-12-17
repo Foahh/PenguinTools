@@ -1626,20 +1626,20 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Song.
+        /// </summary>
+        public static string Tab_Song {
+            get {
+                return ResourceManager.GetString("Tab_Song", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stage.
         /// </summary>
         public static string Tab_Stage {
             get {
                 return ResourceManager.GetString("Tab_Stage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Workflow.
-        /// </summary>
-        public static string Tab_Workflow {
-            get {
-                return ResourceManager.GetString("Tab_Workflow", resourceCulture);
             }
         }
         

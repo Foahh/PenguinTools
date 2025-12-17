@@ -182,8 +182,8 @@
   <data name="Title_Error" xml:space="preserve">
     <value>Error</value>
   </data>
-  <data name="Tab_Workflow" xml:space="preserve">
-    <value>Workflow</value>
+  <data name="Tab_Song" xml:space="preserve">
+    <value>Song</value>
   </data>
   <data name="Tab_Option" xml:space="preserve">
     <value>Option</value>
