@@ -545,8 +545,8 @@
     <data name="Mg_Main_timeline_not_found" xml:space="preserve">
     <value>未找到基准时间轴 {0}。已创建一个速度为 1.0 的新时间轴。</value>
   </data>
-    <data name="Mg_Note_overlapped_in_different_TIL" xml:space="preserve">
-    <value>当前物件与其他时间轴中的物件存在重叠。这可能导致该物件的流速出现问题。</value>
+  <data name="Mg_Note_overlapped_in_different_TIL" xml:space="preserve">
+    <value>此物件与其他时间轴中的物件存在重叠。这可能导致该物件的流速出现问题。</value>
   </data>
     <data name="MgCrit_Pairing_notes_incompatible" xml:space="preserve">
     <value>物件之间不兼容，无法配对。</value>
@@ -557,11 +557,11 @@
     <data name="MgCrit_Air_slide_parent_null" xml:space="preserve">
     <value>AirSlide的父级不能为 null。</value>
   </data>
-    <data name="Mg_Length_smaller_than_unit" xml:space="preserve">
-    <value>此物件的长度为 {0}。可能是由于原始物件中存在间距小于 1/{1} 的节点。</value>
+  <data name="Mg_Length_smaller_than_unit" xml:space="preserve">
+    <value>此长条物件中存在间距小于 1/{1} 的节点。</value>
   </data>
-    <data name="Mg_Overlapping_air_parent_slide" xml:space="preserve">
-    <value>由于同一时间内存在多个重叠的 Slide 节点，无法确定 Air 应从哪个 Slide 节点开始。请尝试在时间上隔开两者。</value>
+  <data name="Mg_Overlapping_air_parent_slide" xml:space="preserve">
+    <value>由于此 Air 的位置上存在多个重叠的 Slide 节点，无法确定此 Air 应从哪个 Slide 节点开始。请尝试在时间上隔开两者。</value>
   </data>
     <data name="Mg_Unrecognized_meta" xml:space="preserve">
     <value>未知属性标记 {0}，文件位置 0x{1:X2}，数据：{2}。</value>
@@ -674,8 +674,8 @@
     <data name="Warn_Duplicate_id_and_difficulty" xml:space="preserve">
     <value>相同 ID 和难度的多个谱面存在，将使用最后扫描到的文件。</value>
   </data>
-    <data name="Mg_Concurrent_ex_effects" xml:space="preserve">
-    <value>同一时间上存在多个不同的 EX 效果：{0}。游戏可能只会显示其中一个。</value>
+  <data name="Mg_Concurrent_ex_effects" xml:space="preserve">
+    <value>同一时间上存在多个不同的 EX 效果：{0}。游戏只会显示其中一个。</value>
   </data>
   <data name="Mg_Meta_Invalid_date" xml:space="preserve">
     <value>无效的日期格式，需要为 "YYYYMMDD"</value>

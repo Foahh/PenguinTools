@@ -1194,7 +1194,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Different EX effects coexist at the same tick: {0}. The game may only display one of these..
+        ///   Looks up a localized string similar to Different EX effects coexist at the same tick: {0}. The game will only display one of these..
         /// </summary>
         public static string Mg_Concurrent_ex_effects {
             get {
@@ -1230,7 +1230,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of this note is {0}. This might be due to nodes in the original note having spacing less than {1}..
+        ///   Looks up a localized string similar to Nodes in the original lengthy note having spacing less than 1/{1}..
         /// </summary>
         public static string Mg_Length_smaller_than_unit {
             get {
@@ -1293,7 +1293,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The note overlaps with note in other TILs. This may cause problems in the scroll speed of this note..
+        ///   Looks up a localized string similar to This note overlaps with note in other TILs. This may cause problems in the scroll speed of this note..
         /// </summary>
         public static string Mg_Note_overlapped_in_different_TIL {
             get {
@@ -1302,7 +1302,7 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Due to multiple overlapping Slide nodes existing simultaneously, it is unknown to determine from which Slide node the Air should start. Please try to space them apart in single ticks..
+        ///   Looks up a localized string similar to Due to multiple overlapping Slide nodes existing simultaneously on this Air&apos;s position, it is unknown to determine from which Slide node the Air should start. Please try to space them apart in single ticks..
         /// </summary>
         public static string Mg_Overlapping_air_parent_slide {
             get {

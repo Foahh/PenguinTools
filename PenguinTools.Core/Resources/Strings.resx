@@ -556,7 +556,7 @@
     <value>There was no events found on main TIL {0}.</value>
   </data>
   <data name="Mg_Note_overlapped_in_different_TIL" xml:space="preserve">
-    <value>The note overlaps with note in other TILs. This may cause problems in the scroll speed of this note.</value>
+    <value>This note overlaps with note in other TILs. This may cause problems in the scroll speed of this note.</value>
   </data>
   <data name="MgCrit_Pairing_notes_incompatible" xml:space="preserve">
     <value>Note are incompatible for pairing.</value>
@@ -568,10 +568,10 @@
     <value>Parent of AirSlide cannot be null.</value>
   </data>
   <data name="Mg_Length_smaller_than_unit" xml:space="preserve">
-    <value>The length of this note is {0}. This might be due to nodes in the original note having spacing less than {1}.</value>
+    <value>Nodes in the original lengthy note having spacing less than 1/{1}.</value>
   </data>
   <data name="Mg_Overlapping_air_parent_slide" xml:space="preserve">
-    <value>Due to multiple overlapping Slide nodes existing simultaneously, it is unknown to determine from which Slide node the Air should start. Please try to space them apart in single ticks.</value>
+    <value>Due to multiple overlapping Slide nodes existing simultaneously on this Air's position, it is unknown to determine from which Slide node the Air should start. Please try to space them apart in single ticks.</value>
   </data>
   <data name="Mg_Unrecognized_meta" xml:space="preserve">
     <value>Unknown property mark {0} at file position 0x{1:X2}, data: {2}.</value>
@@ -685,7 +685,7 @@
     <value>Multiple charts with the same song ID and difficulty exist, the last scanned file will be used.</value>
   </data>
   <data name="Mg_Concurrent_ex_effects" xml:space="preserve">
-    <value>Different EX effects coexist at the same tick: {0}. The game may only display one of these.</value>
+    <value>Different EX effects coexist at the same tick: {0}. The game will only display one of these.</value>
   </data>
   <data name="Mg_Meta_Invalid_date" xml:space="preserve">
     <value>Invalid date format. Expected 'YYYYMMDD'.</value>

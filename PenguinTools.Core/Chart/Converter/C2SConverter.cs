@@ -38,7 +38,7 @@ public partial class C2SConverter(Diagnoster diag, IProgress<string>? prog = nul
         {
             var slidesCount = slidesLookup.GetValueOrDefault(pos, 0);
             if (airsCount >= slidesCount) continue;
-            Diagnostic.Report(Severity.Information, Strings.Mg_Overlapping_air_parent_slide, pos.Tick.Original);
+            Diagnostic.Report(Severity.Warning, Strings.Mg_Overlapping_air_parent_slide, pos.Tick.Original);
         }
 
         foreach (var longNote in Notes.OfType<c2s.LongNote>())
