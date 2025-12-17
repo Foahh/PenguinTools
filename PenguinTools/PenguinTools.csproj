@@ -8,6 +8,7 @@
         <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
         <AssemblyName>PenguinTools</AssemblyName>
         <ApplicationManifest>app.manifest</ApplicationManifest>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
