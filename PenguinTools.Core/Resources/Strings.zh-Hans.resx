@@ -647,6 +647,9 @@
     <data name="Warn_Preview_later_than_120" xml:space="preserve">
     <value>音频预览起始时间超过 120 秒。可能导致在游戏在选择此歌曲时卡顿。</value>
   </data>
+    <data name="Hint_Preview_value_clamped" xml:space="preserve">
+    <value>预览{0}时间（{1:F3} 秒）超过最大值（{2:F3} 秒），已自动调整以防止溢出。</value>
+  </data>
     <data name="Status_Converted" xml:space="preserve">
     <value>已转换</value>
   </data>

@@ -52,12 +52,29 @@ public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : C
         var xml = new CueFileXml(songId);
         var outputDir = await xml.SaveDirectoryAsync(OutFolder);
 
-        var pvStart = Math.Clamp(Meta.BgmPreviewStart, 0, int.MaxValue);
-        var pvStop = Math.Clamp(Meta.BgmPreviewStop, 0, int.MaxValue);
+        var pvStart = Meta.BgmPreviewStart;
+        var pvStop = Meta.BgmPreviewStop;
         if (Meta.BgmEnableBarOffset)
         {
             pvStart += Meta.BgmRealOffset;
             pvStop += Meta.BgmRealOffset;
+        }
+
+        var maxSeconds = Math.Floor(uint.MaxValue / 1000m);
+        var originalPvStart = pvStart;
+        var originalPvStop = pvStop;
+        pvStart = Math.Clamp(pvStart, 0, maxSeconds);
+        pvStop = Math.Clamp(pvStop, 0, maxSeconds);
+
+        if (originalPvStart > maxSeconds)
+        {
+            var msg = string.Format(Strings.Hint_Preview_value_clamped, nameof(Meta.BgmPreviewStart), originalPvStart, maxSeconds);
+            Diagnostic.Report(Severity.Information, msg);
+        }
+        if (originalPvStop > maxSeconds)
+        {
+            var msg = string.Format(Strings.Hint_Preview_value_clamped, nameof(Meta.BgmPreviewStop), originalPvStop, maxSeconds);
+            Diagnostic.Report(Severity.Information, msg);
         }
 
         var acbPath = Path.Combine(outputDir, xml.AcbFile);

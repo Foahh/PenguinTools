@@ -1023,6 +1023,15 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preview {0} time ({1:F3} s) exceeds the maximum value ({2:F3} s) and has been clamped to prevent overflow..
+        /// </summary>
+        public static string Hint_Preview_value_clamped {
+            get {
+                return ResourceManager.GetString("Hint_Preview_value_clamped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Audio: .
         /// </summary>
         public static string Label_Audio {

@@ -657,6 +657,9 @@
   <data name="Warn_Preview_later_than_120" xml:space="preserve">
     <value>The preview start time is set later than 120 seconds. This may cause the game to freeze when selecting the song.</value>
   </data>
+  <data name="Hint_Preview_value_clamped" xml:space="preserve">
+    <value>Preview {0} time ({1:F3} s) exceeds the maximum value ({2:F3} s) and has been clamped to prevent overflow.</value>
+  </data>
   <data name="Status_Converted" xml:space="preserve">
     <value>Converted</value>
   </data>
