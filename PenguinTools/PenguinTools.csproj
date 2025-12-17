@@ -8,7 +8,6 @@
         <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
         <AssemblyName>PenguinTools</AssemblyName>
         <ApplicationManifest>app.manifest</ApplicationManifest>
-        <PublishSingleFile>true</PublishSingleFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -48,6 +47,9 @@
         </EmbeddedResource>
         <EmbeddedResource Include="Resources\st_dummy.afb">
             <LogicalName>st_dummy.afb</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Resources\dummy.acb">
+            <LogicalName>dummy.acb</LogicalName>
         </EmbeddedResource>
     </ItemGroup>
 

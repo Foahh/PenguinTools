@@ -36,6 +36,7 @@ public partial class App : Application
         Resourcer.Initialize(Assembly.GetExecutingAssembly());
         Resourcer.Save("nf_dummy.afb");
         Resourcer.Save("st_dummy.afb");
+        Resourcer.Save("dummy.acb");
         Resourcer.Save("mua.exe");
         Resourcer.Save("mua.LICENSE.txt");
 
