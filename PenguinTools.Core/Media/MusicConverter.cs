@@ -15,7 +15,7 @@ namespace PenguinTools.Core.Media;
 
 public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
 {
-    public ulong Key { get; set; } = 32931609366120192UL;
+    private const ulong Key = 32931609366120192UL;
     public required Meta Meta { get; init; }
     public required string OutFolder { get; init; }
 
@@ -56,8 +56,8 @@ public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : C
         var pvStop = Meta.BgmPreviewStop;
         if (Meta.BgmEnableBarOffset)
         {
-            pvStart += Meta.BgmRealOffset;
-            pvStop += Meta.BgmRealOffset;
+            pvStart += Meta.BgmBarOffset;
+            pvStop += Meta.BgmBarOffset;
         }
 
         var maxSeconds = Math.Floor(uint.MaxValue / 1000m);

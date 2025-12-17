@@ -10,11 +10,11 @@ public partial record Meta
         get
         {
             if (!BgmEnableBarOffset) return BgmManualOffset;
-            return BgmManualOffset + BgmCalculatedOffset;
+            return BgmManualOffset + BgmBarOffset;
         }
     }
 
-    private decimal BgmCalculatedOffset
+    public decimal BgmBarOffset
     {
         get
         {
