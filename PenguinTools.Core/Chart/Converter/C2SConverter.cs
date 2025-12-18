@@ -51,6 +51,17 @@ public partial class C2SConverter(Diagnoster diag, IProgress<string>? prog = nul
             Diagnostic.Report(Severity.Warning, msg, tick, longNote);
         }
 
+        if (Mgxc.Meta.BgmEnableBarOffset)
+        {
+            var offset = (int)Math.Round((decimal)Time.MarResolution / Mgxc.Meta.BgmInitialDenominator * Mgxc.Meta.BgmInitialNumerator);
+            foreach (var e in Events.Where(e => e.Tick.Original != 0)) e.Tick = e.Tick.Original + offset;
+            foreach (var n in Notes)
+            {
+                n.Tick = n.Tick.Original + offset;
+                if (n is c2s.LongNote longNote) longNote.EndTick = longNote.EndTick.Original + offset;
+            }
+        }
+
         Progress?.Report(Strings.Status_Writing);
 
         var sb = new StringBuilder();
