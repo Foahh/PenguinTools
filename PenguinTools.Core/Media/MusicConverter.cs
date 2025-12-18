@@ -44,7 +44,7 @@ public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : C
         var srcPath = Meta.FullBgmFilePath;
         var wavPath = Resourcer.GetTempPath($"c_{Path.GetFileNameWithoutExtension(srcPath)}.wav");
 
-        var ret = await Manipulate.NormalizeAsync(srcPath, wavPath, Meta.BgmRealOffset, ct);
+        var ret = await Manipulate.NormalizeAudioAsync(srcPath, wavPath, Meta.BgmRealOffset, ct);
         if (ret.IsNoOperation) { wavPath = srcPath; }
 
         ct.ThrowIfCancellationRequested();

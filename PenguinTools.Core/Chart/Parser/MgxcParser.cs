@@ -66,7 +66,7 @@ public partial class MgxcParser(Diagnoster diag, IProgress<string>? prog = null)
 
         if (Mgxc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(Mgxc.Meta.FullBgiFilePath))
         {
-            Tasks.Add(Manipulate.IsImageValidAsync(Mgxc.Meta.FullBgiFilePath).ContinueWith(p =>
+            Tasks.Add(Manipulate.CheckImageValidAsync(Mgxc.Meta.FullBgiFilePath).ContinueWith(p =>
             {
                 if (p.IsCompletedSuccessfully) return;
                 Mgxc.Meta.IsCustomStage = false;
@@ -132,7 +132,7 @@ public partial class MgxcParser(Diagnoster diag, IProgress<string>? prog = null)
                 exEffects[exTap.Tick] = effectSet;
             }
             effectSet.Add(exTap.Effect);
-            
+
             if (!noteGroup.TryGetValue(exTap.Tick, out var notesAtTick)) continue;
 
             foreach (var note in notesAtTick)

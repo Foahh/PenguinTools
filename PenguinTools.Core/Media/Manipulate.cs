@@ -59,7 +59,7 @@ public static class Manipulate
         return new ProcessCommandResult(proc, await stdoutTask, await stderrTask);
     }
 
-    public static async Task<ProcessCommandResult> NormalizeAsync(string src, string dst, decimal offset,
+    public static async Task<ProcessCommandResult> NormalizeAudioAsync(string src, string dst, decimal offset,
         CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(src)) { throw new ArgumentNullException(nameof(src)); }
@@ -67,7 +67,7 @@ public static class Manipulate
         if (string.IsNullOrWhiteSpace(dst)) { throw new ArgumentNullException(nameof(dst)); }
 
         var ret = await RunAsync([
-            "an",
+            "audio_normalize",
             "-s", src,
             "-d", dst,
             "-o", Math.Round(offset, 6).ToString(CultureInfo.InvariantCulture)
@@ -77,18 +77,18 @@ public static class Manipulate
         return ret;
     }
 
-    public static async Task<ProcessCommandResult> IsAudioValidAsync(string src, CancellationToken ct = default)
+    public static async Task<ProcessCommandResult> CheckAudioValidAsync(string src, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(src)) { throw new ArgumentNullException(nameof(src)); }
 
-        return await RunAsync(["ai", "-s", src], ct: ct);
+        return await RunAsync(["audio_check", "-s", src], ct: ct);
     }
 
-    public static async Task<ProcessCommandResult> IsImageValidAsync(string src, CancellationToken ct = default)
+    public static async Task<ProcessCommandResult> CheckImageValidAsync(string src, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(src)) { throw new ArgumentNullException(nameof(src)); }
 
-        return await RunAsync(["ii", "-s", src], ct: ct);
+        return await RunAsync(["image_check", "-s", src], ct: ct);
     }
 
     public static async Task ConvertJacketAsync(string src, string dst, CancellationToken ct = default)
@@ -97,7 +97,7 @@ public static class Manipulate
 
         if (string.IsNullOrWhiteSpace(dst)) { throw new ArgumentNullException(nameof(dst)); }
 
-        var ret = await RunAsync(["cj", "-s", src, "-d", dst], ct: ct);
+        var ret = await RunAsync(["convert_jacket", "-s", src, "-d", dst], ct: ct);
         ret.ThrowIfFailed();
     }
 
@@ -112,7 +112,7 @@ public static class Manipulate
 
         var args = new List<string>
         {
-            "cs",
+            "convert_stage",
             "-b", bg,
             "-s", stSrc,
             "-d", stDst
@@ -136,7 +136,7 @@ public static class Manipulate
 
         if (string.IsNullOrWhiteSpace(dst)) { throw new ArgumentNullException(nameof(dst)); }
 
-        var ret = await RunAsync(["ed", "-s", src, "-d", dst], ct: ct);
+        var ret = await RunAsync(["extract_dds", "-s", src, "-d", dst], ct: ct);
         ret.ThrowIfFailed();
     }
 }
