@@ -591,6 +591,15 @@ namespace PenguinTools.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Last Export Location.
+        /// </summary>
+        public static string Display_LastExport {
+            get {
+                return ResourceManager.GetString("Display_LastExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Level.
         /// </summary>
         public static string Display_Level {

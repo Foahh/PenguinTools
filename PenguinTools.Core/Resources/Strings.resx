@@ -705,4 +705,7 @@
   <data name="Error_File_not_found" xml:space="preserve">
     <value>The specified file was not found.</value>
   </data>
+  <data name="Display_LastExport" xml:space="preserve">
+    <value>Last Export Location</value>
+  </data>
 </root>

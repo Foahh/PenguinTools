@@ -87,6 +87,8 @@ public partial class OptionModel : Model
     [Browsable(false)]
     public string WorkingDirectory { get; set; } = string.Empty;
 
+    [LocalizableCategory(nameof(Strings.Category_Misc), typeof(Strings))]
+    [LocalizableDisplayName(nameof(Strings.Display_LastExport), typeof(Strings))]
     public string OptionDirectory
     {
         get

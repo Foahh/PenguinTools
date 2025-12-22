@@ -704,4 +704,7 @@
   <data name="Error_Audio_file_not_found" xml:space="preserve">
     <value>未找到音频文件。</value>
   </data>
+  <data name="Display_LastExport" xml:space="preserve">
+    <value>上次导出位置</value>
+  </data>
 </root>
