@@ -57,7 +57,7 @@ public partial class C2SChartWriter
         var e = new c2s.Dcm
         {
             Tick = lastEvent.Tick,
-            Length = Math.Max(lastTick.Round - lastEvent.Tick.Round, Time.SingleTick),
+            Length = Math.Max(lastTick.Round - lastEvent.Tick.Round, ChartResolution.SingleTick),
             Speed = lastEvent.Speed
         };
         Events.Add(e);
@@ -91,7 +91,7 @@ public partial class C2SChartWriter
             {
                 Timeline = id,
                 Tick = lastEvent.Tick,
-                Length = Math.Max(lastTilTick.Round - lastEvent.Tick.Round, Time.SingleTick),
+                Length = Math.Max(lastTilTick.Round - lastEvent.Tick.Round, ChartResolution.SingleTick),
                 Speed = lastEvent.Speed
             });
         }

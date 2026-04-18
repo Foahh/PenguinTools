@@ -74,7 +74,7 @@ public partial class MgxcParser
                 };
                 var tail = new mg.SoflanAreaJoint
                 {
-                    Tick = note.Tick.Original + Time.SingleTick
+                    Tick = note.Tick.Original + ChartResolution.SingleTick
                 };
 
                 slaSet.Add((note.Tick.Original, id, note.Lane, note.Width));
@@ -124,7 +124,7 @@ public partial class MgxcParser
             var mappedNotes = _noteGroups[id];
             var maxTick = mappedNotes.Select(p => p.Tick).Append(0).Max();
             if (mappedNotes.Count == 0) _tilGroups.Remove(id);
-            else if (events.Count > 0 && maxTick.Original > 0) events.RemoveAll(p => p.Tick.Original > maxTick.Original + Time.SingleTick);
+            else if (events.Count > 0 && maxTick.Original > 0) events.RemoveAll(p => p.Tick.Original > maxTick.Original + ChartResolution.SingleTick);
         }
 
         foreach (var (id, notes) in _noteGroups.ToArray())

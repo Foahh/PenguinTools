@@ -59,16 +59,16 @@ public partial class C2SChartWriter
         foreach (var longNote in Notes.OfType<c2s.LongNote>())
         {
             var length = longNote.Length.Original;
-            if (length >= Time.SingleTick) continue;
+            if (length >= ChartResolution.SingleTick) continue;
 
             var tick = longNote.Tick.Original;
-            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, Time.MarResolution / Time.SingleTick);
+            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, ChartResolution.MarResolution / ChartResolution.SingleTick);
             Diagnostic.Report(Severity.Warning, msg, tick, longNote);
         }
 
         if (Mgxc.Meta.BgmEnableBarOffset)
         {
-            var offset = (int)Math.Round((decimal)Time.MarResolution / Mgxc.Meta.BgmInitialDenominator * Mgxc.Meta.BgmInitialNumerator);
+            var offset = (int)Math.Round((decimal)ChartResolution.MarResolution / Mgxc.Meta.BgmInitialDenominator * Mgxc.Meta.BgmInitialNumerator);
             foreach (var e in Events.Where(e => e.Tick.Original != 0)) e.Tick = e.Tick.Original + offset;
             foreach (var n in Notes)
             {

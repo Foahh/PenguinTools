@@ -24,6 +24,6 @@ public class Chart
             Events.InsertBefore(newEvent, firstEvent);
             beatEvents.Insert(0, newEvent);
         }
-        return new TimeCalculator(Time.MarResolution, beatEvents);
+        return new TimeCalculator(ChartResolution.MarResolution, beatEvents);
     }
 }

@@ -123,7 +123,7 @@ public partial class MgxcParser
             {
                 var curr = beatEvents[i];
                 var next = beatEvents[i + 1];
-                ticks += Time.MarResolution * curr.Numerator / curr.Denominator * (next.Bar - curr.Bar);
+                ticks += ChartResolution.MarResolution * curr.Numerator / curr.Denominator * (next.Bar - curr.Bar);
                 next.Tick = ticks;
             }
         }
