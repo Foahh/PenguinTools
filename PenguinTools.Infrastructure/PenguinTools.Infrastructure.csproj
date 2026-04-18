@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Common.props"/>
+
+    <PropertyGroup>
+        <TargetFramework>$(DotNetVersion)</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\Release\mua.exe">
+            <LogicalName>mua.exe</LogicalName>
+            <Link>Assets\mua.exe</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\External\muautils\LICENSE">
+            <LogicalName>mua.LICENSE.txt</LogicalName>
+            <Link>Assets\mua.LICENSE.txt</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\assets.json">
+            <LogicalName>assets.json</LogicalName>
+            <Link>Assets\assets.json</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\nf_dummy.afb">
+            <LogicalName>nf_dummy.afb</LogicalName>
+            <Link>Assets\nf_dummy.afb</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\st_dummy.afb">
+            <LogicalName>st_dummy.afb</LogicalName>
+            <Link>Assets\st_dummy.afb</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Assets\dummy.acb">
+            <LogicalName>dummy.acb</LogicalName>
+            <Link>Assets\dummy.acb</Link>
+        </EmbeddedResource>
+    </ItemGroup>
+</Project>

@@ -17,6 +17,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
     protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
     {
         if (Model == null) return OperationResult.Success();
+        var diagnostics = DiagnosticSnapshot.Empty;
         var chart = Model.Mgxc;
         var meta = chart.Meta;
         var songId = meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
@@ -53,8 +54,8 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                 ResourceStore,
                 context);
             var builtStage = await stageConverter.BuildAsync(ct);
-            context.Diagnostic.Report(builtStage.Diagnostics);
-            if (!builtStage.Succeeded || builtStage.Value is not { } stageEntry) return OperationResult.Failure();
+            diagnostics = diagnostics.Merge(builtStage.Diagnostics);
+            if (!builtStage.Succeeded || builtStage.Value is not { } stageEntry) return OperationResult.Failure().WithDiagnostics(diagnostics);
             stage = stageEntry;
         }
 
@@ -80,8 +81,8 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 
         var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, chart), context);
         var writtenChart = await chartWriter.WriteAsync(ct);
-        context.Diagnostic.Report(writtenChart.Diagnostics);
-        if (!writtenChart.Succeeded) return OperationResult.Failure();
+        diagnostics = diagnostics.Merge(writtenChart.Diagnostics);
+        if (!writtenChart.Succeeded) return OperationResult.Failure().WithDiagnostics(diagnostics);
 
         ct.ThrowIfCancellationRequested();
 
@@ -90,15 +91,15 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
             MediaTool,
             context);
         var convertedJacket = await jacketConverter.ConvertAsync(ct);
-        context.Diagnostic.Report(convertedJacket.Diagnostics);
-        if (!convertedJacket.Succeeded) return OperationResult.Failure();
+        diagnostics = diagnostics.Merge(convertedJacket.Diagnostics);
+        if (!convertedJacket.Succeeded) return OperationResult.Failure().WithDiagnostics(diagnostics);
 
         ct.ThrowIfCancellationRequested();
 
         var musicConverter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), MediaTool, ResourceStore, context);
         var convertedMusic = await musicConverter.ConvertAsync(ct);
-        context.Diagnostic.Report(convertedMusic.Diagnostics);
-        return convertedMusic.Succeeded ? OperationResult.Success() : OperationResult.Failure();
+        diagnostics = diagnostics.Merge(convertedMusic.Diagnostics);
+        return (convertedMusic.Succeeded ? OperationResult.Success() : OperationResult.Failure()).WithDiagnostics(diagnostics);
     }
 
     protected override async Task<OperationResult<WorkflowModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)

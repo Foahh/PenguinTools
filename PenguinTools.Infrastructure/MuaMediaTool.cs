@@ -1,7 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
+using PenguinTools.Core.Media;
 
-namespace PenguinTools.Core.Media;
+namespace PenguinTools.Infrastructure;
 
 public sealed class MuaMediaTool(string executablePath) : IMediaTool
 {

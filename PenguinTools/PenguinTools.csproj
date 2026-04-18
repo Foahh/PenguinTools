@@ -32,26 +32,6 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>FileFilterStrings.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\Release\mua.exe">
-            <LogicalName>mua.exe</LogicalName>
-            <Link>Resources\mua.exe</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\External\muautils\LICENSE">
-            <LogicalName>mua.LICENSE.txt</LogicalName>
-            <Link>Resources\mua.LICENSE.txt</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Resources\assets.json">
-            <LogicalName>assets.json</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Resources\nf_dummy.afb">
-            <LogicalName>nf_dummy.afb</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Resources\st_dummy.afb">
-            <LogicalName>st_dummy.afb</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Resources\dummy.acb">
-            <LogicalName>dummy.acb</LogicalName>
-        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -61,6 +41,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\PenguinTools.Infrastructure\PenguinTools.Infrastructure.csproj"/>
         <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj"/>
     </ItemGroup>
 

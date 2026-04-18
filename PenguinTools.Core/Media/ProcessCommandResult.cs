@@ -5,7 +5,7 @@ namespace PenguinTools.Core.Media;
 
 public class ProcessCommandResult
 {
-    internal ProcessCommandResult(ProcessStartInfo startInfo, int exitCode, string stdout, string stderr)
+    public ProcessCommandResult(ProcessStartInfo startInfo, int exitCode, string stdout, string stderr)
     {
         ExitCode = (InterExitCode)exitCode;
         StandardOutput = stdout.Trim();
@@ -22,7 +22,7 @@ public class ProcessCommandResult
     public bool IsNoOperation => ExitCode == InterExitCode.NoOperation;
     public bool IsFailure => !IsSuccess;
 
-    internal void ThrowIfFailed()
+    public void ThrowIfFailed()
     {
         if (!IsFailure) return;
 

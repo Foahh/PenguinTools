@@ -15,5 +15,6 @@
   <Project Path="External/SonicAudioTools/Source/SonicAudioLib/SonicAudioLib.csproj" />
   <Project Path="External/vgaudio/src/VGAudio/VGAudio.csproj" />
   <Project Path="PenguinTools.Core/PenguinTools.Core.csproj" />
+  <Project Path="PenguinTools.Infrastructure/PenguinTools.Infrastructure.csproj" />
   <Project Path="PenguinTools/PenguinTools.csproj" />
 </Solution>

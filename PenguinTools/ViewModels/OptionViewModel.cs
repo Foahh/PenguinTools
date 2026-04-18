@@ -38,7 +38,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
     protected override async Task<OperationResult<OptionModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)
     {
-        var diag = context.Diagnostic;
+        var diagnostics = new Diagnoster
+        {
+            TimeCalculator = context.Diagnostic.TimeCalculator
+        };
         context.ReportProgress(Strings.Status_Searching);
         var model = new OptionModel();
         await model.LoadAsync(path, ct);
@@ -57,7 +60,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         var directoryWalker = Directory.EnumerateFiles(path, FileGlob, SearchOption.AllDirectories);
         var books = model.Books;
-        await BatchAsync(Strings.Status_Checked, directoryWalker, async (filePath, innerContext) =>
+        var batchDiagnostics = await BatchAsync(Strings.Status_Checked, directoryWalker, async (filePath, innerContext) =>
         {
             ct.ThrowIfCancellationRequested();
             if (Path.GetExtension(filePath) != ".mgxc") return;
@@ -86,10 +89,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 continue;
             }
 
-            if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1) diag.Report(Severity.Warning, Strings.Warn_We_chart_must_be_unique_id, target: items);
+            if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1) diagnostics.Report(Severity.Warning, Strings.Warn_We_chart_must_be_unique_id, target: items);
             var mainItems = items.Where(x => x.Mgxc.Meta.IsMain).ToArray();
-            if (mainItems.Length > 1) diag.Report(Severity.Warning, Strings.Warn_More_than_one_chart_marked_main, target: mainItems);
-            else if (mainItems.Length == 0 && items.Length > 1) diag.Report(Severity.Warning, Strings.Warn_No_chart_marked_main, target: mainItems);
+            if (mainItems.Length > 1) diagnostics.Report(Severity.Warning, Strings.Warn_More_than_one_chart_marked_main, target: mainItems);
+            else if (mainItems.Length == 0 && items.Length > 1) diagnostics.Report(Severity.Warning, Strings.Warn_No_chart_marked_main, target: mainItems);
 
             var mainItem = mainItems.FirstOrDefault() ?? mainItems.OrderByDescending(x => x.Difficulty).FirstOrDefault();
             if (mainItem == null)
@@ -104,12 +107,15 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         ct.ThrowIfCancellationRequested();
         context.ReportProgress(Strings.Status_Done);
 
-        return OperationResult<OptionModel>.Success(model);
+        return OperationResult<OptionModel>.Success(model).WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
     }
 
     protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
     {
-        var diag = context.Diagnostic;
+        var diagnostics = new Diagnoster
+        {
+            TimeCalculator = context.Diagnostic.TimeCalculator
+        };
         var settings = Model;
         if (settings == null) return OperationResult.Success();
         if (!settings.CanExecute) throw new DiagnosticException(Strings.Error_Noop);
@@ -154,7 +160,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             WorkingDirectory = settings.WorkingDirectory
         };
 
-        await BatchAsync(Strings.Status_Converted, settings, async (book, innerContext) =>
+        var batchDiagnostics = await BatchAsync(Strings.Status_Converted, settings, async (book, innerContext) =>
         {
             var stage = book.Stage;
             if (book.IsCustomStage && settings.ConvertBackground)
@@ -220,7 +226,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                     }
                     else
                     {
-                        innerContext.Diagnostic.Report(Severity.Warning, Strings.Error_Jacket_file_not_found, target: jacketPath);
+                        diagnostics.Report(Severity.Warning, Strings.Error_Jacket_file_not_found, target: jacketPath);
                     }
                 }
             }
@@ -256,14 +262,15 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             ct.ThrowIfCancellationRequested();
         }
 
-        return OperationResult.Success();
+        return OperationResult.Success().WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
     }
 
-    private static async Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, OperationContext, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
+    private static async Task<DiagnosticSnapshot> ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, OperationContext, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
     {
         var itemList = items as IList<T> ?? [..items];
         var total = itemList.Count;
         var completedCount = 0;
+        var diagnostics = new ConcurrentBag<DiagnosticSnapshot>();
         main.Context.ReportProgress($"{prefix}: 0/{total}...");
 
         if (parallel)
@@ -278,6 +285,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         {
             foreach (var item in itemList) await ProcessItemAsync(item, main.CancellationToken);
         }
+
+        return diagnostics.Aggregate(DiagnosticSnapshot.Empty, (current, snapshot) => current.Merge(snapshot));
 
         async ValueTask ProcessItemAsync(T item, CancellationToken ct)
         {
@@ -296,21 +305,29 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             {
                 var done = Interlocked.Increment(ref completedCount);
                 main.Context.ReportProgress($"{prefix}: {done}/{total}...");
-                foreach (var diagItem in ld.Diagnostics)
-                {
-                    diagItem.Path ??= Path.GetRelativePath(main.WorkingDirectory, getPath(item));
-                    main.Context.Diagnostic.Report(diagItem);
-                }
+                diagnostics.Add(CreateItemDiagnostics(ld, getPath(item), main.WorkingDirectory));
             }
         }
     }
 
-    private static Task BatchAsync(string prefix, OptionModel model, Func<Book, OperationContext, Task> action, ProcessContext ctx, bool parallel = false)
+    private static DiagnosticSnapshot CreateItemDiagnostics(IDiagnosticSink sink, string path, string workingDirectory)
+    {
+        var relativePath = Path.GetRelativePath(workingDirectory, path);
+        var copied = sink.Diagnostics.Select(diag =>
+        {
+            var copy = diag.Copy();
+            copy.Path ??= relativePath;
+            return copy;
+        });
+        return DiagnosticSnapshot.Create(copied);
+    }
+
+    private static Task<DiagnosticSnapshot> BatchAsync(string prefix, OptionModel model, Func<Book, OperationContext, Task> action, ProcessContext ctx, bool parallel = false)
     {
         return ProcessItemsAsync(prefix, model.Books.Values, action, b => b.Meta.FilePath, ctx, parallel);
     }
 
-    private static Task BatchAsync(string prefix, IEnumerable<string> items, Func<string, OperationContext, Task> action, ProcessContext ctx)
+    private static Task<DiagnosticSnapshot> BatchAsync(string prefix, IEnumerable<string> items, Func<string, OperationContext, Task> action, ProcessContext ctx)
     {
         return ProcessItemsAsync(prefix, items, action, item => item, ctx, true);
     }
