@@ -20,7 +20,7 @@ public class JacketConverter
 
     private IMediaTool MediaTool { get; }
     private OperationContext Context { get; }
-    private Diagnoster Diagnostic => Context.Diagnostic;
+    private IDiagnosticSink Diagnostic => Context.Diagnostic;
     private IProgress<string>? Progress => Context.Progress;
     private string InPath { get; }
     private string OutPath { get; }

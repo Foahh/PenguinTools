@@ -36,7 +36,7 @@ public class MusicConverter
     private IMediaTool MediaTool { get; }
     private IEmbeddedResourceStore Resources { get; }
     private OperationContext Context { get; }
-    private Diagnoster Diagnostic => Context.Diagnostic;
+    private IDiagnosticSink Diagnostic => Context.Diagnostic;
     private IProgress<string>? Progress => Context.Progress;
     private Meta Meta { get; }
     private string OutFolder { get; }

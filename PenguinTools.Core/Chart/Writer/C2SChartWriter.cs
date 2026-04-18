@@ -24,7 +24,7 @@ public partial class C2SChartWriter
     }
 
     private OperationContext Context { get; }
-    private Diagnoster Diagnostic => Context.Diagnostic;
+    private IDiagnosticSink Diagnostic => Context.Diagnostic;
     private IProgress<string>? Progress => Context.Progress;
     private string OutPath { get; }
     private mg.Chart Mgxc { get; }

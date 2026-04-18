@@ -30,7 +30,7 @@ public class StageConverter
     private IMediaTool MediaTool { get; }
     private IEmbeddedResourceStore Resources { get; }
     private OperationContext Context { get; }
-    private Diagnoster Diagnostic => Context.Diagnostic;
+    private IDiagnosticSink Diagnostic => Context.Diagnostic;
     private IProgress<string>? Progress => Context.Progress;
     private AssetManager Assets { get; }
     private string BackgroundPath { get; }

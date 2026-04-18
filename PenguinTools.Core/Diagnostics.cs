@@ -58,7 +58,20 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
     #endregion
 }
 
-public class Diagnoster
+public interface IDiagnosticSink
+{
+    IReadOnlyCollection<Diagnostic> Diagnostics { get; }
+    bool HasProblem { get; }
+    bool HasError { get; }
+    TimeCalculator? TimeCalculator { get; set; }
+
+    void Report(Diagnostic item);
+    void Report(Exception ex);
+    void Report(Severity severity, string message, string? path = null, object? target = null);
+    void Report(Severity severity, string message, int tick, object? target = null);
+}
+
+public class Diagnoster : IDiagnosticSink
 {
     private readonly ConcurrentBag<Diagnostic> _diags = [];
     public IReadOnlyCollection<Diagnostic> Diagnostics => _diags;

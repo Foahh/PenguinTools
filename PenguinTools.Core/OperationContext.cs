@@ -2,7 +2,7 @@ namespace PenguinTools.Core;
 
 public sealed class OperationContext
 {
-    public OperationContext(Diagnoster diagnostic, IProgress<string>? progress = null)
+    public OperationContext(IDiagnosticSink diagnostic, IProgress<string>? progress = null)
     {
         ArgumentNullException.ThrowIfNull(diagnostic);
 
@@ -10,7 +10,7 @@ public sealed class OperationContext
         Progress = progress;
     }
 
-    public Diagnoster Diagnostic { get; }
+    public IDiagnosticSink Diagnostic { get; }
     public IProgress<string>? Progress { get; }
 
     public bool HasError => Diagnostic.HasError;
@@ -21,7 +21,7 @@ public sealed class OperationContext
         Progress?.Report(status);
     }
 
-    public OperationContext CreateChild(Diagnoster diagnostic, IProgress<string>? progress = null)
+    public OperationContext CreateChild(IDiagnosticSink diagnostic, IProgress<string>? progress = null)
     {
         return new OperationContext(diagnostic, progress ?? Progress);
     }
