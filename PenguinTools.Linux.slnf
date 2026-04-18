@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "PenguinTools.slnx",
+    "projects": [
+      "External/SonicAudioTools/Source/SonicAudioLib/SonicAudioLib.csproj",
+      "External/vgaudio/src/VGAudio/VGAudio.csproj",
+      "PenguinTools.Core/PenguinTools.Core.csproj"
+    ]
+  }
+}
