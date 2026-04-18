@@ -54,17 +54,18 @@ public partial class StageViewModel : ActionViewModel
         };
         if (dlg.ShowDialog() != true) return;
 
-        var converter = new StageConverter(diag, prog)
-        {
-            Assets = AssetManager,
-            BackgroundPath = BackgroundPath,
-            EffectPaths = [EffectPath0, EffectPath1, EffectPath2, EffectPath3],
-            StageId = StageId,
-            OutFolder = dlg.FolderName,
-            NoteFieldLane = NoteFieldsLine
-        };
+        var converter = new StageConverter(
+            new StageBuildRequest(
+                AssetManager,
+                BackgroundPath,
+                [EffectPath0, EffectPath1, EffectPath2, EffectPath3],
+                StageId,
+                dlg.FolderName,
+                NoteFieldsLine),
+            diag,
+            prog);
 
-        await converter.ConvertAsync(ct);
+        await converter.BuildAsync(ct);
     }
 
     [RelayCommand]

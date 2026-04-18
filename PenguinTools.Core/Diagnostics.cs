@@ -76,7 +76,11 @@ public class Diagnoster
 
     public void Report(Exception ex)
     {
-        if (ex is DiagnosticException dEx) _diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target) { RelatedException = dEx });
+        if (ex is DiagnosticException dEx)
+        {
+            _diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target) { RelatedException = dEx });
+            return;
+        }
         Report(new Diagnostic(Severity.Error, ex.Message) { RelatedException = ex });
     }
 

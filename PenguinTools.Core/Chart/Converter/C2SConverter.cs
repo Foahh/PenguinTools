@@ -9,15 +9,29 @@ namespace PenguinTools.Core.Chart.Converter;
 using mg = Models.mgxc;
 using c2s = Models.c2s;
 
-public partial class C2SConverter(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
+public partial class C2SConverter
 {
-    public required string OutPath { get; init; }
-    public required mg.Chart Mgxc { get; init; }
+    public C2SConverter(C2SWriteRequest request, Diagnoster diag, IProgress<string>? prog = null)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(diag);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.OutPath);
+        ArgumentNullException.ThrowIfNull(request.Mgxc);
 
-    private List<c2s.Note> Notes { get; set; } = [];
-    private List<c2s.Event> Events { get; set; } = [];
+        Diagnostic = diag;
+        Progress = prog;
+        OutPath = request.OutPath;
+        Mgxc = request.Mgxc;
+    }
 
-    protected override async Task ActionAsync(CancellationToken ct = default)
+    private Diagnoster Diagnostic { get; }
+    private IProgress<string>? Progress { get; }
+    private string OutPath { get; }
+    private mg.Chart Mgxc { get; }
+    private List<c2s.Note> Notes { get; } = [];
+    private List<c2s.Event> Events { get; } = [];
+
+    public async Task<bool> WriteAsync(CancellationToken ct = default)
     {
         Progress?.Report(Strings.Status_Converting_chart);
 
@@ -104,7 +118,8 @@ public partial class C2SConverter(Diagnoster diag, IProgress<string>? prog = nul
             }
         }
 
-        if (Diagnostic.HasError) return;
+        if (Diagnostic.HasError) return false;
         await File.WriteAllTextAsync(OutPath, sb.ToString(), ct);
+        return true;
     }
 }

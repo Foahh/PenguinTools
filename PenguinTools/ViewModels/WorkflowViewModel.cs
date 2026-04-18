@@ -41,16 +41,19 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var stage = meta.Stage;
         if (meta.IsCustomStage)
         {
-            var stageConverter = new StageConverter(diag, prog)
-            {
-                Assets = AssetManager,
-                BackgroundPath = meta.FullBgiFilePath,
-                EffectPaths = [],
-                StageId = meta.StageId,
-                OutFolder = path,
-                NoteFieldLane = meta.NotesFieldLine
-            };
-            stage = await stageConverter.ConvertAsync(ct);
+            var stageConverter = new StageConverter(
+                new StageBuildRequest(
+                    AssetManager,
+                    meta.FullBgiFilePath,
+                    [],
+                    meta.StageId,
+                    path,
+                    meta.NotesFieldLine),
+                diag,
+                prog);
+            var builtStage = await stageConverter.BuildAsync(ct);
+            if (builtStage is null) return;
+            stage = builtStage;
         }
 
         ct.ThrowIfCancellationRequested();
@@ -73,39 +76,26 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var musicFolder = await xml.SaveDirectoryAsync(path);
         var chartPath = Path.Combine(musicFolder, xml[meta.Difficulty].File);
 
-        var chartConverter = new C2SConverter(diag, prog)
-        {
-            OutPath = chartPath,
-            Mgxc = chart
-        };
-        await chartConverter.ConvertAsync(ct);
+        var chartConverter = new C2SConverter(new C2SWriteRequest(chartPath, chart), diag, prog);
+        if (!await chartConverter.WriteAsync(ct)) return;
 
         ct.ThrowIfCancellationRequested();
 
-        var jacketConverter = new JacketConverter(diag, prog)
-        {
-            InPath = meta.FullJacketFilePath,
-            OutPath = Path.Combine(musicFolder, xml.JaketFile)
-        };
-        await jacketConverter.ConvertAsync(ct);
+        var jacketConverter = new JacketConverter(
+            new JacketConvertRequest(meta.FullJacketFilePath, Path.Combine(musicFolder, xml.JaketFile)),
+            diag,
+            prog);
+        if (!await jacketConverter.ConvertAsync(ct)) return;
 
         ct.ThrowIfCancellationRequested();
 
-        var musicConverter = new MusicConverter(diag, prog)
-        {
-            Meta = Model.Meta,
-            OutFolder = path
-        };
+        var musicConverter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), diag, prog);
         await musicConverter.ConvertAsync(ct);
     }
 
     protected override async Task<WorkflowModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(diag, prog)
-        {
-            Path = path,
-            Assets = AssetManager,
-        };
-        return new WorkflowModel(await parser.ConvertAsync(ct));
+        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), diag, prog);
+        return new WorkflowModel(await parser.ParseAsync(ct));
     }
 }

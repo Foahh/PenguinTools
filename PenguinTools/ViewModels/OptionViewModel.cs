@@ -61,12 +61,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         {
             ct.ThrowIfCancellationRequested();
             if (Path.GetExtension(filePath) != ".mgxc") return;
-            var parser = new MgxcParser(innerDiag)
-            {
-                Path = filePath,
-                Assets = AssetManager
-            };
-            var chart = await parser.ConvertAsync(ct);
+            var parser = new MgxcParser(new MgxcParseRequest(filePath, AssetManager), innerDiag);
+            var chart = await parser.ParseAsync(ct);
             var meta = chart.Meta;
             var id = meta.Id ?? throw new DiagnosticException(Strings.Error_File_ignored_due_to_id_missing);
             if (!books.TryGetValue(id, out var book)) books[id] = book = new Book();
@@ -163,16 +159,18 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             {
                 if (string.IsNullOrWhiteSpace(book.Meta.FullBgiFilePath)) throw new DiagnosticException(Strings.Error_Background_file_is_not_set);
                 if (book.StageId is null) throw new DiagnosticException(Strings.Error_Stage_id_is_not_set);
-                var stageConverter = new StageConverter(innerDiag)
-                {
-                    Assets = AssetManager,
-                    BackgroundPath = book.Meta.FullBgiFilePath,
-                    EffectPaths = [],
-                    StageId = book.StageId,
-                    OutFolder = stageFolder,
-                    NoteFieldLane = book.NotesFieldLine
-                };
-                stage = await stageConverter.ConvertAsync(ct);
+                var stageConverter = new StageConverter(
+                    new StageBuildRequest(
+                        AssetManager,
+                        book.Meta.FullBgiFilePath,
+                        [],
+                        book.StageId,
+                        stageFolder,
+                        book.NotesFieldLine),
+                    innerDiag);
+                var builtStage = await stageConverter.BuildAsync(ct);
+                if (builtStage is null) return;
+                stage = builtStage;
                 ct.ThrowIfCancellationRequested();
             }
 
@@ -193,12 +191,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                         if (diff == Difficulty.WorldsEnd) weEntries.Add(new Entry(songId, book.Title));
                         else if (diff == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
                         var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
-                        var chartConverter = new C2SConverter(innerDiag)
-                        {
-                            OutPath = chartPath,
-                            Mgxc = item.Mgxc
-                        };
-                        await chartConverter.ConvertAsync(ct);
+                        var chartConverter = new C2SConverter(new C2SWriteRequest(chartPath, item.Mgxc), innerDiag);
+                        if (!await chartConverter.WriteAsync(ct)) return;
                         ct.ThrowIfCancellationRequested();
                     }
                 }
@@ -208,12 +202,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                     var jacketPath = book.Meta.FullJacketFilePath;
                     if (File.Exists(jacketPath))
                     {
-                        var jacketConverter = new JacketConverter(innerDiag)
-                        {
-                            InPath = jacketPath,
-                            OutPath = Path.Combine(chartFolder, xml.JaketFile)
-                        };
-                        await jacketConverter.ConvertAsync(ct);
+                        var jacketConverter = new JacketConverter(
+                            new JacketConvertRequest(jacketPath, Path.Combine(chartFolder, xml.JaketFile)),
+                            innerDiag);
+                        if (!await jacketConverter.ConvertAsync(ct)) return;
                         ct.ThrowIfCancellationRequested();
                     }
                     else
@@ -226,12 +218,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
             if (settings.ConvertAudio)
             {
-                var musicConverter = new MusicConverter(innerDiag)
-                {
-                    Meta = book.Meta,
-                    OutFolder = cueFileFolder,
-                };
-                await musicConverter.ConvertAsync(ct);
+                var musicConverter = new MusicConverter(new MusicConvertRequest(book.Meta, cueFileFolder), innerDiag);
+                if (!await musicConverter.ConvertAsync(ct)) return;
                 ct.ThrowIfCancellationRequested();
             }
         }, ctx, true);

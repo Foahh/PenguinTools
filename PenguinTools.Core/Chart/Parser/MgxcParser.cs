@@ -9,20 +9,34 @@ namespace PenguinTools.Core.Chart.Parser;
 
 using mg = Models.mgxc;
 
-public partial class MgxcParser(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase<mg.Chart>(diag, prog)
+public partial class MgxcParser
 {
     private const string HeaderMgxc = "MGXC"; // 4D 47 58 43
     private const string HeaderMeta = "meta"; // 6D 65 74 61
     private const string HeaderEvnt = "evnt"; // 65 76 6E 74
     private const string HeaderDat2 = "dat2"; // 64 61 74 32
 
-    public required string Path { get; init; }
-    public required AssetManager Assets { get; init; }
+    public MgxcParser(MgxcParseRequest request, Diagnoster diag, IProgress<string>? prog = null)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(diag);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.Path);
+        ArgumentNullException.ThrowIfNull(request.Assets);
 
+        Diagnostic = diag;
+        Progress = prog;
+        Path = request.Path;
+        Assets = request.Assets;
+    }
+
+    private Diagnoster Diagnostic { get; }
+    private IProgress<string>? Progress { get; }
+    private string Path { get; }
+    private AssetManager Assets { get; }
     private List<Task> Tasks { get; } = [];
     private mg.Chart Mgxc { get; } = new();
 
-    protected override async Task<mg.Chart> ActionAsync(CancellationToken ct = default)
+    public async Task<mg.Chart> ParseAsync(CancellationToken ct = default)
     {
         Mgxc.Meta.FilePath = Path;
 
@@ -66,13 +80,15 @@ public partial class MgxcParser(Diagnoster diag, IProgress<string>? prog = null)
 
         if (Mgxc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(Mgxc.Meta.FullBgiFilePath))
         {
-            Tasks.Add(Manipulate.CheckImageValidAsync(Mgxc.Meta.FullBgiFilePath).ContinueWith(p =>
-            {
-                if (p.IsCompletedSuccessfully) return;
-                Mgxc.Meta.IsCustomStage = false;
-                Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_bg_image, Mgxc.Meta.FullBgiFilePath, target: p);
-                Mgxc.Meta.BgiFilePath = string.Empty;
-            }));
+            QueueValidation(
+                Manipulate.CheckImageValidAsync(Mgxc.Meta.FullBgiFilePath),
+                Mgxc.Meta.FullBgiFilePath,
+                Strings.Error_Invalid_bg_image,
+                () =>
+                {
+                    Mgxc.Meta.IsCustomStage = false;
+                    Mgxc.Meta.BgiFilePath = string.Empty;
+                });
         }
     }
 
@@ -167,6 +183,28 @@ public partial class MgxcParser(Diagnoster diag, IProgress<string>? prog = null)
         t = WhitespaceRegex().Replace(t, "_");
         t = SpecialCharacterRegex().Replace(t, "");
         return t;
+    }
+
+    private void QueueValidation(Task<ProcessCommandResult> validationTask, string path, string message, Action onFailure)
+    {
+        Tasks.Add(HandleValidationAsync(validationTask, path, message, onFailure));
+    }
+
+    private async Task HandleValidationAsync(Task<ProcessCommandResult> validationTask, string path, string message, Action onFailure)
+    {
+        try
+        {
+            var result = await validationTask;
+            if (result.IsSuccess) return;
+
+            onFailure();
+            Diagnostic.Report(Severity.Warning, message, path, result);
+        }
+        catch (Exception ex)
+        {
+            onFailure();
+            Diagnostic.Report(Severity.Warning, message, path, ex);
+        }
     }
 
     [GeneratedRegex(@"\s+")] private static partial Regex WhitespaceRegex();

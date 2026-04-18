@@ -13,29 +13,32 @@ using VGAudio.Containers.Wave;
 
 namespace PenguinTools.Core.Media;
 
-public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase(diag, prog)
+public class MusicConverter
 {
     private const ulong Key = 32931609366120192UL;
-    public required Meta Meta { get; init; }
-    public required string OutFolder { get; init; }
 
-    protected override Task ValidateAsync(CancellationToken ct = default)
+    public MusicConverter(MusicConvertRequest request, Diagnoster diag, IProgress<string>? prog = null)
     {
-        if (Meta.Id is null) { Diagnostic.Report(Severity.Error, Strings.Error_Song_id_is_not_set); }
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(diag);
+        ArgumentNullException.ThrowIfNull(request.Meta);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
 
-        if (Meta.BgmPreviewStop < Meta.BgmPreviewStart)
-        {
-            Diagnostic.Report(Severity.Error, Strings.Error_Preview_stop_greater_than_start);
-        }
-
-        var path = Meta.FullBgmFilePath;
-        if (!File.Exists(path)) { Diagnostic.Report(Severity.Error, Strings.Error_Audio_file_not_found, path); }
-
-        return Task.CompletedTask;
+        Diagnostic = diag;
+        Progress = prog;
+        Meta = request.Meta;
+        OutFolder = request.OutFolder;
     }
 
-    protected override async Task ActionAsync(CancellationToken ct = default)
+    private Diagnoster Diagnostic { get; }
+    private IProgress<string>? Progress { get; }
+    private Meta Meta { get; }
+    private string OutFolder { get; }
+
+    public async Task<bool> ConvertAsync(CancellationToken ct = default)
     {
+        if (!Validate()) return false;
+
         var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
         Progress?.Report(Strings.Status_Converting_audio);
@@ -167,6 +170,22 @@ public class MusicConverter(Diagnoster diag, IProgress<string>? prog = null) : C
         cueSheetTable.WriterSettings = CriTableWriterSettings.Adx2Settings;
         await using var acbStream = File.Create(acbPath);
         cueSheetTable.Save(acbStream);
+        return !Diagnostic.HasError;
+    }
+
+    private bool Validate()
+    {
+        if (Meta.Id is null) { Diagnostic.Report(Severity.Error, Strings.Error_Song_id_is_not_set); }
+
+        if (Meta.BgmPreviewStop < Meta.BgmPreviewStart)
+        {
+            Diagnostic.Report(Severity.Error, Strings.Error_Preview_stop_greater_than_start);
+        }
+
+        var path = Meta.FullBgmFilePath;
+        if (!File.Exists(path)) { Diagnostic.Report(Severity.Error, Strings.Error_Audio_file_not_found, path); }
+
+        return !Diagnostic.HasError;
     }
 }
 

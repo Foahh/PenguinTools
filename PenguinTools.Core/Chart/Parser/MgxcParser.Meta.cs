@@ -83,12 +83,11 @@ public partial class MgxcParser
             Mgxc.Meta.BgmFilePath = (string)data;
             if (!string.IsNullOrWhiteSpace(Mgxc.Meta.BgmFilePath))
             {
-                Tasks.Add(Manipulate.CheckAudioValidAsync(Mgxc.Meta.FullBgmFilePath).ContinueWith(p =>
-                {
-                    if (p.IsCompletedSuccessfully) return;
-                    Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_audio, Mgxc.Meta.FullBgmFilePath);
-                    Mgxc.Meta.BgmFilePath = string.Empty;
-                }));
+                QueueValidation(
+                    Manipulate.CheckAudioValidAsync(Mgxc.Meta.FullBgmFilePath),
+                    Mgxc.Meta.FullBgmFilePath,
+                    Strings.Error_Invalid_audio,
+                    () => Mgxc.Meta.BgmFilePath = string.Empty);
             }
         }
         else if (name == "wvof")
@@ -108,12 +107,11 @@ public partial class MgxcParser
             Mgxc.Meta.JacketFilePath = (string)data;
             if (!string.IsNullOrWhiteSpace(Mgxc.Meta.JacketFilePath))
             {
-                Tasks.Add(Manipulate.CheckImageValidAsync(Mgxc.Meta.FullJacketFilePath).ContinueWith(p =>
-                {
-                    if (p.IsCompletedSuccessfully) return;
-                    Diagnostic.Report(Severity.Warning, Strings.Error_Invalid_jk_image, Mgxc.Meta.FullJacketFilePath);
-                    Mgxc.Meta.JacketFilePath = string.Empty;
-                }));
+                QueueValidation(
+                    Manipulate.CheckImageValidAsync(Mgxc.Meta.FullJacketFilePath),
+                    Mgxc.Meta.FullJacketFilePath,
+                    Strings.Error_Invalid_jk_image,
+                    () => Mgxc.Meta.JacketFilePath = string.Empty);
             }
         }
         else if (name == "bgfn")

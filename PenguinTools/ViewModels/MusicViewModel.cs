@@ -35,11 +35,7 @@ public class MusicViewModel : WatchViewModel<MusicModel>
         if (dlg.ShowDialog() != true) return;
         var path = dlg.FolderName;
 
-        var converter = new MusicConverter(diag, prog)
-        {
-            Meta = Model.Meta,
-            OutFolder = path
-        };
+        var converter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), diag, prog);
         await converter.ConvertAsync(ct);
     }
 }

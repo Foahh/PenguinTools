@@ -4,18 +4,39 @@ using PenguinTools.Core.Xml;
 
 namespace PenguinTools.Core.Media;
 
-public class StageConverter(Diagnoster diag, IProgress<string>? prog = null) : ConverterBase<Entry>(diag, prog)
+public class StageConverter
 {
-    public required AssetManager Assets { get; init; }
-    public required string BackgroundPath { get; init; }
-    public required string?[]? EffectPaths { get; init; }
-    public required int? StageId { get; init; }
-    public required string OutFolder { get; init; }
-    public required Entry NoteFieldLane { get; init; }
-
-    protected override async Task<Entry> ActionAsync(CancellationToken ct = default)
+    public StageConverter(StageBuildRequest request, Diagnoster diag, IProgress<string>? prog = null)
     {
-        if (StageId is not { } stageId) { throw new DiagnosticException(Strings.Error_Stage_id_is_not_set); }
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(diag);
+        ArgumentNullException.ThrowIfNull(request.Assets);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.BackgroundPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
+
+        Diagnostic = diag;
+        Progress = prog;
+        Assets = request.Assets;
+        BackgroundPath = request.BackgroundPath;
+        EffectPaths = request.EffectPaths;
+        StageId = request.StageId;
+        OutFolder = request.OutFolder;
+        NoteFieldLane = request.NoteFieldLane;
+    }
+
+    private Diagnoster Diagnostic { get; }
+    private IProgress<string>? Progress { get; }
+    private AssetManager Assets { get; }
+    private string BackgroundPath { get; }
+    private string?[]? EffectPaths { get; }
+    private int? StageId { get; }
+    private string OutFolder { get; }
+    private Entry NoteFieldLane { get; }
+
+    public async Task<Entry?> BuildAsync(CancellationToken ct = default)
+    {
+        if (!await ValidateAsync(ct)) return null;
+        if (StageId is not { } stageId) return null;
 
         Progress?.Report(Strings.Status_Convert_background);
 
@@ -24,14 +45,13 @@ public class StageConverter(Diagnoster diag, IProgress<string>? prog = null) : C
 
         var nfPath = Path.Combine(outputDir, xml.NotesFieldFile);
         var stPath = Path.Combine(outputDir, xml.BaseFile);
-        await Manipulate.ConvertStageAsync(BackgroundPath, Resourcer.GetTempPath("st_dummy.afb"), stPath, EffectPaths,
-            ct);
+        await Manipulate.ConvertStageAsync(BackgroundPath, Resourcer.GetTempPath("st_dummy.afb"), stPath, EffectPaths, ct);
         await Resourcer.CopyAsync("nf_dummy.afb", nfPath);
 
         return xml.Name;
     }
 
-    protected override async Task ValidateAsync(CancellationToken ct = default)
+    private async Task<bool> ValidateAsync(CancellationToken ct = default)
     {
         var duplicates = Assets.StageNames.Where(p => p.Id == StageId);
         foreach (var d in duplicates)
@@ -45,9 +65,11 @@ public class StageConverter(Diagnoster diag, IProgress<string>? prog = null) : C
         {
             Diagnostic.Report(Severity.Error, Strings.Error_Background_file_not_found, BackgroundPath);
         }
-
-        var ret = await Manipulate.CheckImageValidAsync(BackgroundPath, ct);
-        if (ret.IsFailure) { Diagnostic.Report(Severity.Error, Strings.Error_Invalid_bg_image, BackgroundPath, ret); }
+        else
+        {
+            var ret = await Manipulate.CheckImageValidAsync(BackgroundPath, ct);
+            if (ret.IsFailure) { Diagnostic.Report(Severity.Error, Strings.Error_Invalid_bg_image, BackgroundPath, ret); }
+        }
 
         if (EffectPaths is not null)
         {
@@ -55,11 +77,17 @@ public class StageConverter(Diagnoster diag, IProgress<string>? prog = null) : C
             {
                 if (string.IsNullOrWhiteSpace(p)) { continue; }
 
-                if (!File.Exists(p)) { Diagnostic.Report(Severity.Error, Strings.Error_Effect_file_not_found, p); }
+                if (!File.Exists(p))
+                {
+                    Diagnostic.Report(Severity.Error, Strings.Error_Effect_file_not_found, p);
+                    continue;
+                }
 
-                ret = await Manipulate.CheckImageValidAsync(p, ct);
+                var ret = await Manipulate.CheckImageValidAsync(p, ct);
                 if (ret.IsFailure) { Diagnostic.Report(Severity.Error, Strings.Error_Invalid_bg_fx_image, p, ret); }
             }
         }
+
+        return !Diagnostic.HasError;
     }
 }

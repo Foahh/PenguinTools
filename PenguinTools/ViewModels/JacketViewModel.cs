@@ -42,11 +42,7 @@ public partial class JacketViewModel : ActionViewModel
         };
         if (dlg.ShowDialog() != true) return;
 
-        var converter = new JacketConverter(diag, prog)
-        {
-            InPath = JacketPath,
-            OutPath = dlg.FileName,
-        };
+        var converter = new JacketConverter(new JacketConvertRequest(JacketPath, dlg.FileName), diag, prog);
         await converter.ConvertAsync(ct);
     }
 }

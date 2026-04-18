@@ -27,22 +27,14 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         if (dlg.ShowDialog() != true) return;
 
 
-        var converter = new C2SConverter(diag, prog)
-        {
-            OutPath = dlg.FileName,
-            Mgxc = chart
-        };
-        await converter.ConvertAsync(ct);
+        var converter = new C2SConverter(new C2SWriteRequest(dlg.FileName, chart), diag, prog);
+        await converter.WriteAsync(ct);
     }
 
     protected override async Task<ChartModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(diag, prog)
-        {
-            Assets = AssetManager,
-            Path = path
-        };
-        var chart = await parser.ConvertAsync(ct);
+        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), diag, prog);
+        var chart = await parser.ParseAsync(ct);
         return new ChartModel(chart);
     }
 }
