@@ -41,9 +41,9 @@ public class MusicConverter
     private Meta Meta { get; }
     private string OutFolder { get; }
 
-    public async Task<bool> ConvertAsync(CancellationToken ct = default)
+    public async Task<OperationResult> ConvertAsync(CancellationToken ct = default)
     {
-        if (!Validate()) return false;
+        if (!Validate()) return OperationResult.Failure();
 
         var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
@@ -177,7 +177,7 @@ public class MusicConverter
         cueSheetTable.WriterSettings = CriTableWriterSettings.Adx2Settings;
         await using var acbStream = File.Create(acbPath);
         cueSheetTable.Save(acbStream);
-        return true;
+        return OperationResult.Success();
     }
 
     private bool Validate()

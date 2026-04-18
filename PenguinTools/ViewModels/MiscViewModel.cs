@@ -52,10 +52,10 @@ public partial class MiscViewModel : ViewModel
         };
         if (saveDlg.ShowDialog() != true) { return; }
 
-        await ActionService.RunAsync((context, ct) =>
+        await ActionService.RunAsync(async (context, ct) =>
         {
             var extractor = new AfbExtractor(new AfbExtractRequest(openDlg.FileName, saveDlg.FolderName), MediaTool, context);
-            return extractor.ExtractAsync(ct);
+            await extractor.ExtractAsync(ct);
         });
     }
 

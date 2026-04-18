@@ -14,9 +14,9 @@ namespace PenguinTools.ViewModels;
 
 public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 {
-    protected override async Task Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
     {
-        if (Model == null) return;
+        if (Model == null) return OperationResult.Success();
         var chart = Model.Mgxc;
         var meta = chart.Meta;
         var songId = meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
@@ -35,7 +35,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
             Multiselect = false,
             ValidateNames = true
         };
-        if (dlg.ShowDialog() != true) return;
+        if (dlg.ShowDialog() != true) return OperationResult.Success();
         var path = dlg.FolderName;
 
         var stage = meta.Stage;
@@ -53,8 +53,8 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                 ResourceStore,
                 context);
             var builtStage = await stageConverter.BuildAsync(ct);
-            if (builtStage is null) return;
-            stage = builtStage;
+            if (!builtStage.Succeeded || builtStage.Value is not { } stageEntry) return OperationResult.Failure();
+            stage = stageEntry;
         }
 
         ct.ThrowIfCancellationRequested();
@@ -78,7 +78,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var chartPath = Path.Combine(musicFolder, xml[meta.Difficulty].File);
 
         var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, chart), context);
-        if (!await chartWriter.WriteAsync(ct)) return;
+        if (!(await chartWriter.WriteAsync(ct)).Succeeded) return OperationResult.Failure();
 
         ct.ThrowIfCancellationRequested();
 
@@ -86,17 +86,19 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
             new JacketConvertRequest(meta.FullJacketFilePath, Path.Combine(musicFolder, xml.JaketFile)),
             MediaTool,
             context);
-        if (!await jacketConverter.ConvertAsync(ct)) return;
+        if (!(await jacketConverter.ConvertAsync(ct)).Succeeded) return OperationResult.Failure();
 
         ct.ThrowIfCancellationRequested();
 
         var musicConverter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), MediaTool, ResourceStore, context);
-        await musicConverter.ConvertAsync(ct);
+        return await musicConverter.ConvertAsync(ct);
     }
 
-    protected override async Task<WorkflowModel> ReadModel(string path, OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult<WorkflowModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)
     {
         var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, context);
-        return new WorkflowModel(await parser.ParseAsync(ct));
+        var chart = await parser.ParseAsync(ct);
+        if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<WorkflowModel>.Failure();
+        return OperationResult<WorkflowModel>.Success(new WorkflowModel(value));
     }
 }

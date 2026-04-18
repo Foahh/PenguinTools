@@ -25,15 +25,15 @@ public class JacketConverter
     private string InPath { get; }
     private string OutPath { get; }
 
-    public async Task<bool> ConvertAsync(CancellationToken ct = default)
+    public async Task<OperationResult> ConvertAsync(CancellationToken ct = default)
     {
-        if (!Validate()) return false;
+        if (!Validate()) return OperationResult.Failure();
 
         Progress?.Report(Strings.Status_Converting_jacket);
         ct.ThrowIfCancellationRequested();
         await MediaTool.ConvertJacketAsync(InPath, OutPath, ct);
         ct.ThrowIfCancellationRequested();
-        return true;
+        return OperationResult.Success();
     }
 
     private bool Validate()

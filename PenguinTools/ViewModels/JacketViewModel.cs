@@ -32,7 +32,7 @@ public partial class JacketViewModel : ActionViewModel
         return !string.IsNullOrWhiteSpace(JacketPath);
     }
 
-    protected override async Task Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
     {
         var fileName = JacketId is null ? Path.GetFileNameWithoutExtension((string?)JacketPath) : $"{(int)JacketId:0000}";
         var dlg = new SaveFileDialog
@@ -40,9 +40,9 @@ public partial class JacketViewModel : ActionViewModel
             Filter = Strings.Filefilter_dds,
             FileName = $"CHU_UI_Jacket_{fileName}"
         };
-        if (dlg.ShowDialog() != true) return;
+        if (dlg.ShowDialog() != true) return OperationResult.Success();
 
         var converter = new JacketConverter(new JacketConvertRequest(JacketPath, dlg.FileName), MediaTool, context);
-        await converter.ConvertAsync(ct);
+        return await converter.ConvertAsync(ct);
     }
 }

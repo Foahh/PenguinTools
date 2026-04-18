@@ -10,9 +10,9 @@ namespace PenguinTools.ViewModels;
 
 public class ChartViewModel : WatchViewModel<ChartModel>
 {
-    protected override async Task Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
     {
-        if (Model == null) return;
+        if (Model == null) return OperationResult.Success();
         var chart = Model.Mgxc;
         var meta = chart.Meta;
 
@@ -24,17 +24,18 @@ public class ChartViewModel : WatchViewModel<ChartModel>
             Filter = Strings.Filefilter_c2s,
             FileName = left + right
         };
-        if (dlg.ShowDialog() != true) return;
+        if (dlg.ShowDialog() != true) return OperationResult.Success();
 
 
         var writer = new C2SChartWriter(new C2SWriteRequest(dlg.FileName, chart), context);
-        await writer.WriteAsync(ct);
+        return await writer.WriteAsync(ct);
     }
 
-    protected override async Task<ChartModel> ReadModel(string path, OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult<ChartModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)
     {
         var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, context);
         var chart = await parser.ParseAsync(ct);
-        return new ChartModel(chart);
+        if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<ChartModel>.Failure();
+        return OperationResult<ChartModel>.Success(new ChartModel(value));
     }
 }

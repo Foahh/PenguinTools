@@ -36,7 +36,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         SelectedBookItem = null;
     }
 
-    protected override async Task<OptionModel> ReadModel(string path, OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult<OptionModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)
     {
         var diag = context.Diagnostic;
         context.ReportProgress(Strings.Status_Searching);
@@ -62,7 +62,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             ct.ThrowIfCancellationRequested();
             if (Path.GetExtension(filePath) != ".mgxc") return;
             var parser = new MgxcParser(new MgxcParseRequest(filePath, AssetManager), MediaTool, innerContext);
-            var chart = await parser.ParseAsync(ct);
+            var parsed = await parser.ParseAsync(ct);
+            if (!parsed.Succeeded || parsed.Value is not { } chart) return;
             var meta = chart.Meta;
             var id = meta.Id ?? throw new DiagnosticException(Strings.Error_File_ignored_due_to_id_missing);
             if (!books.TryGetValue(id, out var book)) books[id] = book = new Book();
@@ -102,14 +103,14 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         ct.ThrowIfCancellationRequested();
         context.ReportProgress(Strings.Status_Done);
 
-        return model;
+        return OperationResult<OptionModel>.Success(model);
     }
 
-    protected override async Task Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
     {
         var diag = context.Diagnostic;
         var settings = Model;
-        if (settings == null) return;
+        if (settings == null) return OperationResult.Success();
         if (!settings.CanExecute) throw new DiagnosticException(Strings.Error_Noop);
 
         var books = settings.Books;
@@ -130,7 +131,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             ValidateNames = true,
             InitialDirectory = initialDirectory
         };
-        if (dlg.ShowDialog() != true) return;
+        if (dlg.ShowDialog() != true) return OperationResult.Success();
         settings.WorkingDirectory = dlg.FolderName;
         var path = settings.OptionDirectory;
 
@@ -171,8 +172,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                     ResourceStore,
                     innerContext);
                 var builtStage = await stageConverter.BuildAsync(ct);
-                if (builtStage is null) return;
-                stage = builtStage;
+                if (!builtStage.Succeeded || builtStage.Value is not { } stageEntry) return;
+                stage = stageEntry;
                 ct.ThrowIfCancellationRequested();
             }
 
@@ -194,7 +195,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                         else if (diff == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
                         var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
                         var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, item.Mgxc), innerContext);
-                        if (!await chartWriter.WriteAsync(ct)) return;
+                        if (!(await chartWriter.WriteAsync(ct)).Succeeded) return;
                         ct.ThrowIfCancellationRequested();
                     }
                 }
@@ -208,7 +209,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                             new JacketConvertRequest(jacketPath, Path.Combine(chartFolder, xml.JaketFile)),
                             MediaTool,
                             innerContext);
-                        if (!await jacketConverter.ConvertAsync(ct)) return;
+                        if (!(await jacketConverter.ConvertAsync(ct)).Succeeded) return;
                         ct.ThrowIfCancellationRequested();
                     }
                     else
@@ -222,7 +223,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             if (settings.ConvertAudio)
             {
                 var musicConverter = new MusicConverter(new MusicConvertRequest(book.Meta, cueFileFolder), MediaTool, ResourceStore, innerContext);
-                if (!await musicConverter.ConvertAsync(ct)) return;
+                if (!(await musicConverter.ConvertAsync(ct)).Succeeded) return;
                 ct.ThrowIfCancellationRequested();
             }
         }, ctx, true);
@@ -246,6 +247,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             await eventXml.SaveDirectoryAsync(eventFolder);
             ct.ThrowIfCancellationRequested();
         }
+
+        return OperationResult.Success();
     }
 
     private static async Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, OperationContext, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)

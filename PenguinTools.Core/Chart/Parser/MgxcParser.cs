@@ -39,7 +39,7 @@ public partial class MgxcParser
     private List<Task> Tasks { get; } = [];
     private mg.Chart Mgxc { get; } = new();
 
-    public async Task<mg.Chart> ParseAsync(CancellationToken ct = default)
+    public async Task<OperationResult<mg.Chart>> ParseAsync(CancellationToken ct = default)
     {
         Mgxc.Meta.FilePath = Path;
 
@@ -70,7 +70,7 @@ public partial class MgxcParser
         ProcessMeta();
 
         await Task.WhenAll(Tasks);
-        return Mgxc;
+        return OperationResult<mg.Chart>.Success(Mgxc);
     }
 
     private void ProcessMeta()

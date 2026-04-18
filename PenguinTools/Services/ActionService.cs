@@ -20,7 +20,16 @@ public partial class ActionService : ObservableObject
         return !IsBusy;
     }
 
-    public async Task RunAsync(Func<OperationContext, CancellationToken, Task> action, CancellationToken ct = default)
+    public Task RunAsync(Func<OperationContext, CancellationToken, Task> action, CancellationToken ct = default)
+    {
+        return RunAsync(async (context, innerCt) =>
+        {
+            await action(context, innerCt);
+            return OperationResult.Success();
+        }, ct);
+    }
+
+    public async Task RunAsync(Func<OperationContext, CancellationToken, Task<OperationResult>> action, CancellationToken ct = default)
     {
         if (!CanRun()) return;
         var diagnostics = new Diagnoster();
@@ -72,5 +81,16 @@ public partial class ActionService : ObservableObject
             Owner = App.ServiceProvider.GetRequiredService<MainWindow>()
         };
         window.ShowDialog();
+    }
+
+    public async Task<OperationResult<T>> RunAsync<T>(Func<OperationContext, CancellationToken, Task<OperationResult<T>>> action, CancellationToken ct = default)
+    {
+        OperationResult<T> result = OperationResult<T>.Failure();
+        await RunAsync(async (context, innerCt) =>
+        {
+            result = await action(context, innerCt);
+            return result.ToResult();
+        }, ct);
+        return result;
     }
 }

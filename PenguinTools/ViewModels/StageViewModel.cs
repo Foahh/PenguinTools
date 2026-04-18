@@ -43,7 +43,7 @@ public partial class StageViewModel : ActionViewModel
         return !string.IsNullOrWhiteSpace(BackgroundPath);
     }
 
-    protected override async Task Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
     {
         var dlg = new OpenFolderDialog
         {
@@ -52,7 +52,7 @@ public partial class StageViewModel : ActionViewModel
             Multiselect = false,
             ValidateNames = true
         };
-        if (dlg.ShowDialog() != true) return;
+        if (dlg.ShowDialog() != true) return OperationResult.Success();
 
         var converter = new StageConverter(
             new StageBuildRequest(
@@ -66,7 +66,7 @@ public partial class StageViewModel : ActionViewModel
             ResourceStore,
             context);
 
-        await converter.BuildAsync(ct);
+        return (await converter.BuildAsync(ct)).ToResult();
     }
 
     [RelayCommand]

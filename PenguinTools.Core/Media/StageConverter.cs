@@ -39,10 +39,10 @@ public class StageConverter
     private string OutFolder { get; }
     private Entry NoteFieldLane { get; }
 
-    public async Task<Entry?> BuildAsync(CancellationToken ct = default)
+    public async Task<OperationResult<Entry>> BuildAsync(CancellationToken ct = default)
     {
-        if (!await ValidateAsync(ct)) return null;
-        if (StageId is not { } stageId) return null;
+        if (!await ValidateAsync(ct)) return OperationResult<Entry>.Failure();
+        if (StageId is not { } stageId) return OperationResult<Entry>.Failure();
 
         Progress?.Report(Strings.Status_Convert_background);
 
@@ -55,7 +55,7 @@ public class StageConverter
         await MediaTool.ConvertStageAsync(BackgroundPath, stageTemplatePath, stPath, EffectPaths, ct);
         await Resources.CopyToAsync("nf_dummy.afb", nfPath, ct);
 
-        return xml.Name;
+        return OperationResult<Entry>.Success(xml.Name);
     }
 
     private async Task<bool> ValidateAsync(CancellationToken ct = default)

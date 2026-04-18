@@ -31,7 +31,7 @@ public partial class C2SChartWriter
     private List<c2s.Note> Notes { get; } = [];
     private List<c2s.Event> Events { get; } = [];
 
-    public async Task<bool> WriteAsync(CancellationToken ct = default)
+    public async Task<OperationResult> WriteAsync(CancellationToken ct = default)
     {
         Progress?.Report(Strings.Status_Converting_chart);
 
@@ -97,10 +97,10 @@ public partial class C2SChartWriter
 
         AppendFormattedEvents(sb);
         sb.AppendLine();
-        if (!AppendFormattedNotes(sb)) return false;
+        if (!AppendFormattedNotes(sb)) return OperationResult.Failure();
 
         await File.WriteAllTextAsync(OutPath, sb.ToString(), ct);
-        return true;
+        return OperationResult.Success();
     }
 
     private void AppendFormattedEvents(StringBuilder sb)

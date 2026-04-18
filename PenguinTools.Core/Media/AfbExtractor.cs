@@ -25,15 +25,15 @@ public class AfbExtractor
     private string InPath { get; }
     private string OutFolder { get; }
 
-    public async Task<bool> ExtractAsync(CancellationToken ct = default)
+    public async Task<OperationResult> ExtractAsync(CancellationToken ct = default)
     {
-        if (!Validate()) return false;
+        if (!Validate()) return OperationResult.Failure();
 
         Progress?.Report(Strings.Status_Extracting);
         await MediaTool.ExtractDdsAsync(InPath, OutFolder, ct);
         ct.ThrowIfCancellationRequested();
         Progress?.Report(Strings.Status_Writing);
-        return true;
+        return OperationResult.Success();
     }
 
     private bool Validate()
