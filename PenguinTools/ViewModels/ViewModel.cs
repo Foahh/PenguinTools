@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using PenguinTools.Models;
 using PenguinTools.Services;
@@ -17,6 +18,8 @@ public abstract partial class ViewModel : ObservableObject
 {
     public ActionService ActionService { get; } = App.ServiceProvider.GetRequiredService<ActionService>();
     public AssetManager AssetManager { get; } = App.ServiceProvider.GetRequiredService<AssetManager>();
+    public IMediaTool MediaTool { get; } = App.ServiceProvider.GetRequiredService<IMediaTool>();
+    public IEmbeddedResourceStore ResourceStore { get; } = App.ServiceProvider.GetRequiredService<IEmbeddedResourceStore>();
 
     protected static Dispatcher Dispatcher => Application.Current.Dispatcher;
 

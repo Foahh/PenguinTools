@@ -13,9 +13,9 @@ namespace PenguinTools.ViewModels;
 public partial class MiscViewModel : ViewModel
 {
     [RelayCommand]
-    private static void OpenTempDirectory()
+    private void OpenTempDirectory()
     {
-        var path = Resourcer.TempWorkPath;
+        var path = ResourceStore.TempWorkPath;
 
         Process.Start(new ProcessStartInfo
         {
@@ -54,7 +54,7 @@ public partial class MiscViewModel : ViewModel
 
         await ActionService.RunAsync((diag, prog, ct) =>
         {
-            var extractor = new AfbExtractor(new AfbExtractRequest(openDlg.FileName, saveDlg.FolderName), diag, prog);
+            var extractor = new AfbExtractor(new AfbExtractRequest(openDlg.FileName, saveDlg.FolderName), MediaTool, diag, prog);
             return extractor.ExtractAsync(ct);
         });
     }

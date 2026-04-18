@@ -49,6 +49,8 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                     meta.StageId,
                     path,
                     meta.NotesFieldLine),
+                MediaTool,
+                ResourceStore,
                 diag,
                 prog);
             var builtStage = await stageConverter.BuildAsync(ct);
@@ -83,19 +85,20 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 
         var jacketConverter = new JacketConverter(
             new JacketConvertRequest(meta.FullJacketFilePath, Path.Combine(musicFolder, xml.JaketFile)),
+            MediaTool,
             diag,
             prog);
         if (!await jacketConverter.ConvertAsync(ct)) return;
 
         ct.ThrowIfCancellationRequested();
 
-        var musicConverter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), diag, prog);
+        var musicConverter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), MediaTool, ResourceStore, diag, prog);
         await musicConverter.ConvertAsync(ct);
     }
 
     protected override async Task<WorkflowModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), diag, prog);
+        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, diag, prog);
         return new WorkflowModel(await parser.ParseAsync(ct));
     }
 }

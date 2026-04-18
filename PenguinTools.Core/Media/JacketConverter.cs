@@ -4,19 +4,22 @@ namespace PenguinTools.Core.Media;
 
 public class JacketConverter
 {
-    public JacketConverter(JacketConvertRequest request, Diagnoster diag, IProgress<string>? prog = null)
+    public JacketConverter(JacketConvertRequest request, IMediaTool mediaTool, Diagnoster diag, IProgress<string>? prog = null)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(mediaTool);
         ArgumentNullException.ThrowIfNull(diag);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.InPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutPath);
 
+        MediaTool = mediaTool;
         Diagnostic = diag;
         Progress = prog;
         InPath = request.InPath;
         OutPath = request.OutPath;
     }
 
+    private IMediaTool MediaTool { get; }
     private Diagnoster Diagnostic { get; }
     private IProgress<string>? Progress { get; }
     private string InPath { get; }
@@ -28,7 +31,7 @@ public class JacketConverter
 
         Progress?.Report(Strings.Status_Converting_jacket);
         ct.ThrowIfCancellationRequested();
-        await Manipulate.ConvertJacketAsync(InPath, OutPath, ct);
+        await MediaTool.ConvertJacketAsync(InPath, OutPath, ct);
         ct.ThrowIfCancellationRequested();
         return !Diagnostic.HasError;
     }

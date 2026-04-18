@@ -61,7 +61,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         {
             ct.ThrowIfCancellationRequested();
             if (Path.GetExtension(filePath) != ".mgxc") return;
-            var parser = new MgxcParser(new MgxcParseRequest(filePath, AssetManager), innerDiag);
+            var parser = new MgxcParser(new MgxcParseRequest(filePath, AssetManager), MediaTool, innerDiag);
             var chart = await parser.ParseAsync(ct);
             var meta = chart.Meta;
             var id = meta.Id ?? throw new DiagnosticException(Strings.Error_File_ignored_due_to_id_missing);
@@ -167,6 +167,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                         book.StageId,
                         stageFolder,
                         book.NotesFieldLine),
+                    MediaTool,
+                    ResourceStore,
                     innerDiag);
                 var builtStage = await stageConverter.BuildAsync(ct);
                 if (builtStage is null) return;
@@ -204,6 +206,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                     {
                         var jacketConverter = new JacketConverter(
                             new JacketConvertRequest(jacketPath, Path.Combine(chartFolder, xml.JaketFile)),
+                            MediaTool,
                             innerDiag);
                         if (!await jacketConverter.ConvertAsync(ct)) return;
                         ct.ThrowIfCancellationRequested();
@@ -218,7 +221,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
             if (settings.ConvertAudio)
             {
-                var musicConverter = new MusicConverter(new MusicConvertRequest(book.Meta, cueFileFolder), innerDiag);
+                var musicConverter = new MusicConverter(new MusicConvertRequest(book.Meta, cueFileFolder), MediaTool, ResourceStore, innerDiag);
                 if (!await musicConverter.ConvertAsync(ct)) return;
                 ct.ThrowIfCancellationRequested();
             }

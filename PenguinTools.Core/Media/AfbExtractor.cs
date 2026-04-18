@@ -4,19 +4,22 @@ namespace PenguinTools.Core.Media;
 
 public class AfbExtractor
 {
-    public AfbExtractor(AfbExtractRequest request, Diagnoster diag, IProgress<string>? prog = null)
+    public AfbExtractor(AfbExtractRequest request, IMediaTool mediaTool, Diagnoster diag, IProgress<string>? prog = null)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(mediaTool);
         ArgumentNullException.ThrowIfNull(diag);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.InPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
 
+        MediaTool = mediaTool;
         Diagnostic = diag;
         Progress = prog;
         InPath = request.InPath;
         OutFolder = request.OutFolder;
     }
 
+    private IMediaTool MediaTool { get; }
     private Diagnoster Diagnostic { get; }
     private IProgress<string>? Progress { get; }
     private string InPath { get; }
@@ -27,7 +30,7 @@ public class AfbExtractor
         if (!Validate()) return false;
 
         Progress?.Report(Strings.Status_Extracting);
-        await Manipulate.ExtractDdsAsync(InPath, OutFolder, ct);
+        await MediaTool.ExtractDdsAsync(InPath, OutFolder, ct);
         ct.ThrowIfCancellationRequested();
         Progress?.Report(Strings.Status_Writing);
         return !Diagnostic.HasError;

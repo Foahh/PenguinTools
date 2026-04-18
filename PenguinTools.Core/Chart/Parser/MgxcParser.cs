@@ -1,9 +1,9 @@
 ﻿using PenguinTools.Core.Asset;
 using PenguinTools.Core.Chart.Models;
-using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
+using PenguinTools.Core.Media;
 
 namespace PenguinTools.Core.Chart.Parser;
 
@@ -16,19 +16,22 @@ public partial class MgxcParser
     private const string HeaderEvnt = "evnt"; // 65 76 6E 74
     private const string HeaderDat2 = "dat2"; // 64 61 74 32
 
-    public MgxcParser(MgxcParseRequest request, Diagnoster diag, IProgress<string>? prog = null)
+    public MgxcParser(MgxcParseRequest request, IMediaTool mediaTool, Diagnoster diag, IProgress<string>? prog = null)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(mediaTool);
         ArgumentNullException.ThrowIfNull(diag);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.Path);
         ArgumentNullException.ThrowIfNull(request.Assets);
 
+        MediaTool = mediaTool;
         Diagnostic = diag;
         Progress = prog;
         Path = request.Path;
         Assets = request.Assets;
     }
 
+    private IMediaTool MediaTool { get; }
     private Diagnoster Diagnostic { get; }
     private IProgress<string>? Progress { get; }
     private string Path { get; }
@@ -81,7 +84,7 @@ public partial class MgxcParser
         if (Mgxc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(Mgxc.Meta.FullBgiFilePath))
         {
             QueueValidation(
-                Manipulate.CheckImageValidAsync(Mgxc.Meta.FullBgiFilePath),
+                MediaTool.CheckImageValidAsync(Mgxc.Meta.FullBgiFilePath),
                 Mgxc.Meta.FullBgiFilePath,
                 Strings.Error_Invalid_bg_image,
                 () =>

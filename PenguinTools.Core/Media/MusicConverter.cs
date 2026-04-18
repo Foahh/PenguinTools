@@ -17,19 +17,25 @@ public class MusicConverter
 {
     private const ulong Key = 32931609366120192UL;
 
-    public MusicConverter(MusicConvertRequest request, Diagnoster diag, IProgress<string>? prog = null)
+    public MusicConverter(MusicConvertRequest request, IMediaTool mediaTool, IEmbeddedResourceStore resources, Diagnoster diag, IProgress<string>? prog = null)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(mediaTool);
+        ArgumentNullException.ThrowIfNull(resources);
         ArgumentNullException.ThrowIfNull(diag);
         ArgumentNullException.ThrowIfNull(request.Meta);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
 
+        MediaTool = mediaTool;
+        Resources = resources;
         Diagnostic = diag;
         Progress = prog;
         Meta = request.Meta;
         OutFolder = request.OutFolder;
     }
 
+    private IMediaTool MediaTool { get; }
+    private IEmbeddedResourceStore Resources { get; }
     private Diagnoster Diagnostic { get; }
     private IProgress<string>? Progress { get; }
     private Meta Meta { get; }
@@ -45,9 +51,9 @@ public class MusicConverter
         if (Meta.BgmPreviewStart > 120) { Diagnostic.Report(Severity.Warning, Strings.Warn_Preview_later_than_120); }
 
         var srcPath = Meta.FullBgmFilePath;
-        var wavPath = Resourcer.GetTempPath($"c_{Path.GetFileNameWithoutExtension(srcPath)}.wav");
+        var wavPath = Resources.GetTempPath($"c_{Path.GetFileNameWithoutExtension(srcPath)}.wav");
 
-        var ret = await Manipulate.NormalizeAudioAsync(srcPath, wavPath, Meta.BgmRealOffset, ct);
+        var ret = await MediaTool.NormalizeAudioAsync(srcPath, wavPath, Meta.BgmRealOffset, ct);
         if (ret.IsNoOperation) { wavPath = srcPath; }
 
         ct.ThrowIfCancellationRequested();
@@ -113,7 +119,8 @@ public class MusicConverter
 
         var cueSheetTable = new CriTable();
 
-        cueSheetTable.Load(Resourcer.GetStream("dummy.acb"));
+        using var dummyAcb = Resources.OpenRead("dummy.acb");
+        cueSheetTable.Load(dummyAcb);
         cueSheetTable.Rows[0]["Name"] = xml.DataName;
 
         var cueTable = new CriTable();

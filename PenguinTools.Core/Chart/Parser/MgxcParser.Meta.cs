@@ -84,7 +84,7 @@ public partial class MgxcParser
             if (!string.IsNullOrWhiteSpace(Mgxc.Meta.BgmFilePath))
             {
                 QueueValidation(
-                    Manipulate.CheckAudioValidAsync(Mgxc.Meta.FullBgmFilePath),
+                    MediaTool.CheckAudioValidAsync(Mgxc.Meta.FullBgmFilePath),
                     Mgxc.Meta.FullBgmFilePath,
                     Strings.Error_Invalid_audio,
                     () => Mgxc.Meta.BgmFilePath = string.Empty);
@@ -108,7 +108,7 @@ public partial class MgxcParser
             if (!string.IsNullOrWhiteSpace(Mgxc.Meta.JacketFilePath))
             {
                 QueueValidation(
-                    Manipulate.CheckImageValidAsync(Mgxc.Meta.FullJacketFilePath),
+                    MediaTool.CheckImageValidAsync(Mgxc.Meta.FullJacketFilePath),
                     Mgxc.Meta.FullJacketFilePath,
                     Strings.Error_Invalid_jk_image,
                     () => Mgxc.Meta.JacketFilePath = string.Empty);

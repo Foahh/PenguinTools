@@ -6,14 +6,18 @@ namespace PenguinTools.Core.Media;
 
 public class StageConverter
 {
-    public StageConverter(StageBuildRequest request, Diagnoster diag, IProgress<string>? prog = null)
+    public StageConverter(StageBuildRequest request, IMediaTool mediaTool, IEmbeddedResourceStore resources, Diagnoster diag, IProgress<string>? prog = null)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(mediaTool);
+        ArgumentNullException.ThrowIfNull(resources);
         ArgumentNullException.ThrowIfNull(diag);
         ArgumentNullException.ThrowIfNull(request.Assets);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.BackgroundPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
 
+        MediaTool = mediaTool;
+        Resources = resources;
         Diagnostic = diag;
         Progress = prog;
         Assets = request.Assets;
@@ -24,6 +28,8 @@ public class StageConverter
         NoteFieldLane = request.NoteFieldLane;
     }
 
+    private IMediaTool MediaTool { get; }
+    private IEmbeddedResourceStore Resources { get; }
     private Diagnoster Diagnostic { get; }
     private IProgress<string>? Progress { get; }
     private AssetManager Assets { get; }
@@ -45,8 +51,9 @@ public class StageConverter
 
         var nfPath = Path.Combine(outputDir, xml.NotesFieldFile);
         var stPath = Path.Combine(outputDir, xml.BaseFile);
-        await Manipulate.ConvertStageAsync(BackgroundPath, Resourcer.GetTempPath("st_dummy.afb"), stPath, EffectPaths, ct);
-        await Resourcer.CopyAsync("nf_dummy.afb", nfPath);
+        var stageTemplatePath = Resources.ExtractToTemp("st_dummy.afb");
+        await MediaTool.ConvertStageAsync(BackgroundPath, stageTemplatePath, stPath, EffectPaths, ct);
+        await Resources.CopyToAsync("nf_dummy.afb", nfPath, ct);
 
         return xml.Name;
     }
@@ -67,7 +74,7 @@ public class StageConverter
         }
         else
         {
-            var ret = await Manipulate.CheckImageValidAsync(BackgroundPath, ct);
+            var ret = await MediaTool.CheckImageValidAsync(BackgroundPath, ct);
             if (ret.IsFailure) { Diagnostic.Report(Severity.Error, Strings.Error_Invalid_bg_image, BackgroundPath, ret); }
         }
 
@@ -83,7 +90,7 @@ public class StageConverter
                     continue;
                 }
 
-                var ret = await Manipulate.CheckImageValidAsync(p, ct);
+                var ret = await MediaTool.CheckImageValidAsync(p, ct);
                 if (ret.IsFailure) { Diagnostic.Report(Severity.Error, Strings.Error_Invalid_bg_fx_image, p, ret); }
             }
         }

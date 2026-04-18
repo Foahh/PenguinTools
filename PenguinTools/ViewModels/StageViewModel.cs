@@ -62,6 +62,8 @@ public partial class StageViewModel : ActionViewModel
                 StageId,
                 dlg.FolderName,
                 NoteFieldsLine),
+            MediaTool,
+            ResourceStore,
             diag,
             prog);
 

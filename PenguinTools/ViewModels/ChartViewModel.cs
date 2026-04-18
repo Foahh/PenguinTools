@@ -33,7 +33,7 @@ public class ChartViewModel : WatchViewModel<ChartModel>
 
     protected override async Task<ChartModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), diag, prog);
+        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, diag, prog);
         var chart = await parser.ParseAsync(ct);
         return new ChartModel(chart);
     }

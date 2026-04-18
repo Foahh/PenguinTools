@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.Controls;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Core.Media;
 using PenguinTools.Services;
 using PenguinTools.ViewModels;
 using PenguinTools.Views;
@@ -34,20 +35,31 @@ public partial class App : Application
         var basePath = Path.GetDirectoryName(AppContext.BaseDirectory);
         if (basePath != null) { Directory.SetCurrentDirectory(basePath); }
 
-        Resourcer.Initialize(Assembly.GetExecutingAssembly());
-        Resourcer.Save("nf_dummy.afb");
-        Resourcer.Save("st_dummy.afb");
-        Resourcer.Save("dummy.acb");
-        Resourcer.Save("mua.exe");
-        Resourcer.Save("mua.LICENSE.txt");
-
         var services = new ServiceCollection();
+        var resources = new EmbeddedResourceStore(Assembly.GetExecutingAssembly());
 
         services.AddSingleton<MainWindow>();
         services.AddSingleton<ActionService>();
+        services.AddSingleton<IEmbeddedResourceStore>(resources);
+        services.AddSingleton<IMediaTool>(_ =>
+        {
+            if (resources.HasResource("mua.exe"))
+            {
+                var toolPath = resources.ExtractToTemp("mua.exe");
+                return new MuaMediaTool(toolPath);
+            }
+
+            if (resources.HasResource("mua"))
+            {
+                var toolPath = resources.ExtractToTemp("mua");
+                return new MuaMediaTool(toolPath);
+            }
+
+            return new MuaMediaTool("mua");
+        });
         services.AddSingleton<AssetManager>(_ =>
         {
-            var stream = Resourcer.GetStream("assets.json");
+            using var stream = resources.OpenRead("assets.json");
             return new AssetManager(stream);
         });
         services.AddSingleton<IReleaseService, GitHubReleaseService>();
@@ -76,6 +88,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        Resourcer.Release();
+        if (ServiceProvider is IDisposable disposable) disposable.Dispose();
+        base.OnExit(e);
     }
 }
