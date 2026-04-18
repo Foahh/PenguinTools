@@ -13,9 +13,6 @@ public sealed class OperationContext
     public IDiagnosticSink Diagnostic { get; }
     public IProgress<string>? Progress { get; }
 
-    public bool HasError => Diagnostic.HasError;
-    public bool HasProblem => Diagnostic.HasProblem;
-
     public void ReportProgress(string status)
     {
         Progress?.Report(status);

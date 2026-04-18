@@ -33,6 +33,15 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
         }
     }
 
+    public Diagnostic Copy()
+    {
+        return new Diagnostic(Severity, Message, Path, Time, Target)
+        {
+            RelatedException = RelatedException,
+            TimeCalculator = TimeCalculator
+        };
+    }
+
     #region IComparable
 
     public int CompareTo(Diagnostic? other)
@@ -56,6 +65,35 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
     }
 
     #endregion
+}
+
+public sealed class DiagnosticSnapshot
+{
+    private DiagnosticSnapshot(IReadOnlyList<Diagnostic> diagnostics)
+    {
+        Diagnostics = diagnostics;
+    }
+
+    public static DiagnosticSnapshot Empty { get; } = new([]);
+
+    public IReadOnlyList<Diagnostic> Diagnostics { get; }
+
+    public bool HasProblem => Diagnostics.Count > 0;
+    public bool HasError => Diagnostics.Any(d => d.Severity == Severity.Error);
+
+    public static DiagnosticSnapshot Create(IEnumerable<Diagnostic> diagnostics)
+    {
+        ArgumentNullException.ThrowIfNull(diagnostics);
+
+        return new DiagnosticSnapshot([.. diagnostics.Select(d => d.Copy())]);
+    }
+
+    public static DiagnosticSnapshot Create(IDiagnosticSink sink)
+    {
+        ArgumentNullException.ThrowIfNull(sink);
+
+        return Create(sink.Diagnostics);
+    }
 }
 
 public interface IDiagnosticSink

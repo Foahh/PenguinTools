@@ -31,8 +31,15 @@ public partial class ActionService : ObservableObject
 
     public async Task RunAsync(Func<OperationContext, CancellationToken, Task<OperationResult>> action, CancellationToken ct = default)
     {
-        if (!CanRun()) return;
+        await ExecuteAsync(action, ct);
+    }
+
+    private async Task<OperationResult> ExecuteAsync(Func<OperationContext, CancellationToken, Task<OperationResult>> action, CancellationToken ct)
+    {
+        if (!CanRun()) return OperationResult.Failure();
         var diagnostics = new Diagnoster();
+        OperationResult result = OperationResult.Failure();
+        var wasCancelled = false;
         IsBusy = true;
 
         var progress = new Progress<string>(s =>
@@ -50,14 +57,13 @@ public partial class ActionService : ObservableObject
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
             context.ReportProgress(Strings.Status_Starting);
-            await Task.Run(() => action(context, cts.Token), cts.Token);
-            context.ReportProgress(Strings.Status_Done);
+            result = await Task.Run(() => action(context, cts.Token), cts.Token);
 
             SystemSounds.Exclamation.Play();
         }
         catch (OperationCanceledException)
         {
-            // do nothing
+            wasCancelled = true;
         }
         catch (Exception ex)
         {
@@ -68,12 +74,17 @@ public partial class ActionService : ObservableObject
             IsBusy = false;
         }
 
-        if (!context.HasProblem) return;
-        if (context.HasError) context.ReportProgress(Strings.Status_Error);
+        result = result.WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+        if (wasCancelled) return result;
+
+        if (result.Diagnostics.HasError) context.ReportProgress(Strings.Status_Error);
+        else context.ReportProgress(Strings.Status_Done);
+
+        if (!result.Diagnostics.HasProblem) return result;
 
         var model = new DiagnosticsWindowViewModel
         {
-            Diagnostics = [..diagnostics.Diagnostics]
+            Diagnostics = [.. result.Diagnostics.Diagnostics]
         };
         var window = new DiagnosticsWindow
         {
@@ -81,16 +92,17 @@ public partial class ActionService : ObservableObject
             Owner = App.ServiceProvider.GetRequiredService<MainWindow>()
         };
         window.ShowDialog();
+        return result;
     }
 
     public async Task<OperationResult<T>> RunAsync<T>(Func<OperationContext, CancellationToken, Task<OperationResult<T>>> action, CancellationToken ct = default)
     {
         OperationResult<T> result = OperationResult<T>.Failure();
-        await RunAsync(async (context, innerCt) =>
+        var wrapper = await ExecuteAsync(async (context, innerCt) =>
         {
             result = await action(context, innerCt);
             return result.ToResult();
         }, ct);
-        return result;
+        return result.WithDiagnostics(wrapper.Diagnostics);
     }
 }
