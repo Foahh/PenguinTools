@@ -193,8 +193,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                         if (diff == Difficulty.WorldsEnd) weEntries.Add(new Entry(songId, book.Title));
                         else if (diff == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
                         var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
-                        var chartConverter = new C2SConverter(new C2SWriteRequest(chartPath, item.Mgxc), innerDiag);
-                        if (!await chartConverter.WriteAsync(ct)) return;
+                        var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, item.Mgxc), innerDiag);
+                        if (!await chartWriter.WriteAsync(ct)) return;
                         ct.ThrowIfCancellationRequested();
                     }
                 }

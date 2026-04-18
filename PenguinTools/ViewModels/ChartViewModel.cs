@@ -27,8 +27,8 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         if (dlg.ShowDialog() != true) return;
 
 
-        var converter = new C2SConverter(new C2SWriteRequest(dlg.FileName, chart), diag, prog);
-        await converter.WriteAsync(ct);
+        var writer = new C2SChartWriter(new C2SWriteRequest(dlg.FileName, chart), diag, prog);
+        await writer.WriteAsync(ct);
     }
 
     protected override async Task<ChartModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)

@@ -78,8 +78,8 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var musicFolder = await xml.SaveDirectoryAsync(path);
         var chartPath = Path.Combine(musicFolder, xml[meta.Difficulty].File);
 
-        var chartConverter = new C2SConverter(new C2SWriteRequest(chartPath, chart), diag, prog);
-        if (!await chartConverter.WriteAsync(ct)) return;
+        var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, chart), diag, prog);
+        if (!await chartWriter.WriteAsync(ct)) return;
 
         ct.ThrowIfCancellationRequested();
 

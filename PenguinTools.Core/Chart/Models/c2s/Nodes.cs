@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace PenguinTools.Core.Chart.Models.c2s;
 
 /*
@@ -12,15 +10,6 @@ public abstract class Node
     public Time Tick { get; set; }
 
     public abstract string Id { get; }
-
-    [JsonIgnore] public virtual string Text
-    {
-        get
-        {
-            var pos = Tick.Position;
-            return $"{Id}\t{pos.Measure}\t{pos.Offset}";
-        }
-    }
 }
 
 public abstract class Note : Node
@@ -29,7 +18,6 @@ public abstract class Note : Node
 
     public int Lane { get; set; }
     public int Width { get; set; }
-    [JsonIgnore] public override string Text => $"{base.Text}\t{Lane}\t{Width}";
 }
 
 public abstract class LongNote : Note

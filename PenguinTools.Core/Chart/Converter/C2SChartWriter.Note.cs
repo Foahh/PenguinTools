@@ -7,7 +7,7 @@ namespace PenguinTools.Core.Chart.Converter;
 using mg = Models.mgxc;
 using c2s = Models.c2s;
 
-public partial class C2SConverter
+public partial class C2SChartWriter
 {
     private readonly Dictionary<mg.NegativeNote, c2s.Note> _nMap = [];
     private readonly Dictionary<mg.PositiveNote, c2s.Note> _pMap = [];

@@ -9,9 +9,9 @@ namespace PenguinTools.Core.Chart.Converter;
 using mg = Models.mgxc;
 using c2s = Models.c2s;
 
-public partial class C2SConverter
+public partial class C2SChartWriter
 {
-    public C2SConverter(C2SWriteRequest request, Diagnoster diag, IProgress<string>? prog = null)
+    public C2SChartWriter(C2SWriteRequest request, Diagnoster diag, IProgress<string>? prog = null)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(diag);
@@ -94,32 +94,34 @@ public partial class C2SConverter
         sb.AppendLine("TUTORIAL\t0");
         sb.AppendLine();
 
-        foreach (var e in Events)
-        {
-            try
-            {
-                sb.AppendLine(e.Text);
-            }
-            catch (Exception ex)
-            {
-                Diagnostic.Report(Severity.Error, ex.Message, e.Tick.Original, e);
-            }
-        }
+        AppendFormattedEvents(sb);
         sb.AppendLine();
-        foreach (var n in Notes)
-        {
-            try
-            {
-                sb.AppendLine(n.Text);
-            }
-            catch (Exception ex)
-            {
-                Diagnostic.Report(Severity.Error, ex.Message, n.Tick.Original, n);
-            }
-        }
+        AppendFormattedNotes(sb);
 
         if (Diagnostic.HasError) return false;
         await File.WriteAllTextAsync(OutPath, sb.ToString(), ct);
         return true;
+    }
+
+    private void AppendFormattedEvents(StringBuilder sb)
+    {
+        foreach (var e in Events)
+        {
+            sb.AppendLine(Format(e));
+        }
+    }
+
+    private void AppendFormattedNotes(StringBuilder sb)
+    {
+        foreach (var n in Notes)
+        {
+            if (TryFormat(n, out var line, out var error))
+            {
+                sb.AppendLine(line);
+                continue;
+            }
+
+            Diagnostic.Report(Severity.Error, error, n.Tick.Original, n);
+        }
     }
 }
