@@ -37,8 +37,7 @@ public class AssetDictionary
 
     public AssetDictionary()
     {
-        _database = new Dictionary<AssetType, SortedSet<Entry>>();
-        foreach (var type in Enum.GetValues<AssetType>()) _database[type] = [];
+        _database = CreateDatabase();
     }
 
     public AssetDictionary(string path) : this()
@@ -116,12 +115,12 @@ public class AssetDictionary
 
     public static async Task<Dictionary<AssetType, SortedSet<Entry>>> CollectAsync(string workDir, CancellationToken ct = default)
     {
-        var specs = new (string FileName, string EntryName)[]
+        var specs = new (string FileName, AssetType Type)[]
         {
-            ("Music.xml", "genreNames"),
-            ("Music.xml", "worldsEndTagName"),
-            ("Music.xml", "stageName"),
-            ("Stage.xml", "notesFieldLine")
+            ("Music.xml", AssetType.GenreNames),
+            ("Music.xml", AssetType.WeTagNames),
+            ("Music.xml", AssetType.StageNames),
+            ("Stage.xml", AssetType.FieldLines)
         };
         return await CollectManyAsync(workDir, specs, ct);
     }
@@ -194,24 +193,38 @@ public class AssetDictionary
         return result;
     }
 
-    public static async Task<Dictionary<AssetType, SortedSet<Entry>>> CollectManyAsync(string root, IEnumerable<(string FileName, string EntryName)> specs, CancellationToken ct = default)
+    public static async Task<Dictionary<AssetType, SortedSet<Entry>>> CollectManyAsync(string root, IEnumerable<(string FileName, AssetType Type)> specs, CancellationToken ct = default)
     {
-        var aggregated = new Dictionary<string, SortedSet<Entry>>();
+        var aggregated = CreateDatabase();
 
-        foreach (var (fileName, entryName) in specs)
+        foreach (var (fileName, type) in specs)
         {
             ct.ThrowIfCancellationRequested();
-            if (!aggregated.TryGetValue(entryName, out var set))
-            {
-                set = [];
-                aggregated[entryName] = set;
-            }
+            var entryName = GetEntryName(type);
             var entries = await CollectOneAsync(root, fileName, entryName, ct);
-            set.UnionWith(entries);
+            aggregated[type].UnionWith(entries);
         }
 
-        var json = JsonSerializer.Serialize(aggregated, Options);
-        return JsonSerializer.Deserialize<Dictionary<AssetType, SortedSet<Entry>>>(json, Options) ?? [];
+        return aggregated;
+    }
+
+    private static Dictionary<AssetType, SortedSet<Entry>> CreateDatabase()
+    {
+        var database = new Dictionary<AssetType, SortedSet<Entry>>();
+        foreach (var type in Enum.GetValues<AssetType>()) database[type] = [];
+        return database;
+    }
+
+    private static string GetEntryName(AssetType type)
+    {
+        return type switch
+        {
+            AssetType.GenreNames => "genreNames",
+            AssetType.FieldLines => "notesFieldLine",
+            AssetType.StageNames => "stageName",
+            AssetType.WeTagNames => "worldsEndTagName",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unsupported asset type.")
+        };
     }
 
     #endregion
