@@ -61,9 +61,10 @@ public partial class StageViewModel : ActionViewModel
                 [EffectPath0, EffectPath1, EffectPath2, EffectPath3],
                 StageId,
                 dlg.FolderName,
-                NoteFieldsLine),
+                NoteFieldsLine,
+                ResourceStore.ExtractToTemp("st_dummy.afb"),
+                ResourceStore.ExtractToTemp("nf_dummy.afb")),
             MediaTool,
-            ResourceStore,
             context);
 
         return (await converter.BuildAsync(ct)).ToResult();

@@ -6,18 +6,18 @@ namespace PenguinTools.Core.Media;
 
 public class StageConverter
 {
-    public StageConverter(StageBuildRequest request, IMediaTool mediaTool, IEmbeddedResourceStore resources, OperationContext context)
+    public StageConverter(StageBuildRequest request, IMediaTool mediaTool, OperationContext context)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(mediaTool);
-        ArgumentNullException.ThrowIfNull(resources);
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(request.Assets);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.BackgroundPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.StageTemplatePath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.NotesFieldTemplatePath);
 
         MediaTool = mediaTool;
-        Resources = resources;
         ParentContext = context;
         CurrentContext = context;
         Assets = request.Assets;
@@ -26,10 +26,11 @@ public class StageConverter
         StageId = request.StageId;
         OutFolder = request.OutFolder;
         NoteFieldLane = request.NoteFieldLane;
+        StageTemplatePath = request.StageTemplatePath;
+        NotesFieldTemplatePath = request.NotesFieldTemplatePath;
     }
 
     private IMediaTool MediaTool { get; }
-    private IEmbeddedResourceStore Resources { get; }
     private OperationContext ParentContext { get; }
     private OperationContext CurrentContext { get; set; }
     private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
@@ -40,6 +41,8 @@ public class StageConverter
     private int? StageId { get; }
     private string OutFolder { get; }
     private Entry NoteFieldLane { get; }
+    private string StageTemplatePath { get; }
+    private string NotesFieldTemplatePath { get; }
 
     public async Task<OperationResult<Entry>> BuildAsync(CancellationToken ct = default)
     {
@@ -61,9 +64,8 @@ public class StageConverter
 
             var nfPath = Path.Combine(outputDir, xml.NotesFieldFile);
             var stPath = Path.Combine(outputDir, xml.BaseFile);
-            var stageTemplatePath = Resources.ExtractToTemp("st_dummy.afb");
-            await MediaTool.ConvertStageAsync(BackgroundPath, stageTemplatePath, stPath, EffectPaths, ct);
-            await Resources.CopyToAsync("nf_dummy.afb", nfPath, ct);
+            await MediaTool.ConvertStageAsync(BackgroundPath, StageTemplatePath, stPath, EffectPaths, ct);
+            File.Copy(NotesFieldTemplatePath, nfPath, true);
 
             return OperationResult<Entry>.Success(xml.Name).WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
         }
@@ -85,6 +87,18 @@ public class StageConverter
         if (StageId is null)
         {
             Diagnostic.Report(Severity.Error, string.Format(Strings.Error_Stage_id_is_not_set));
+            hasError = true;
+        }
+
+        if (!File.Exists(StageTemplatePath))
+        {
+            Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, StageTemplatePath);
+            hasError = true;
+        }
+
+        if (!File.Exists(NotesFieldTemplatePath))
+        {
+            Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, NotesFieldTemplatePath);
             hasError = true;
         }
 

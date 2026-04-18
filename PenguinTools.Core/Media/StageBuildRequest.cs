@@ -8,4 +8,6 @@ public sealed record StageBuildRequest(
     string?[]? EffectPaths,
     int? StageId,
     string OutFolder,
-    Entry NoteFieldLane);
+    Entry NoteFieldLane,
+    string StageTemplatePath,
+    string NotesFieldTemplatePath);

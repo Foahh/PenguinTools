@@ -49,9 +49,10 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                     [],
                     meta.StageId,
                     path,
-                    meta.NotesFieldLine),
+                    meta.NotesFieldLine,
+                    ResourceStore.ExtractToTemp("st_dummy.afb"),
+                    ResourceStore.ExtractToTemp("nf_dummy.afb")),
                 MediaTool,
-                ResourceStore,
                 context);
             var builtStage = await stageConverter.BuildAsync(ct);
             diagnostics = diagnostics.Merge(builtStage.Diagnostics);
@@ -96,7 +97,14 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 
         ct.ThrowIfCancellationRequested();
 
-        var musicConverter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), MediaTool, ResourceStore, context);
+        var musicConverter = new MusicConverter(
+            new MusicConvertRequest(
+                Model.Meta,
+                path,
+                ResourceStore.ExtractToTemp("dummy.acb"),
+                ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(Model.Meta.FullBgmFilePath)}.wav")),
+            MediaTool,
+            context);
         var convertedMusic = await musicConverter.ConvertAsync(ct);
         diagnostics = diagnostics.Merge(convertedMusic.Diagnostics);
         return (convertedMusic.Succeeded ? OperationResult.Success() : OperationResult.Failure()).WithDiagnostics(diagnostics);

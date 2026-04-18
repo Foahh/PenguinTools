@@ -17,31 +17,34 @@ public class MusicConverter
 {
     private const ulong Key = 32931609366120192UL;
 
-    public MusicConverter(MusicConvertRequest request, IMediaTool mediaTool, IEmbeddedResourceStore resources, OperationContext context)
+    public MusicConverter(MusicConvertRequest request, IMediaTool mediaTool, OperationContext context)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(mediaTool);
-        ArgumentNullException.ThrowIfNull(resources);
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(request.Meta);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.DummyAcbPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.WorkingAudioPath);
 
         MediaTool = mediaTool;
-        Resources = resources;
         ParentContext = context;
         CurrentContext = context;
         Meta = request.Meta;
         OutFolder = request.OutFolder;
+        DummyAcbPath = request.DummyAcbPath;
+        WorkingAudioPath = request.WorkingAudioPath;
     }
 
     private IMediaTool MediaTool { get; }
-    private IEmbeddedResourceStore Resources { get; }
     private OperationContext ParentContext { get; }
     private OperationContext CurrentContext { get; set; }
     private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
     private IProgress<string>? Progress => CurrentContext.Progress;
     private Meta Meta { get; }
     private string OutFolder { get; }
+    private string DummyAcbPath { get; }
+    private string WorkingAudioPath { get; }
 
     public async Task<OperationResult> ConvertAsync(CancellationToken ct = default)
     {
@@ -61,7 +64,7 @@ public class MusicConverter
             if (Meta.BgmPreviewStart > 120) { Diagnostic.Report(Severity.Warning, Strings.Warn_Preview_later_than_120); }
 
             var srcPath = Meta.FullBgmFilePath;
-            var wavPath = Resources.GetTempPath($"c_{Path.GetFileNameWithoutExtension(srcPath)}.wav");
+            var wavPath = WorkingAudioPath;
 
             var ret = await MediaTool.NormalizeAudioAsync(srcPath, wavPath, Meta.BgmRealOffset, ct);
             if (ret.IsNoOperation) { wavPath = srcPath; }
@@ -129,7 +132,7 @@ public class MusicConverter
 
             var cueSheetTable = new CriTable();
 
-            using var dummyAcb = Resources.OpenRead("dummy.acb");
+            using var dummyAcb = File.OpenRead(DummyAcbPath);
             cueSheetTable.Load(dummyAcb);
             cueSheetTable.Rows[0]["Name"] = xml.DataName;
 
@@ -214,6 +217,12 @@ public class MusicConverter
         if (!File.Exists(path))
         {
             Diagnostic.Report(Severity.Error, Strings.Error_Audio_file_not_found, path);
+            hasError = true;
+        }
+
+        if (!File.Exists(DummyAcbPath))
+        {
+            Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, DummyAcbPath);
             hasError = true;
         }
 

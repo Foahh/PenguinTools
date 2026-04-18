@@ -35,7 +35,14 @@ public class MusicViewModel : WatchViewModel<MusicModel>
         if (dlg.ShowDialog() != true) return OperationResult.Success();
         var path = dlg.FolderName;
 
-        var converter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), MediaTool, ResourceStore, context);
+        var converter = new MusicConverter(
+            new MusicConvertRequest(
+                Model.Meta,
+                path,
+                ResourceStore.ExtractToTemp("dummy.acb"),
+                ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(Model.Meta.FullBgmFilePath)}.wav")),
+            MediaTool,
+            context);
         return await converter.ConvertAsync(ct);
     }
 }
