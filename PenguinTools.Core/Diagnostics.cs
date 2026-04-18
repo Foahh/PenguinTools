@@ -81,6 +81,15 @@ public sealed class DiagnosticSnapshot
     public bool HasProblem => Diagnostics.Count > 0;
     public bool HasError => Diagnostics.Any(d => d.Severity == Severity.Error);
 
+    public DiagnosticSnapshot Merge(DiagnosticSnapshot other)
+    {
+        ArgumentNullException.ThrowIfNull(other);
+
+        if (!HasProblem) return other;
+        if (!other.HasProblem) return this;
+        return Create(Diagnostics.Concat(other.Diagnostics));
+    }
+
     public static DiagnosticSnapshot Create(IEnumerable<Diagnostic> diagnostics)
     {
         ArgumentNullException.ThrowIfNull(diagnostics);
@@ -153,4 +162,18 @@ public class DiagnosticException(string message, object? target = null, int? tic
     public int? Tick { get; } = tick;
 
     public TimeCalculator? TimeCalculator { get; set; } = null;
+}
+
+public static class DiagnosticSinkExtensions
+{
+    public static void Report(this IDiagnosticSink sink, DiagnosticSnapshot snapshot)
+    {
+        ArgumentNullException.ThrowIfNull(sink);
+        ArgumentNullException.ThrowIfNull(snapshot);
+
+        foreach (var diagnostic in snapshot.Diagnostics)
+        {
+            sink.Report(diagnostic.Copy());
+        }
+    }
 }

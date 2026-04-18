@@ -63,6 +63,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             if (Path.GetExtension(filePath) != ".mgxc") return;
             var parser = new MgxcParser(new MgxcParseRequest(filePath, AssetManager), MediaTool, innerContext);
             var parsed = await parser.ParseAsync(ct);
+            innerContext.Diagnostic.Report(parsed.Diagnostics);
             if (!parsed.Succeeded || parsed.Value is not { } chart) return;
             var meta = chart.Meta;
             var id = meta.Id ?? throw new DiagnosticException(Strings.Error_File_ignored_due_to_id_missing);
@@ -172,6 +173,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                     ResourceStore,
                     innerContext);
                 var builtStage = await stageConverter.BuildAsync(ct);
+                innerContext.Diagnostic.Report(builtStage.Diagnostics);
                 if (!builtStage.Succeeded || builtStage.Value is not { } stageEntry) return;
                 stage = stageEntry;
                 ct.ThrowIfCancellationRequested();
@@ -195,7 +197,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                         else if (diff == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
                         var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
                         var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, item.Mgxc), innerContext);
-                        if (!(await chartWriter.WriteAsync(ct)).Succeeded) return;
+                        var writtenChart = await chartWriter.WriteAsync(ct);
+                        innerContext.Diagnostic.Report(writtenChart.Diagnostics);
+                        if (!writtenChart.Succeeded) return;
                         ct.ThrowIfCancellationRequested();
                     }
                 }
@@ -209,7 +213,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                             new JacketConvertRequest(jacketPath, Path.Combine(chartFolder, xml.JaketFile)),
                             MediaTool,
                             innerContext);
-                        if (!(await jacketConverter.ConvertAsync(ct)).Succeeded) return;
+                        var convertedJacket = await jacketConverter.ConvertAsync(ct);
+                        innerContext.Diagnostic.Report(convertedJacket.Diagnostics);
+                        if (!convertedJacket.Succeeded) return;
                         ct.ThrowIfCancellationRequested();
                     }
                     else
@@ -223,7 +229,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             if (settings.ConvertAudio)
             {
                 var musicConverter = new MusicConverter(new MusicConvertRequest(book.Meta, cueFileFolder), MediaTool, ResourceStore, innerContext);
-                if (!(await musicConverter.ConvertAsync(ct)).Succeeded) return;
+                var convertedMusic = await musicConverter.ConvertAsync(ct);
+                innerContext.Diagnostic.Report(convertedMusic.Diagnostics);
+                if (!convertedMusic.Succeeded) return;
                 ct.ThrowIfCancellationRequested();
             }
         }, ctx, true);

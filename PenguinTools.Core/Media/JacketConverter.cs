@@ -13,27 +13,42 @@ public class JacketConverter
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutPath);
 
         MediaTool = mediaTool;
-        Context = context;
+        ParentContext = context;
+        CurrentContext = context;
         InPath = request.InPath;
         OutPath = request.OutPath;
     }
 
     private IMediaTool MediaTool { get; }
-    private OperationContext Context { get; }
-    private IDiagnosticSink Diagnostic => Context.Diagnostic;
-    private IProgress<string>? Progress => Context.Progress;
+    private OperationContext ParentContext { get; }
+    private OperationContext CurrentContext { get; set; }
+    private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
+    private IProgress<string>? Progress => CurrentContext.Progress;
     private string InPath { get; }
     private string OutPath { get; }
 
     public async Task<OperationResult> ConvertAsync(CancellationToken ct = default)
     {
-        if (!Validate()) return OperationResult.Failure();
+        var diagnostics = new Diagnoster
+        {
+            TimeCalculator = ParentContext.Diagnostic.TimeCalculator
+        };
+        CurrentContext = ParentContext.CreateChild(diagnostics);
 
-        Progress?.Report(Strings.Status_Converting_jacket);
-        ct.ThrowIfCancellationRequested();
-        await MediaTool.ConvertJacketAsync(InPath, OutPath, ct);
-        ct.ThrowIfCancellationRequested();
-        return OperationResult.Success();
+        try
+        {
+            if (!Validate()) return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+
+            Progress?.Report(Strings.Status_Converting_jacket);
+            ct.ThrowIfCancellationRequested();
+            await MediaTool.ConvertJacketAsync(InPath, OutPath, ct);
+            ct.ThrowIfCancellationRequested();
+            return OperationResult.Success().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+        }
+        finally
+        {
+            CurrentContext = ParentContext;
+        }
     }
 
     private bool Validate()

@@ -74,7 +74,7 @@ public partial class ActionService : ObservableObject
             IsBusy = false;
         }
 
-        result = result.WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+        result = result.WithDiagnostics(result.Diagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
         if (wasCancelled) return result;
 
         if (result.Diagnostics.HasError) context.ReportProgress(Strings.Status_Error);

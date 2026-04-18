@@ -35,7 +35,7 @@ public class ChartViewModel : WatchViewModel<ChartModel>
     {
         var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, context);
         var chart = await parser.ParseAsync(ct);
-        if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<ChartModel>.Failure();
-        return OperationResult<ChartModel>.Success(new ChartModel(value));
+        if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<ChartModel>.Failure().WithDiagnostics(chart.Diagnostics);
+        return OperationResult<ChartModel>.Success(new ChartModel(value)).WithDiagnostics(chart.Diagnostics);
     }
 }

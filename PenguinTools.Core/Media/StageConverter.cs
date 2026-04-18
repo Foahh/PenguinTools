@@ -18,7 +18,8 @@ public class StageConverter
 
         MediaTool = mediaTool;
         Resources = resources;
-        Context = context;
+        ParentContext = context;
+        CurrentContext = context;
         Assets = request.Assets;
         BackgroundPath = request.BackgroundPath;
         EffectPaths = request.EffectPaths;
@@ -29,9 +30,10 @@ public class StageConverter
 
     private IMediaTool MediaTool { get; }
     private IEmbeddedResourceStore Resources { get; }
-    private OperationContext Context { get; }
-    private IDiagnosticSink Diagnostic => Context.Diagnostic;
-    private IProgress<string>? Progress => Context.Progress;
+    private OperationContext ParentContext { get; }
+    private OperationContext CurrentContext { get; set; }
+    private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
+    private IProgress<string>? Progress => CurrentContext.Progress;
     private AssetManager Assets { get; }
     private string BackgroundPath { get; }
     private string?[]? EffectPaths { get; }
@@ -41,21 +43,34 @@ public class StageConverter
 
     public async Task<OperationResult<Entry>> BuildAsync(CancellationToken ct = default)
     {
-        if (!await ValidateAsync(ct)) return OperationResult<Entry>.Failure();
-        if (StageId is not { } stageId) return OperationResult<Entry>.Failure();
+        var diagnostics = new Diagnoster
+        {
+            TimeCalculator = ParentContext.Diagnostic.TimeCalculator
+        };
+        CurrentContext = ParentContext.CreateChild(diagnostics);
 
-        Progress?.Report(Strings.Status_Convert_background);
+        try
+        {
+            if (!await ValidateAsync(ct)) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+            if (StageId is not { } stageId) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
 
-        var xml = new StageXml(stageId, NoteFieldLane);
-        var outputDir = await xml.SaveDirectoryAsync(OutFolder);
+            Progress?.Report(Strings.Status_Convert_background);
 
-        var nfPath = Path.Combine(outputDir, xml.NotesFieldFile);
-        var stPath = Path.Combine(outputDir, xml.BaseFile);
-        var stageTemplatePath = Resources.ExtractToTemp("st_dummy.afb");
-        await MediaTool.ConvertStageAsync(BackgroundPath, stageTemplatePath, stPath, EffectPaths, ct);
-        await Resources.CopyToAsync("nf_dummy.afb", nfPath, ct);
+            var xml = new StageXml(stageId, NoteFieldLane);
+            var outputDir = await xml.SaveDirectoryAsync(OutFolder);
 
-        return OperationResult<Entry>.Success(xml.Name);
+            var nfPath = Path.Combine(outputDir, xml.NotesFieldFile);
+            var stPath = Path.Combine(outputDir, xml.BaseFile);
+            var stageTemplatePath = Resources.ExtractToTemp("st_dummy.afb");
+            await MediaTool.ConvertStageAsync(BackgroundPath, stageTemplatePath, stPath, EffectPaths, ct);
+            await Resources.CopyToAsync("nf_dummy.afb", nfPath, ct);
+
+            return OperationResult<Entry>.Success(xml.Name).WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+        }
+        finally
+        {
+            CurrentContext = ParentContext;
+        }
     }
 
     private async Task<bool> ValidateAsync(CancellationToken ct = default)

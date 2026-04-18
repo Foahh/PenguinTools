@@ -167,10 +167,10 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         }
         context.ReportProgress(Strings.Status_Reading);
         var model = await ReadModel(ModelPath, context, ct);
-        if (!model.Succeeded || model.Value is not { } value) return OperationResult.Failure();
+        if (!model.Succeeded || model.Value is not { } value) return model.ToResult();
         ct.ThrowIfCancellationRequested();
         await Dispatcher.InvokeAsync(() => SetModel(Model, value));
-        return OperationResult.Success();
+        return model.ToResult();
     }
 
     protected abstract Task<OperationResult<TModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default);

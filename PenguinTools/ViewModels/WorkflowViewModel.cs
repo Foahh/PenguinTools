@@ -53,6 +53,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                 ResourceStore,
                 context);
             var builtStage = await stageConverter.BuildAsync(ct);
+            context.Diagnostic.Report(builtStage.Diagnostics);
             if (!builtStage.Succeeded || builtStage.Value is not { } stageEntry) return OperationResult.Failure();
             stage = stageEntry;
         }
@@ -78,7 +79,9 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var chartPath = Path.Combine(musicFolder, xml[meta.Difficulty].File);
 
         var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, chart), context);
-        if (!(await chartWriter.WriteAsync(ct)).Succeeded) return OperationResult.Failure();
+        var writtenChart = await chartWriter.WriteAsync(ct);
+        context.Diagnostic.Report(writtenChart.Diagnostics);
+        if (!writtenChart.Succeeded) return OperationResult.Failure();
 
         ct.ThrowIfCancellationRequested();
 
@@ -86,19 +89,23 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
             new JacketConvertRequest(meta.FullJacketFilePath, Path.Combine(musicFolder, xml.JaketFile)),
             MediaTool,
             context);
-        if (!(await jacketConverter.ConvertAsync(ct)).Succeeded) return OperationResult.Failure();
+        var convertedJacket = await jacketConverter.ConvertAsync(ct);
+        context.Diagnostic.Report(convertedJacket.Diagnostics);
+        if (!convertedJacket.Succeeded) return OperationResult.Failure();
 
         ct.ThrowIfCancellationRequested();
 
         var musicConverter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), MediaTool, ResourceStore, context);
-        return await musicConverter.ConvertAsync(ct);
+        var convertedMusic = await musicConverter.ConvertAsync(ct);
+        context.Diagnostic.Report(convertedMusic.Diagnostics);
+        return convertedMusic.Succeeded ? OperationResult.Success() : OperationResult.Failure();
     }
 
     protected override async Task<OperationResult<WorkflowModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)
     {
         var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, context);
         var chart = await parser.ParseAsync(ct);
-        if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<WorkflowModel>.Failure();
-        return OperationResult<WorkflowModel>.Success(new WorkflowModel(value));
+        if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<WorkflowModel>.Failure().WithDiagnostics(chart.Diagnostics);
+        return OperationResult<WorkflowModel>.Success(new WorkflowModel(value)).WithDiagnostics(chart.Diagnostics);
     }
 }

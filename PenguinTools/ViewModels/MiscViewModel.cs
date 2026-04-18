@@ -55,7 +55,7 @@ public partial class MiscViewModel : ViewModel
         await ActionService.RunAsync(async (context, ct) =>
         {
             var extractor = new AfbExtractor(new AfbExtractRequest(openDlg.FileName, saveDlg.FolderName), MediaTool, context);
-            await extractor.ExtractAsync(ct);
+            return await extractor.ExtractAsync(ct);
         });
     }
 

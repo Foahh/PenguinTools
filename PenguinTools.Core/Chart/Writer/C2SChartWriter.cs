@@ -18,14 +18,16 @@ public partial class C2SChartWriter
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutPath);
         ArgumentNullException.ThrowIfNull(request.Mgxc);
 
-        Context = context;
+        ParentContext = context;
+        CurrentContext = context;
         OutPath = request.OutPath;
         Mgxc = request.Mgxc;
     }
 
-    private OperationContext Context { get; }
-    private IDiagnosticSink Diagnostic => Context.Diagnostic;
-    private IProgress<string>? Progress => Context.Progress;
+    private OperationContext ParentContext { get; }
+    private OperationContext CurrentContext { get; set; }
+    private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
+    private IProgress<string>? Progress => CurrentContext.Progress;
     private string OutPath { get; }
     private mg.Chart Mgxc { get; }
     private List<c2s.Note> Notes { get; } = [];
@@ -33,74 +35,90 @@ public partial class C2SChartWriter
 
     public async Task<OperationResult> WriteAsync(CancellationToken ct = default)
     {
-        Progress?.Report(Strings.Status_Converting_chart);
-
-        Diagnostic.TimeCalculator = Mgxc.GetCalculator();
-
-        foreach (var note in Mgxc.Notes.Children) ConvertNote(note);
-        ResolvePairings();
-        ConvertEvent(Mgxc);
-
-        // Post Validation
-        Progress?.Report(Strings.Status_Validate);
-        var allSlides = Notes.OfType<c2s.Slide>();
-        var allAirs = Notes.OfType<c2s.IPairable>().Where(p => p.Parent is c2s.Slide).Cast<c2s.Note>();
-
-        var airsLookup = allAirs.GroupBy(a => (a.Tick, a.Lane, a.Width)).ToDictionary(g => g.Key, g => g.Count());
-        var slidesLookup = allSlides.GroupBy(s => (s.EndTick, s.EndLane, s.EndWidth)).ToDictionary(g => g.Key, g => g.Count());
-
-        foreach (var (pos, airsCount) in airsLookup)
+        var diagnostics = new Diagnoster
         {
-            var slidesCount = slidesLookup.GetValueOrDefault(pos, 0);
-            if (airsCount >= slidesCount) continue;
-            Diagnostic.Report(Severity.Warning, Strings.Mg_Overlapping_air_parent_slide, pos.Tick.Original);
-        }
+            TimeCalculator = ParentContext.Diagnostic.TimeCalculator
+        };
+        CurrentContext = ParentContext.CreateChild(diagnostics);
 
-        foreach (var longNote in Notes.OfType<c2s.LongNote>())
+        try
         {
-            var length = longNote.Length.Original;
-            if (length >= ChartResolution.SingleTick) continue;
+            Progress?.Report(Strings.Status_Converting_chart);
 
-            var tick = longNote.Tick.Original;
-            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, ChartResolution.MarResolution / ChartResolution.SingleTick);
-            Diagnostic.Report(Severity.Warning, msg, tick, longNote);
-        }
+            Diagnostic.TimeCalculator = Mgxc.GetCalculator();
 
-        if (Mgxc.Meta.BgmEnableBarOffset)
-        {
-            var offset = (int)Math.Round((decimal)ChartResolution.MarResolution / Mgxc.Meta.BgmInitialDenominator * Mgxc.Meta.BgmInitialNumerator);
-            foreach (var e in Events.Where(e => e.Tick.Original != 0)) e.Tick = e.Tick.Original + offset;
-            foreach (var n in Notes)
+            foreach (var note in Mgxc.Notes.Children) ConvertNote(note);
+            ResolvePairings();
+            ConvertEvent(Mgxc);
+
+            // Post Validation
+            Progress?.Report(Strings.Status_Validate);
+            var allSlides = Notes.OfType<c2s.Slide>();
+            var allAirs = Notes.OfType<c2s.IPairable>().Where(p => p.Parent is c2s.Slide).Cast<c2s.Note>();
+
+            var airsLookup = allAirs.GroupBy(a => (a.Tick, a.Lane, a.Width)).ToDictionary(g => g.Key, g => g.Count());
+            var slidesLookup = allSlides.GroupBy(s => (s.EndTick, s.EndLane, s.EndWidth)).ToDictionary(g => g.Key, g => g.Count());
+
+            foreach (var (pos, airsCount) in airsLookup)
             {
-                n.Tick = n.Tick.Original + offset;
-                if (n is c2s.LongNote longNote) longNote.EndTick = longNote.EndTick.Original + offset;
+                var slidesCount = slidesLookup.GetValueOrDefault(pos, 0);
+                if (airsCount >= slidesCount) continue;
+                Diagnostic.Report(Severity.Warning, Strings.Mg_Overlapping_air_parent_slide, pos.Tick.Original);
             }
+
+            foreach (var longNote in Notes.OfType<c2s.LongNote>())
+            {
+                var length = longNote.Length.Original;
+                if (length >= ChartResolution.SingleTick) continue;
+
+                var tick = longNote.Tick.Original;
+                var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, ChartResolution.MarResolution / ChartResolution.SingleTick);
+                Diagnostic.Report(Severity.Warning, msg, tick, longNote);
+            }
+
+            if (Mgxc.Meta.BgmEnableBarOffset)
+            {
+                var offset = (int)Math.Round((decimal)ChartResolution.MarResolution / Mgxc.Meta.BgmInitialDenominator * Mgxc.Meta.BgmInitialNumerator);
+                foreach (var e in Events.Where(e => e.Tick.Original != 0)) e.Tick = e.Tick.Original + offset;
+                foreach (var n in Notes)
+                {
+                    n.Tick = n.Tick.Original + offset;
+                    if (n is c2s.LongNote longNote) longNote.EndTick = longNote.EndTick.Original + offset;
+                }
+            }
+
+            Progress?.Report(Strings.Status_Writing);
+
+            var sb = new StringBuilder();
+            sb.AppendLine("VERSION\t1.13.00\t1.13.00");
+            sb.AppendLine("MUSIC\t0");
+            sb.AppendLine("SEQUENCEID\t0");
+            sb.AppendLine("DIFFICULT\t0");
+            sb.AppendLine("LEVEL\t0.0");
+            sb.AppendLine($"CREATOR\t{Mgxc.Meta.Designer}");
+            sb.AppendLine($"BPM_DEF\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}");
+            sb.AppendLine($"MET_DEF\t{Mgxc.Meta.BgmInitialDenominator}\t{Mgxc.Meta.BgmInitialNumerator}");
+            sb.AppendLine("RESOLUTION\t384");
+            sb.AppendLine("CLK_DEF\t384");
+            sb.AppendLine("PROGJUDGE_BPM\t240.000");
+            sb.AppendLine("PROGJUDGE_AER\t  0.999");
+            sb.AppendLine("TUTORIAL\t0");
+            sb.AppendLine();
+
+            AppendFormattedEvents(sb);
+            sb.AppendLine();
+            if (!AppendFormattedNotes(sb))
+            {
+                return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+            }
+
+            await File.WriteAllTextAsync(OutPath, sb.ToString(), ct);
+            return OperationResult.Success().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
         }
-
-        Progress?.Report(Strings.Status_Writing);
-
-        var sb = new StringBuilder();
-        sb.AppendLine("VERSION\t1.13.00\t1.13.00");
-        sb.AppendLine("MUSIC\t0");
-        sb.AppendLine("SEQUENCEID\t0");
-        sb.AppendLine("DIFFICULT\t0");
-        sb.AppendLine("LEVEL\t0.0");
-        sb.AppendLine($"CREATOR\t{Mgxc.Meta.Designer}");
-        sb.AppendLine($"BPM_DEF\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}");
-        sb.AppendLine($"MET_DEF\t{Mgxc.Meta.BgmInitialDenominator}\t{Mgxc.Meta.BgmInitialNumerator}");
-        sb.AppendLine("RESOLUTION\t384");
-        sb.AppendLine("CLK_DEF\t384");
-        sb.AppendLine("PROGJUDGE_BPM\t240.000");
-        sb.AppendLine("PROGJUDGE_AER\t  0.999");
-        sb.AppendLine("TUTORIAL\t0");
-        sb.AppendLine();
-
-        AppendFormattedEvents(sb);
-        sb.AppendLine();
-        if (!AppendFormattedNotes(sb)) return OperationResult.Failure();
-
-        await File.WriteAllTextAsync(OutPath, sb.ToString(), ct);
-        return OperationResult.Success();
+        finally
+        {
+            CurrentContext = ParentContext;
+        }
     }
 
     private void AppendFormattedEvents(StringBuilder sb)

@@ -13,27 +13,42 @@ public class AfbExtractor
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
 
         MediaTool = mediaTool;
-        Context = context;
+        ParentContext = context;
+        CurrentContext = context;
         InPath = request.InPath;
         OutFolder = request.OutFolder;
     }
 
     private IMediaTool MediaTool { get; }
-    private OperationContext Context { get; }
-    private IDiagnosticSink Diagnostic => Context.Diagnostic;
-    private IProgress<string>? Progress => Context.Progress;
+    private OperationContext ParentContext { get; }
+    private OperationContext CurrentContext { get; set; }
+    private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
+    private IProgress<string>? Progress => CurrentContext.Progress;
     private string InPath { get; }
     private string OutFolder { get; }
 
     public async Task<OperationResult> ExtractAsync(CancellationToken ct = default)
     {
-        if (!Validate()) return OperationResult.Failure();
+        var diagnostics = new Diagnoster
+        {
+            TimeCalculator = ParentContext.Diagnostic.TimeCalculator
+        };
+        CurrentContext = ParentContext.CreateChild(diagnostics);
 
-        Progress?.Report(Strings.Status_Extracting);
-        await MediaTool.ExtractDdsAsync(InPath, OutFolder, ct);
-        ct.ThrowIfCancellationRequested();
-        Progress?.Report(Strings.Status_Writing);
-        return OperationResult.Success();
+        try
+        {
+            if (!Validate()) return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+
+            Progress?.Report(Strings.Status_Extracting);
+            await MediaTool.ExtractDdsAsync(InPath, OutFolder, ct);
+            ct.ThrowIfCancellationRequested();
+            Progress?.Report(Strings.Status_Writing);
+            return OperationResult.Success().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+        }
+        finally
+        {
+            CurrentContext = ParentContext;
+        }
     }
 
     private bool Validate()
