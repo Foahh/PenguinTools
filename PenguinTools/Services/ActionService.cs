@@ -20,7 +20,7 @@ public partial class ActionService : ObservableObject
         return !IsBusy;
     }
 
-    public async Task RunAsync(Func<Diagnoster, IProgress<string>?, CancellationToken, Task> action, CancellationToken ct = default)
+    public async Task RunAsync(Func<OperationContext, CancellationToken, Task> action, CancellationToken ct = default)
     {
         if (!CanRun()) return;
         var diagnostics = new Diagnoster();
@@ -34,15 +34,15 @@ public partial class ActionService : ObservableObject
                 StatusTime = DateTime.Now;
             });
         });
-        IProgress<string> ip = progress;
+        var context = new OperationContext(diagnostics, progress);
 
         try
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
-            ip.Report(Strings.Status_Starting);
-            await Task.Run(() => action(diagnostics, progress, cts.Token), cts.Token);
-            ip.Report(Strings.Status_Done);
+            context.ReportProgress(Strings.Status_Starting);
+            await Task.Run(() => action(context, cts.Token), cts.Token);
+            context.ReportProgress(Strings.Status_Done);
 
             SystemSounds.Exclamation.Play();
         }
@@ -59,8 +59,8 @@ public partial class ActionService : ObservableObject
             IsBusy = false;
         }
 
-        if (!diagnostics.HasProblem) return;
-        if (diagnostics.HasError) ip.Report(Strings.Status_Error);
+        if (!context.HasProblem) return;
+        if (context.HasError) context.ReportProgress(Strings.Status_Error);
 
         var model = new DiagnosticsWindowViewModel
         {

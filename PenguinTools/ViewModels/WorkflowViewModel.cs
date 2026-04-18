@@ -14,7 +14,7 @@ namespace PenguinTools.ViewModels;
 
 public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 {
-    protected override async Task Action(Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(OperationContext context, CancellationToken ct = default)
     {
         if (Model == null) return;
         var chart = Model.Mgxc;
@@ -51,8 +51,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                     meta.NotesFieldLine),
                 MediaTool,
                 ResourceStore,
-                diag,
-                prog);
+                context);
             var builtStage = await stageConverter.BuildAsync(ct);
             if (builtStage is null) return;
             stage = builtStage;
@@ -78,7 +77,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var musicFolder = await xml.SaveDirectoryAsync(path);
         var chartPath = Path.Combine(musicFolder, xml[meta.Difficulty].File);
 
-        var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, chart), diag, prog);
+        var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, chart), context);
         if (!await chartWriter.WriteAsync(ct)) return;
 
         ct.ThrowIfCancellationRequested();
@@ -86,19 +85,18 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var jacketConverter = new JacketConverter(
             new JacketConvertRequest(meta.FullJacketFilePath, Path.Combine(musicFolder, xml.JaketFile)),
             MediaTool,
-            diag,
-            prog);
+            context);
         if (!await jacketConverter.ConvertAsync(ct)) return;
 
         ct.ThrowIfCancellationRequested();
 
-        var musicConverter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), MediaTool, ResourceStore, diag, prog);
+        var musicConverter = new MusicConverter(new MusicConvertRequest(Model.Meta, path), MediaTool, ResourceStore, context);
         await musicConverter.ConvertAsync(ct);
     }
 
-    protected override async Task<WorkflowModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task<WorkflowModel> ReadModel(string path, OperationContext context, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, diag, prog);
+        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, context);
         return new WorkflowModel(await parser.ParseAsync(ct));
     }
 }

@@ -16,24 +16,24 @@ public partial class MgxcParser
     private const string HeaderEvnt = "evnt"; // 65 76 6E 74
     private const string HeaderDat2 = "dat2"; // 64 61 74 32
 
-    public MgxcParser(MgxcParseRequest request, IMediaTool mediaTool, Diagnoster diag, IProgress<string>? prog = null)
+    public MgxcParser(MgxcParseRequest request, IMediaTool mediaTool, OperationContext context)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(mediaTool);
-        ArgumentNullException.ThrowIfNull(diag);
+        ArgumentNullException.ThrowIfNull(context);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.Path);
         ArgumentNullException.ThrowIfNull(request.Assets);
 
         MediaTool = mediaTool;
-        Diagnostic = diag;
-        Progress = prog;
+        Context = context;
         Path = request.Path;
         Assets = request.Assets;
     }
 
     private IMediaTool MediaTool { get; }
-    private Diagnoster Diagnostic { get; }
-    private IProgress<string>? Progress { get; }
+    private OperationContext Context { get; }
+    private Diagnoster Diagnostic => Context.Diagnostic;
+    private IProgress<string>? Progress => Context.Progress;
     private string Path { get; }
     private AssetManager Assets { get; }
     private List<Task> Tasks { get; } = [];

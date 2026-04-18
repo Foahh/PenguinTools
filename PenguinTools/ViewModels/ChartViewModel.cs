@@ -10,7 +10,7 @@ namespace PenguinTools.ViewModels;
 
 public class ChartViewModel : WatchViewModel<ChartModel>
 {
-    protected override async Task Action(Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(OperationContext context, CancellationToken ct = default)
     {
         if (Model == null) return;
         var chart = Model.Mgxc;
@@ -27,13 +27,13 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         if (dlg.ShowDialog() != true) return;
 
 
-        var writer = new C2SChartWriter(new C2SWriteRequest(dlg.FileName, chart), diag, prog);
+        var writer = new C2SChartWriter(new C2SWriteRequest(dlg.FileName, chart), context);
         await writer.WriteAsync(ct);
     }
 
-    protected override async Task<ChartModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task<ChartModel> ReadModel(string path, OperationContext context, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, diag, prog);
+        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, context);
         var chart = await parser.ParseAsync(ct);
         return new ChartModel(chart);
     }

@@ -4,24 +4,24 @@ namespace PenguinTools.Core.Media;
 
 public class JacketConverter
 {
-    public JacketConverter(JacketConvertRequest request, IMediaTool mediaTool, Diagnoster diag, IProgress<string>? prog = null)
+    public JacketConverter(JacketConvertRequest request, IMediaTool mediaTool, OperationContext context)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(mediaTool);
-        ArgumentNullException.ThrowIfNull(diag);
+        ArgumentNullException.ThrowIfNull(context);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.InPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutPath);
 
         MediaTool = mediaTool;
-        Diagnostic = diag;
-        Progress = prog;
+        Context = context;
         InPath = request.InPath;
         OutPath = request.OutPath;
     }
 
     private IMediaTool MediaTool { get; }
-    private Diagnoster Diagnostic { get; }
-    private IProgress<string>? Progress { get; }
+    private OperationContext Context { get; }
+    private Diagnoster Diagnostic => Context.Diagnostic;
+    private IProgress<string>? Progress => Context.Progress;
     private string InPath { get; }
     private string OutPath { get; }
 
@@ -33,12 +33,14 @@ public class JacketConverter
         ct.ThrowIfCancellationRequested();
         await MediaTool.ConvertJacketAsync(InPath, OutPath, ct);
         ct.ThrowIfCancellationRequested();
-        return !Diagnostic.HasError;
+        return true;
     }
 
     private bool Validate()
     {
-        if (!File.Exists(InPath)) Diagnostic.Report(Severity.Error, Strings.Error_Jacket_file_not_found, InPath);
-        return !Diagnostic.HasError;
+        if (File.Exists(InPath)) return true;
+
+        Diagnostic.Report(Severity.Error, Strings.Error_Jacket_file_not_found, InPath);
+        return false;
     }
 }

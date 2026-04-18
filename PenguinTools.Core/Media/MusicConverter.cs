@@ -17,27 +17,27 @@ public class MusicConverter
 {
     private const ulong Key = 32931609366120192UL;
 
-    public MusicConverter(MusicConvertRequest request, IMediaTool mediaTool, IEmbeddedResourceStore resources, Diagnoster diag, IProgress<string>? prog = null)
+    public MusicConverter(MusicConvertRequest request, IMediaTool mediaTool, IEmbeddedResourceStore resources, OperationContext context)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(mediaTool);
         ArgumentNullException.ThrowIfNull(resources);
-        ArgumentNullException.ThrowIfNull(diag);
+        ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(request.Meta);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
 
         MediaTool = mediaTool;
         Resources = resources;
-        Diagnostic = diag;
-        Progress = prog;
+        Context = context;
         Meta = request.Meta;
         OutFolder = request.OutFolder;
     }
 
     private IMediaTool MediaTool { get; }
     private IEmbeddedResourceStore Resources { get; }
-    private Diagnoster Diagnostic { get; }
-    private IProgress<string>? Progress { get; }
+    private OperationContext Context { get; }
+    private Diagnoster Diagnostic => Context.Diagnostic;
+    private IProgress<string>? Progress => Context.Progress;
     private Meta Meta { get; }
     private string OutFolder { get; }
 
@@ -177,22 +177,32 @@ public class MusicConverter
         cueSheetTable.WriterSettings = CriTableWriterSettings.Adx2Settings;
         await using var acbStream = File.Create(acbPath);
         cueSheetTable.Save(acbStream);
-        return !Diagnostic.HasError;
+        return true;
     }
 
     private bool Validate()
     {
-        if (Meta.Id is null) { Diagnostic.Report(Severity.Error, Strings.Error_Song_id_is_not_set); }
+        var hasError = false;
+        if (Meta.Id is null)
+        {
+            Diagnostic.Report(Severity.Error, Strings.Error_Song_id_is_not_set);
+            hasError = true;
+        }
 
         if (Meta.BgmPreviewStop < Meta.BgmPreviewStart)
         {
             Diagnostic.Report(Severity.Error, Strings.Error_Preview_stop_greater_than_start);
+            hasError = true;
         }
 
         var path = Meta.FullBgmFilePath;
-        if (!File.Exists(path)) { Diagnostic.Report(Severity.Error, Strings.Error_Audio_file_not_found, path); }
+        if (!File.Exists(path))
+        {
+            Diagnostic.Report(Severity.Error, Strings.Error_Audio_file_not_found, path);
+            hasError = true;
+        }
 
-        return !Diagnostic.HasError;
+        return !hasError;
     }
 }
 

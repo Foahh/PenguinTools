@@ -56,7 +56,7 @@ public abstract class ActionViewModel : ViewModel
     public IRelayCommand? ActionCommand { get; }
 
     protected abstract bool CanRun();
-    protected abstract Task Action(Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default);
+    protected abstract Task Action(OperationContext context, CancellationToken ct = default);
 }
 
 public abstract class ReloadableActionViewModel : ActionViewModel
@@ -158,20 +158,20 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         LastModifiedTime = null;
     }
 
-    protected async Task ReadModelInternal(Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected async Task ReadModelInternal(OperationContext context, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(ModelPath))
         {
             await Dispatcher.InvokeAsync(() => SetModel(Model, null));
             return;
         }
-        prog?.Report(Strings.Status_Reading);
-        var model = await ReadModel(ModelPath, diag, prog, ct);
+        context.ReportProgress(Strings.Status_Reading);
+        var model = await ReadModel(ModelPath, context, ct);
         ct.ThrowIfCancellationRequested();
         await Dispatcher.InvokeAsync(() => SetModel(Model, model));
     }
 
-    protected abstract Task<TModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default);
+    protected abstract Task<TModel> ReadModel(string path, OperationContext context, CancellationToken ct = default);
 
     protected virtual void SetModel(TModel? oldMode, TModel? newModel)
     {

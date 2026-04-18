@@ -11,21 +11,21 @@ using c2s = Models.c2s;
 
 public partial class C2SChartWriter
 {
-    public C2SChartWriter(C2SWriteRequest request, Diagnoster diag, IProgress<string>? prog = null)
+    public C2SChartWriter(C2SWriteRequest request, OperationContext context)
     {
         ArgumentNullException.ThrowIfNull(request);
-        ArgumentNullException.ThrowIfNull(diag);
+        ArgumentNullException.ThrowIfNull(context);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutPath);
         ArgumentNullException.ThrowIfNull(request.Mgxc);
 
-        Diagnostic = diag;
-        Progress = prog;
+        Context = context;
         OutPath = request.OutPath;
         Mgxc = request.Mgxc;
     }
 
-    private Diagnoster Diagnostic { get; }
-    private IProgress<string>? Progress { get; }
+    private OperationContext Context { get; }
+    private Diagnoster Diagnostic => Context.Diagnostic;
+    private IProgress<string>? Progress => Context.Progress;
     private string OutPath { get; }
     private mg.Chart Mgxc { get; }
     private List<c2s.Note> Notes { get; } = [];
@@ -97,9 +97,8 @@ public partial class C2SChartWriter
 
         AppendFormattedEvents(sb);
         sb.AppendLine();
-        AppendFormattedNotes(sb);
+        if (!AppendFormattedNotes(sb)) return false;
 
-        if (Diagnostic.HasError) return false;
         await File.WriteAllTextAsync(OutPath, sb.ToString(), ct);
         return true;
     }
@@ -112,8 +111,9 @@ public partial class C2SChartWriter
         }
     }
 
-    private void AppendFormattedNotes(StringBuilder sb)
+    private bool AppendFormattedNotes(StringBuilder sb)
     {
+        var hasError = false;
         foreach (var n in Notes)
         {
             if (TryFormat(n, out var line, out var error))
@@ -123,6 +123,9 @@ public partial class C2SChartWriter
             }
 
             Diagnostic.Report(Severity.Error, error, n.Tick.Original, n);
+            hasError = true;
         }
+
+        return !hasError;
     }
 }

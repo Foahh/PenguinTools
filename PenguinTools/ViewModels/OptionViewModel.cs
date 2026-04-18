@@ -36,9 +36,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         SelectedBookItem = null;
     }
 
-    protected override async Task<OptionModel> ReadModel(string path, Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task<OptionModel> ReadModel(string path, OperationContext context, CancellationToken ct = default)
     {
-        prog?.Report(Strings.Status_Searching);
+        var diag = context.Diagnostic;
+        context.ReportProgress(Strings.Status_Searching);
         var model = new OptionModel();
         await model.LoadAsync(path, ct);
         if (string.IsNullOrWhiteSpace(model.WorkingDirectory) || !Directory.Exists(model.WorkingDirectory))
@@ -48,8 +49,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         var ctx = new ProcessContext
         {
-            Diagnostic = diag,
-            Progress = prog,
+            Context = context,
             CancellationToken = ct,
             BatchSize = model.BatchSize,
             WorkingDirectory = model.WorkingDirectory
@@ -57,17 +57,17 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         var directoryWalker = Directory.EnumerateFiles(path, FileGlob, SearchOption.AllDirectories);
         var books = model.Books;
-        await BatchAsync(Strings.Status_Checked, directoryWalker, async (filePath, innerDiag) =>
+        await BatchAsync(Strings.Status_Checked, directoryWalker, async (filePath, innerContext) =>
         {
             ct.ThrowIfCancellationRequested();
             if (Path.GetExtension(filePath) != ".mgxc") return;
-            var parser = new MgxcParser(new MgxcParseRequest(filePath, AssetManager), MediaTool, innerDiag);
+            var parser = new MgxcParser(new MgxcParseRequest(filePath, AssetManager), MediaTool, innerContext);
             var chart = await parser.ParseAsync(ct);
             var meta = chart.Meta;
             var id = meta.Id ?? throw new DiagnosticException(Strings.Error_File_ignored_due_to_id_missing);
             if (!books.TryGetValue(id, out var book)) books[id] = book = new Book();
             var item = new BookItem(chart);
-            if (book.Items.ContainsKey(meta.Difficulty)) innerDiag.Report(Severity.Warning, Strings.Warn_Duplicate_id_and_difficulty);
+            if (book.Items.ContainsKey(meta.Difficulty)) innerContext.Diagnostic.Report(Severity.Warning, Strings.Warn_Duplicate_id_and_difficulty);
             book.Items[meta.Difficulty] = item;
         }, ctx);
 
@@ -100,13 +100,14 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         }
 
         ct.ThrowIfCancellationRequested();
-        prog?.Report(Strings.Status_Done);
+        context.ReportProgress(Strings.Status_Done);
 
         return model;
     }
 
-    protected override async Task Action(Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(OperationContext context, CancellationToken ct = default)
     {
+        var diag = context.Diagnostic;
         var settings = Model;
         if (settings == null) return;
         if (!settings.CanExecute) throw new DiagnosticException(Strings.Error_Noop);
@@ -145,14 +146,13 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         var ctx = new ProcessContext
         {
-            Diagnostic = diag,
-            Progress = prog,
+            Context = context,
             CancellationToken = ct,
             BatchSize = settings.BatchSize,
             WorkingDirectory = settings.WorkingDirectory
         };
 
-        await BatchAsync(Strings.Status_Converted, settings, async (book, innerDiag) =>
+        await BatchAsync(Strings.Status_Converted, settings, async (book, innerContext) =>
         {
             var stage = book.Stage;
             if (book.IsCustomStage && settings.ConvertBackground)
@@ -169,7 +169,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                         book.NotesFieldLine),
                     MediaTool,
                     ResourceStore,
-                    innerDiag);
+                    innerContext);
                 var builtStage = await stageConverter.BuildAsync(ct);
                 if (builtStage is null) return;
                 stage = builtStage;
@@ -193,7 +193,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                         if (diff == Difficulty.WorldsEnd) weEntries.Add(new Entry(songId, book.Title));
                         else if (diff == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
                         var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
-                        var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, item.Mgxc), innerDiag);
+                        var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, item.Mgxc), innerContext);
                         if (!await chartWriter.WriteAsync(ct)) return;
                         ct.ThrowIfCancellationRequested();
                     }
@@ -207,13 +207,13 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                         var jacketConverter = new JacketConverter(
                             new JacketConvertRequest(jacketPath, Path.Combine(chartFolder, xml.JaketFile)),
                             MediaTool,
-                            innerDiag);
+                            innerContext);
                         if (!await jacketConverter.ConvertAsync(ct)) return;
                         ct.ThrowIfCancellationRequested();
                     }
                     else
                     {
-                        innerDiag.Report(Severity.Warning, Strings.Error_Jacket_file_not_found, target: jacketPath);
+                        innerContext.Diagnostic.Report(Severity.Warning, Strings.Error_Jacket_file_not_found, target: jacketPath);
                     }
                 }
             }
@@ -221,7 +221,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
             if (settings.ConvertAudio)
             {
-                var musicConverter = new MusicConverter(new MusicConvertRequest(book.Meta, cueFileFolder), MediaTool, ResourceStore, innerDiag);
+                var musicConverter = new MusicConverter(new MusicConvertRequest(book.Meta, cueFileFolder), MediaTool, ResourceStore, innerContext);
                 if (!await musicConverter.ConvertAsync(ct)) return;
                 ct.ThrowIfCancellationRequested();
             }
@@ -248,12 +248,12 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         }
     }
 
-    private static async Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, Diagnoster, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
+    private static async Task ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, OperationContext, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
     {
         var itemList = items as IList<T> ?? [..items];
         var total = itemList.Count;
         var completedCount = 0;
-        main.Progress?.Report($"{prefix}: 0/{total}...");
+        main.Context.ReportProgress($"{prefix}: 0/{total}...");
 
         if (parallel)
         {
@@ -271,9 +271,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         async ValueTask ProcessItemAsync(T item, CancellationToken ct)
         {
             var ld = new Diagnoster();
+            var childContext = main.Context.CreateChild(ld);
             try
             {
-                await action(item, ld);
+                await action(item, childContext);
                 ct.ThrowIfCancellationRequested();
             }
             catch (Exception ex)
@@ -283,22 +284,22 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             finally
             {
                 var done = Interlocked.Increment(ref completedCount);
-                main.Progress?.Report($"{prefix}: {done}/{total}...");
+                main.Context.ReportProgress($"{prefix}: {done}/{total}...");
                 foreach (var diagItem in ld.Diagnostics)
                 {
                     diagItem.Path ??= Path.GetRelativePath(main.WorkingDirectory, getPath(item));
-                    main.Diagnostic.Report(diagItem);
+                    main.Context.Diagnostic.Report(diagItem);
                 }
             }
         }
     }
 
-    private static Task BatchAsync(string prefix, OptionModel model, Func<Book, Diagnoster, Task> action, ProcessContext ctx, bool parallel = false)
+    private static Task BatchAsync(string prefix, OptionModel model, Func<Book, OperationContext, Task> action, ProcessContext ctx, bool parallel = false)
     {
         return ProcessItemsAsync(prefix, model.Books.Values, action, b => b.Meta.FilePath, ctx, parallel);
     }
 
-    private static Task BatchAsync(string prefix, IEnumerable<string> items, Func<string, Diagnoster, Task> action, ProcessContext ctx)
+    private static Task BatchAsync(string prefix, IEnumerable<string> items, Func<string, OperationContext, Task> action, ProcessContext ctx)
     {
         return ProcessItemsAsync(prefix, items, action, item => item, ctx, true);
     }
@@ -311,8 +312,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
     private class ProcessContext
     {
-        public required Diagnoster Diagnostic { get; init; }
-        public required IProgress<string>? Progress { get; init; }
+        public required OperationContext Context { get; init; }
         public required CancellationToken CancellationToken { get; init; }
         public required int BatchSize { get; init; }
         public required string WorkingDirectory { get; init; }

@@ -43,7 +43,7 @@ public partial class StageViewModel : ActionViewModel
         return !string.IsNullOrWhiteSpace(BackgroundPath);
     }
 
-    protected override async Task Action(Diagnoster diag, IProgress<string>? prog = null, CancellationToken ct = default)
+    protected override async Task Action(OperationContext context, CancellationToken ct = default)
     {
         var dlg = new OpenFolderDialog
         {
@@ -64,8 +64,7 @@ public partial class StageViewModel : ActionViewModel
                 NoteFieldsLine),
             MediaTool,
             ResourceStore,
-            diag,
-            prog);
+            context);
 
         await converter.BuildAsync(ct);
     }
