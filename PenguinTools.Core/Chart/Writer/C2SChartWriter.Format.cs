@@ -1,3 +1,4 @@
+using PenguinTools.Core.Chart.Models;
 using PenguinTools.Core.Resources;
 
 namespace PenguinTools.Core.Chart.Writer;
@@ -6,6 +7,7 @@ using c2s = Models.c2s;
 
 public partial class C2SChartWriter
 {
+#pragma warning disable CS0612
     private static string Format(c2s.Event e)
     {
         return e switch
@@ -18,6 +20,7 @@ public partial class C2SChartWriter
             _ => throw new InvalidOperationException($"Unsupported c2s event type '{e.GetType().FullName}'.")
         };
     }
+#pragma warning restore CS0612
 
     private static bool TryFormat(c2s.Note note, out string line, out string error)
     {
@@ -36,11 +39,11 @@ public partial class C2SChartWriter
                 error = string.Empty;
                 return true;
             case c2s.ExTap exTap:
-                line = $"{FormatNote(exTap)}{exTap.Effect.GetKind()}";
+                line = $"{FormatNote(exTap)}{FormatEffect(exTap.Effect)}";
                 error = string.Empty;
                 return true;
             case c2s.Hold hold:
-                line = $"{FormatNote(hold)}\t{hold.Length.Scaled}{hold.Effect.GetKind()}";
+                line = $"{FormatNote(hold)}\t{hold.Length.Scaled}{FormatEffect(hold.Effect)}";
                 error = string.Empty;
                 return true;
             case c2s.Sla sla:
@@ -48,23 +51,23 @@ public partial class C2SChartWriter
                 error = string.Empty;
                 return true;
             case c2s.Slide slide:
-                line = $"{FormatNote(slide)}\t{slide.Length.Scaled}\t{slide.EndLane}\t{slide.EndWidth}\tSLD{slide.Effect.GetKind()}";
+                line = $"{FormatNote(slide)}\t{slide.Length.Scaled}\t{slide.EndLane}\t{slide.EndWidth}\tSLD{FormatEffect(slide.Effect)}";
                 error = string.Empty;
                 return true;
             case c2s.Air air when air.Parent is null:
                 line = string.Empty;
                 error = Strings.MgCrit_Air_parent_null;
                 return false;
-            case c2s.Air air:
-                line = $"{FormatNote(air)}\t{air.Parent.Id}\t{air.Color}";
+            case c2s.Air { Parent: { } parent } air:
+                line = $"{FormatNote(air)}\t{parent.Id}\t{air.Color}";
                 error = string.Empty;
                 return true;
             case c2s.AirSlide airSlide when airSlide.Parent is null:
                 line = string.Empty;
                 error = Strings.MgCrit_Air_slide_parent_null;
                 return false;
-            case c2s.AirSlide airSlide:
-                line = $"{FormatNote(airSlide)}\t{airSlide.Parent.Id}\t{airSlide.Height.Result:F1}\t{airSlide.Length.Scaled}\t{airSlide.EndLane}\t{airSlide.EndWidth}\t{airSlide.EndHeight.Result:F1}\t{airSlide.Color}";
+            case c2s.AirSlide { Parent: { } parent } airSlide:
+                line = $"{FormatNote(airSlide)}\t{parent.Id}\t{airSlide.Height.Result:F1}\t{airSlide.Length.Scaled}\t{airSlide.EndLane}\t{airSlide.EndWidth}\t{airSlide.EndHeight.Result:F1}\t{airSlide.Color}";
                 error = string.Empty;
                 return true;
             case c2s.AirCrash airCrash:
@@ -85,5 +88,10 @@ public partial class C2SChartWriter
     private static string FormatNote(c2s.Note note)
     {
         return $"{FormatNode(note)}\t{note.Lane}\t{note.Width}";
+    }
+
+    private static string FormatEffect(ExEffect? effect)
+    {
+        return effect is null ? string.Empty : $"\t{effect}";
     }
 }
