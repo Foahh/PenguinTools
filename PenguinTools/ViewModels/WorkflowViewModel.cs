@@ -7,6 +7,7 @@ using PenguinTools.Core.Media;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Resources;
 using PenguinTools.Core.Xml;
+using PenguinTools.Infrastructure;
 using PenguinTools.Models;
 using System.IO;
 
@@ -50,8 +51,8 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                     meta.StageId,
                     path,
                     meta.NotesFieldLine,
-                    ResourceStore.ExtractToTemp("st_dummy.afb"),
-                    ResourceStore.ExtractToTemp("nf_dummy.afb")),
+                    AssetProvider.GetPath(InfrastructureAsset.StageTemplate),
+                    AssetProvider.GetPath(InfrastructureAsset.NotesFieldTemplate)),
                 MediaTool,
                 context);
             var builtStage = await stageConverter.BuildAsync(ct);
@@ -101,7 +102,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
             new MusicConvertRequest(
                 Model.Meta,
                 path,
-                ResourceStore.ExtractToTemp("dummy.acb"),
+                AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
                 ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(Model.Meta.FullBgmFilePath)}.wav")),
             MediaTool,
             context);

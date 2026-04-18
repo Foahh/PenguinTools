@@ -5,6 +5,7 @@ using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
+using PenguinTools.Infrastructure;
 using System.IO;
 
 namespace PenguinTools.ViewModels;
@@ -62,8 +63,8 @@ public partial class StageViewModel : ActionViewModel
                 StageId,
                 dlg.FolderName,
                 NoteFieldsLine,
-                ResourceStore.ExtractToTemp("st_dummy.afb"),
-                ResourceStore.ExtractToTemp("nf_dummy.afb")),
+                AssetProvider.GetPath(InfrastructureAsset.StageTemplate),
+                AssetProvider.GetPath(InfrastructureAsset.NotesFieldTemplate)),
             MediaTool,
             context);
 

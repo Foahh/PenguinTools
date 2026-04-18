@@ -2,6 +2,7 @@
 using PenguinTools.Core;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
+using PenguinTools.Infrastructure;
 using PenguinTools.Models;
 using System.IO;
 
@@ -39,7 +40,7 @@ public class MusicViewModel : WatchViewModel<MusicModel>
             new MusicConvertRequest(
                 Model.Meta,
                 path,
-                ResourceStore.ExtractToTemp("dummy.acb"),
+                AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
                 ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(Model.Meta.FullBgmFilePath)}.wav")),
             MediaTool,
             context);

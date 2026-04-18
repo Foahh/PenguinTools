@@ -14,23 +14,11 @@ public static class InfrastructureServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(resourceAssembly);
 
         services.AddSingleton<IEmbeddedResourceStore>(_ => new EmbeddedResourceStore(resourceAssembly));
+        services.AddSingleton<IInfrastructureAssetProvider, InfrastructureAssetProvider>();
         services.AddSingleton<IMediaTool>(provider =>
         {
-            var resources = provider.GetRequiredService<IEmbeddedResourceStore>();
-
-            if (resources.HasResource("mua.exe"))
-            {
-                var toolPath = resources.ExtractToTemp("mua.exe");
-                return new MuaMediaTool(toolPath);
-            }
-
-            if (resources.HasResource("mua"))
-            {
-                var toolPath = resources.ExtractToTemp("mua");
-                return new MuaMediaTool(toolPath);
-            }
-
-            return new MuaMediaTool("mua");
+            var assets = provider.GetRequiredService<IInfrastructureAssetProvider>();
+            return new MuaMediaTool(assets.GetPath(InfrastructureAsset.MuaExecutable));
         });
         services.AddSingleton<AssetManager>(provider =>
         {

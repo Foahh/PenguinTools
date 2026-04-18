@@ -8,6 +8,7 @@ using PenguinTools.Core.Media;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Resources;
 using PenguinTools.Core.Xml;
+using PenguinTools.Infrastructure;
 using PenguinTools.Models;
 using System.Collections.Concurrent;
 using System.IO;
@@ -289,8 +290,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 book.StageId,
                 exportContext.OutputPaths.StageFolder,
                 book.NotesFieldLine,
-                ResourceStore.ExtractToTemp("st_dummy.afb"),
-                ResourceStore.ExtractToTemp("nf_dummy.afb")),
+                AssetProvider.GetPath(InfrastructureAsset.StageTemplate),
+                AssetProvider.GetPath(InfrastructureAsset.NotesFieldTemplate)),
             MediaTool,
             context);
         var builtStage = await stageConverter.BuildAsync(ct);
@@ -382,7 +383,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             new MusicConvertRequest(
                 book.Meta,
                 cueFileFolder,
-                ResourceStore.ExtractToTemp("dummy.acb"),
+                AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
                 ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(book.Meta.FullBgmFilePath)}.wav")),
             MediaTool,
             context);
