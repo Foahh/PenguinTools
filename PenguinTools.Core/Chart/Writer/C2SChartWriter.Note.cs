@@ -2,33 +2,17 @@
 
 // ReSharper disable RedundantNameQualifier
 
-namespace PenguinTools.Core.Chart.Converter;
+namespace PenguinTools.Core.Chart.Writer;
 
 using mg = Models.mgxc;
 using c2s = Models.c2s;
 
 public partial class C2SChartWriter
 {
-    private readonly Dictionary<mg.NegativeNote, c2s.Note> _nMap = [];
-    private readonly Dictionary<mg.PositiveNote, c2s.Note> _pMap = [];
+    private readonly Dictionary<mg.NegativeNote, c2s.IPairable> _negativePairRoots = [];
+    private readonly Dictionary<mg.PositiveNote, c2s.Note> _positivePairTargets = [];
 
-    private void TryPairingNegative(mg.PositiveNote source)
-    {
-        if (source.PairNote != null && _nMap.TryGetValue(source.PairNote, out var pair) && pair is c2s.IPairable children)
-        {
-            children.Parent = pair;
-        }
-    }
-
-    private void TryPairingPositive(mg.NegativeNote source)
-    {
-        if (source.PairNote != null && _pMap.TryGetValue(source.PairNote, out var pair) && pair is c2s.IPairable children)
-        {
-            children.Parent = pair;
-        }
-    }
-
-    private T CreateNote<TSource, T>(Dictionary<TSource, c2s.Note> noteMap, TSource source, Action<T>? action = null) where TSource : mg.Note where T : c2s.Note, new()
+    private T CreateNote<TSource, T>(TSource source, Action<T>? action = null) where TSource : mg.Note where T : c2s.Note, new()
     {
         var note = new T
         {
@@ -40,26 +24,38 @@ public partial class C2SChartWriter
 
         action?.Invoke(note);
         Notes.Add(note);
-        noteMap[source] = note;
-
-        if (source is mg.PositiveNote pNote) TryPairingNegative(pNote);
-        else if (source is mg.NegativeNote nNote) TryPairingPositive(nNote);
 
         return note;
     }
 
-    private T CreateNote<T>(mg.Note source, Action<T>? extra = null) where T : c2s.Note, new()
+    private T CreatePositiveNote<TSource, T>(TSource source, Action<T>? action = null)
+        where TSource : mg.PositiveNote where T : c2s.Note, new()
     {
-        var note = new T
-        {
-            Timeline = source.Timeline,
-            Tick = source.Tick,
-            Lane = source.Lane,
-            Width = source.Width
-        };
-        extra?.Invoke(note);
-        Notes.Add(note);
+        var note = CreateNote<TSource, T>(source, action);
+        RegisterPositivePairTarget(source, note);
         return note;
+    }
+
+    private void RegisterPositivePairTarget(mg.PositiveNote source, c2s.Note target)
+    {
+        _positivePairTargets[source] = target;
+    }
+
+    private void RegisterNegativePairRoot(mg.NegativeNote source, c2s.IPairable target)
+    {
+        _negativePairRoots[source] = target;
+    }
+
+    private void ResolvePairings()
+    {
+        foreach (var (source, root) in _negativePairRoots)
+        {
+            if (source.PairNote is null) continue;
+            if (_positivePairTargets.TryGetValue(source.PairNote, out var parent))
+            {
+                root.Parent = parent;
+            }
+        }
     }
 
     private void ConvertNote(mg.Note e)
@@ -70,16 +66,16 @@ public partial class C2SChartWriter
                 ProcessSoflanArea(sla);
                 break;
             case mg.Tap tap:
-                CreateNote<mg.PositiveNote, c2s.Tap>(_pMap, tap);
+                CreatePositiveNote<mg.Tap, c2s.Tap>(tap);
                 break;
             case mg.ExTap exTap:
-                CreateNote<mg.PositiveNote, c2s.ExTap>(_pMap, exTap, x => x.Effect = exTap.Effect);
+                CreatePositiveNote<mg.ExTap, c2s.ExTap>(exTap, x => x.Effect = exTap.Effect);
                 break;
             case mg.Flick flick:
-                CreateNote<mg.PositiveNote, c2s.Flick>(_pMap, flick);
+                CreatePositiveNote<mg.Flick, c2s.Flick>(flick);
                 break;
             case mg.Damage damage:
-                CreateNote<mg.PositiveNote, c2s.Damage>(_pMap, damage);
+                CreatePositiveNote<mg.Damage, c2s.Damage>(damage);
                 break;
             case mg.Hold hold:
                 ProcessHold(hold);
@@ -110,7 +106,7 @@ public partial class C2SChartWriter
         {
             var curr = joints[i];
             var next = joints[i + 1];
-            CreateNote<c2s.AirCrash>(curr, x =>
+            CreateNote<mg.AirCrashJoint, c2s.AirCrash>(curr, x =>
             {
                 x.EndTick = next.Tick;
                 x.EndLane = next.Lane;
@@ -127,16 +123,16 @@ public partial class C2SChartWriter
     {
         if (airSlide.PairNote?.PairNote != airSlide) throw new DiagnosticException(Strings.MgCrit_Invalid_AirSlide_parent, airSlide, airSlide.Tick.Original);
 
-        var parent = _pMap.GetValueOrDefault(airSlide.PairNote);
         var joints = airSlide.Children.OfType<mg.AirSlideJoint>().Prepend(airSlide.AsChild()).ToArray();
+        c2s.AirSlide? firstSegment = null;
+        c2s.Note? previousSegment = null;
         for (var i = 0; i < joints.Length - 1; i++)
         {
-            var prev = parent;
             var curr = joints[i];
             var next = joints[i + 1];
-            parent = CreateNote<c2s.AirSlide>(curr, x =>
+            var segment = CreateNote<mg.AirSlideJoint, c2s.AirSlide>(curr, x =>
             {
-                x.Parent = prev;
+                x.Parent = previousSegment;
                 x.Color = airSlide.Color;
                 x.Height = curr.Height;
                 x.Joint = next.Joint;
@@ -145,13 +141,13 @@ public partial class C2SChartWriter
                 x.EndWidth = next.Width;
                 x.EndHeight = next.Height;
             });
+            firstSegment ??= segment;
+            previousSegment = segment;
+        }
 
-            // pair the first joint with ground note
-            if (i == 0)
-            {
-                _nMap[airSlide] = parent;
-                TryPairingPositive(airSlide);
-            }
+        if (firstSegment != null)
+        {
+            RegisterNegativePairRoot(airSlide, firstSegment);
         }
     }
 
@@ -159,13 +155,12 @@ public partial class C2SChartWriter
     {
         if (airNote.PairNote?.PairNote != airNote) throw new DiagnosticException(Strings.MgCrit_Invalid_Air_parent, airNote, airNote.Tick.Original);
 
-        var note = CreateNote<mg.NegativeNote, c2s.Air>(_nMap, airNote, x =>
+        var note = CreateNote<mg.Air, c2s.Air>(airNote, x =>
         {
-            x.Parent = _pMap.GetValueOrDefault(airNote.PairNote);
             x.Direction = airNote.Direction;
             x.Color = airNote.Color;
         });
-        _nMap[airNote] = note;
+        RegisterNegativePairRoot(airNote, note);
     }
 
     private void ProcessSlide(mg.Slide slide)
@@ -176,7 +171,7 @@ public partial class C2SChartWriter
             var curr = joints[i];
             var next = joints[i + 1];
             var index = i;
-            var note = CreateNote<c2s.Slide>(curr, x =>
+            var note = CreateNote<mg.SlideJoint, c2s.Slide>(curr, x =>
             {
                 x.Joint = next.Joint;
                 x.EndTick = next.Tick;
@@ -187,8 +182,7 @@ public partial class C2SChartWriter
             // pair the last joint with air
             if (i == joints.Length - 2)
             {
-                _pMap[next] = note;
-                TryPairingNegative(next);
+                RegisterPositivePairTarget(next, note);
             }
         }
     }
@@ -197,7 +191,7 @@ public partial class C2SChartWriter
     {
         if (sla.LastChild is not mg.SoflanAreaJoint tail) throw new DiagnosticException(Strings.MgCrit_SoflanArea_has_no_tail, sla, sla.Tick.Original);
 
-        CreateNote<c2s.Sla>(sla, x =>
+        CreateNote<mg.SoflanArea, c2s.Sla>(sla, x =>
         {
             x.Length = tail.Tick.Round - sla.Tick.Round;
         });
@@ -207,12 +201,11 @@ public partial class C2SChartWriter
     {
         if (hold.LastChild is not mg.HoldJoint tail) throw new DiagnosticException(Strings.MgCrit_Hold_has_no_tail, hold, hold.Tick.Original);
 
-        var note = CreateNote<c2s.Hold>(hold, x =>
+        var note = CreateNote<mg.Hold, c2s.Hold>(hold, x =>
         {
             x.EndTick = tail.Tick;
             x.Effect = hold.Effect;
         });
-        _pMap[tail] = note;
-        TryPairingNegative(tail);
+        RegisterPositivePairTarget(tail, note);
     }
 }

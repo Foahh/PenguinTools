@@ -1,6 +1,6 @@
 using PenguinTools.Core.Resources;
 
-namespace PenguinTools.Core.Chart.Converter;
+namespace PenguinTools.Core.Chart.Writer;
 
 using c2s = Models.c2s;
 

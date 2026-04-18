@@ -4,7 +4,7 @@ using System.Text;
 
 // ReSharper disable RedundantNameQualifier
 
-namespace PenguinTools.Core.Chart.Converter;
+namespace PenguinTools.Core.Chart.Writer;
 
 using mg = Models.mgxc;
 using c2s = Models.c2s;
@@ -38,6 +38,7 @@ public partial class C2SChartWriter
         Diagnostic.TimeCalculator = Mgxc.GetCalculator();
 
         foreach (var note in Mgxc.Notes.Children) ConvertNote(note);
+        ResolvePairings();
         ConvertEvent(Mgxc);
 
         // Post Validation
