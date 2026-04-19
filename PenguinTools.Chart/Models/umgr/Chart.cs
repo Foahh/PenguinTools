@@ -1,6 +1,6 @@
 ﻿using PenguinTools.Core.Metadata;
 
-namespace PenguinTools.Chart.Models.mgxc;
+namespace PenguinTools.Chart.Models.umgr;
 
 public class Chart
 {
@@ -24,6 +24,6 @@ public class Chart
             Events.InsertBefore(newEvent, firstEvent);
             beatEvents.Insert(0, newEvent);
         }
-        return new TimeCalculator(ChartResolution.MarResolution, beatEvents);
+        return new TimeCalculator(ChartResolution.UmiguriTick, beatEvents);
     }
 }

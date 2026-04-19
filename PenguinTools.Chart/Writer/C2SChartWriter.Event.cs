@@ -2,17 +2,17 @@ using PenguinTools.Chart.Models;
 
 namespace PenguinTools.Chart.Writer;
 
-using mg = Models.mgxc;
+using umgr = Models.umgr;
 using c2s = Models.c2s;
 
 public partial class C2SChartWriter
 {
-    private void ConvertEvent(mg.Chart mgxc)
+    private void ConvertEvent(umgr.Chart mgxc)
     {
         Time lastTick = mgxc.GetLastTick();
 
         var events = mgxc.Events.Children;
-        foreach (var e in events.OfType<mg.BpmEvent>().OrderBy(e => e.Tick))
+        foreach (var e in events.OfType<umgr.BpmEvent>().OrderBy(e => e.Tick))
         {
             Events.Add(new c2s.Bpm
             {
@@ -21,7 +21,7 @@ public partial class C2SChartWriter
             });
         }
 
-        foreach (var e in events.OfType<mg.BeatEvent>().OrderBy(e => e.Tick))
+        foreach (var e in events.OfType<umgr.BeatEvent>().OrderBy(e => e.Tick))
         {
             Events.Add(new c2s.Met
             {
@@ -31,11 +31,11 @@ public partial class C2SChartWriter
             });
         }
 
-        ConvertDcm([.. events.OfType<mg.NoteSpeedEvent>().OrderBy(e => e.Tick)], lastTick);
-        ConvertSlp(mgxc, [.. events.OfType<mg.ScrollSpeedEvent>().OrderBy(e => e.Tick)]);
+        ConvertDcm([.. events.OfType<umgr.NoteSpeedEvent>().OrderBy(e => e.Tick)], lastTick);
+        ConvertSlp(mgxc, [.. events.OfType<umgr.ScrollSpeedEvent>().OrderBy(e => e.Tick)]);
     }
 
-    private void ConvertDcm(List<mg.NoteSpeedEvent> events, Time lastTick)
+    private void ConvertDcm(List<umgr.NoteSpeedEvent> events, Time lastTick)
     {
         if (events.Count <= 0) return;
         for (var i = 0; i < events.Count - 1; i++)
@@ -63,7 +63,7 @@ public partial class C2SChartWriter
         Events.Add(e);
     }
 
-    private void ConvertSlp(mg.Chart mgxc, List<mg.ScrollSpeedEvent> tilEvents)
+    private void ConvertSlp(umgr.Chart mgxc, List<umgr.ScrollSpeedEvent> tilEvents)
     {
         if (tilEvents.Count <= 0) return;
         var tilGroups = tilEvents.GroupBy(til => til.Timeline).ToDictionary(g => g.Key, g => g.ToArray());

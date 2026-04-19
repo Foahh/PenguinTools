@@ -6,7 +6,7 @@ using PenguinTools.Media;
 
 namespace PenguinTools.Chart.Parser;
 
-using mg = Models.mgxc;
+using umgr = Models.umgr;
 
 public partial class MgxcParser
 {
@@ -32,9 +32,9 @@ public partial class MgxcParser
     private string Path { get; }
     private AssetManager Assets { get; }
     private List<Task> Tasks { get; } = [];
-    private mg.Chart Mgxc { get; } = new();
+    private umgr.Chart Mgxc { get; } = new();
 
-    public async Task<OperationResult<mg.Chart>> ParseAsync(CancellationToken ct = default)
+    public async Task<OperationResult<umgr.Chart>> ParseAsync(CancellationToken ct = default)
     {
         Mgxc.Meta.FilePath = Path;
 
@@ -60,7 +60,7 @@ public partial class MgxcParser
         ProcessMeta();
 
         await Task.WhenAll(Tasks);
-        return OperationResult<mg.Chart>.Success(Mgxc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        return OperationResult<umgr.Chart>.Success(Mgxc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
     }
 
     private void ProcessMeta()

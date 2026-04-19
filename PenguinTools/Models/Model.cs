@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using mg = PenguinTools.Chart.Models.mgxc;
+using umgr = PenguinTools.Chart.Models.umgr;
 
 namespace PenguinTools.Models;
 
@@ -40,7 +40,7 @@ public abstract class Model : ObservableValidator
 public abstract class MetaModel : Model
 {
     [Browsable(false)]
-    public abstract mg.Chart Mgxc { get; }
+    public abstract umgr.Chart Mgxc { get; }
 
     [Browsable(false)]
     public Meta Meta => Mgxc.Meta;

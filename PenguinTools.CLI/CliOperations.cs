@@ -56,14 +56,14 @@ internal static class CliOperations
             "Command-line parsing failed.");
     }
 
-    internal static async Task<OperationResult<PenguinTools.Chart.Models.mgxc.Chart>> ParseChartAsync(
+    internal static async Task<OperationResult<PenguinTools.Chart.Models.umgr.Chart>> ParseChartAsync(
         CliRuntime runtime,
         string input,
         CancellationToken cancellationToken)
     {
         if (!File.Exists(input))
         {
-            return CliPaths.CreateFailureResultOf<PenguinTools.Chart.Models.mgxc.Chart>($"Chart file not found: {input}", input);
+            return CliPaths.CreateFailureResultOf<PenguinTools.Chart.Models.umgr.Chart>($"Chart file not found: {input}", input);
         }
 
         return await new MgxcParser(new MgxcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(cancellationToken);
@@ -106,7 +106,7 @@ internal static class CliOperations
 
     internal static Task<OperationResult> ExportMusicAsync(
         CliRuntime runtime,
-        PenguinTools.Chart.Models.mgxc.Chart chart,
+        PenguinTools.Chart.Models.umgr.Chart chart,
         string output,
         string? jacketInput,
         AudioRequestOverrides audioOverrides,

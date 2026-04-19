@@ -8,7 +8,7 @@ using PenguinTools.Media;
 
 namespace PenguinTools.Workflow;
 
-using mg = PenguinTools.Chart.Models.mgxc;
+using umgr = PenguinTools.Chart.Models.umgr;
 
 public static class OptionChartScanner
 {
@@ -85,7 +85,7 @@ public static class OptionChartScanner
     {
         ct.ThrowIfCancellationRequested();
         var ext = Path.GetExtension(filePath);
-        mg.Chart? chart = null;
+        umgr.Chart? chart = null;
         if (string.Equals(ext, UgcExtension, StringComparison.OrdinalIgnoreCase))
         {
             var r = await new UgcParser(new UgcParseRequest(filePath, assets), mediaTool).ParseAsync(ct);

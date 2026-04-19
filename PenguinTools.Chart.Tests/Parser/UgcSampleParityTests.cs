@@ -1,7 +1,7 @@
 using System.Globalization;
 using PenguinTools.Chart.Parser;
 using Xunit;
-using mg = PenguinTools.Chart.Models.mgxc;
+using umgr = PenguinTools.Chart.Models.umgr;
 
 namespace PenguinTools.Chart.Tests.Parser;
 
@@ -28,18 +28,18 @@ public class UgcSampleParityTests
         Assert.Equal(mgxcSet.Beats.OrderBy(x => x).ToArray(), ugcSet.Beats.OrderBy(x => x).ToArray());
     }
 
-    private static ChartSummary Summarize(mg.Chart c)
+    private static ChartSummary Summarize(umgr.Chart c)
     {
         var summary = new ChartSummary();
         foreach (var n in c.Notes.Children)
         {
             // TIL → SoflanArea synthesis still diverges from reference MGXC on some charts; compare gameplay notes only.
-            if (n is mg.SoflanArea or mg.SoflanAreaJoint) continue;
+            if (n is umgr.SoflanArea or umgr.SoflanAreaJoint) continue;
             summary.Notes.Add($"{n.GetType().Name}|{n.Tick.Original}|{n.Lane}|{n.Width}|{n.Timeline}");
         }
-        foreach (var b in c.Events.Children.OfType<mg.BpmEvent>())
+        foreach (var b in c.Events.Children.OfType<umgr.BpmEvent>())
             summary.Bpms.Add($"{b.Tick.Original}|{FormatBpm(b.Bpm)}");
-        foreach (var b in c.Events.Children.OfType<mg.BeatEvent>())
+        foreach (var b in c.Events.Children.OfType<umgr.BeatEvent>())
             summary.Beats.Add($"{b.Bar}|{b.Numerator}|{b.Denominator}");
         return summary;
     }

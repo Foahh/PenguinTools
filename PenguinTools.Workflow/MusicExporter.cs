@@ -1,5 +1,5 @@
 using PenguinTools.Chart.Writer;
-using mgxc = PenguinTools.Chart.Models.mgxc;
+using umgr = PenguinTools.Chart.Models.umgr;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
@@ -67,7 +67,7 @@ public static class MusicExporter
 
     public static async Task<OperationResult> ExportAsync(
         MusicExportContext ctx,
-        mgxc.Chart chart,
+        umgr.Chart chart,
         string output,
         string? jacketInput,
         AudioRequestOverrides audioOverrides,

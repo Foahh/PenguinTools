@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PenguinTools.Chart.Writer;
 
-using mg = Models.mgxc;
+using umgr = Models.umgr;
 using c2s = Models.c2s;
 
 public partial class C2SChartWriter
@@ -22,7 +22,7 @@ public partial class C2SChartWriter
 
     private IDiagnosticSink Diagnostic { get; } = new Diagnoster();
     private string OutPath { get; }
-    private mg.Chart Mgxc { get; }
+    private umgr.Chart Mgxc { get; }
     private List<c2s.Note> Notes { get; } = [];
     private List<c2s.Event> Events { get; } = [];
 
@@ -54,13 +54,13 @@ public partial class C2SChartWriter
             if (length >= ChartResolution.SingleTick) continue;
 
             var tick = longNote.Tick.Original;
-            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, ChartResolution.MarResolution / ChartResolution.SingleTick);
+            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, ChartResolution.UmiguriTick / ChartResolution.SingleTick);
             Diagnostic.Report(Severity.Warning, msg, tick, longNote);
         }
 
         if (Mgxc.Meta.BgmEnableBarOffset)
         {
-            var offset = (int)Math.Round((decimal)ChartResolution.MarResolution / Mgxc.Meta.BgmInitialDenominator * Mgxc.Meta.BgmInitialNumerator);
+            var offset = (int)Math.Round((decimal)ChartResolution.UmiguriTick / Mgxc.Meta.BgmInitialDenominator * Mgxc.Meta.BgmInitialNumerator);
             foreach (var e in Events.Where(e => e.Tick.Original != 0)) e.Tick = e.Tick.Original + offset;
             foreach (var n in Notes)
             {

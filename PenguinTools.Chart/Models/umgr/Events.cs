@@ -1,4 +1,4 @@
-﻿namespace PenguinTools.Chart.Models.mgxc;
+﻿namespace PenguinTools.Chart.Models.umgr;
 
 public class Event : TimeNode<Event>;
 

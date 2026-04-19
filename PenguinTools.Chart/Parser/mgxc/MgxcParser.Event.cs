@@ -3,18 +3,18 @@ using PenguinTools.Chart.Resources;
 
 namespace PenguinTools.Chart.Parser;
 
-using mg = Models.mgxc;
+using umgr = Models.umgr;
 
 public partial class MgxcParser
 {
     private void ParseEvent(BinaryReader br)
     {
         var name = br.ReadUtf8String(4);
-        mg.Event? e = null;
+        umgr.Event? e = null;
 
         if (name == "beat")
         {
-            e = new mg.BeatEvent
+            e = new umgr.BeatEvent
             {
                 Bar = (int)br.ReadField(),
                 Numerator = (int)br.ReadField(),
@@ -23,7 +23,7 @@ public partial class MgxcParser
         }
         else if (name == "bpm ")
         {
-            e = new mg.BpmEvent
+            e = new umgr.BpmEvent
             {
                 Tick = (int)br.ReadField(),
                 Bpm = br.ReadField().Round()
@@ -31,7 +31,7 @@ public partial class MgxcParser
         }
         else if (name == "smod")
         {
-            e = new mg.NoteSpeedEvent
+            e = new umgr.NoteSpeedEvent
             {
                 Tick = (int)br.ReadField(),
                 Speed = br.ReadField().Round()
@@ -39,7 +39,7 @@ public partial class MgxcParser
         }
         else if (name == "til ")
         {
-            e = new mg.ScrollSpeedEvent
+            e = new umgr.ScrollSpeedEvent
             {
                 Timeline = (int)br.ReadField(),
                 Tick = (int)br.ReadField(),
@@ -49,7 +49,7 @@ public partial class MgxcParser
         else if (name == "bmrk")
         {
             br.ReadWideField(); // hash
-            e = new mg.BookmarkEvent
+            e = new umgr.BookmarkEvent
             {
                 Tick = (int)br.ReadField(),
                 Tag = (string)br.ReadWideField()
@@ -58,7 +58,7 @@ public partial class MgxcParser
         }
         else if (name == "mbkm")
         {
-            e = new mg.BreakingMarker
+            e = new umgr.BreakingMarker
             {
                 Tick = (int)br.ReadField()
             };

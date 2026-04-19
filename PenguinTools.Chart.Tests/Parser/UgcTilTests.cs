@@ -20,7 +20,7 @@ public class UgcTilTests
             var r = await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
             Assert.True(r.Succeeded);
             var sse = r.Value!.Events.Children
-                .OfType<PenguinTools.Chart.Models.mgxc.ScrollSpeedEvent>()
+                .OfType<PenguinTools.Chart.Models.umgr.ScrollSpeedEvent>()
                 .SingleOrDefault(e => e.Speed == 10000.0m);
             Assert.NotNull(sse);
             Assert.Equal(240, sse!.Tick.Original);

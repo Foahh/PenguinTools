@@ -4,7 +4,7 @@
 */
 
 using PenguinTools.Core;
-using PenguinTools.Chart.Models.mgxc;
+using PenguinTools.Chart.Models.umgr;
 
 namespace PenguinTools.Chart;
 

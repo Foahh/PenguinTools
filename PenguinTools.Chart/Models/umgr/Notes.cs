@@ -3,7 +3,7 @@
    https://github.com/inonote/MargreteOnline
 */
 
-namespace PenguinTools.Chart.Models.mgxc;
+namespace PenguinTools.Chart.Models.umgr;
 
 public class Tap : PositiveNote;
 

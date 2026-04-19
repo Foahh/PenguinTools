@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace PenguinTools.Chart.Parser;
 
-using mg = Models.mgxc;
+using umgr = Models.umgr;
 
 public partial class UgcParser
 {
@@ -25,7 +25,7 @@ public partial class UgcParser
         if (!int.TryParse(args[0], out var bar)) return;
         if (!int.TryParse(args[1], out var num)) return;
         if (!int.TryParse(args[2], out var den)) return;
-        Ugc.Events.AppendChild(new mg.BeatEvent { Bar = bar, Numerator = num, Denominator = den });
+        Ugc.Events.AppendChild(new umgr.BeatEvent { Bar = bar, Numerator = num, Denominator = den });
     }
 
     private void HandleSpdMod(string[] args)
@@ -48,10 +48,10 @@ public partial class UgcParser
 
     internal int BarTickToAbsTick(int bar, int tick)
     {
-        var beats = Ugc.Events.Children.OfType<mg.BeatEvent>().OrderBy(b => b.Bar).ToList();
+        var beats = Ugc.Events.Children.OfType<umgr.BeatEvent>().OrderBy(b => b.Bar).ToList();
         if (beats.Count == 0) return tick;
 
-        mg.BeatEvent? active = null;
+        umgr.BeatEvent? active = null;
         foreach (var b in beats)
         {
             if (b.Bar <= bar) active = b;
@@ -61,11 +61,11 @@ public partial class UgcParser
         if (active is null)
         {
             var first = beats[0];
-            var tpb = ChartResolution.MarResolution * first.Numerator / first.Denominator;
+            var tpb = ChartResolution.UmiguriTick * first.Numerator / first.Denominator;
             return first.Tick.Original + (bar - first.Bar) * tpb + tick;
         }
 
-        var ticksPerBar = ChartResolution.MarResolution * active.Numerator / active.Denominator;
+        var ticksPerBar = ChartResolution.UmiguriTick * active.Numerator / active.Denominator;
         var barsSince = bar - active.Bar;
         return active.Tick.Original + barsSince * ticksPerBar + tick;
     }

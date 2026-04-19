@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PenguinTools.Chart.Parser;
 
-using mg = Models.mgxc;
+using umgr = Models.umgr;
 
 public partial class UgcParser
 {
@@ -33,13 +33,13 @@ public partial class UgcParser
     private string Path { get; }
     private AssetManager Assets { get; }
     private List<Task> Tasks { get; } = [];
-    private mg.Chart Ugc { get; } = new();
+    private umgr.Chart Ugc { get; } = new();
 
     private int _currentTimeline;
-    private mg.Note? _lastNote;
-    private mg.Note? _lastParentNote;
+    private umgr.Note? _lastNote;
+    private umgr.Note? _lastParentNote;
 
-    public async Task<OperationResult<mg.Chart>> ParseAsync(CancellationToken ct = default)
+    public async Task<OperationResult<umgr.Chart>> ParseAsync(CancellationToken ct = default)
     {
         try
         {
@@ -69,12 +69,12 @@ public partial class UgcParser
             ProcessMeta();
 
             await Task.WhenAll(Tasks);
-            return OperationResult<mg.Chart>.Success(Ugc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            return OperationResult<umgr.Chart>.Success(Ugc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
         }
         catch (DiagnosticException ex)
         {
             Diagnostic.Report(ex);
-            return OperationResult<mg.Chart>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            return OperationResult<umgr.Chart>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
         }
     }
 
@@ -96,7 +96,7 @@ public partial class UgcParser
 
     private void BuildBarAxis()
     {
-        var beats = Ugc.Events.Children.OfType<mg.BeatEvent>().OrderBy(b => b.Bar).ToList();
+        var beats = Ugc.Events.Children.OfType<umgr.BeatEvent>().OrderBy(b => b.Bar).ToList();
         if (beats.Count > 0)
         {
             beats[0].Tick = 0;
@@ -105,19 +105,19 @@ public partial class UgcParser
             {
                 var curr = beats[i];
                 var next = beats[i + 1];
-                accum += ChartResolution.MarResolution * curr.Numerator / curr.Denominator * (next.Bar - curr.Bar);
+                accum += ChartResolution.UmiguriTick * curr.Numerator / curr.Denominator * (next.Bar - curr.Bar);
                 next.Tick = accum;
             }
         }
 
         foreach (var (bar, tick, bpm) in _pendingBpms)
-            Ugc.Events.AppendChild(new mg.BpmEvent { Tick = BarTickToAbsTick(bar, tick), Bpm = bpm });
+            Ugc.Events.AppendChild(new umgr.BpmEvent { Tick = BarTickToAbsTick(bar, tick), Bpm = bpm });
 
         foreach (var (bar, tick, spd) in _pendingSpdMods)
-            Ugc.Events.AppendChild(new mg.NoteSpeedEvent { Tick = BarTickToAbsTick(bar, tick), Speed = spd });
+            Ugc.Events.AppendChild(new umgr.NoteSpeedEvent { Tick = BarTickToAbsTick(bar, tick), Speed = spd });
 
         foreach (var (tilId, bar, tick, spd) in _pendingTils)
-            Ugc.Events.AppendChild(new mg.ScrollSpeedEvent { Timeline = tilId, Tick = BarTickToAbsTick(bar, tick), Speed = spd });
+            Ugc.Events.AppendChild(new umgr.ScrollSpeedEvent { Timeline = tilId, Tick = BarTickToAbsTick(bar, tick), Speed = spd });
     }
 
     private void ProcessMeta()

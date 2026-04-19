@@ -8,18 +8,18 @@ using System.Text.RegularExpressions;
 
 namespace PenguinTools.Chart.Parser;
 
-using mg = Models.mgxc;
+using umgr = Models.umgr;
 
 internal sealed partial class ChartPostProcessor
 {
-    private readonly mg.Chart _chart;
+    private readonly umgr.Chart _chart;
     private readonly IDiagnosticSink _diag;
     private readonly AssetManager _assets;
 
-    private readonly Dictionary<int, List<mg.Note>> _noteGroups = [];
-    private readonly Dictionary<int, List<mg.ScrollSpeedEvent>> _tilGroups = [];
+    private readonly Dictionary<int, List<umgr.Note>> _noteGroups = [];
+    private readonly Dictionary<int, List<umgr.ScrollSpeedEvent>> _tilGroups = [];
 
-    public ChartPostProcessor(mg.Chart chart, IDiagnosticSink diag, AssetManager assets)
+    public ChartPostProcessor(umgr.Chart chart, IDiagnosticSink diag, AssetManager assets)
     {
         _chart = chart;
         _diag = diag;
@@ -45,14 +45,14 @@ internal sealed partial class ChartPostProcessor
 
     private void ProcessEvent()
     {
-        var bpmEvents = _chart.Events.Children.OfType<mg.BpmEvent>().OrderBy(e => e.Tick).ToArray();
+        var bpmEvents = _chart.Events.Children.OfType<umgr.BpmEvent>().OrderBy(e => e.Tick).ToArray();
         if (bpmEvents.Length <= 0 || bpmEvents[0].Tick.Original != 0) throw new DiagnosticException(Strings.Mg_Head_BPM_not_found);
 
-        var beatEvents = _chart.Events.Children.OfType<mg.BeatEvent>().OrderBy(e => e.Bar).ToList();
+        var beatEvents = _chart.Events.Children.OfType<umgr.BeatEvent>().OrderBy(e => e.Bar).ToList();
         var firstBeatEvent = beatEvents.FirstOrDefault();
         if (firstBeatEvent is not { Bar: 0 })
         {
-            var newEvent = new mg.BeatEvent { Bar = 0, Numerator = 4, Denominator = 4 };
+            var newEvent = new umgr.BeatEvent { Bar = 0, Numerator = 4, Denominator = 4 };
             _chart.Events.InsertBefore(newEvent, firstBeatEvent);
             beatEvents.Insert(0, newEvent);
             _diag.Report(Severity.Information, Strings.Mg_Head_Time_Signature_event_not_found);
@@ -71,7 +71,7 @@ internal sealed partial class ChartPostProcessor
             {
                 var curr = beatEvents[i];
                 var next = beatEvents[i + 1];
-                ticks += ChartResolution.MarResolution * curr.Numerator / curr.Denominator * (next.Bar - curr.Bar);
+                ticks += ChartResolution.UmiguriTick * curr.Numerator / curr.Denominator * (next.Bar - curr.Bar);
                 next.Tick = ticks;
             }
         }
@@ -84,14 +84,14 @@ internal sealed partial class ChartPostProcessor
         if (_chart.Notes.Children.Count <= 0) return;
 
         var noteGroup = _chart.Notes.Children
-            .OfType<mg.ExTapableNote>()
+            .OfType<umgr.ExTapableNote>()
             .GroupBy(note => note.Tick)
             .ToDictionary(g => g.Key, g => g.ToArray());
 
         var exEffects = new Dictionary<Time, HashSet<ExEffect>>();
-        var tbRemoved = new HashSet<mg.ExTap>();
+        var tbRemoved = new HashSet<umgr.ExTap>();
 
-        foreach (var exTap in _chart.Notes.Children.OfType<mg.ExTap>())
+        foreach (var exTap in _chart.Notes.Children.OfType<umgr.ExTap>())
         {
             if (!exEffects.TryGetValue(exTap.Tick, out var effectSet))
             {
@@ -145,13 +145,13 @@ internal sealed partial class ChartPostProcessor
 
     private void FinalizeEvent()
     {
-        var noteSpeedMods = _chart.Events.Children.OfType<mg.NoteSpeedEvent>().ToArray();
-        foreach (var e in _chart.Events.Children.OfType<mg.SpeedEventBase>().ToArray()) _chart.Events.RemoveChild(e);
+        var noteSpeedMods = _chart.Events.Children.OfType<umgr.NoteSpeedEvent>().ToArray();
+        foreach (var e in _chart.Events.Children.OfType<umgr.SpeedEventBase>().ToArray()) _chart.Events.RemoveChild(e);
         foreach (var (tilId, events) in _tilGroups)
         {
             foreach (var e in events)
             {
-                var newEvent = new mg.ScrollSpeedEvent
+                var newEvent = new umgr.ScrollSpeedEvent
                 {
                     Tick = e.Tick,
                     Timeline = tilId,
@@ -179,21 +179,21 @@ internal sealed partial class ChartPostProcessor
                 note.Timeline = id;
 
                 // magic optimization: when the crash is transparent, it is not necessary to add the SLA on the control joint
-                if (note is mg.AirCrashJoint { Parent: mg.AirCrash { Color: Color.NON }, Density.Original: 0x7FFFFFFF or 0 }) continue;
+                if (note is umgr.AirCrashJoint { Parent: umgr.AirCrash { Color: Color.NON }, Density.Original: 0x7FFFFFFF or 0 }) continue;
 
                 // find the speed that is just before the note
                 var prevTil = events.Where(p => p.Tick.Original <= note.Tick.Original).OrderByDescending(p => p.Tick).FirstOrDefault();
                 if (prevTil?.Speed is null) continue;
                 if (slaSet.Contains((note.Tick.Original, id, note.Lane, note.Width))) continue;
 
-                var head = new mg.SoflanArea
+                var head = new umgr.SoflanArea
                 {
                     Tick = note.Tick,
                     Timeline = id,
                     Lane = note.Lane,
                     Width = note.Width
                 };
-                var tail = new mg.SoflanAreaJoint
+                var tail = new umgr.SoflanAreaJoint
                 {
                     Tick = note.Tick.Original + ChartResolution.SingleTick
                 };
@@ -205,9 +205,9 @@ internal sealed partial class ChartPostProcessor
         }
     }
 
-    private void GroupEventByTimeline(mg.Event events)
+    private void GroupEventByTimeline(umgr.Event events)
     {
-        foreach (var til in events.Children.OfType<mg.ScrollSpeedEvent>())
+        foreach (var til in events.Children.OfType<umgr.ScrollSpeedEvent>())
         {
             var timelineId = til.Timeline;
             CreateGroup(timelineId);
@@ -215,7 +215,7 @@ internal sealed partial class ChartPostProcessor
         }
     }
 
-    private void GroupNoteByTimeline(mg.Note parent)
+    private void GroupNoteByTimeline(umgr.Note parent)
     {
         if (parent.Children.Count == 0) return;
         foreach (var note in parent.Children)
@@ -288,7 +288,7 @@ internal sealed partial class ChartPostProcessor
 
     private void FindNoteViolations()
     {
-        var violations = new HashSet<mg.Note>();
+        var violations = new HashSet<umgr.Note>();
         var noteGroup = _chart.Notes.Children.GroupBy(n => (n.Tick, n.Lane)).Where(g => g.Count() > 1);
 
         foreach (var group in noteGroup)

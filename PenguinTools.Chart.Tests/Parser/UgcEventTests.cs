@@ -5,7 +5,7 @@ namespace PenguinTools.Chart.Tests.Parser;
 
 public class UgcEventTests
 {
-    private static async Task<PenguinTools.Chart.Models.mgxc.Chart> Parse(string ugc)
+    private static async Task<PenguinTools.Chart.Models.umgr.Chart> Parse(string ugc)
     {
         var tmp = Path.GetTempFileName() + ".ugc";
         await File.WriteAllTextAsync(tmp, ugc);
@@ -31,7 +31,7 @@ public class UgcEventTests
             "@BEAT\t0\t4\t4\n";
 
         var chart = await Parse(ugc);
-        var bpms = chart.Events.Children.OfType<PenguinTools.Chart.Models.mgxc.BpmEvent>()
+        var bpms = chart.Events.Children.OfType<PenguinTools.Chart.Models.umgr.BpmEvent>()
             .OrderBy(e => e.Tick).ToArray();
         Assert.Equal(2, bpms.Length);
         Assert.Equal(0, bpms[0].Tick.Original);
@@ -50,7 +50,7 @@ public class UgcEventTests
             "@BEAT\t2\t3\t4\n";
 
         var chart = await Parse(ugc);
-        var beats = chart.Events.Children.OfType<PenguinTools.Chart.Models.mgxc.BeatEvent>()
+        var beats = chart.Events.Children.OfType<PenguinTools.Chart.Models.umgr.BeatEvent>()
             .OrderBy(e => e.Bar).ToArray();
         Assert.Equal(2, beats.Length);
         Assert.Equal(0, beats[0].Bar);
@@ -68,7 +68,7 @@ public class UgcEventTests
             "@SPDMOD\t1'0\t0.5\n";
 
         var chart = await Parse(ugc);
-        var smod = chart.Events.Children.OfType<PenguinTools.Chart.Models.mgxc.NoteSpeedEvent>().Single();
+        var smod = chart.Events.Children.OfType<PenguinTools.Chart.Models.umgr.NoteSpeedEvent>().Single();
         Assert.Equal(1920, smod.Tick.Original);
         Assert.Equal(0.5m, smod.Speed);
     }

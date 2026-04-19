@@ -6,7 +6,7 @@
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
-namespace PenguinTools.Chart.Models.mgxc;
+namespace PenguinTools.Chart.Models.umgr;
 
 public abstract class TimeNode<T> where T : TimeNode<T>
 {

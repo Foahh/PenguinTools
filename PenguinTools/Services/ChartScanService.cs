@@ -10,7 +10,7 @@ using System.IO;
 
 namespace PenguinTools.Services;
 
-using mg = PenguinTools.Chart.Models.mgxc;
+using umgr = PenguinTools.Chart.Models.umgr;
 
 public sealed class ChartScanService : IChartScanService
 {
@@ -70,7 +70,7 @@ public sealed class ChartScanService : IChartScanService
     {
         ct.ThrowIfCancellationRequested();
         var ext = Path.GetExtension(filePath);
-        mg.Chart? chart = null;
+        umgr.Chart? chart = null;
         if (string.Equals(ext, UgcExtension, StringComparison.OrdinalIgnoreCase))
         {
             var r = await new UgcParser(new UgcParseRequest(filePath, _assetManager), _mediaTool).ParseAsync(ct);

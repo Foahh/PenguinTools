@@ -13,7 +13,7 @@ using System.IO;
 
 namespace PenguinTools.ViewModels;
 
-using mg = PenguinTools.Chart.Models.mgxc;
+using umgr = PenguinTools.Chart.Models.umgr;
 
 public class ChartViewModel : WatchViewModel<ChartModel>
 {
@@ -51,20 +51,20 @@ public class ChartViewModel : WatchViewModel<ChartModel>
 
     protected override async Task<OperationResult<ChartModel>> ReadModel(string path, CancellationToken ct = default)
     {
-        OperationResult<mg.Chart> parsed;
+        OperationResult<umgr.Chart> parsed;
         if (string.Equals(Path.GetExtension(path), ".ugc", StringComparison.OrdinalIgnoreCase))
         {
             var r = await new UgcParser(new UgcParseRequest(path, AssetManager), MediaTool).ParseAsync(ct);
             parsed = r.Succeeded && r.Value is { } v
-                ? OperationResult<mg.Chart>.Success(v).WithDiagnostics(r.Diagnostics)
-                : OperationResult<mg.Chart>.Failure().WithDiagnostics(r.Diagnostics);
+                ? OperationResult<umgr.Chart>.Success(v).WithDiagnostics(r.Diagnostics)
+                : OperationResult<umgr.Chart>.Failure().WithDiagnostics(r.Diagnostics);
         }
         else
         {
             var r = await new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool).ParseAsync(ct);
             parsed = r.Succeeded && r.Value is { } v
-                ? OperationResult<mg.Chart>.Success(v).WithDiagnostics(r.Diagnostics)
-                : OperationResult<mg.Chart>.Failure().WithDiagnostics(r.Diagnostics);
+                ? OperationResult<umgr.Chart>.Success(v).WithDiagnostics(r.Diagnostics)
+                : OperationResult<umgr.Chart>.Failure().WithDiagnostics(r.Diagnostics);
         }
 
         if (!parsed.Succeeded || parsed.Value is not { } value) return OperationResult<ChartModel>.Failure().WithDiagnostics(parsed.Diagnostics);

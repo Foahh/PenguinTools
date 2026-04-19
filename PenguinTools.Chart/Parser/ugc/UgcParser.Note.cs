@@ -4,7 +4,7 @@ using PenguinTools.Core;
 
 namespace PenguinTools.Chart.Parser;
 
-using mg = Models.mgxc;
+using umgr = Models.umgr;
 
 public partial class UgcParser
 {
@@ -81,7 +81,7 @@ public partial class UgcParser
 
         if (typeChar == 'a')
         {
-            var air = new mg.Air();
+            var air = new umgr.Air();
             var dirChar = extras.Length >= 1 ? extras[0] : 'U';
             var colorChar = extras.Length >= 2 ? extras[1] : 'N';
             air.Direction = UgcPayload.AirDirectionChar(dirChar);
@@ -107,11 +107,11 @@ public partial class UgcParser
             if (heightRaw < 0) heightRaw = 0;
             var height = heightRaw * 2;
 
-            var airSlide = new mg.AirSlide { Height = height, Color = Color.DEF };
+            var airSlide = new umgr.AirSlide { Height = height, Color = Color.DEF };
             airSlide.Timeline = _currentTimeline;
             Ugc.Notes.AppendChild(airSlide);
 
-            if (_lastNote is mg.Air oldAir && oldAir.Tick.Original == absTick)
+            if (_lastNote is umgr.Air oldAir && oldAir.Tick.Original == absTick)
             {
                 airSlide.Color = oldAir.Color;
                 oldAir.Parent?.RemoveChild(oldAir);
@@ -138,7 +138,7 @@ public partial class UgcParser
             if (!string.IsNullOrEmpty(suffix) && int.TryParse(suffix, out var parsedDensity))
                 density = parsedDensity;
 
-            var crash = new mg.AirCrash
+            var crash = new umgr.AirCrash
             {
                 Color = UgcPayload.CrushColorChar(colorChar),
                 Height = height,
@@ -154,12 +154,12 @@ public partial class UgcParser
             return;
         }
 
-        mg.Note? note = typeChar switch
+        umgr.Note? note = typeChar switch
         {
-            't' => new mg.Tap(),
+            't' => new umgr.Tap(),
             'x' => MakeExTap(extras),
-            'f' => new mg.Flick(),
-            'd' => new mg.Damage(),
+            'f' => new umgr.Flick(),
+            'd' => new umgr.Damage(),
             'c' => null,
             _ => HandleLongNoteParent(typeChar, extras, suffix)
         };
@@ -181,26 +181,26 @@ public partial class UgcParser
     }
 
     // Last PositiveNote at absTick when _lastNote is a non-positive long parent (Hold/Slide).
-    private mg.PositiveNote? FindPairPositive(int absTick)
+    private umgr.PositiveNote? FindPairPositive(int absTick)
     {
-        if (_lastNote is mg.PositiveNote lastP && lastP.Tick.Original == absTick)
+        if (_lastNote is umgr.PositiveNote lastP && lastP.Tick.Original == absTick)
             return lastP;
 
-        return Ugc.Notes.Children.OfType<mg.PositiveNote>().LastOrDefault(p => p.Tick.Original == absTick);
+        return Ugc.Notes.Children.OfType<umgr.PositiveNote>().LastOrDefault(p => p.Tick.Original == absTick);
     }
 
-    private static mg.ExTap MakeExTap(string extras)
+    private static umgr.ExTap MakeExTap(string extras)
     {
-        var exNote = new mg.ExTap();
+        var exNote = new umgr.ExTap();
         exNote.Effect = extras.Length >= 1 ? UgcPayload.ExEffectChar(extras[0]) : ExEffect.UP;
         return exNote;
     }
 
-    private mg.Note? HandleLongNoteParent(char typeChar, string extras, string suffix) =>
+    private umgr.Note? HandleLongNoteParent(char typeChar, string extras, string suffix) =>
         typeChar switch
         {
-            'h' => new mg.Hold(),
-            's' => new mg.Slide(),
+            'h' => new umgr.Hold(),
+            's' => new umgr.Slide(),
             _ => null
         };
 
@@ -212,9 +212,9 @@ public partial class UgcParser
             return;
         }
 
-        if (payload.Trim() == "s" && _lastParentNote is mg.Hold hold)
+        if (payload.Trim() == "s" && _lastParentNote is umgr.Hold hold)
         {
-            var hj = new mg.HoldJoint
+            var hj = new umgr.HoldJoint
             {
                 Tick = hold.Tick.Original + offsetTick,
                 Lane = hold.Lane,
@@ -243,13 +243,13 @@ public partial class UgcParser
 
         var absTick = _lastParentNote.Tick.Original + offsetTick;
 
-        mg.Note? child = null;
+        umgr.Note? child = null;
         switch (typeChar)
         {
-            case 's' when _lastParentNote is mg.Hold:
-                child = new mg.HoldJoint();
+            case 's' when _lastParentNote is umgr.Hold:
+                child = new umgr.HoldJoint();
                 break;
-            case 's' when _lastParentNote is mg.Slide:
+            case 's' when _lastParentNote is umgr.Slide:
             {
                 var jointChar = payload.Length >= 4 ? payload[3] : 'D';
                 var jointKind = jointChar switch
@@ -259,17 +259,17 @@ public partial class UgcParser
                     'E' => Joint.D,
                     _ => Joint.D
                 };
-                child = new mg.SlideJoint { Joint = jointKind };
+                child = new umgr.SlideJoint { Joint = jointKind };
                 break;
             }
             case 'H':
             case 'S':
-                if (_lastParentNote is mg.AirSlide)
+                if (_lastParentNote is umgr.AirSlide)
                 {
                     var hChar = payload.Length >= 4 ? payload[3] : '0';
                     var hRaw = UgcPayload.Base36(hChar);
                     if (hRaw < 0) hRaw = 0;
-                    child = new mg.AirSlideJoint
+                    child = new umgr.AirSlideJoint
                     {
                         Joint = typeChar == 'S' ? Joint.C : Joint.D,
                         Height = hRaw * 2
@@ -278,12 +278,12 @@ public partial class UgcParser
 
                 break;
             case 'C':
-                if (_lastParentNote is mg.AirCrash)
+                if (_lastParentNote is umgr.AirCrash)
                 {
                     var hChar = payload.Length >= 4 ? payload[3] : '0';
                     var hRaw = UgcPayload.Base36(hChar);
                     if (hRaw < 0) hRaw = 0;
-                    child = new mg.AirCrashJoint { Height = hRaw * 2 };
+                    child = new umgr.AirCrashJoint { Height = hRaw * 2 };
                 }
 
                 break;

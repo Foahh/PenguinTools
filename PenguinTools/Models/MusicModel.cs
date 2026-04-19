@@ -5,7 +5,7 @@ using PenguinTools.Resources;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-using mg = PenguinTools.Chart.Models.mgxc;
+using umgr = PenguinTools.Chart.Models.umgr;
 
 namespace PenguinTools.Models;
 
@@ -16,14 +16,14 @@ namespace PenguinTools.Models;
 [LocalizableCategoryOrder(nameof(Strings.Category_Sync), 4, typeof(Strings))]
 public class MusicModel : MetaModel
 {
-    public MusicModel(mg.Chart mgxc)
+    public MusicModel(umgr.Chart mgxc)
     {
         Mgxc = mgxc;
         BgmInitialTimeSignature = new TimeSignatureModel(Meta);
     }
 
     [Browsable(false)]
-    public override mg.Chart Mgxc { get; }
+    public override umgr.Chart Mgxc { get; }
 
     [PropertyOrder(0)]
     [LocalizableCategory(nameof(Strings.Category_Song), typeof(Strings))]

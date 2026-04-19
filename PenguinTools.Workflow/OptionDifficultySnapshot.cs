@@ -1,6 +1,6 @@
 using PenguinTools.Core.Metadata;
-using mgxc = PenguinTools.Chart.Models.mgxc;
+using umgr = PenguinTools.Chart.Models.umgr;
 
 namespace PenguinTools.Workflow;
 
-public sealed record OptionDifficultySnapshot(Difficulty Difficulty, int? SongId, mgxc.Chart Chart, Meta Meta);
+public sealed record OptionDifficultySnapshot(Difficulty Difficulty, int? SongId, umgr.Chart Chart, Meta Meta);
