@@ -492,6 +492,9 @@
   <data name="UserAssetSetup_Browse_install" xml:space="preserve">
     <value>Browse game folder…</value>
   </data>
+  <data name="UserAssetSetup_Processing" xml:space="preserve">
+    <value>Importing game data. This may take a moment, please wait...</value>
+  </data>
   <data name="UserAssetSetup_Skip" xml:space="preserve">
     <value>Skip</value>
   </data>

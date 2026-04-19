@@ -492,6 +492,9 @@
   <data name="UserAssetSetup_Browse_install" xml:space="preserve">
     <value>浏览游戏文件夹…</value>
   </data>
+  <data name="UserAssetSetup_Processing" xml:space="preserve">
+    <value>正在读取游戏数据，可能需要一点时间，请稍候……</value>
+  </data>
   <data name="UserAssetSetup_Skip" xml:space="preserve">
     <value>跳过</value>
   </data>

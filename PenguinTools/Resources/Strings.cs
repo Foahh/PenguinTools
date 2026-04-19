@@ -162,6 +162,7 @@ public class Strings
     public static string Update_Tooltip => ResourceManager.GetString(nameof(Update_Tooltip), resourceCulture) ?? string.Empty;
     public static string UserAssetSetup_Body => ResourceManager.GetString(nameof(UserAssetSetup_Body), resourceCulture) ?? string.Empty;
     public static string UserAssetSetup_Browse_install => ResourceManager.GetString(nameof(UserAssetSetup_Browse_install), resourceCulture) ?? string.Empty;
+    public static string UserAssetSetup_Processing => ResourceManager.GetString(nameof(UserAssetSetup_Processing), resourceCulture) ?? string.Empty;
     public static string UserAssetSetup_Skip => ResourceManager.GetString(nameof(UserAssetSetup_Skip), resourceCulture) ?? string.Empty;
     public static string UserAssetSetup_Title => ResourceManager.GetString(nameof(UserAssetSetup_Title), resourceCulture) ?? string.Empty;
     public static string Warn_Duplicate_id_and_difficulty => ResourceManager.GetString(nameof(Warn_Duplicate_id_and_difficulty), resourceCulture) ?? string.Empty;

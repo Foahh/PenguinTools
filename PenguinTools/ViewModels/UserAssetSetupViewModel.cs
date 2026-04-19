@@ -21,7 +21,14 @@ public partial class UserAssetSetupViewModel : ObservableObject
 
     public string ExplanationText { get; }
 
-    [RelayCommand]
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(BrowseGameFolderCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SkipCommand))]
+    public partial bool IsProcessing { get; set; }
+
+    public string ProcessingText => Strings.UserAssetSetup_Processing;
+
+    [RelayCommand(CanExecute = nameof(CanBrowseGameFolder))]
     private async Task BrowseGameFolderAsync()
     {
         var dlg = new OpenFolderDialog
@@ -38,6 +45,7 @@ public partial class UserAssetSetupViewModel : ObservableObject
 
         try
         {
+            IsProcessing = true;
             await _assetManager.CollectAssetsAsync(dlg.FolderName, CancellationToken.None).ConfigureAwait(true);
         }
         catch (Exception ex)
@@ -50,13 +58,27 @@ public partial class UserAssetSetupViewModel : ObservableObject
                 MessageBoxImage.Error);
             return;
         }
+        finally
+        {
+            IsProcessing = false;
+        }
 
         _window.Close();
     }
 
-    [RelayCommand]
+    private bool CanBrowseGameFolder()
+    {
+        return !IsProcessing;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanSkip))]
     private void Skip()
     {
         _window.Close();
+    }
+
+    private bool CanSkip()
+    {
+        return !IsProcessing;
     }
 }
