@@ -6,14 +6,16 @@ namespace PenguinTools.Behaviors;
 
 public class TreeViewCollapseSiblingsBehavior : Behavior<TreeView>
 {
+    private readonly RoutedEventHandler _expandedHandler = OnTreeViewItemExpanded;
+
     protected override void OnAttached()
     {
-        AssociatedObject.AddHandler(TreeViewItem.ExpandedEvent, OnTreeViewItemExpanded, true);
+        AssociatedObject.AddHandler(TreeViewItem.ExpandedEvent, _expandedHandler, true);
     }
 
     protected override void OnDetaching()
     {
-        AssociatedObject.RemoveHandler(TreeViewItem.ExpandedEvent, OnTreeViewItemExpanded);
+        AssociatedObject.RemoveHandler(TreeViewItem.ExpandedEvent, _expandedHandler);
     }
 
     private static void OnTreeViewItemExpanded(object sender, RoutedEventArgs e)

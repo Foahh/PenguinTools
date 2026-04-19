@@ -487,7 +487,7 @@
     <value>Click to check for updates</value>
   </data>
   <data name="UserAssetSetup_Body" xml:space="preserve">
-    <value>The saved asset list at {0} is missing or could not be read. You can scan an CHUNITHM data folder now (optional), or skip and use built-in defaults only. You can collect assets later from the Misc tab.</value>
+    <value>The latest game data is missing.&#xA;You can scan a CHUNITHM game data folder now (optional), or skip and use only the built-in data.&#xA;You can still re-import game assets later from the Misc tab.</value>
   </data>
   <data name="UserAssetSetup_Browse_install" xml:space="preserve">
     <value>Browse game folder…</value>

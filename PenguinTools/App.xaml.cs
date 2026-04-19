@@ -31,6 +31,14 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+        DispatcherUnhandledException += (_, ex) =>
+        {
+            var errorWindow = new ExceptionWindow { StackTrace = ex.Exception.ToString() };
+            errorWindow.ShowDialog();
+            if (ex.Exception is OperationCanceledException or DiagnosticException) { ex.Handled = true; }
+        };
 
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -46,9 +54,9 @@ public partial class App : Application
 
         services.AddSingleton<IExternalLauncher, ShellExecuteLauncher>();
         services.AddSingleton<IFileDialogService>(sp =>
-            new FileDialogService(new Lazy<MainWindow>(() => sp.GetRequiredService<MainWindow>())));
+            new FileDialogService(new Lazy<MainWindow>(sp.GetRequiredService<MainWindow>)));
         services.AddSingleton<IDiagnosticsPresenter>(sp =>
-            new DiagnosticsPresenter(new Lazy<MainWindow>(() => sp.GetRequiredService<MainWindow>())));
+            new DiagnosticsPresenter(new Lazy<MainWindow>(sp.GetRequiredService<MainWindow>)));
         services.AddSingleton<MainWindow>();
         services.AddSingleton(sp => new ActionService(sp.GetRequiredService<IDiagnosticsPresenter>()));
         services.AddSingleton<IReleaseService, GitHubReleaseService>();
@@ -85,14 +93,9 @@ public partial class App : Application
         }
 
         var window = ServiceProvider.GetRequiredService<MainWindow>();
+        MainWindow = window;
+        ShutdownMode = ShutdownMode.OnMainWindowClose;
         window.Show();
-
-        DispatcherUnhandledException += (_, ex) =>
-        {
-            var errorWindow = new ExceptionWindow { StackTrace = ex.Exception.ToString() };
-            errorWindow.ShowDialog();
-            if (ex.Exception is OperationCanceledException or DiagnosticException) { ex.Handled = true; }
-        };
     }
 
     protected override void OnExit(ExitEventArgs e)

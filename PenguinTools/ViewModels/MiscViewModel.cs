@@ -1,23 +1,20 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using PenguinTools.Resources;
-using PenguinTools.Infrastructure;
 using PenguinTools.Services;
-using PenguinTools.Views;
 
 namespace PenguinTools.ViewModels;
 
 public partial class MiscViewModel : ViewModel
 {
-    private readonly MainWindow _mainWindow;
-
     public MiscViewModel(
-        MainWindow mainWindow,
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
@@ -26,7 +23,6 @@ public partial class MiscViewModel : ViewModel
         IExternalLauncher externalLauncher)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
-        _mainWindow = mainWindow;
     }
 
     [RelayCommand]
@@ -53,7 +49,7 @@ public partial class MiscViewModel : ViewModel
             AddExtension = true,
             ValidateNames = true
         };
-        var result = openDlg.ShowDialog(_mainWindow);
+        var result = openDlg.ShowDialog(Application.Current.MainWindow);
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FileName)) { return; }
 
         var baseDir = Path.GetDirectoryName(openDlg.FileName);
@@ -83,7 +79,7 @@ public partial class MiscViewModel : ViewModel
             Multiselect = false,
             ValidateNames = true
         };
-        var result = openDlg.ShowDialog(_mainWindow);
+        var result = openDlg.ShowDialog(Application.Current.MainWindow);
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) { return; }
 
         await ActionService.RunAsync(ct => AssetManager.CollectAssetsAsync(openDlg.FolderName, ct));
