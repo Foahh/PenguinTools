@@ -1,5 +1,5 @@
 ﻿using PenguinTools.Core.Asset;
-using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace PenguinTools.Core.Xml;
@@ -8,23 +8,19 @@ public abstract class XmlElement<T>
 {
     protected abstract string FileName { get; }
 
-    [XmlNamespaceDeclarations]
-    public XmlSerializerNamespaces Xmlns => new(
-    [
-        new XmlQualifiedName("xsi", XmlConstants.XmlnsXsi),
-        new XmlQualifiedName("xsd", XmlConstants.XmlnsXsd)
-    ]);
-
     [XmlElement("dataName")]
     public string DataName { get; set; } = string.Empty;
 
     public async Task<string> SaveDirectoryAsync(string baseFolder)
     {
-        var serializer = new XmlSerializer(typeof(T));
         var folder = Path.Combine(baseFolder, DataName);
         Directory.CreateDirectory(folder);
-        await using var streamWriter = new StreamWriter(Path.Combine(folder, FileName));
-        serializer.Serialize(streamWriter, this);
+
+        var path = Path.Combine(folder, FileName);
+        var document = XmlDocumentFactory.Create(this);
+
+        await using var stream = File.Create(path);
+        await document.SaveAsync(stream, SaveOptions.DisableFormatting, CancellationToken.None);
         return folder;
     }
 }

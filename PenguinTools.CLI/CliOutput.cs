@@ -1,5 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using PenguinTools.Core;
 using PenguinTools.Media;
 
@@ -29,18 +27,12 @@ internal sealed record CliCommandData(
     int? StageId = null,
     string? StageName = null,
     CliChartSummary? Chart = null,
-    IReadOnlyList<CliArtifact>? Artifacts = null);
+    CliArtifact[]? Artifacts = null);
 
-internal sealed record CliCommandOutcome(OperationResult Result, string? Message = null, object? Data = null);
+internal sealed record CliCommandOutcome(OperationResult Result, string? Message = null, CliCommandData? Data = null);
 
 internal static class CliOutput
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-    };
-
     internal static void Write(string commandName, CliOutputFormat format, CliCommandOutcome outcome)
     {
         var exitCode = outcome.Result.Succeeded ? 0 : 1;
@@ -80,7 +72,7 @@ internal static class CliOutput
             Data: outcome.Data,
             Diagnostics: CliDiagnostics.ToPayload(outcome.Result.Diagnostics));
 
-        Console.Out.WriteLine(JsonSerializer.Serialize(response, JsonOptions));
+        Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(response, CliJsonSerializerContext.Default.CliResponse));
     }
 }
 
@@ -90,8 +82,8 @@ internal sealed record CliResponse(
     bool Success,
     int ExitCode,
     string? Message,
-    object? Data,
-    IReadOnlyList<CliDiagnosticPayload> Diagnostics);
+    CliCommandData? Data,
+    CliDiagnosticPayload[] Diagnostics);
 
 internal sealed record CliDiagnosticPayload(
     string Severity,

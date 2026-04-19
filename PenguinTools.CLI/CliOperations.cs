@@ -269,7 +269,7 @@ internal static class CliOperations
             StageId: stageId,
             StageName: stageName,
             Chart: CreateChartSummary(meta),
-            Artifacts: artifacts);
+            Artifacts: artifacts.ToArray());
     }
 
     internal static CliCommandData CreateExtractAfbData(string input, string output)
@@ -291,7 +291,7 @@ internal static class CliOperations
             InputPath: input,
             OutputDirectory: output,
             SourcePath: input,
-            Artifacts: artifacts);
+            Artifacts: artifacts.ToArray());
     }
 
     internal static CliCommandData CreateWorkflowData(
@@ -347,7 +347,7 @@ internal static class CliOperations
             StageId: stageId,
             StageName: stageName,
             Chart: CreateChartSummary(meta),
-            Artifacts: artifacts);
+            Artifacts: artifacts.ToArray());
     }
 
     private static DiagnosticSnapshot CreateErrorSnapshot(string message)

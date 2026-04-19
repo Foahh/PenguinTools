@@ -5,7 +5,7 @@ namespace PenguinTools.CLI;
 
 internal static class CliDiagnostics
 {
-    internal static IReadOnlyList<CliDiagnosticPayload> ToPayload(DiagnosticSnapshot snapshot)
+    internal static CliDiagnosticPayload[] ToPayload(DiagnosticSnapshot snapshot)
     {
         return [.. GetOrderedDiagnostics(snapshot).Select(ToPayload)];
     }

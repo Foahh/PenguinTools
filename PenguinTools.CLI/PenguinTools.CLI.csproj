@@ -5,6 +5,8 @@
         <TargetFramework>$(DotNetVersion)</TargetFramework>
         <OutputType>Exe</OutputType>
         <RootNamespace>PenguinTools.CLI</RootNamespace>
+        <SelfContained>true</SelfContained>
+        <PublishTrimmed>true</PublishTrimmed>
     </PropertyGroup>
 
     <ItemGroup>

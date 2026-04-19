@@ -1,0 +1,42 @@
+{
+  "genreNames": [],
+  "notesFieldLine": [],
+  "stageName": [
+    {
+      "id": 1005089,
+      "str": "custom_stage_1005089",
+      "data": ""
+    },
+    {
+      "id": 1005090,
+      "str": "custom_stage_1005090",
+      "data": ""
+    },
+    {
+      "id": 1005095,
+      "str": "custom_stage_1005095",
+      "data": ""
+    },
+    {
+      "id": 1005111,
+      "str": "custom_stage_1005111",
+      "data": ""
+    },
+    {
+      "id": 1005135,
+      "str": "custom_stage_1005135",
+      "data": ""
+    },
+    {
+      "id": 1009033,
+      "str": "custom_stage_1009033",
+      "data": ""
+    },
+    {
+      "id": 1009034,
+      "str": "custom_stage_1009034",
+      "data": ""
+    }
+  ],
+  "worldsEndTagName": []
+}
