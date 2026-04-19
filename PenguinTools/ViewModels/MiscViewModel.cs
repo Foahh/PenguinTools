@@ -22,8 +22,9 @@ public partial class MiscViewModel : ViewModel
         AssetManager assetManager,
         IMediaTool mediaTool,
         IEmbeddedResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
-        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        IExternalLauncher externalLauncher)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
         _mainWindow = mainWindow;
     }

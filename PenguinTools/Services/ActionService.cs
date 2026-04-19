@@ -1,20 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PenguinTools.Controls;
 using PenguinTools.Core;
 using PenguinTools.Core.Resources;
 using System.Media;
-using System.Windows;
-using PenguinTools.Views;
 
 namespace PenguinTools.Services;
 
 public partial class ActionService : ObservableObject
 {
-    private readonly Lazy<MainWindow> _mainWindow;
+    private readonly IDiagnosticsPresenter _diagnosticsPresenter;
 
-    public ActionService(Lazy<MainWindow> mainWindow)
+    public ActionService(IDiagnosticsPresenter diagnosticsPresenter)
     {
-        _mainWindow = mainWindow;
+        _diagnosticsPresenter = diagnosticsPresenter;
     }
 
     [ObservableProperty] public partial bool IsBusy { get; set; }
@@ -87,16 +84,7 @@ public partial class ActionService : ObservableObject
 
         if (!result.Diagnostics.HasProblem) return result;
 
-        var model = new DiagnosticsWindowViewModel
-        {
-            Diagnostics = [.. result.Diagnostics.Diagnostics]
-        };
-        var window = new DiagnosticsWindow
-        {
-            DataContext = model,
-            Owner = _mainWindow.Value
-        };
-        window.ShowDialog();
+        _diagnosticsPresenter.Show(result.Diagnostics);
         return result;
     }
 

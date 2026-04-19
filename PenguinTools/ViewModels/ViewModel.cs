@@ -8,7 +8,6 @@ using PenguinTools.Infrastructure;
 using PenguinTools.Models;
 using PenguinTools.Services;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
@@ -17,6 +16,8 @@ namespace PenguinTools.ViewModels;
 
 public abstract partial class ViewModel : ObservableObject
 {
+    private readonly IExternalLauncher _externalLauncher;
+
     public ActionService ActionService { get; }
     public AssetManager AssetManager { get; }
     public IMediaTool MediaTool { get; }
@@ -28,33 +29,21 @@ public abstract partial class ViewModel : ObservableObject
         AssetManager assetManager,
         IMediaTool mediaTool,
         IEmbeddedResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        IExternalLauncher externalLauncher)
     {
         ActionService = actionService;
         AssetManager = assetManager;
         MediaTool = mediaTool;
         ResourceStore = resourceStore;
         AssetProvider = assetProvider;
+        _externalLauncher = externalLauncher;
     }
 
     protected static Dispatcher Dispatcher => Application.Current.Dispatcher;
 
     [RelayCommand]
-    private static void OpenWiki()
-    {
-        try
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = Strings.Link_Documentation,
-                UseShellExecute = true
-            });
-        }
-        catch
-        {
-            // ignored
-        }
-    }
+    private void OpenWiki() => _externalLauncher.Launch(Strings.Link_Documentation);
 }
 
 public abstract class ActionViewModel : ViewModel
@@ -64,8 +53,9 @@ public abstract class ActionViewModel : ViewModel
         AssetManager assetManager,
         IMediaTool mediaTool,
         IEmbeddedResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
-        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        IExternalLauncher externalLauncher)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
         ActionCommand = new AsyncRelayCommand(() => ActionService.RunAsync(Action), () => ActionService.CanRun() && CanRun());
         ActionService.PropertyChanged += (_, e) =>
@@ -88,8 +78,9 @@ public abstract class ReloadableActionViewModel : ActionViewModel
         AssetManager assetManager,
         IMediaTool mediaTool,
         IEmbeddedResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
-        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        IExternalLauncher externalLauncher)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
         ReloadCommand = new AsyncRelayCommand(Reload, () => ActionService.CanRun() && CanReload());
         ActionService.PropertyChanged += (_, e) =>
@@ -115,8 +106,9 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         AssetManager assetManager,
         IMediaTool mediaTool,
         IEmbeddedResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
-        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        IExternalLauncher externalLauncher)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
         ActionService.PropertyChanged += OnWatchViewModelActionServicePropertyChanged;
     }

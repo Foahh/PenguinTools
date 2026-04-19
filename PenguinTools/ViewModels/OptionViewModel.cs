@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Chart.Writer;
@@ -18,14 +17,19 @@ namespace PenguinTools.ViewModels;
 
 public partial class OptionViewModel : WatchViewModel<OptionModel>
 {
+    private readonly IFileDialogService _fileDialogs;
+
     public OptionViewModel(
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
         IEmbeddedResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
-        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        IExternalLauncher externalLauncher,
+        IFileDialogService fileDialogs)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
+        _fileDialogs = fileDialogs;
     }
 
     private const string MgxcExtension = ".mgxc";
@@ -82,7 +86,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         if (settings.Books.Count == 0) throw new DiagnosticException(Strings.Error_No_charts_are_found_directory);
 
-        var workingDirectory = SelectOutputDirectory(settings);
+        var workingDirectory = await SelectOutputDirectoryAsync(settings);
         if (workingDirectory == null) return OperationResult.Success();
 
         settings.WorkingDirectory = workingDirectory;
@@ -224,19 +228,11 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         }
     }
 
-    private string? SelectOutputDirectory(OptionModel settings)
-    {
-        var dialog = new OpenFolderDialog
-        {
-            ClientGuid = new Guid("C81454B6-EA09-41D6-90B2-4BD4FB3D5449"),
-            Title = Strings.Title_Select_the_output_folder,
-            Multiselect = false,
-            ValidateNames = true,
-            InitialDirectory = GetInitialOutputDirectory(settings)
-        };
-
-        return dialog.ShowDialog() == true ? dialog.FolderName : null;
-    }
+    private Task<string?> SelectOutputDirectoryAsync(OptionModel settings) =>
+        _fileDialogs.PickFolderAsync(
+            Strings.Title_Select_the_output_folder,
+            GetInitialOutputDirectory(settings),
+            new Guid("C81454B6-EA09-41D6-90B2-4BD4FB3D5449"));
 
     private string GetInitialOutputDirectory(OptionModel settings)
     {

@@ -37,8 +37,13 @@ public partial class App : Application
         var services = new ServiceCollection();
         services.AddPenguinInfrastructure(typeof(EmbeddedResourceStore).Assembly);
 
+        services.AddSingleton<IExternalLauncher, ShellExecuteLauncher>();
+        services.AddSingleton<IFileDialogService>(sp =>
+            new FileDialogService(new Lazy<MainWindow>(() => sp.GetRequiredService<MainWindow>())));
+        services.AddSingleton<IDiagnosticsPresenter>(sp =>
+            new DiagnosticsPresenter(new Lazy<MainWindow>(() => sp.GetRequiredService<MainWindow>())));
         services.AddSingleton<MainWindow>();
-        services.AddSingleton(sp => new ActionService(new Lazy<MainWindow>(() => sp.GetRequiredService<MainWindow>())));
+        services.AddSingleton(sp => new ActionService(sp.GetRequiredService<IDiagnosticsPresenter>()));
         services.AddSingleton<IReleaseService, GitHubReleaseService>();
 
         services.AddTransient<MainWindowViewModel>();

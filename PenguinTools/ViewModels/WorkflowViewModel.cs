@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using PenguinTools.Core;
+﻿using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Chart.Writer;
 using PenguinTools.Core.Chart.Parser;
@@ -16,14 +15,19 @@ namespace PenguinTools.ViewModels;
 
 public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 {
+    private readonly IFileDialogService _fileDialogs;
+
     public WorkflowViewModel(
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
         IEmbeddedResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
-        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        IExternalLauncher externalLauncher,
+        IFileDialogService fileDialogs)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
+        _fileDialogs = fileDialogs;
     }
 
     protected override async Task<OperationResult> Action(CancellationToken ct = default)
@@ -41,15 +45,10 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
             if (meta.StageId is null) throw new DiagnosticException(Strings.Error_Stage_id_is_not_set);
         }
 
-        var dlg = new OpenFolderDialog
-        {
-            InitialDirectory = Path.GetDirectoryName((string?)ModelPath),
-            Title = Strings.Title_Select_the_output_folder,
-            Multiselect = false,
-            ValidateNames = true
-        };
-        if (dlg.ShowDialog() != true) return OperationResult.Success();
-        var path = dlg.FolderName;
+        var path = await _fileDialogs.PickFolderAsync(
+            Strings.Title_Select_the_output_folder,
+            Path.GetDirectoryName((string?)ModelPath));
+        if (path is null) return OperationResult.Success();
 
         var stage = meta.Stage;
         if (meta.IsCustomStage)

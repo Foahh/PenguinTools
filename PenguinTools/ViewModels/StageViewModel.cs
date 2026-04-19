@@ -18,8 +18,9 @@ public partial class StageViewModel : ActionViewModel
         AssetManager assetManager,
         IMediaTool mediaTool,
         IEmbeddedResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
-        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        IExternalLauncher externalLauncher)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
         NoteFieldsLine = AssetManager.FieldLines.FirstOrDefault(p => p.Str == "Orange") ?? Entry.Default;
     }
