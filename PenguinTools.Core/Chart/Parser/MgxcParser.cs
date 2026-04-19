@@ -16,25 +16,20 @@ public partial class MgxcParser
     private const string HeaderEvnt = "evnt"; // 65 76 6E 74
     private const string HeaderDat2 = "dat2"; // 64 61 74 32
 
-    public MgxcParser(MgxcParseRequest request, IMediaTool mediaTool, OperationContext context)
+    public MgxcParser(MgxcParseRequest request, IMediaTool mediaTool)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(mediaTool);
-        ArgumentNullException.ThrowIfNull(context);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.Path);
         ArgumentNullException.ThrowIfNull(request.Assets);
 
         MediaTool = mediaTool;
-        ParentContext = context;
-        CurrentContext = context;
         Path = request.Path;
         Assets = request.Assets;
     }
 
     private IMediaTool MediaTool { get; }
-    private OperationContext ParentContext { get; }
-    private OperationContext CurrentContext { get; set; }
-    private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
+    private IDiagnosticSink Diagnostic { get; } = new Diagnoster();
     private string Path { get; }
     private AssetManager Assets { get; }
     private List<Task> Tasks { get; } = [];
@@ -42,49 +37,36 @@ public partial class MgxcParser
 
     public async Task<OperationResult<mg.Chart>> ParseAsync(CancellationToken ct = default)
     {
-        var diagnostics = new Diagnoster
-        {
-            TimeCalculator = ParentContext.Diagnostic.TimeCalculator
-        };
-        CurrentContext = ParentContext.CreateChild(diagnostics);
+        Mgxc.Meta.FilePath = Path;
 
-        try
-        {
-            Mgxc.Meta.FilePath = Path;
+        await using var fs = File.OpenRead(Path);
+        using var br = new BinaryReader(fs);
 
-            await using var fs = File.OpenRead(Path);
-            using var br = new BinaryReader(fs);
+        var header = br.ReadUtf8String(4);
+        if (header != HeaderMgxc) throw new DiagnosticException(string.Format(Strings.Error_Invalid_Header, header, HeaderMgxc));
 
-            var header = br.ReadUtf8String(4);
-            if (header != HeaderMgxc) throw new DiagnosticException(string.Format(Strings.Error_Invalid_Header, header, HeaderMgxc));
+        br.ReadInt32(); // MGXC Block Size
+        br.ReadInt32(); // unknown
 
-            br.ReadInt32(); // MGXC Block Size
-            br.ReadInt32(); // unknown
+        br.ReadBlock(HeaderMeta, ParseMeta);
 
-            br.ReadBlock(HeaderMeta, ParseMeta);
+        br.ReadBlock(HeaderEvnt, ParseEvent);
 
-            br.ReadBlock(HeaderEvnt, ParseEvent);
+        Diagnostic.TimeCalculator = Mgxc.GetCalculator();
 
-            Diagnostic.TimeCalculator = Mgxc.GetCalculator();
+        br.ReadBlock(HeaderDat2, ParseNote);
 
-            br.ReadBlock(HeaderDat2, ParseNote);
+        ProcessEvent();
 
-            ProcessEvent();
+        ProcessNote();
 
-            ProcessNote();
+        ProcessTil();
 
-            ProcessTil();
+        ProcessCommand();
+        ProcessMeta();
 
-            ProcessCommand();
-            ProcessMeta();
-
-            await Task.WhenAll(Tasks);
-            return OperationResult<mg.Chart>.Success(Mgxc).WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
-        }
-        finally
-        {
-            CurrentContext = ParentContext;
-        }
+        await Task.WhenAll(Tasks);
+        return OperationResult<mg.Chart>.Success(Mgxc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
     }
 
     private void ProcessMeta()

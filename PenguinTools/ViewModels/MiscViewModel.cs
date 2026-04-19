@@ -52,9 +52,9 @@ public partial class MiscViewModel : ViewModel
         };
         if (saveDlg.ShowDialog() != true) { return; }
 
-        await ActionService.RunAsync(async (context, ct) =>
+        await ActionService.RunAsync(async ct =>
         {
-            var extractor = new AfbExtractor(new AfbExtractRequest(openDlg.FileName, saveDlg.FolderName), MediaTool, context);
+            var extractor = new AfbExtractor(new AfbExtractRequest(openDlg.FileName, saveDlg.FolderName), MediaTool);
             return await extractor.ExtractAsync(ct);
         });
     }
@@ -72,6 +72,6 @@ public partial class MiscViewModel : ViewModel
         var result = openDlg.ShowDialog(window);
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) { return; }
 
-        await ActionService.RunAsync((context, ct) => AssetManager.CollectAssetsAsync(openDlg.FolderName, ct));
+        await ActionService.RunAsync(ct => AssetManager.CollectAssetsAsync(openDlg.FolderName, ct));
     }
 }

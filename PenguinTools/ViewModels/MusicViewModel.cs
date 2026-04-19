@@ -10,7 +10,7 @@ namespace PenguinTools.ViewModels;
 
 public class MusicViewModel : WatchViewModel<MusicModel>
 {
-    protected override Task<OperationResult<MusicModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)
+    protected override Task<OperationResult<MusicModel>> ReadModel(string path, CancellationToken ct = default)
     {
         var model = new MusicModel();
         model.Meta.BgmFilePath = ModelPath;
@@ -22,7 +22,7 @@ public class MusicViewModel : WatchViewModel<MusicModel>
         return !string.IsNullOrWhiteSpace(ModelPath);
     }
 
-    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(CancellationToken ct = default)
     {
         if (Model?.Id is null) throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
@@ -42,8 +42,7 @@ public class MusicViewModel : WatchViewModel<MusicModel>
                 path,
                 AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
                 ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(Model.Meta.FullBgmFilePath)}.wav")),
-            MediaTool,
-            context);
+            MediaTool);
         return await converter.ConvertAsync(ct);
     }
 }

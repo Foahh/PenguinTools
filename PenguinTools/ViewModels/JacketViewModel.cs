@@ -32,7 +32,7 @@ public partial class JacketViewModel : ActionViewModel
         return !string.IsNullOrWhiteSpace(JacketPath);
     }
 
-    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(CancellationToken ct = default)
     {
         var fileName = JacketId is null ? Path.GetFileNameWithoutExtension((string?)JacketPath) : $"{(int)JacketId:0000}";
         var dlg = new SaveFileDialog
@@ -42,7 +42,7 @@ public partial class JacketViewModel : ActionViewModel
         };
         if (dlg.ShowDialog() != true) return OperationResult.Success();
 
-        var converter = new JacketConverter(new JacketConvertRequest(JacketPath, dlg.FileName), MediaTool, context);
+        var converter = new JacketConverter(new JacketConvertRequest(JacketPath, dlg.FileName), MediaTool);
         return await converter.ConvertAsync(ct);
     }
 }

@@ -39,16 +39,16 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         SelectedBookItem = null;
     }
 
-    protected override async Task<OperationResult<OptionModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult<OptionModel>> ReadModel(string path, CancellationToken ct = default)
     {
-        var diagnostics = CreateDiagnoster(context);
+        var diagnostics = CreateDiagnoster();
         await Dispatcher.InvokeAsync(() =>
         {
             ActionService.Status = Strings.Status_Searching;
             ActionService.StatusTime = DateTime.Now;
         });
         var model = await LoadModelAsync(path, ct);
-        var processContext = CreateProcessContext(context, ct, model);
+        var processContext = CreateProcessContext(diagnostics, ct, model);
         var batchDiagnostics = await LoadBooksAsync(path, model.Books, processContext, ct);
         FinalizeBooks(model.Books, diagnostics, ct);
 
@@ -62,9 +62,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         return OperationResult<OptionModel>.Success(model).WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
     }
 
-    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(CancellationToken ct = default)
     {
-        var diagnostics = CreateDiagnoster(context);
+        var diagnostics = CreateDiagnoster();
         var settings = Model;
         if (settings == null) return OperationResult.Success();
         if (!settings.CanExecute) throw new DiagnosticException(Strings.Error_Noop);
@@ -81,17 +81,16 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         var ultEntries = new ConcurrentBag<Entry>();
         await settings.SaveAsync(ModelPath, ct);
 
-        var processContext = CreateProcessContext(context, ct, settings);
+        var processContext = CreateProcessContext(diagnostics, ct, settings);
         var exportContext = new ExportContext
         {
             Settings = settings,
-            OutputPaths = outputPaths,
-            Diagnostics = diagnostics
+            OutputPaths = outputPaths
         };
         var batchDiagnostics = await BatchAsync(
             Strings.Status_Converted,
             settings.Books.Values,
-            (book, innerContext) => ConvertBookAsync(book, exportContext, innerContext, weEntries, ultEntries, ct),
+            (book, innerDiagnostics) => ConvertBookAsync(book, exportContext, innerDiagnostics, weEntries, ultEntries, ct),
             book => book.Meta.FilePath,
             processContext,
             parallel: true);
@@ -101,16 +100,16 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         return OperationResult.Success().WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
     }
 
-    private static Diagnoster CreateDiagnoster(OperationContext context) =>
+    private static Diagnoster CreateDiagnoster(IDiagnosticSink? parent = null) =>
         new()
         {
-            TimeCalculator = context.Diagnostic.TimeCalculator
+            TimeCalculator = parent?.TimeCalculator
         };
 
-    private static ProcessContext CreateProcessContext(OperationContext context, CancellationToken ct, OptionModel model) =>
+    private static ProcessContext CreateProcessContext(IDiagnosticSink diagnostics, CancellationToken ct, OptionModel model) =>
         new()
         {
-            Context = context,
+            Diagnostics = diagnostics,
             CancellationToken = ct,
             BatchSize = model.BatchSize,
             WorkingDirectory = model.WorkingDirectory
@@ -135,20 +134,20 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         return await BatchAsync(
             Strings.Status_Checked,
             chartPaths,
-            (filePath, innerContext) => LoadBookAsync(filePath, books, innerContext, ct),
+            (filePath, innerDiagnostics) => LoadBookAsync(filePath, books, innerDiagnostics, ct),
             filePath => filePath,
             context,
             parallel: true);
     }
 
-    private async Task LoadBookAsync(string filePath, BookDictionary books, OperationContext context, CancellationToken ct)
+    private async Task LoadBookAsync(string filePath, BookDictionary books, IDiagnosticSink diagnostics, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
         if (!string.Equals(Path.GetExtension(filePath), MgxcExtension, StringComparison.OrdinalIgnoreCase)) return;
 
-        var parser = new MgxcParser(new MgxcParseRequest(filePath, AssetManager), MediaTool, context);
+        var parser = new MgxcParser(new MgxcParseRequest(filePath, AssetManager), MediaTool);
         var parsed = await parser.ParseAsync(ct);
-        context.Diagnostic.Report(parsed.Diagnostics);
+        diagnostics.Report(parsed.Diagnostics);
         if (!parsed.Succeeded || parsed.Value is not { } chart) return;
 
         var meta = chart.Meta;
@@ -169,7 +168,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         {
             if (book.Items.ContainsKey(meta.Difficulty))
             {
-                context.Diagnostic.Report(Severity.Warning, Strings.Warn_Duplicate_id_and_difficulty);
+                diagnostics.Report(Severity.Warning, Strings.Warn_Duplicate_id_and_difficulty);
             }
 
             book.Items[meta.Difficulty] = item;
@@ -254,12 +253,12 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
     private async Task ConvertBookAsync(
         Book book,
         ExportContext exportContext,
-        OperationContext context,
+        IDiagnosticSink diagnostics,
         ConcurrentBag<Entry> weEntries,
         ConcurrentBag<Entry> ultEntries,
         CancellationToken ct)
     {
-        var stage = await BuildStageAsync(book, exportContext, context, ct) ?? book.Stage;
+        var stage = await BuildStageAsync(book, exportContext, diagnostics, ct) ?? book.Stage;
         string? chartFolder = null;
         MusicXml? xml = null;
 
@@ -270,21 +269,21 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         if (exportContext.Settings.ConvertChart && xml is not null && chartFolder is not null)
         {
-            await ConvertChartsAsync(book, xml, chartFolder, context, weEntries, ultEntries, ct);
+            await ConvertChartsAsync(book, xml, chartFolder, diagnostics, weEntries, ultEntries, ct);
         }
 
         if (exportContext.Settings.ConvertJacket && xml is not null && chartFolder is not null)
         {
-            await ConvertJacketAsync(book, xml, chartFolder, exportContext.Diagnostics, context, ct);
+            await ConvertJacketAsync(book, xml, chartFolder, diagnostics, ct);
         }
 
         if (exportContext.Settings.ConvertAudio)
         {
-            await ConvertAudioAsync(book, exportContext.OutputPaths.CueFileFolder, context, ct);
+            await ConvertAudioAsync(book, exportContext.OutputPaths.CueFileFolder, diagnostics, ct);
         }
     }
 
-    private async Task<Entry?> BuildStageAsync(Book book, ExportContext exportContext, OperationContext context, CancellationToken ct)
+    private async Task<Entry?> BuildStageAsync(Book book, ExportContext exportContext, IDiagnosticSink diagnostics, CancellationToken ct)
     {
         if (!book.IsCustomStage || !exportContext.Settings.ConvertBackground) return null;
         if (string.IsNullOrWhiteSpace(book.Meta.FullBgiFilePath)) throw new DiagnosticException(Strings.Error_Background_file_is_not_set);
@@ -300,10 +299,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 book.NotesFieldLine,
                 AssetProvider.GetPath(InfrastructureAsset.StageTemplate),
                 AssetProvider.GetPath(InfrastructureAsset.NotesFieldTemplate)),
-            MediaTool,
-            context);
+            MediaTool);
         var builtStage = await stageConverter.BuildAsync(ct);
-        context.Diagnostic.Report(builtStage.Diagnostics);
+        diagnostics.Report(builtStage.Diagnostics);
         if (!builtStage.Succeeded || builtStage.Value is not { } stageEntry) return null;
 
         ct.ThrowIfCancellationRequested();
@@ -338,7 +336,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         Book book,
         MusicXml xml,
         string chartFolder,
-        OperationContext context,
+        IDiagnosticSink diagnostics,
         ConcurrentBag<Entry> weEntries,
         ConcurrentBag<Entry> ultEntries,
         CancellationToken ct)
@@ -350,9 +348,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             TrackEventEntry(book, difficulty, songId, weEntries, ultEntries);
 
             var chartPath = Path.Combine(chartFolder, xml[item.Difficulty].File);
-            var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, item.Mgxc), context);
+            var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, item.Mgxc));
             var writtenChart = await chartWriter.WriteAsync(ct);
-            context.Diagnostic.Report(writtenChart.Diagnostics);
+            diagnostics.Report(writtenChart.Diagnostics);
             if (!writtenChart.Succeeded) return;
 
             ct.ThrowIfCancellationRequested();
@@ -364,7 +362,6 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         MusicXml xml,
         string chartFolder,
         IDiagnosticSink diagnostics,
-        OperationContext context,
         CancellationToken ct)
     {
         var jacketPath = book.Meta.FullJacketFilePath;
@@ -376,16 +373,15 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         var jacketConverter = new JacketConverter(
             new JacketConvertRequest(jacketPath, Path.Combine(chartFolder, xml.JaketFile)),
-            MediaTool,
-            context);
+            MediaTool);
         var convertedJacket = await jacketConverter.ConvertAsync(ct);
-        context.Diagnostic.Report(convertedJacket.Diagnostics);
+        diagnostics.Report(convertedJacket.Diagnostics);
         if (!convertedJacket.Succeeded) return;
 
         ct.ThrowIfCancellationRequested();
     }
 
-    private async Task ConvertAudioAsync(Book book, string cueFileFolder, OperationContext context, CancellationToken ct)
+    private async Task ConvertAudioAsync(Book book, string cueFileFolder, IDiagnosticSink diagnostics, CancellationToken ct)
     {
         var musicConverter = new MusicConverter(
             new MusicConvertRequest(
@@ -393,10 +389,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
                 cueFileFolder,
                 AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
                 ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(book.Meta.FullBgmFilePath)}.wav")),
-            MediaTool,
-            context);
+            MediaTool);
         var convertedMusic = await musicConverter.ConvertAsync(ct);
-        context.Diagnostic.Report(convertedMusic.Diagnostics);
+        diagnostics.Report(convertedMusic.Diagnostics);
         if (!convertedMusic.Succeeded) return;
 
         ct.ThrowIfCancellationRequested();
@@ -428,7 +423,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         }
     }
 
-    private static async Task<DiagnosticSnapshot> ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, OperationContext, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
+    private static async Task<DiagnosticSnapshot> ProcessItemsAsync<T>(string prefix, IEnumerable<T> items, Func<T, IDiagnosticSink, Task> action, Func<T, string> getPath, ProcessContext main, bool parallel = false)
     {
         var itemList = items as IList<T> ?? [..items];
         var total = itemList.Count;
@@ -452,11 +447,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         async ValueTask ProcessItemAsync(T item, CancellationToken ct)
         {
-            var ld = new Diagnoster();
-            var childContext = main.Context.CreateChild(ld);
+            var ld = CreateDiagnoster(main.Diagnostics);
             try
             {
-                await action(item, childContext);
+                await action(item, ld);
                 ct.ThrowIfCancellationRequested();
             }
             catch (Exception ex)
@@ -486,7 +480,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
     private static Task<DiagnosticSnapshot> BatchAsync<T>(
         string prefix,
         IEnumerable<T> items,
-        Func<T, OperationContext, Task> action,
+        Func<T, IDiagnosticSink, Task> action,
         Func<T, string> getPath,
         ProcessContext context,
         bool parallel = false) =>
@@ -500,7 +494,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
     private sealed class ProcessContext
     {
-        public required OperationContext Context { get; init; }
+        public required IDiagnosticSink Diagnostics { get; init; }
         public required CancellationToken CancellationToken { get; init; }
         public required int BatchSize { get; init; }
         public required string WorkingDirectory { get; init; }
@@ -510,7 +504,6 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
     {
         public required OptionModel Settings { get; init; }
         public required OutputPaths OutputPaths { get; init; }
-        public required IDiagnosticSink Diagnostics { get; init; }
     }
 
     private sealed class OutputPaths

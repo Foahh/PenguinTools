@@ -6,11 +6,10 @@ namespace PenguinTools.Core.Media;
 
 public class StageConverter
 {
-    public StageConverter(StageBuildRequest request, IMediaTool mediaTool, OperationContext context)
+    public StageConverter(StageBuildRequest request, IMediaTool mediaTool)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(mediaTool);
-        ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(request.Assets);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.BackgroundPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.OutFolder);
@@ -18,8 +17,6 @@ public class StageConverter
         ArgumentException.ThrowIfNullOrWhiteSpace(request.NotesFieldTemplatePath);
 
         MediaTool = mediaTool;
-        ParentContext = context;
-        CurrentContext = context;
         Assets = request.Assets;
         BackgroundPath = request.BackgroundPath;
         EffectPaths = request.EffectPaths;
@@ -31,9 +28,7 @@ public class StageConverter
     }
 
     private IMediaTool MediaTool { get; }
-    private OperationContext ParentContext { get; }
-    private OperationContext CurrentContext { get; set; }
-    private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
+    private IDiagnosticSink Diagnostic { get; } = new Diagnoster();
     private AssetManager Assets { get; }
     private string BackgroundPath { get; }
     private string?[]? EffectPaths { get; }
@@ -45,31 +40,18 @@ public class StageConverter
 
     public async Task<OperationResult<Entry>> BuildAsync(CancellationToken ct = default)
     {
-        var diagnostics = new Diagnoster
-        {
-            TimeCalculator = ParentContext.Diagnostic.TimeCalculator
-        };
-        CurrentContext = ParentContext.CreateChild(diagnostics);
+        if (!await ValidateAsync(ct)) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        if (StageId is not { } stageId) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
 
-        try
-        {
-            if (!await ValidateAsync(ct)) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
-            if (StageId is not { } stageId) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
+        var xml = new StageXml(stageId, NoteFieldLane);
+        var outputDir = await xml.SaveDirectoryAsync(OutFolder);
 
-            var xml = new StageXml(stageId, NoteFieldLane);
-            var outputDir = await xml.SaveDirectoryAsync(OutFolder);
+        var nfPath = Path.Combine(outputDir, xml.NotesFieldFile);
+        var stPath = Path.Combine(outputDir, xml.BaseFile);
+        await MediaTool.ConvertStageAsync(BackgroundPath, StageTemplatePath, stPath, EffectPaths, ct);
+        File.Copy(NotesFieldTemplatePath, nfPath, true);
 
-            var nfPath = Path.Combine(outputDir, xml.NotesFieldFile);
-            var stPath = Path.Combine(outputDir, xml.BaseFile);
-            await MediaTool.ConvertStageAsync(BackgroundPath, StageTemplatePath, stPath, EffectPaths, ct);
-            File.Copy(NotesFieldTemplatePath, nfPath, true);
-
-            return OperationResult<Entry>.Success(xml.Name).WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
-        }
-        finally
-        {
-            CurrentContext = ParentContext;
-        }
+        return OperationResult<Entry>.Success(xml.Name).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
     }
 
     private async Task<bool> ValidateAsync(CancellationToken ct = default)

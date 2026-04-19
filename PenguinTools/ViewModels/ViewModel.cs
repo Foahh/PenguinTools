@@ -58,7 +58,7 @@ public abstract class ActionViewModel : ViewModel
     public IRelayCommand? ActionCommand { get; }
 
     protected abstract bool CanRun();
-    protected abstract Task<OperationResult> Action(OperationContext context, CancellationToken ct = default);
+    protected abstract Task<OperationResult> Action(CancellationToken ct = default);
 }
 
 public abstract class ReloadableActionViewModel : ActionViewModel
@@ -160,7 +160,7 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         LastModifiedTime = null;
     }
 
-    protected async Task<OperationResult> ReadModelInternal(OperationContext context, CancellationToken ct = default)
+    protected async Task<OperationResult> ReadModelInternal(CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(ModelPath))
         {
@@ -172,14 +172,14 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
             ActionService.Status = Strings.Status_Reading;
             ActionService.StatusTime = DateTime.Now;
         });
-        var model = await ReadModel(ModelPath, context, ct);
+        var model = await ReadModel(ModelPath, ct);
         if (!model.Succeeded || model.Value is not { } value) return model.ToResult();
         ct.ThrowIfCancellationRequested();
         await Dispatcher.InvokeAsync(() => SetModel(Model, value));
         return model.ToResult();
     }
 
-    protected abstract Task<OperationResult<TModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default);
+    protected abstract Task<OperationResult<TModel>> ReadModel(string path, CancellationToken ct = default);
 
     protected virtual void SetModel(TModel? oldMode, TModel? newModel)
     {

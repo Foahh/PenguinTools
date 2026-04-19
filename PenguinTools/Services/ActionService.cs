@@ -20,21 +20,21 @@ public partial class ActionService : ObservableObject
         return !IsBusy;
     }
 
-    public Task RunAsync(Func<OperationContext, CancellationToken, Task> action, CancellationToken ct = default)
+    public Task RunAsync(Func<CancellationToken, Task> action, CancellationToken ct = default)
     {
-        return RunAsync(async (context, innerCt) =>
+        return RunAsync(async innerCt =>
         {
-            await action(context, innerCt);
+            await action(innerCt);
             return OperationResult.Success();
         }, ct);
     }
 
-    public async Task RunAsync(Func<OperationContext, CancellationToken, Task<OperationResult>> action, CancellationToken ct = default)
+    public async Task RunAsync(Func<CancellationToken, Task<OperationResult>> action, CancellationToken ct = default)
     {
         await ExecuteAsync(action, ct);
     }
 
-    private async Task<OperationResult> ExecuteAsync(Func<OperationContext, CancellationToken, Task<OperationResult>> action, CancellationToken ct)
+    private async Task<OperationResult> ExecuteAsync(Func<CancellationToken, Task<OperationResult>> action, CancellationToken ct)
     {
         if (!CanRun()) return OperationResult.Failure();
         var diagnostics = new Diagnoster();
@@ -42,15 +42,13 @@ public partial class ActionService : ObservableObject
         var wasCancelled = false;
         IsBusy = true;
 
-        var context = new OperationContext(diagnostics);
-
         try
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
             Status = Strings.Status_Starting;
             StatusTime = DateTime.Now;
-            result = await Task.Run(() => action(context, cts.Token), cts.Token);
+            result = await Task.Run(() => action(cts.Token), cts.Token);
 
             SystemSounds.Exclamation.Play();
         }
@@ -96,12 +94,12 @@ public partial class ActionService : ObservableObject
         return result;
     }
 
-    public async Task<OperationResult<T>> RunAsync<T>(Func<OperationContext, CancellationToken, Task<OperationResult<T>>> action, CancellationToken ct = default)
+    public async Task<OperationResult<T>> RunAsync<T>(Func<CancellationToken, Task<OperationResult<T>>> action, CancellationToken ct = default)
     {
         OperationResult<T> result = OperationResult<T>.Failure();
-        var wrapper = await ExecuteAsync(async (context, innerCt) =>
+        var wrapper = await ExecuteAsync(async innerCt =>
         {
-            result = await action(context, innerCt);
+            result = await action(innerCt);
             return result.ToResult();
         }, ct);
         return result.WithDiagnostics(wrapper.Diagnostics);

@@ -14,9 +14,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\Release\mua.exe">
+        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\Release\mua.exe" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
             <LogicalName>mua.exe</LogicalName>
             <Link>Assets\mua.exe</Link>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\mua" Condition="!$([MSBuild]::IsOSPlatform('Windows'))">
+            <LogicalName>mua</LogicalName>
+            <Link>Assets\mua</Link>
         </EmbeddedResource>
         <EmbeddedResource Include="..\External\muautils\LICENSE">
             <LogicalName>mua.LICENSE.txt</LogicalName>

@@ -44,7 +44,7 @@ public partial class StageViewModel : ActionViewModel
         return !string.IsNullOrWhiteSpace(BackgroundPath);
     }
 
-    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(CancellationToken ct = default)
     {
         var dlg = new OpenFolderDialog
         {
@@ -65,8 +65,7 @@ public partial class StageViewModel : ActionViewModel
                 NoteFieldsLine,
                 AssetProvider.GetPath(InfrastructureAsset.StageTemplate),
                 AssetProvider.GetPath(InfrastructureAsset.NotesFieldTemplate)),
-            MediaTool,
-            context);
+            MediaTool);
 
         return (await converter.BuildAsync(ct)).ToResult();
     }

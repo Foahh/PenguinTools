@@ -15,7 +15,7 @@ namespace PenguinTools.ViewModels;
 
 public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 {
-    protected override async Task<OperationResult> Action(OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult> Action(CancellationToken ct = default)
     {
         if (Model == null) return OperationResult.Success();
         var diagnostics = DiagnosticSnapshot.Empty;
@@ -53,8 +53,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                     meta.NotesFieldLine,
                     AssetProvider.GetPath(InfrastructureAsset.StageTemplate),
                     AssetProvider.GetPath(InfrastructureAsset.NotesFieldTemplate)),
-                MediaTool,
-                context);
+                MediaTool);
             var builtStage = await stageConverter.BuildAsync(ct);
             diagnostics = diagnostics.Merge(builtStage.Diagnostics);
             if (!builtStage.Succeeded || builtStage.Value is not { } stageEntry) return OperationResult.Failure().WithDiagnostics(diagnostics);
@@ -81,7 +80,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         var musicFolder = await xml.SaveDirectoryAsync(path);
         var chartPath = Path.Combine(musicFolder, xml[meta.Difficulty].File);
 
-        var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, chart), context);
+        var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, chart));
         var writtenChart = await chartWriter.WriteAsync(ct);
         diagnostics = diagnostics.Merge(writtenChart.Diagnostics);
         if (!writtenChart.Succeeded) return OperationResult.Failure().WithDiagnostics(diagnostics);
@@ -90,8 +89,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 
         var jacketConverter = new JacketConverter(
             new JacketConvertRequest(meta.FullJacketFilePath, Path.Combine(musicFolder, xml.JaketFile)),
-            MediaTool,
-            context);
+            MediaTool);
         var convertedJacket = await jacketConverter.ConvertAsync(ct);
         diagnostics = diagnostics.Merge(convertedJacket.Diagnostics);
         if (!convertedJacket.Succeeded) return OperationResult.Failure().WithDiagnostics(diagnostics);
@@ -104,16 +102,15 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
                 path,
                 AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
                 ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(Model.Meta.FullBgmFilePath)}.wav")),
-            MediaTool,
-            context);
+            MediaTool);
         var convertedMusic = await musicConverter.ConvertAsync(ct);
         diagnostics = diagnostics.Merge(convertedMusic.Diagnostics);
         return (convertedMusic.Succeeded ? OperationResult.Success() : OperationResult.Failure()).WithDiagnostics(diagnostics);
     }
 
-    protected override async Task<OperationResult<WorkflowModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)
+    protected override async Task<OperationResult<WorkflowModel>> ReadModel(string path, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool, context);
+        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool);
         var chart = await parser.ParseAsync(ct);
         if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<WorkflowModel>.Failure().WithDiagnostics(chart.Diagnostics);
         return OperationResult<WorkflowModel>.Success(new WorkflowModel(value)).WithDiagnostics(chart.Diagnostics);
