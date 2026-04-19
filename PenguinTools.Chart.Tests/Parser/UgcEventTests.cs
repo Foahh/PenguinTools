@@ -1,0 +1,75 @@
+using PenguinTools.Chart.Parser;
+using Xunit;
+
+namespace PenguinTools.Chart.Tests.Parser;
+
+public class UgcEventTests
+{
+    private static async Task<PenguinTools.Chart.Models.mgxc.Chart> Parse(string ugc)
+    {
+        var tmp = Path.GetTempFileName() + ".ugc";
+        await File.WriteAllTextAsync(tmp, ugc);
+        try
+        {
+            var r = await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
+            Assert.True(r.Succeeded, r.ToString());
+            return r.Value!;
+        }
+        finally
+        {
+            File.Delete(tmp);
+        }
+    }
+
+    [Fact]
+    public async Task Bpm_MultipleEntries_CreatesBpmEvents()
+    {
+        const string ugc =
+            "@VER\t8\n@TICKS\t480\n" +
+            "@BPM\t0'0\t200.0\n" +
+            "@BPM\t4'0\t180.0\n" +
+            "@BEAT\t0\t4\t4\n";
+
+        var chart = await Parse(ugc);
+        var bpms = chart.Events.Children.OfType<PenguinTools.Chart.Models.mgxc.BpmEvent>()
+            .OrderBy(e => e.Tick).ToArray();
+        Assert.Equal(2, bpms.Length);
+        Assert.Equal(0, bpms[0].Tick.Original);
+        Assert.Equal(200.0m, bpms[0].Bpm);
+        Assert.Equal(7680, bpms[1].Tick.Original);
+        Assert.Equal(180.0m, bpms[1].Bpm);
+    }
+
+    [Fact]
+    public async Task Beat_MultipleEntries_AccumulateTicks()
+    {
+        const string ugc =
+            "@VER\t8\n@TICKS\t480\n" +
+            "@BPM\t0'0\t120.0\n" +
+            "@BEAT\t0\t4\t4\n" +
+            "@BEAT\t2\t3\t4\n";
+
+        var chart = await Parse(ugc);
+        var beats = chart.Events.Children.OfType<PenguinTools.Chart.Models.mgxc.BeatEvent>()
+            .OrderBy(e => e.Bar).ToArray();
+        Assert.Equal(2, beats.Length);
+        Assert.Equal(0, beats[0].Bar);
+        Assert.Equal(2, beats[1].Bar);
+        Assert.Equal(3840, beats[1].Tick.Original);
+    }
+
+    [Fact]
+    public async Task SpdMod_CreatesNoteSpeedEvent()
+    {
+        const string ugc =
+            "@VER\t8\n@TICKS\t480\n" +
+            "@BPM\t0'0\t120.0\n" +
+            "@BEAT\t0\t4\t4\n" +
+            "@SPDMOD\t1'0\t0.5\n";
+
+        var chart = await Parse(ugc);
+        var smod = chart.Events.Children.OfType<PenguinTools.Chart.Models.mgxc.NoteSpeedEvent>().Single();
+        Assert.Equal(1920, smod.Tick.Original);
+        Assert.Equal(0.5m, smod.Speed);
+    }
+}

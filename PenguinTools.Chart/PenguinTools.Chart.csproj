@@ -7,8 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="PenguinTools.Chart.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj" />
         <ProjectReference Include="..\PenguinTools.Media\PenguinTools.Media.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0" NoWarn="NU1510" />
     </ItemGroup>
 
     <ItemGroup>
