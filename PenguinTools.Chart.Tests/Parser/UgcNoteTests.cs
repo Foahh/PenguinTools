@@ -99,4 +99,13 @@ public class UgcNoteTests
         var sl = Assert.Single(chart.Notes.Children.OfType<Models.mgxc.AirSlide>());
         Assert.Single(sl.Children.OfType<Models.mgxc.AirSlideJoint>());
     }
+
+    [Fact]
+    public async Task AirCrush_WithIntervalAndColor()
+    {
+        var chart = await Parse("#0'0:C1410,100\n");
+        var crash = Assert.Single(chart.Notes.Children.OfType<Models.mgxc.AirCrash>());
+        Assert.Equal(Color.RED, crash.Color);
+        Assert.Equal(100, crash.Density.Original);
+    }
 }

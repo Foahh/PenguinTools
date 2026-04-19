@@ -125,6 +125,33 @@ public partial class UgcParser
             return;
         }
 
+        if (typeChar == 'C')
+        {
+            var colorChar = extras.Length >= 1 ? extras[0] : '0';
+            var heightChar = extras.Length >= 2 ? extras[1] : '0';
+            var heightRaw = UgcPayload.Base36(heightChar);
+            if (heightRaw < 0) heightRaw = 0;
+            var height = heightRaw * 2;
+            var density = 0;
+            if (!string.IsNullOrEmpty(suffix) && int.TryParse(suffix, out var parsedDensity))
+                density = parsedDensity;
+
+            var crash = new mg.AirCrash
+            {
+                Color = UgcPayload.CrushColorChar(colorChar),
+                Height = height,
+                Density = density
+            };
+            crash.Tick = absTick;
+            crash.Lane = x;
+            crash.Width = w;
+            crash.Timeline = _currentTimeline;
+            Ugc.Notes.AppendChild(crash);
+            _lastParentNote = crash;
+            _lastNote = crash;
+            return;
+        }
+
         mg.Note? note = typeChar switch
         {
             't' => new mg.Tap(),
@@ -222,6 +249,16 @@ public partial class UgcParser
                         Joint = typeChar == 'S' ? Joint.C : Joint.D,
                         Height = hRaw * 2
                     };
+                }
+
+                break;
+            case 'C':
+                if (_lastParentNote is mg.AirCrash)
+                {
+                    var hChar = payload.Length >= 4 ? payload[3] : '0';
+                    var hRaw = UgcPayload.Base36(hChar);
+                    if (hRaw < 0) hRaw = 0;
+                    child = new mg.AirCrashJoint { Height = hRaw * 2 };
                 }
 
                 break;
