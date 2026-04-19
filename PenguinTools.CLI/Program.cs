@@ -1,5 +1,8 @@
 using System.CommandLine;
+using System.Text;
 using PenguinTools.CLI;
+
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 var rootCommand = RootCommands.BuildRootCommand();
 var parseResult = rootCommand.Parse(args);

@@ -7,7 +7,7 @@ internal static class WorkflowCommands
 {
     internal static Command BuildWorkflowCommand()
     {
-        var command = new Command("workflow", "End-to-end export commands.");
+        var command = new Command("workflow", "Export mgxc with jacket and audio.");
         command.Subcommands.Add(BuildWorkflowExportCommand());
         return command;
     }
