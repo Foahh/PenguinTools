@@ -25,11 +25,13 @@ public partial class UgcParser
             case "TITLE": Ugc.Meta.Title = Str(args); break;
             case "SORT": Ugc.Meta.SortName = Str(args); break;
             case "ARTIST": Ugc.Meta.Artist = Str(args); break;
+            case "GENRE": HandleGenre(args); break;
             case "DESIGN": Ugc.Meta.Designer = Str(args); break;
             case "DIFF": HandleDiff(args); break;
             case "LEVEL": HandleLevel(args); break;
             case "CONST": HandleConst(args); break;
             case "SONGID": HandleSongId(args); break;
+            case "RLDATE": HandleReleaseDate(args); break;
 
             case "BGM": HandleBgm(args); break;
             case "BGMOFS":
@@ -42,12 +44,14 @@ public partial class UgcParser
             case "BGMODE": break;
             case "FLDCOL": HandleFldCol(args); break;
             case "FLDIMG": break;
+            case "FLDSCENE": break;
             case "MAINBPM":
                 if (args.Length >= 1 && decimal.TryParse(args[0], CultureInfo.InvariantCulture, out var mbpm))
                     Ugc.Meta.MainBpm = mbpm;
                 break;
 
             case "FLAG": HandleFlag(args); break;
+            case "CLKCNT": break;
             case "CMT": Ugc.Meta.Comment = Str(args); break;
 
             case "ATINFO":
@@ -76,7 +80,7 @@ public partial class UgcParser
 
             default:
                 ReportAtCurrentLine(Severity.Warning,
-                    string.Format(Strings.Mg_Unrecognized_meta, name, 0, Str(args)));
+                    string.Format(Strings.Mg_Unrecognized_meta, name, Str(args)));
                 break;
         }
     }
@@ -85,12 +89,13 @@ public partial class UgcParser
 
     private void Log(string name, string[] args) =>
         ReportAtCurrentLine(Severity.Information,
-            string.Format(Strings.Mg_Unrecognized_meta, name, 0, string.Join(' ', args)));
+            string.Format(Strings.Mg_Unrecognized_meta, name, string.Join(' ', args)));
 
     private void HandleVer(string[] args)
     {
-        if (args.Length < 1 || !int.TryParse(args[0], out var v) || v != 8)
-            ThrowAtCurrentLine(string.Format(Strings.Error_Invalid_Header, args.Length >= 1 ? args[0] : "", "UGC v8"));
+        if (args.Length < 1) return;
+        if (!int.TryParse(args[0], out var v) || v != 8)
+            ThrowAtCurrentLine(string.Format(Strings.Error_Invalid_Header, args[0], "UGC v8"));
     }
 
     private void HandleExVer(string[] args)
@@ -101,8 +106,16 @@ public partial class UgcParser
 
     private void HandleTicks(string[] args)
     {
-        if (args.Length < 1 || !int.TryParse(args[0], out var t) || t != 480)
-            ThrowAtCurrentLine(string.Format(Strings.Error_Invalid_Header, args.Length >= 1 ? args[0] : "", "TICKS=480"));
+        if (args.Length < 1) return;
+        if (!int.TryParse(args[0], out var t) || t != 480)
+            ThrowAtCurrentLine(string.Format(Strings.Error_Invalid_Header, args[0], "TICKS=480"));
+    }
+
+    private void HandleGenre(string[] args)
+    {
+        if (args.Length < 1) return;
+        var entry = Assets.GenreNames.FirstOrDefault(x => x.Str.Equals(args[0], StringComparison.Ordinal));
+        if (entry != null) Ugc.Meta.Genre = entry;
     }
 
     private void HandleDiff(string[] args)
@@ -150,6 +163,13 @@ public partial class UgcParser
         if (args.Length < 1) return;
         Ugc.Meta.MgxcId = args[0];
         if (int.TryParse(args[0], out var id)) Ugc.Meta.Id = id;
+    }
+
+    private void HandleReleaseDate(string[] args)
+    {
+        if (args.Length < 1) return;
+        if (DateTime.TryParseExact(args[0], "yyyyMMdd", null, DateTimeStyles.None, out var date))
+            Ugc.Meta.ReleaseDate = date;
     }
 
     private void HandleBgm(string[] args)

@@ -138,6 +138,19 @@ public partial class UgcParser
     private void BuildBarAxis()
     {
         var beats = Ugc.Events.Children.OfType<umgr.BeatEvent>().OrderBy(b => b.Bar).ToList();
+        if (beats.Count == 0 || beats[0].Bar != 0)
+        {
+            var defaultBeat = new umgr.BeatEvent
+            {
+                Bar = 0,
+                Numerator = DefaultBeatNumerator,
+                Denominator = DefaultBeatDenominator,
+                Tick = 0
+            };
+            Ugc.Events.AppendChild(defaultBeat);
+            beats.Insert(0, defaultBeat);
+        }
+
         if (beats.Count > 0)
         {
             beats[0].Tick = 0;

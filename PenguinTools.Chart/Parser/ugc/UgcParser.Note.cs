@@ -10,42 +10,41 @@ public partial class UgcParser
 {
     private void DispatchBodyLine(string line)
     {
-        // Parent: #<Bar>'<Tick>:<payload>[,<suffix>]
-        // Child:  #<offsetTick>><payload>
         if (!line.StartsWith('#')) return;
         var rest = line.AsSpan(1);
-
-        var childIdx = rest.IndexOf('>');
         var parentIdx = rest.IndexOf(':');
-
-        if (childIdx >= 0 && (parentIdx < 0 || childIdx < parentIdx))
+        if (parentIdx < 0)
         {
-            if (!int.TryParse(rest[..childIdx], out var offset))
+            var legacyChildIdx = rest.IndexOf('>');
+            if (legacyChildIdx <= 0 || !int.TryParse(rest[..legacyChildIdx], out var legacyOffset))
             {
                 WarnMalformed(line);
                 return;
             }
 
-            var payload = rest[(childIdx + 1)..].ToString();
+            var legacyPayload = rest[(legacyChildIdx + 1)..].ToString();
+            HandleChildPayload(legacyOffset, legacyPayload);
+            return;
+        }
+
+        var lhs = rest[..parentIdx];
+        var tickSepIdx = lhs.IndexOf('\'');
+        if (tickSepIdx < 0)
+        {
+            if (!int.TryParse(lhs, out var offset))
+            {
+                WarnMalformed(line);
+                return;
+            }
+
+            var payload = rest[(parentIdx + 1)..].ToString();
             HandleChildPayload(offset, payload);
             return;
         }
 
-        if (parentIdx < 0)
-        {
-            WarnMalformed(line);
-            return;
-        }
-
-        var bt = rest[..parentIdx];
-        var tickSepIdx = bt.IndexOf('\'');
-        if (tickSepIdx <= 0)
-        {
-            WarnMalformed(line);
-            return;
-        }
-
-        if (!int.TryParse(bt[..tickSepIdx], out var bar) || !int.TryParse(bt[(tickSepIdx + 1)..], out var tick))
+        if (tickSepIdx == 0
+            || !int.TryParse(lhs[..tickSepIdx], out var bar)
+            || !int.TryParse(lhs[(tickSepIdx + 1)..], out var tick))
         {
             WarnMalformed(line);
             return;
@@ -62,6 +61,12 @@ public partial class UgcParser
 
     private void HandleParentPayload(int absTick, string payload, string suffix)
     {
+        if (payload.Length == 1 && payload[0] == 'c')
+        {
+            _lastNote = null;
+            return;
+        }
+
         if (payload.Length < 3)
         {
             WarnMalformed(payload);
@@ -81,11 +86,15 @@ public partial class UgcParser
 
         if (typeChar == 'a')
         {
+            if (extras.Length < 3)
+            {
+                WarnMalformed(payload);
+                return;
+            }
+
             var air = new umgr.Air();
-            var dirChar = extras.Length >= 1 ? extras[0] : 'U';
-            var colorChar = extras.Length >= 2 ? extras[1] : 'N';
-            air.Direction = UgcPayload.AirDirectionChar(dirChar);
-            air.Color = UgcPayload.AirColorChar(colorChar);
+            air.Direction = UgcPayload.AirDirectionCode(extras.AsSpan(0, 2));
+            air.Color = UgcPayload.AirColorChar(extras[2]);
 
             air.Timeline = _currentTimeline;
             Ugc.Notes.AppendChild(air);
@@ -102,18 +111,23 @@ public partial class UgcParser
 
         if (typeChar is 'H' or 'S')
         {
-            var heightChar = extras.Length >= 1 ? extras[0] : '0';
-            var heightRaw = UgcPayload.Base36(heightChar);
-            if (heightRaw < 0) heightRaw = 0;
-            var height = heightRaw * 2;
+            var (height, color) = typeChar == 'H'
+                ? (0m, extras.Length >= 1 ? UgcPayload.AirColorChar(extras[0]) : Color.DEF)
+                : extras.Length >= 3
+                    ? (UgcPayload.Height36(extras.AsSpan(0, 2)), UgcPayload.AirColorChar(extras[2]))
+                    : (-1m, Color.DEF);
+            if (height < 0)
+            {
+                WarnMalformed(payload);
+                return;
+            }
 
-            var airSlide = new umgr.AirSlide { Height = height, Color = Color.DEF };
+            var airSlide = new umgr.AirSlide { Height = height, Color = color };
             airSlide.Timeline = _currentTimeline;
             Ugc.Notes.AppendChild(airSlide);
 
             if (_lastNote is umgr.Air oldAir && oldAir.Tick.Original == absTick)
             {
-                airSlide.Color = oldAir.Color;
                 oldAir.Parent?.RemoveChild(oldAir);
                 _lastNote = oldAir.PairNote;
             }
@@ -129,20 +143,24 @@ public partial class UgcParser
 
         if (typeChar == 'C')
         {
-            var colorChar = extras.Length >= 1 ? extras[0] : '0';
-            var heightChar = extras.Length >= 2 ? extras[1] : '0';
-            var heightRaw = UgcPayload.Base36(heightChar);
-            if (heightRaw < 0) heightRaw = 0;
-            var height = heightRaw * 2;
-            var density = 0;
-            if (!string.IsNullOrEmpty(suffix) && int.TryParse(suffix, out var parsedDensity))
-                density = parsedDensity;
+            if (extras.Length < 3)
+            {
+                WarnMalformed(payload);
+                return;
+            }
+
+            var height = UgcPayload.Height36(extras.AsSpan(0, 2));
+            if (height < 0)
+            {
+                WarnMalformed(payload);
+                return;
+            }
 
             var crash = new umgr.AirCrash
             {
-                Color = UgcPayload.CrushColorChar(colorChar),
+                Color = UgcPayload.CrushColorChar(extras[2]),
                 Height = height,
-                Density = density
+                Density = UgcPayload.AirCrashInterval(suffix)
             };
             crash.Tick = absTick;
             crash.Lane = x;
@@ -160,13 +178,12 @@ public partial class UgcParser
             'x' => MakeExTap(extras),
             'f' => new umgr.Flick(),
             'd' => new umgr.Damage(),
-            'c' => null,
             _ => HandleLongNoteParent(typeChar, extras, suffix)
         };
 
         if (note is null)
         {
-            if (typeChar != 'c') WarnUnknownType(typeChar);
+            WarnUnknownType(typeChar);
             return;
         }
 
@@ -226,6 +243,28 @@ public partial class UgcParser
             return;
         }
 
+        if (payload.Length == 1 && _lastParentNote is umgr.AirSlide airSlide)
+        {
+            if (payload[0] is not ('s' or 'c'))
+            {
+                WarnMalformed(payload);
+                return;
+            }
+
+            var joint = new umgr.AirSlideJoint
+            {
+                Tick = airSlide.Tick.Original + offsetTick,
+                Lane = airSlide.Lane,
+                Width = airSlide.Width,
+                Timeline = airSlide.Timeline,
+                Height = airSlide.Height,
+                Joint = payload[0] == 'c' ? Joint.C : Joint.D
+            };
+            airSlide.AppendChild(joint);
+            _lastNote = joint;
+            return;
+        }
+
         if (payload.Length < 3)
         {
             WarnMalformed(payload);
@@ -250,42 +289,51 @@ public partial class UgcParser
                 child = new umgr.HoldJoint();
                 break;
             case 's' when _lastParentNote is umgr.Slide:
-            {
-                var jointChar = payload.Length >= 4 ? payload[3] : 'D';
-                var jointKind = jointChar switch
-                {
-                    'C' => Joint.C,
-                    'D' => Joint.D,
-                    'E' => Joint.D,
-                    _ => Joint.D
-                };
-                child = new umgr.SlideJoint { Joint = jointKind };
+                child = new umgr.SlideJoint { Joint = Joint.D };
                 break;
-            }
-            case 'H':
-            case 'S':
+            case 'c' when _lastParentNote is umgr.Slide:
+                child = new umgr.SlideJoint { Joint = Joint.C };
+                break;
+            case 's':
+            case 'c':
                 if (_lastParentNote is umgr.AirSlide)
                 {
-                    var hChar = payload.Length >= 4 ? payload[3] : '0';
-                    var hRaw = UgcPayload.Base36(hChar);
-                    if (hRaw < 0) hRaw = 0;
+                    if (payload.Length < 5)
+                    {
+                        WarnMalformed(payload);
+                        return;
+                    }
+
+                    var height = UgcPayload.Height36(payload.AsSpan(3, 2));
+                    if (height < 0)
+                    {
+                        WarnMalformed(payload);
+                        return;
+                    }
+
                     child = new umgr.AirSlideJoint
                     {
-                        Joint = typeChar == 'S' ? Joint.C : Joint.D,
-                        Height = hRaw * 2
+                        Joint = typeChar == 'c' ? Joint.C : Joint.D,
+                        Height = height
                     };
                 }
-
-                break;
-            case 'C':
-                if (_lastParentNote is umgr.AirCrash)
+                else if (_lastParentNote is umgr.AirCrash)
                 {
-                    var hChar = payload.Length >= 4 ? payload[3] : '0';
-                    var hRaw = UgcPayload.Base36(hChar);
-                    if (hRaw < 0) hRaw = 0;
-                    child = new umgr.AirCrashJoint { Height = hRaw * 2 };
-                }
+                    if (typeChar != 'c' || payload.Length < 5)
+                    {
+                        WarnMalformed(payload);
+                        return;
+                    }
 
+                    var height = UgcPayload.Height36(payload.AsSpan(3, 2));
+                    if (height < 0)
+                    {
+                        WarnMalformed(payload);
+                        return;
+                    }
+
+                    child = new umgr.AirCrashJoint { Height = height };
+                }
                 break;
         }
 
@@ -300,8 +348,8 @@ public partial class UgcParser
     }
 
     private void WarnMalformed(string what) =>
-        ReportAtCurrentLine(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, what, 0));
+        ReportAtCurrentLine(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, what));
 
     private void WarnUnknownType(char c) =>
-        ReportAtCurrentLine(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, c.ToString(), 0));
+        ReportAtCurrentLine(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, c.ToString()));
 }
