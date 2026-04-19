@@ -4,11 +4,12 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>$(DotNetVersion)-windows</TargetFramework>
-        <UseWPF>true</UseWPF>
+        <UseWPF>True</UseWPF>
         <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
         <AssemblyName>PenguinTools</AssemblyName>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <LangVersion>preview</LangVersion>
+        <EnableWindowsTargeting>True</EnableWindowsTargeting>
     </PropertyGroup>
 
     <ItemGroup>
