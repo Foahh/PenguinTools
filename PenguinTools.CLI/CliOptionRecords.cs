@@ -20,23 +20,3 @@ internal sealed record StageCommandOptions(
     Option<string?> StageTemplatePath,
     Option<string?> NotesFieldTemplatePath);
 
-internal sealed record MusicRequestOverrides(
-    string? DummyAcbPath,
-    string? WorkingAudioPath,
-    ulong? HcaEncryptionKey);
-
-internal sealed record StageRequestOverrides(
-    string? BackgroundPath,
-    string?[] EffectPaths,
-    int? StageId,
-    int? NoteFieldLaneId,
-    string? NoteFieldLaneName,
-    string? NoteFieldLaneData,
-    string? StageTemplatePath,
-    string? NotesFieldTemplatePath)
-{
-    public bool HasBuildInputs =>
-        !string.IsNullOrWhiteSpace(BackgroundPath) ||
-        StageId is not null ||
-        EffectPaths.Any(path => !string.IsNullOrWhiteSpace(path));
-}

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Common.props"/>
+
+    <PropertyGroup>
+        <TargetFramework>$(DotNetVersion)</TargetFramework>
+        <RootNamespace>PenguinTools.Workflow</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\PenguinTools.Chart\PenguinTools.Chart.csproj"/>
+        <ProjectReference Include="..\PenguinTools.Infrastructure\PenguinTools.Infrastructure.csproj"/>
+    </ItemGroup>
+</Project>
