@@ -42,14 +42,22 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
     protected override async Task<OperationResult<OptionModel>> ReadModel(string path, OperationContext context, CancellationToken ct = default)
     {
         var diagnostics = CreateDiagnoster(context);
-        context.ReportProgress(Strings.Status_Searching);
+        await Dispatcher.InvokeAsync(() =>
+        {
+            ActionService.Status = Strings.Status_Searching;
+            ActionService.StatusTime = DateTime.Now;
+        });
         var model = await LoadModelAsync(path, ct);
         var processContext = CreateProcessContext(context, ct, model);
         var batchDiagnostics = await LoadBooksAsync(path, model.Books, processContext, ct);
         FinalizeBooks(model.Books, diagnostics, ct);
 
         if (model.Books.Count == 0) throw new DiagnosticException(Strings.Error_No_charts_are_found_directory);
-        context.ReportProgress(Strings.Status_Done);
+        await Dispatcher.InvokeAsync(() =>
+        {
+            ActionService.Status = Strings.Status_Done;
+            ActionService.StatusTime = DateTime.Now;
+        });
 
         return OperationResult<OptionModel>.Success(model).WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
     }
@@ -426,7 +434,6 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         var total = itemList.Count;
         var completedCount = 0;
         var diagnostics = new ConcurrentBag<DiagnosticSnapshot>();
-        main.Context.ReportProgress($"{prefix}: 0/{total}...");
 
         if (parallel)
         {
@@ -459,7 +466,6 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             finally
             {
                 var done = Interlocked.Increment(ref completedCount);
-                main.Context.ReportProgress($"{prefix}: {done}/{total}...");
                 diagnostics.Add(CreateItemDiagnostics(ld, getPath(item), main.WorkingDirectory));
             }
         }

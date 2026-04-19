@@ -42,21 +42,14 @@ public partial class ActionService : ObservableObject
         var wasCancelled = false;
         IsBusy = true;
 
-        var progress = new Progress<string>(s =>
-        {
-            Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                Status = s;
-                StatusTime = DateTime.Now;
-            });
-        });
-        var context = new OperationContext(diagnostics, progress);
+        var context = new OperationContext(diagnostics);
 
         try
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
-            context.ReportProgress(Strings.Status_Starting);
+            Status = Strings.Status_Starting;
+            StatusTime = DateTime.Now;
             result = await Task.Run(() => action(context, cts.Token), cts.Token);
 
             SystemSounds.Exclamation.Play();
@@ -77,8 +70,16 @@ public partial class ActionService : ObservableObject
         result = result.WithDiagnostics(result.Diagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
         if (wasCancelled) return result;
 
-        if (result.Diagnostics.HasError) context.ReportProgress(Strings.Status_Error);
-        else context.ReportProgress(Strings.Status_Done);
+        if (result.Diagnostics.HasError)
+        {
+            Status = Strings.Status_Error;
+            StatusTime = DateTime.Now;
+        }
+        else
+        {
+            Status = Strings.Status_Done;
+            StatusTime = DateTime.Now;
+        }
 
         if (!result.Diagnostics.HasProblem) return result;
 

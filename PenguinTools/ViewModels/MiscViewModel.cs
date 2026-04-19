@@ -72,6 +72,6 @@ public partial class MiscViewModel : ViewModel
         var result = openDlg.ShowDialog(window);
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) { return; }
 
-        await ActionService.RunAsync((context, ct) => AssetManager.CollectAssetsAsync(openDlg.FolderName, context.Progress, ct));
+        await ActionService.RunAsync((context, ct) => AssetManager.CollectAssetsAsync(openDlg.FolderName, ct));
     }
 }
