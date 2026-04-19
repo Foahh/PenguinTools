@@ -40,7 +40,6 @@ public class MusicConverter
     private OperationContext ParentContext { get; }
     private OperationContext CurrentContext { get; set; }
     private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
-    private IProgress<string>? Progress => CurrentContext.Progress;
     private Meta Meta { get; }
     private string OutFolder { get; }
     private string DummyAcbPath { get; }
@@ -60,7 +59,6 @@ public class MusicConverter
 
             var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
-            Progress?.Report(Strings.Status_Converting_audio);
             if (Meta.BgmPreviewStart > 120) { Diagnostic.Report(Severity.Warning, Strings.Warn_Preview_later_than_120); }
 
             var srcPath = Meta.FullBgmFilePath;

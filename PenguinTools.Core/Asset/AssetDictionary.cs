@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml;
@@ -28,13 +27,6 @@ public class AssetDictionary
     public IReadOnlySet<Entry> StageNames => _database[AssetType.StageNames];
     public IReadOnlySet<Entry> WeTagNames => _database[AssetType.WeTagNames];
 
-    private static readonly JsonSerializerOptions Options = new()
-    {
-        WriteIndented = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-    };
-
     public AssetDictionary()
     {
         _database = CreateDatabase();
@@ -56,7 +48,7 @@ public class AssetDictionary
     
     private void Load(string json) 
     {
-        var dict = JsonSerializer.Deserialize<Dictionary<AssetType, SortedSet<Entry>>>(json, Options);
+        var dict = JsonSerializer.Deserialize(json, AssetDictionaryJsonContext.DefaultContext.Database);
         if (dict == null) return;
         MergeWith(dict);
     }
@@ -93,7 +85,7 @@ public class AssetDictionary
 
     public async Task SaveAsync(string path, CancellationToken ct = default)
     {
-        var json = JsonSerializer.Serialize(_database, Options);
+        var json = JsonSerializer.Serialize(_database, AssetDictionaryJsonContext.DefaultContext.Database);
         await File.WriteAllTextAsync(path, json, ct);
     }
 

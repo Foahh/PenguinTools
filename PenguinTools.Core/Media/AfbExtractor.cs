@@ -23,7 +23,6 @@ public class AfbExtractor
     private OperationContext ParentContext { get; }
     private OperationContext CurrentContext { get; set; }
     private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
-    private IProgress<string>? Progress => CurrentContext.Progress;
     private string InPath { get; }
     private string OutFolder { get; }
 
@@ -39,10 +38,8 @@ public class AfbExtractor
         {
             if (!Validate()) return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
 
-            Progress?.Report(Strings.Status_Extracting);
             await MediaTool.ExtractDdsAsync(InPath, OutFolder, ct);
             ct.ThrowIfCancellationRequested();
-            Progress?.Report(Strings.Status_Writing);
             return OperationResult.Success().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
         }
         finally
