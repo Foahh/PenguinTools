@@ -8,5 +8,5 @@ namespace PenguinTools.Workflow;
 public sealed record WorkflowExportContext(
     AssetManager Assets,
     IMediaTool MediaTool,
-    IEmbeddedResourceStore ResourceStore,
+    IResourceStore ResourceStore,
     IInfrastructureAssetProvider AssetProvider);

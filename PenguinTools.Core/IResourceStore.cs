@@ -1,6 +1,6 @@
 namespace PenguinTools.Core;
 
-public interface IEmbeddedResourceStore
+public interface IResourceStore : IDisposable
 {
     string TempWorkPath { get; }
 

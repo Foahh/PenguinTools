@@ -11,13 +11,13 @@ public sealed class WorkflowExportService : IWorkflowExportService
 {
     private readonly AssetManager _assetManager;
     private readonly IMediaTool _mediaTool;
-    private readonly IEmbeddedResourceStore _resourceStore;
+    private readonly IResourceStore _resourceStore;
     private readonly IInfrastructureAssetProvider _assetProvider;
 
     public WorkflowExportService(
         AssetManager assetManager,
         IMediaTool mediaTool,
-        IEmbeddedResourceStore resourceStore,
+        IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider)
     {
         _assetManager = assetManager;

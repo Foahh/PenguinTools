@@ -3,6 +3,12 @@
 
     <PropertyGroup>
         <TargetFramework>$(DotNetVersion)</TargetFramework>
+        <PenguinToolsEmbedInfrastructureAssets Condition="'$(PenguinToolsEmbedInfrastructureAssets)' == ''">true</PenguinToolsEmbedInfrastructureAssets>
+        <PenguinToolsPublishInfrastructureAssets Condition="'$(PenguinToolsPublishInfrastructureAssets)' == ''">false</PenguinToolsPublishInfrastructureAssets>
+        <PenguinToolsUseWindowsMua Condition="'$(PenguinToolsUseWindowsMua)' == '' and $([System.String]::Copy('$(TargetFramework)').Contains('-windows'))">true</PenguinToolsUseWindowsMua>
+        <PenguinToolsUseWindowsMua Condition="'$(PenguinToolsUseWindowsMua)' == '' and '$(RuntimeIdentifier)' != '' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win'))">true</PenguinToolsUseWindowsMua>
+        <PenguinToolsUseWindowsMua Condition="'$(PenguinToolsUseWindowsMua)' == '' and $([MSBuild]::IsOSPlatform('Windows'))">true</PenguinToolsUseWindowsMua>
+        <PenguinToolsUseWindowsMua Condition="'$(PenguinToolsUseWindowsMua)' == ''">false</PenguinToolsUseWindowsMua>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,33 +21,49 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\Release\mua.exe" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-            <LogicalName>mua.exe</LogicalName>
-            <Link>Assets\mua.exe</Link>
+        <PenguinToolsInfrastructureAsset Include="..\External\muautils\cmake-build-vcpkg\Release\mua.exe" Condition="'$(PenguinToolsUseWindowsMua)' == 'true'">
+            <ResourceName>mua.exe</ResourceName>
+            <PublishPath>assets\mua.exe</PublishPath>
+        </PenguinToolsInfrastructureAsset>
+        <PenguinToolsInfrastructureAsset Include="..\External\muautils\cmake-build-vcpkg\mua" Condition="'$(PenguinToolsUseWindowsMua)' != 'true'">
+            <ResourceName>mua</ResourceName>
+            <PublishPath>assets\mua</PublishPath>
+        </PenguinToolsInfrastructureAsset>
+        <PenguinToolsInfrastructureAsset Include="..\External\muautils\LICENSE">
+            <ResourceName>mua.LICENSE.txt</ResourceName>
+            <PublishPath>assets\mua.LICENSE.txt</PublishPath>
+        </PenguinToolsInfrastructureAsset>
+        <PenguinToolsInfrastructureAsset Include="Assets\assets.json">
+            <ResourceName>assets.json</ResourceName>
+            <PublishPath>assets\assets.json</PublishPath>
+        </PenguinToolsInfrastructureAsset>
+        <PenguinToolsInfrastructureAsset Include="Assets\nf_dummy.afb">
+            <ResourceName>nf_dummy.afb</ResourceName>
+            <PublishPath>assets\nf_dummy.afb</PublishPath>
+        </PenguinToolsInfrastructureAsset>
+        <PenguinToolsInfrastructureAsset Include="Assets\st_dummy.afb">
+            <ResourceName>st_dummy.afb</ResourceName>
+            <PublishPath>assets\st_dummy.afb</PublishPath>
+        </PenguinToolsInfrastructureAsset>
+        <PenguinToolsInfrastructureAsset Include="Assets\dummy.acb">
+            <ResourceName>dummy.acb</ResourceName>
+            <PublishPath>assets\dummy.acb</PublishPath>
+        </PenguinToolsInfrastructureAsset>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(PenguinToolsEmbedInfrastructureAssets)' == 'true'">
+        <EmbeddedResource Include="@(PenguinToolsInfrastructureAsset)">
+            <LogicalName>%(ResourceName)</LogicalName>
+            <Link>%(PublishPath)</Link>
         </EmbeddedResource>
-        <EmbeddedResource Include="..\External\muautils\cmake-build-vcpkg\mua" Condition="!$([MSBuild]::IsOSPlatform('Windows'))">
-            <LogicalName>mua</LogicalName>
-            <Link>Assets\mua</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\External\muautils\LICENSE">
-            <LogicalName>mua.LICENSE.txt</LogicalName>
-            <Link>Assets\mua.LICENSE.txt</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Assets\assets.json">
-            <LogicalName>assets.json</LogicalName>
-            <Link>Assets\assets.json</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Assets\nf_dummy.afb">
-            <LogicalName>nf_dummy.afb</LogicalName>
-            <Link>Assets\nf_dummy.afb</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Assets\st_dummy.afb">
-            <LogicalName>st_dummy.afb</LogicalName>
-            <Link>Assets\st_dummy.afb</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Assets\dummy.acb">
-            <LogicalName>dummy.acb</LogicalName>
-            <Link>Assets\dummy.acb</Link>
-        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(PenguinToolsPublishInfrastructureAssets)' == 'true'">
+        <Content Include="@(PenguinToolsInfrastructureAsset)">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+            <TargetPath>%(PublishPath)</TargetPath>
+            <Link>%(PublishPath)</Link>
+        </Content>
     </ItemGroup>
 </Project>

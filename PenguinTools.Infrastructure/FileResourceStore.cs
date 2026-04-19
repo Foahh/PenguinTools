@@ -1,19 +1,18 @@
-using System.Reflection;
 using PenguinTools.Core;
 
 namespace PenguinTools.Infrastructure;
 
-public sealed class EmbeddedResourceStore : IResourceStore
+public sealed class FileResourceStore : IResourceStore
 {
-    private readonly Assembly _assembly;
+    private readonly string _assetRootPath;
     private readonly Lock _lock = new();
 
-    public EmbeddedResourceStore(Assembly assembly, string root = "PenguinTools.Temp")
+    public FileResourceStore(string assetRootPath, string root = "PenguinTools.Temp")
     {
-        ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentException.ThrowIfNullOrWhiteSpace(assetRootPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(root);
 
-        _assembly = assembly;
+        _assetRootPath = assetRootPath;
         TempWorkPath = Path.Combine(Path.GetTempPath(), root);
         Directory.CreateDirectory(TempWorkPath);
     }
@@ -23,12 +22,13 @@ public sealed class EmbeddedResourceStore : IResourceStore
     public bool HasResource(string resourceName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
-        return _assembly.GetManifestResourceInfo(resourceName) is not null;
+        return File.Exists(Path.Combine(_assetRootPath, resourceName));
     }
 
     public string GetTempPath(string fileName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
+        Directory.CreateDirectory(TempWorkPath);
         return Path.Combine(TempWorkPath, fileName);
     }
 
@@ -36,18 +36,20 @@ public sealed class EmbeddedResourceStore : IResourceStore
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
 
-        var path = GetTempPath(Path.GetFileName(resourceName));
+        var sourcePath = GetResourcePath(resourceName);
+        var destinationPath = GetTempPath(Path.GetFileName(resourceName));
 
         lock (_lock)
         {
-            using var stream = OpenRead(resourceName);
-            using var fileStream = File.Create(path);
-            stream.CopyTo(fileStream);
+            if (!Path.GetFullPath(sourcePath).Equals(Path.GetFullPath(destinationPath), StringComparison.Ordinal))
+            {
+                File.Copy(sourcePath, destinationPath, overwrite: true);
+            }
+
+            ResourceStoreHelpers.EnsureExecutableIfNeeded(destinationPath, resourceName);
         }
 
-        ResourceStoreHelpers.EnsureExecutableIfNeeded(path, resourceName);
-
-        return path;
+        return destinationPath;
     }
 
     public async Task CopyToAsync(string resourceName, string destinationPath, CancellationToken ct = default)
@@ -58,20 +60,31 @@ public sealed class EmbeddedResourceStore : IResourceStore
         await using var stream = OpenRead(resourceName);
         await using var fileStream = File.Create(destinationPath);
         await stream.CopyToAsync(fileStream, ct);
+
         ResourceStoreHelpers.EnsureExecutableIfNeeded(destinationPath, resourceName);
     }
 
     public Stream OpenRead(string resourceName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
-
-        return _assembly.GetManifestResourceStream(resourceName)
-               ?? throw new FileNotFoundException(
-                   $"Resource '{resourceName}' was not found in assembly '{_assembly.GetName().Name}'.");
+        return File.OpenRead(GetResourcePath(resourceName));
     }
 
     public void Dispose()
     {
         ResourceStoreHelpers.ClearDirectory(TempWorkPath, deleteRoot: true);
+    }
+
+    private string GetResourcePath(string resourceName)
+    {
+        var path = Path.Combine(_assetRootPath, resourceName);
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException(
+                $"Resource '{resourceName}' was not found in asset directory '{_assetRootPath}'.",
+                path);
+        }
+
+        return path;
     }
 }

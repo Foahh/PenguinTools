@@ -19,7 +19,7 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
-        IEmbeddedResourceStore resourceStore,
+        IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider,
         IExternalLauncher externalLauncher,
         IFileDialogService fileDialogs,

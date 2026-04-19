@@ -16,13 +16,13 @@ public sealed class OptionService : IOptionService
 {
     private readonly AssetManager _assetManager;
     private readonly IMediaTool _mediaTool;
-    private readonly IEmbeddedResourceStore _resourceStore;
+    private readonly IResourceStore _resourceStore;
     private readonly IInfrastructureAssetProvider _assetProvider;
 
     public OptionService(
         AssetManager assetManager,
         IMediaTool mediaTool,
-        IEmbeddedResourceStore resourceStore,
+        IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider)
     {
         _assetManager = assetManager;

@@ -21,7 +21,7 @@ public partial class MiscViewModel : ViewModel
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
-        IEmbeddedResourceStore resourceStore,
+        IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider,
         IExternalLauncher externalLauncher)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)

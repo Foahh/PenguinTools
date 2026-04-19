@@ -1,12 +1,13 @@
+using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 
 namespace PenguinTools.CLI;
 
-internal sealed class CliRuntime(EmbeddedResourceStore resourceStore, AssetManager assets, IMediaTool mediaTool, IInfrastructureAssetProvider assetProvider) : IDisposable
+internal sealed class CliRuntime(IResourceStore resourceStore, AssetManager assets, IMediaTool mediaTool, IInfrastructureAssetProvider assetProvider) : IDisposable
 {
-    public EmbeddedResourceStore ResourceStore { get; } = resourceStore;
+    public IResourceStore ResourceStore { get; } = resourceStore;
     public AssetManager Assets { get; } = assets;
     public IMediaTool MediaTool { get; } = mediaTool;
     public IInfrastructureAssetProvider AssetProvider { get; } = assetProvider;
@@ -14,7 +15,7 @@ internal sealed class CliRuntime(EmbeddedResourceStore resourceStore, AssetManag
     public static CliRuntime Create()
     {
 #pragma warning disable CA2000
-        var resourceStore = new EmbeddedResourceStore(typeof(InfrastructureAssetProvider).Assembly);
+        var resourceStore = ResourceStoreFactory.Create(typeof(InfrastructureAssetProvider).Assembly);
 #pragma warning restore CA2000
 
         try

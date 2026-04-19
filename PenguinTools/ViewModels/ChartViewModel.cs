@@ -18,7 +18,7 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
-        IEmbeddedResourceStore resourceStore,
+        IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider,
         IExternalLauncher externalLauncher)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)

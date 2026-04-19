@@ -21,14 +21,14 @@ public abstract partial class ViewModel : ObservableObject
     public ActionService ActionService { get; }
     public AssetManager AssetManager { get; }
     public IMediaTool MediaTool { get; }
-    public IEmbeddedResourceStore ResourceStore { get; }
+    public IResourceStore ResourceStore { get; }
     public IInfrastructureAssetProvider AssetProvider { get; }
 
     protected ViewModel(
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
-        IEmbeddedResourceStore resourceStore,
+        IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider,
         IExternalLauncher externalLauncher)
     {
@@ -52,7 +52,7 @@ public abstract class ActionViewModel : ViewModel
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
-        IEmbeddedResourceStore resourceStore,
+        IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider,
         IExternalLauncher externalLauncher)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
@@ -77,7 +77,7 @@ public abstract class ReloadableActionViewModel : ActionViewModel
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
-        IEmbeddedResourceStore resourceStore,
+        IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider,
         IExternalLauncher externalLauncher)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
@@ -105,7 +105,7 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
-        IEmbeddedResourceStore resourceStore,
+        IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider,
         IExternalLauncher externalLauncher)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)

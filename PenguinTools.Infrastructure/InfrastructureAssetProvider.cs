@@ -16,11 +16,11 @@ public interface IInfrastructureAssetProvider
     string GetPath(InfrastructureAsset asset);
 }
 
-public sealed class InfrastructureAssetProvider(IEmbeddedResourceStore resources) : IInfrastructureAssetProvider
+public sealed class InfrastructureAssetProvider(IResourceStore resources) : IInfrastructureAssetProvider
 {
     private readonly ConcurrentDictionary<InfrastructureAsset, string> _paths = new();
 
-    private IEmbeddedResourceStore Resources { get; } = resources ?? throw new ArgumentNullException(nameof(resources));
+    private IResourceStore Resources { get; } = resources ?? throw new ArgumentNullException(nameof(resources));
 
     public string GetPath(InfrastructureAsset asset)
     {
@@ -41,6 +41,16 @@ public sealed class InfrastructureAssetProvider(IEmbeddedResourceStore resources
 
     private string ResolveMuaExecutablePath()
     {
+        if (OperatingSystem.IsWindows() && Resources.HasResource("mua.exe"))
+        {
+            return Resources.ExtractToTemp("mua.exe");
+        }
+
+        if (OperatingSystem.IsLinux() && Resources.HasResource("mua"))
+        {
+            return Resources.ExtractToTemp("mua");
+        }
+
         if (Resources.HasResource("mua.exe"))
         {
             return Resources.ExtractToTemp("mua.exe");
@@ -51,6 +61,6 @@ public sealed class InfrastructureAssetProvider(IEmbeddedResourceStore resources
             return Resources.ExtractToTemp("mua");
         }
 
-        return "mua";
+        return OperatingSystem.IsWindows() ? "mua.exe" : "mua";
     }
 }
