@@ -223,29 +223,29 @@ internal static class OptionCommands
                 document.OptionName = optionName;
             }
 
-            if (parseResult.GetValue(ChartFileDiscovery) is ChartFileDiscoveryMode discovery)
+            if (parseResult.GetValue(ChartFileDiscovery) is { } discovery)
                 document.ChartFileDiscovery = discovery;
 
-            if (parseResult.GetValue(BatchSize) is int batchSize) document.BatchSize = batchSize;
+            if (parseResult.GetValue(BatchSize) is { } batchSize) document.BatchSize = batchSize;
 
-            if (parseResult.GetValue(ConvertChart) is bool convertChart) document.ConvertChart = convertChart;
+            if (parseResult.GetValue(ConvertChart) is { } convertChart) document.ConvertChart = convertChart;
 
-            if (parseResult.GetValue(ConvertAudio) is bool convertAudio) document.ConvertAudio = convertAudio;
+            if (parseResult.GetValue(ConvertAudio) is { } convertAudio) document.ConvertAudio = convertAudio;
 
-            if (parseResult.GetValue(ConvertJacket) is bool convertJacket) document.ConvertJacket = convertJacket;
+            if (parseResult.GetValue(ConvertJacket) is { } convertJacket) document.ConvertJacket = convertJacket;
 
-            if (parseResult.GetValue(ConvertBackground) is bool convertBackground)
+            if (parseResult.GetValue(ConvertBackground) is { } convertBackground)
                 document.ConvertBackground = convertBackground;
 
-            if (parseResult.GetValue(GenerateEventXml) is bool generateEventXml)
+            if (parseResult.GetValue(GenerateEventXml) is { } generateEventXml)
                 document.GenerateEventXml = generateEventXml;
 
-            if (parseResult.GetValue(GenerateReleaseTagXml) is bool generateReleaseTagXml)
+            if (parseResult.GetValue(GenerateReleaseTagXml) is { } generateReleaseTagXml)
                 document.GenerateReleaseTagXml = generateReleaseTagXml;
 
-            if (parseResult.GetValue(UltimaEventId) is int ultimaEventId) document.UltimaEventId = ultimaEventId;
+            if (parseResult.GetValue(UltimaEventId) is { } ultimaEventId) document.UltimaEventId = ultimaEventId;
 
-            if (parseResult.GetValue(WeEventId) is int weEventId) document.WeEventId = weEventId;
+            if (parseResult.GetValue(WeEventId) is { } weEventId) document.WeEventId = weEventId;
 
             return null;
         }
