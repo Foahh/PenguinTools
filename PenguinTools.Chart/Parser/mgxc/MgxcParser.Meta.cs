@@ -236,8 +236,8 @@ public partial class MgxcParser
         }
         else
         {
-            var msg = string.Format(Strings.Mg_Unrecognized_meta, name, br.BaseStream.Position, data);
-            Diagnostic.Report(Severity.Information, msg);
+            var msg = string.Format(Strings.Mg_Unrecognized_meta, name, data);
+            ReportAtPosition(Severity.Information, msg, br.BaseStream.Position);
         }
     }
 }

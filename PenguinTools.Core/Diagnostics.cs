@@ -22,12 +22,22 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
     public Exception? RelatedException { get; set; }
 
     public ITickFormatter? TimeCalculator { get; set; }
-    public string? FormattedLocation =>
-        string.IsNullOrWhiteSpace(Path)
-            ? null
-            : Line is null
-                ? Path
+    public string? FormattedLocation
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(Path))
+            {
+                return Line is null ? null : $"0x{Line.Value:X2}";
+            }
+
+            if (Line is null) return Path;
+
+            return string.Equals(System.IO.Path.GetExtension(Path), ".mgxc", StringComparison.OrdinalIgnoreCase)
+                ? $"{Path}(0x{Line.Value:X2})"
                 : $"{Path}({Line.Value})";
+        }
+    }
 
     public string? FormattedTime
     {

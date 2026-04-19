@@ -101,10 +101,10 @@
     <value>The SoflanArea is missing a tail.</value>
   </data>
   <data name="MgCrit_Unrecognized_data_type" xml:space="preserve">
-    <value>Unknown type {0} at file position 0x{1:X2}.</value>
+    <value>Unknown type {0}.</value>
   </data>
   <data name="MgCrit_Unrecognized_event" xml:space="preserve">
-    <value>Unknown event mark {0} at file position0x{1:X2}.</value>
+    <value>Unknown event mark {0}.</value>
   </data>
   <data name="Mg_Concurrent_ex_effects" xml:space="preserve">
     <value>Different EX effects coexist at the same tick: {0}. The game will only display one of these.</value>
@@ -149,9 +149,9 @@
     <value>The specified StringID (id or str) {0} could not be found in '{1}'. Please check your input or run "Recollect Game Assets" to refresh the database. If you want to use your custom StringID, please provide both (i.e. "#meta ... [ID] [String]").</value>
   </data>
   <data name="Mg_Unrecognized_meta" xml:space="preserve">
-    <value>Unknown property mark {0} at file position 0x{1:X2}, data: {2}.</value>
+    <value>Unknown property mark {0}, data: {1}.</value>
   </data>
   <data name="Mg_Unrecognized_note" xml:space="preserve">
-    <value>Unknown note type {0} at file position 0x{1:X2}.</value>
+    <value>Unknown note type {0}.</value>
   </data>
   </root>

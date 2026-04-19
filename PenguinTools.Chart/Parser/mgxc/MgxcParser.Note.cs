@@ -267,8 +267,8 @@ public partial class MgxcParser
 
         if (note == null)
         {
-            var msg = string.Format(Strings.Mg_Unrecognized_note, (int)type, br.BaseStream.Position);
-            Diagnostic.Report(Severity.Warning, msg, tick, type);
+            var msg = string.Format(Strings.Mg_Unrecognized_note, (int)type);
+            ReportAtPosition(Severity.Warning, msg, tick, br.BaseStream.Position, type);
             return;
         }
 

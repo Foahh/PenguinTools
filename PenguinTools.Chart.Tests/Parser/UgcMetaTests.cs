@@ -81,4 +81,20 @@ public class UgcMetaTests
         Assert.True(r.Succeeded);
         Assert.True(r.Value!.Meta.BgmEnableBarOffset);
     }
+
+    [Fact]
+    public async Task Meta_GenreAndReleaseDate_AreReadFromHeader()
+    {
+        const string ugc =
+            "@VER\t8\n" +
+            "@TICKS\t480\n" +
+            "@GENRE\t自制譜\n" +
+            "@RLDATE\t20260420\n" +
+            "@BPM\t0'0\t120.0\n";
+
+        var r = await Parse(ugc);
+        Assert.True(r.Succeeded, r.ToString());
+        Assert.Equal("自制譜", r.Value!.Meta.Genre.Str);
+        Assert.Equal(new DateTime(2026, 4, 20), r.Value.Meta.ReleaseDate);
+    }
 }

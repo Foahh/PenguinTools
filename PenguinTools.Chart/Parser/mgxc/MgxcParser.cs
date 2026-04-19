@@ -33,6 +33,21 @@ public partial class MgxcParser
     private List<Task> Tasks { get; } = [];
     private umgr.Chart Mgxc { get; } = new();
 
+    private void ReportAtPosition(Severity severity, string message, long position, object? target = null)
+    {
+        Diagnostic.Report(new Diagnostic(severity, message, Path, target: target, line: checked((int)position)));
+    }
+
+    private void ReportAtPosition(Severity severity, string message, int tick, long position, object? target = null)
+    {
+        Diagnostic.Report(new Diagnostic(severity, message, Path, tick, target, checked((int)position)));
+    }
+
+    private void ThrowAtPosition(string message, long position, object? target = null, int? tick = null)
+    {
+        throw new DiagnosticException(message, target, tick, Path, checked((int)position));
+    }
+
     public async Task<OperationResult<umgr.Chart>> ParseAsync(CancellationToken ct = default)
     {
         Mgxc.Meta.FilePath = Path;

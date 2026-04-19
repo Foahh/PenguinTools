@@ -75,8 +75,8 @@ public partial class MgxcParser
         if (e == null)
         {
             // avoid misalignment
-            var msg = string.Format(Strings.MgCrit_Unrecognized_event, name, br.BaseStream.Position);
-            throw new DiagnosticException(msg, Mgxc);
+            var msg = string.Format(Strings.MgCrit_Unrecognized_event, name);
+            ThrowAtPosition(msg, br.BaseStream.Position, Mgxc);
         }
         Mgxc.Events.AppendChild(e);
 

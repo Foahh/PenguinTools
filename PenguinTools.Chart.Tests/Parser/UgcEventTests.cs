@@ -72,4 +72,17 @@ public class UgcEventTests
         Assert.Equal(1920, smod.Tick.Original);
         Assert.Equal(0.5m, smod.Speed);
     }
+
+    [Fact]
+    public async Task MissingBeat_DefaultsToFourFourForBarTickConversion()
+    {
+        const string ugc =
+            "@VER\t8\n@TICKS\t480\n" +
+            "@BPM\t0'0\t120.0\n" +
+            "#2'240:t64\n";
+
+        var chart = await Parse(ugc);
+        var tap = Assert.Single(chart.Notes.Children.OfType<PenguinTools.Chart.Models.umgr.Tap>());
+        Assert.Equal(4080, tap.Tick.Original);
+    }
 }
