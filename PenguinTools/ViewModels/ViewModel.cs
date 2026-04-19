@@ -7,6 +7,7 @@ using PenguinTools.Core.Resources;
 using PenguinTools.Infrastructure;
 using PenguinTools.Models;
 using PenguinTools.Services;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -107,6 +108,7 @@ public abstract class ReloadableActionViewModel : ActionViewModel
 public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel where TModel : Model
 {
     private FileSystemWatcher? _fileWatcher;
+    private bool _pendingReload;
 
     protected WatchViewModel(
         ActionService actionService,
@@ -116,7 +118,28 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         IInfrastructureAssetProvider assetProvider)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
     {
-        ActionService.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
+        ActionService.PropertyChanged += OnWatchViewModelActionServicePropertyChanged;
+    }
+
+    private void OnWatchViewModelActionServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(e.PropertyName);
+        if (e.PropertyName != nameof(ActionService.IsBusy) || ActionService.IsBusy || !_pendingReload) { return; }
+
+        ConsiderEnqueueReloadFromFileWatch();
+    }
+
+    private void ConsiderEnqueueReloadFromFileWatch()
+    {
+        if (!CanReload()) return;
+        if (!ActionService.CanRun())
+        {
+            _pendingReload = true;
+            return;
+        }
+
+        _pendingReload = false;
+        _ = ActionService.RunAsync(ReadModelInternal);
     }
 
     [ObservableProperty]
@@ -178,6 +201,7 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
     {
         if (!IsFileChanged(e.FullPath)) return;
         LastModifiedTime = DateTime.Now;
+        _ = Dispatcher.InvokeAsync(ConsiderEnqueueReloadFromFileWatch);
     }
 
     protected virtual bool IsFileChanged(string path)
