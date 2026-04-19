@@ -20,5 +20,6 @@
   <Project Path="PenguinTools.Chart.Tests/PenguinTools.Chart.Tests.csproj" />
   <Project Path="PenguinTools.Media/PenguinTools.Media.csproj" />
   <Project Path="PenguinTools.Infrastructure/PenguinTools.Infrastructure.csproj" />
+  <Project Path="PenguinTools.Workflow/PenguinTools.Workflow.csproj" />
   <Project Path="PenguinTools/PenguinTools.csproj" />
 </Solution>

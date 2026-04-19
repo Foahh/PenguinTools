@@ -26,7 +26,7 @@
             <ResourceName>mua.exe</ResourceName>
             <PublishPath>assets\mua.exe</PublishPath>
         </PenguinToolsInfrastructureAsset>
-        <PenguinToolsInfrastructureAsset Include="..\External\muautils\cmake-build-vcpkg\mua" Condition="'$(PenguinToolsUseWindowsMua)' != 'true'">
+        <PenguinToolsInfrastructureAsset Include="..\External\muautils\cmake-build-vcpkg\Release\mua" Condition="'$(PenguinToolsUseWindowsMua)' != 'true'">
             <ResourceName>mua</ResourceName>
             <PublishPath>assets\mua</PublishPath>
         </PenguinToolsInfrastructureAsset>
