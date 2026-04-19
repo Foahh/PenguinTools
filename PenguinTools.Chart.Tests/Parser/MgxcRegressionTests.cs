@@ -12,13 +12,15 @@ public class MgxcRegressionTests
     private const string MasterMgxcPath = "/home/fn/Chunithm/Finished/2765/MASTER.mgxc";
 
     [Fact]
-    public async Task Parse_MASTER_mgxc_matches_prior_pipeline()
+    public async Task ParseKnownSample_StillProducesChart()
     {
-        if (!File.Exists(MasterMgxcPath)) return;
+        if (!File.Exists(MasterMgxcPath))
+            return;
 
         var repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
         var assetsPath = Path.Combine(repoRoot, "assets.json");
-        if (!File.Exists(assetsPath)) return;
+        if (!File.Exists(assetsPath))
+            return;
 
         await using var assetsStream = File.OpenRead(assetsPath);
         var assets = new AssetManager(assetsStream);
@@ -28,7 +30,7 @@ public class MgxcRegressionTests
 
         Assert.True(result.Succeeded);
         Assert.NotNull(result.Value);
-        Assert.Equal(MasterMgxcPath, result.Value!.Meta.FilePath);
+        Assert.NotEmpty(result.Value!.Notes.Children);
     }
 
     private sealed class NullMediaTool : IMediaTool
