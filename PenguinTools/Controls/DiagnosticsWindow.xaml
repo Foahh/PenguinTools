@@ -97,7 +97,7 @@
                                 <DataTemplate>
                                     <TextBlock
                                         HorizontalAlignment="Center"
-                                        Text="{Binding Path}"
+                                        Text="{Binding FormattedLocation}"
                                         TextWrapping="Wrap"
                                         VerticalAlignment="Center" />
                                 </DataTemplate>

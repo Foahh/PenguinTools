@@ -94,7 +94,7 @@ public partial class UgcParser
             if (pairPositive != null)
                 pairPositive.MakePair(air);
             else
-                Diagnostic.Report(Severity.Warning, Strings.MgCrit_Pairing_notes_incompatible, absTick);
+                ReportAtCurrentLine(Severity.Warning, Strings.MgCrit_Pairing_notes_incompatible, absTick);
 
             _lastNote = air;
             return;
@@ -300,8 +300,8 @@ public partial class UgcParser
     }
 
     private void WarnMalformed(string what) =>
-        Diagnostic.Report(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, what, 0));
+        ReportAtCurrentLine(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, what, 0));
 
     private void WarnUnknownType(char c) =>
-        Diagnostic.Report(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, c.ToString(), 0));
+        ReportAtCurrentLine(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, c.ToString(), 0));
 }

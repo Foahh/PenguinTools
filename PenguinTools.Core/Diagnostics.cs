@@ -10,17 +10,25 @@ public enum Severity
     Error = 3
 }
 
-public class Diagnostic(Severity severity, string message, string? path = null, int? time = null, object? target = null) : IComparable<Diagnostic>, IComparable
+public class Diagnostic(Severity severity, string message, string? path = null, int? time = null, object? target = null, int? line = null) : IComparable<Diagnostic>, IComparable
 {
     public Severity Severity { get; set; } = severity;
     public string Message { get; set; } = message;
     public string? Path { get; set; } = path;
     public int? Time { get; set; } = time;
     public object? Target { get; set; } = target;
+    public int? Line { get; set; } = line;
 
     public Exception? RelatedException { get; set; }
 
     public ITickFormatter? TimeCalculator { get; set; }
+    public string? FormattedLocation =>
+        string.IsNullOrWhiteSpace(Path)
+            ? null
+            : Line is null
+                ? Path
+                : $"{Path}({Line.Value})";
+
     public string? FormattedTime
     {
         get
@@ -33,7 +41,7 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
 
     public Diagnostic Copy()
     {
-        return new Diagnostic(Severity, Message, Path, Time, Target)
+        return new Diagnostic(Severity, Message, Path, Time, Target, Line)
         {
             RelatedException = RelatedException,
             TimeCalculator = TimeCalculator
@@ -50,6 +58,8 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
         if (severityComparison != 0) return severityComparison;
         var pathComparison = string.Compare(Path, other.Path, StringComparison.Ordinal);
         if (pathComparison != 0) return pathComparison;
+        var lineComparison = Nullable.Compare(Line, other.Line);
+        if (lineComparison != 0) return lineComparison;
         var timeComparison = Nullable.Compare(Time, other.Time);
         if (timeComparison != 0) return timeComparison;
         return string.Compare(Message, other.Message, StringComparison.Ordinal);
@@ -136,7 +146,7 @@ public class Diagnoster : IDiagnosticSink
     {
         if (ex is DiagnosticException dEx)
         {
-            _diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target) { RelatedException = dEx });
+            _diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target, dEx.Line) { RelatedException = dEx });
             return;
         }
         Report(new Diagnostic(Severity.Error, ex.Message) { RelatedException = ex });
@@ -153,11 +163,12 @@ public class Diagnoster : IDiagnosticSink
     }
 }
 
-public class DiagnosticException(string message, object? target = null, int? tick = null, string? path = null) : Exception(message)
+public class DiagnosticException(string message, object? target = null, int? tick = null, string? path = null, int? line = null) : Exception(message)
 {
     public object? Target { get; } = target;
     public string? Path { get; } = path;
     public int? Tick { get; } = tick;
+    public int? Line { get; } = line;
 
     public ITickFormatter? TimeCalculator { get; set; } = null;
 }

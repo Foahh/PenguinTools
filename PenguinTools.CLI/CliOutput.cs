@@ -88,6 +88,7 @@ internal sealed record CliDiagnosticPayload(
     string Severity,
     string Message,
     string? Path = null,
+    int? Line = null,
     int? Time = null,
     string? FormattedTime = null,
     CliProcessPayload? Process = null);

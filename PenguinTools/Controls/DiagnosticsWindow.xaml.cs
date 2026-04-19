@@ -32,7 +32,7 @@ public partial class DiagnosticsWindowViewModel : ObservableObject
     partial void OnDiagnosticsChanged(ConcurrentObservableSortedSet<Diagnostic>? value)
     {
         if (value is null) return;
-        var showPath = value.Any(diag => !string.IsNullOrWhiteSpace(diag.Path));
+        var showPath = value.Any(diag => !string.IsNullOrWhiteSpace(diag.FormattedLocation));
         PathColumnWidth = showPath ? double.NaN : 0;
         var showTime = value.Any(diag => diag.FormattedTime != null);
         TimeColumnWidth = showTime ? double.NaN : 0;

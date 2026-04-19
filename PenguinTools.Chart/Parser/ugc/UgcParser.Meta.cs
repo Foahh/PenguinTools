@@ -39,9 +39,9 @@ public partial class UgcParser
             case "BGMPRV": HandleBgmPreview(args); break;
             case "JACKET": HandleJacket(args); break;
             case "BGIMG": HandleBgImg(args); break;
-            case "BGMODE": Log(name, args); break;
+            case "BGMODE": break;
             case "FLDCOL": HandleFldCol(args); break;
-            case "FLDIMG": Log(name, args); break;
+            case "FLDIMG": break;
             case "MAINBPM":
                 if (args.Length >= 1 && decimal.TryParse(args[0], CultureInfo.InvariantCulture, out var mbpm))
                     Ugc.Meta.MainBpm = mbpm;
@@ -53,20 +53,29 @@ public partial class UgcParser
             case "ATINFO":
             case "DLURL":
             case "COPYRIGHT":
-            case "LICENSE": Log(name, args); break;
+            case "LICENSE": break;
 
             case "BPM": HandleBpm(args); break;
             case "BEAT": HandleBeat(args); break;
             case "SPDMOD": HandleSpdMod(args); break;
-            case "SPDDEF": Log(name, args); break;
-            case "SPDFLD": Log(name, args); break;
-
+            case "SPDDEF": break;
+            case "SPDFLD": break;
+            case "BGSCENE": break;
+            case "WEATTR":
+                if (args.Length <= 0)
+                {
+                    Log("WEATTR", args);
+                    return;
+                }
+                var attr = Assets.WeTagNames.FirstOrDefault(x => x.Str == args[0]);
+                if (attr != null) Ugc.Meta.WeTag = attr;
+                break;
             case "TIL": HandleTil(args); break;
             case "MAINTIL": HandleMainTil(args); break;
             case "USETIL": break;
 
             default:
-                Diagnostic.Report(Severity.Warning,
+                ReportAtCurrentLine(Severity.Warning,
                     string.Format(Strings.Mg_Unrecognized_meta, name, 0, Str(args)));
                 break;
         }
@@ -75,13 +84,13 @@ public partial class UgcParser
     private static string Str(string[] args) => args.Length >= 1 ? args[0] : string.Empty;
 
     private void Log(string name, string[] args) =>
-        Diagnostic.Report(Severity.Information,
+        ReportAtCurrentLine(Severity.Information,
             string.Format(Strings.Mg_Unrecognized_meta, name, 0, string.Join(' ', args)));
 
     private void HandleVer(string[] args)
     {
         if (args.Length < 1 || !int.TryParse(args[0], out var v) || v != 8)
-            throw new DiagnosticException(string.Format(Strings.Error_Invalid_Header, args.Length >= 1 ? args[0] : "", "UGC v8"));
+            ThrowAtCurrentLine(string.Format(Strings.Error_Invalid_Header, args.Length >= 1 ? args[0] : "", "UGC v8"));
     }
 
     private void HandleExVer(string[] args)
@@ -93,7 +102,7 @@ public partial class UgcParser
     private void HandleTicks(string[] args)
     {
         if (args.Length < 1 || !int.TryParse(args[0], out var t) || t != 480)
-            throw new DiagnosticException(string.Format(Strings.Error_Invalid_Header, args.Length >= 1 ? args[0] : "", "TICKS=480"));
+            ThrowAtCurrentLine(string.Format(Strings.Error_Invalid_Header, args.Length >= 1 ? args[0] : "", "TICKS=480"));
     }
 
     private void HandleDiff(string[] args)
@@ -211,7 +220,6 @@ public partial class UgcParser
             case "BGMWCMP":
             case "HIPRECISION":
             case "DIFFTTL":
-                Log("FLAG:" + key, args);
                 break;
             default:
                 Log("FLAG:" + key, args);

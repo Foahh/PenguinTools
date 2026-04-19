@@ -11,6 +11,8 @@ using umgr = Models.umgr;
 
 public partial class UgcParser
 {
+    private readonly record struct SourceLine(int Number, string Text);
+
     static UgcParser()
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -38,6 +40,7 @@ public partial class UgcParser
     private int _currentTimeline;
     private umgr.Note? _lastNote;
     private umgr.Note? _lastParentNote;
+    private int? _currentLineNumber;
 
     public async Task<OperationResult<umgr.Chart>> ParseAsync(CancellationToken ct = default)
     {
@@ -49,19 +52,23 @@ public partial class UgcParser
             foreach (var line in lines)
             {
                 ct.ThrowIfCancellationRequested();
-                if (line.StartsWith('@')) DispatchHeaderLine(line);
+                SetCurrentLine(line);
+                if (line.Text.StartsWith('@')) DispatchHeaderLine(line.Text);
             }
 
+            ClearCurrentLine();
             BuildBarAxis();
 
             _currentTimeline = 0;
             foreach (var line in lines)
             {
                 ct.ThrowIfCancellationRequested();
-                if (line.StartsWith("@USETIL", StringComparison.Ordinal)) ApplyUseTil(line);
-                else if (line.StartsWith('#')) DispatchBodyLine(line);
+                SetCurrentLine(line);
+                if (line.Text.StartsWith("@USETIL", StringComparison.Ordinal)) ApplyUseTil(line.Text);
+                else if (line.Text.StartsWith('#')) DispatchBodyLine(line.Text);
             }
 
+            ClearCurrentLine();
             Diagnostic.TimeCalculator = Ugc.GetCalculator();
 
             var post = new ChartPostProcessor(Ugc, Diagnostic, Assets);
@@ -78,7 +85,7 @@ public partial class UgcParser
         }
     }
 
-    private static async Task<string[]> ReadLinesAsync(string path, CancellationToken ct)
+    private static async Task<SourceLine[]> ReadLinesAsync(string path, CancellationToken ct)
     {
         var bytes = await File.ReadAllBytesAsync(path, ct);
         string text;
@@ -91,7 +98,41 @@ public partial class UgcParser
             text = Encoding.GetEncoding(932).GetString(bytes);
         }
 
-        return text.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+        using var reader = new StringReader(text);
+        var lines = new List<SourceLine>();
+        for (var lineNumber = 1; ; lineNumber++)
+        {
+            var line = reader.ReadLine();
+            if (line is null) break;
+            lines.Add(new SourceLine(lineNumber, line));
+        }
+
+        return [.. lines];
+    }
+
+    private void SetCurrentLine(SourceLine line)
+    {
+        _currentLineNumber = line.Number;
+    }
+
+    private void ClearCurrentLine()
+    {
+        _currentLineNumber = null;
+    }
+
+    private void ReportAtCurrentLine(Severity severity, string message, object? target = null)
+    {
+        Diagnostic.Report(new Diagnostic(severity, message, Path, target: target, line: _currentLineNumber));
+    }
+
+    private void ReportAtCurrentLine(Severity severity, string message, int tick, object? target = null)
+    {
+        Diagnostic.Report(new Diagnostic(severity, message, Path, tick, target, _currentLineNumber));
+    }
+
+    private void ThrowAtCurrentLine(string message, object? target = null, int? tick = null)
+    {
+        throw new DiagnosticException(message, target, tick, Path, _currentLineNumber);
     }
 
     private void BuildBarAxis()

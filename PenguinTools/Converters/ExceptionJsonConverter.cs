@@ -33,6 +33,8 @@ public class ExceptionJsonConverter : JsonConverter<Exception>
 
             writer.WriteString(nameof(DiagnosticException.Tick), dEx.Tick?.ToString());
 
+            writer.WriteString(nameof(DiagnosticException.Line), dEx.Line?.ToString());
+
             writer.WritePropertyName(nameof(DiagnosticException.TimeCalculator));
             JsonSerializer.Serialize(writer, (object?)dEx.TimeCalculator, options);
         }

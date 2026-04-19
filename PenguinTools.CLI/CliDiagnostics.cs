@@ -52,7 +52,8 @@ internal static class CliDiagnostics
                 diagnosticException.Message,
                 diagnosticException.Path,
                 diagnosticException.Tick,
-                diagnosticException.Target));
+                diagnosticException.Target,
+                diagnosticException.Line));
 
             return DiagnosticSnapshot.Create(sink);
         }
@@ -72,9 +73,9 @@ internal static class CliDiagnostics
         };
 
         var details = new List<string>();
-        if (!string.IsNullOrWhiteSpace(diagnostic.Path))
+        if (!string.IsNullOrWhiteSpace(diagnostic.FormattedLocation))
         {
-            details.Add(diagnostic.Path);
+            details.Add(diagnostic.FormattedLocation);
         }
 
         if (!string.IsNullOrWhiteSpace(diagnostic.FormattedTime))
@@ -96,6 +97,7 @@ internal static class CliDiagnostics
     {
         return snapshot.Diagnostics.OrderByDescending(d => d.Severity)
             .ThenBy(d => d.Path, StringComparer.Ordinal)
+            .ThenBy(d => d.Line)
             .ThenBy(d => d.Time)
             .ThenBy(d => d.Message, StringComparer.Ordinal);
     }
@@ -106,6 +108,7 @@ internal static class CliDiagnostics
             ToSeverity(diagnostic.Severity),
             diagnostic.Message,
             diagnostic.Path,
+            diagnostic.Line,
             diagnostic.Time,
             diagnostic.FormattedTime,
             diagnostic.Target is ProcessCommandResult commandResult ? ToPayload(commandResult) : null);
