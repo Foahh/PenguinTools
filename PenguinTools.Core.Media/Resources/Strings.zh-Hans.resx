@@ -63,10 +63,51 @@
           PublicKeyToken=b77a5c561934e089
       </value>
   </resheader>
-  <data name="Error_Song_id_is_not_set" xml:space="preserve">
+  <data name="Error_Audio_file_not_found" xml:space="preserve">
+    <value>未找到音频文件。</value>
+  </data>
+  <data name="Error_Audio_format_not_supported" xml:space="preserve">
+    <value>不支持的音频格式，仅支持wav格式（pcm_s16le 48000Hz）。</value>
+  </data>
+    <data name="Error_Background_file_not_found" xml:space="preserve">
+    <value>未找到背景图片文件。</value>
+  </data>
+  <data name="Error_Command_failed" xml:space="preserve">
+    <value>命令执行失败。</value>
+  </data>
+    <data name="Error_Effect_file_not_found" xml:space="preserve">
+    <value>未找到背景效果文件。</value>
+  </data>
+  <data name="Error_File_not_found" xml:space="preserve">
+    <value>未找到指定的文件。</value>
+  </data>
+
+    <data name="Error_Invalid_bg_fx_image" xml:space="preserve">
+    <value>无法读取雪花图片，格式无效。</value>
+  </data>
+    <data name="Error_Invalid_bg_image" xml:space="preserve">
+    <value>无法读取背景图片，格式无效。</value>
+  </data>
+    <data name="Error_Jacket_file_not_found" xml:space="preserve">
+    <value>未找到封面文件。</value>
+  </data>
+  <data name="Error_Preview_stop_greater_than_start" xml:space="preserve">
+    <value>预览结束时间必须大于开始时间。</value>
+  </data>
+    <data name="Error_Song_id_is_not_set" xml:space="preserve">
     <value>未设置歌曲 ID。</value>
   </data>
-  <data name="Unit_Tick" xml:space="preserve">
-    <value>{0} 刻</value>
+  <data name="Error_Stage_id_is_not_set" xml:space="preserve">
+    <value>未设置背景 ID。</value>
   </data>
-  </root>
+    <data name="Hint_Preview_value_clamped" xml:space="preserve">
+    <value>预览{0}时间（{1:F3} 秒）超过最大值（{2:F3} 秒），已自动调整以防止溢出。</value>
+  </data>
+    <data name="Warn_Preview_later_than_120" xml:space="preserve">
+    <value>音频预览起始时间超过 120 秒。可能导致在游戏在选择此歌曲时卡顿。</value>
+  </data>
+    <data name="Warn_Stage_already_exists" xml:space="preserve">
+    <value>已经存在 ID 为 {1} 的背景类型 {0}。</value>
+  </data>
+
+    </root>

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Core;
-using PenguinTools.Core.Resources;
+using PenguinTools.Resources;
 using System.Media;
 
 namespace PenguinTools.Services;

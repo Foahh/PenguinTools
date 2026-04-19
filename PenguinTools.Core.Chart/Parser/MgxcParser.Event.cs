@@ -1,4 +1,4 @@
-﻿using PenguinTools.Core.Resources;
+﻿using PenguinTools.Core.Chart.Resources;
 
 namespace PenguinTools.Core.Chart.Parser;
 

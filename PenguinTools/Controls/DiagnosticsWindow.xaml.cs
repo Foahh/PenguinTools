@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Core;
-using PenguinTools.Core.Resources;
+using PenguinTools.Resources;
 using Swordfish.NET.Collections;
 
 namespace PenguinTools.Controls;

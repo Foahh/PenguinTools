@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using PenguinTools.Core.Metadata;
-using PenguinTools.Core.Resources;
+using PenguinTools.Core.Media.Resources;
 using PenguinTools.Core.Xml;
 using SonicAudioLib.Archives;
 using SonicAudioLib.CriMw;

@@ -34,7 +34,7 @@ public class ExceptionJsonConverter : JsonConverter<Exception>
             writer.WriteString(nameof(DiagnosticException.Tick), dEx.Tick?.ToString());
 
             writer.WritePropertyName(nameof(DiagnosticException.TimeCalculator));
-            JsonSerializer.Serialize(writer, dEx.TimeCalculator, options);
+            JsonSerializer.Serialize(writer, (object?)dEx.TimeCalculator, options);
         }
 
         if (value.InnerException != null)

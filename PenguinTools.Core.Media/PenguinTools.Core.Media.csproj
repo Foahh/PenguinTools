@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Common.props"/>
+
+    <PropertyGroup>
+        <TargetFramework>$(DotNetVersion)</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\External\SonicAudioTools\Source\SonicAudioLib\SonicAudioLib.csproj" />
+        <ProjectReference Include="..\External\vgaudio\src\VGAudio\VGAudio.csproj" />
+        <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,5 +1,5 @@
 ﻿using PenguinTools.Core.Asset;
-using PenguinTools.Core.Resources;
+using PenguinTools.Core.Media.Resources;
 using PenguinTools.Core.Xml;
 
 namespace PenguinTools.Core.Media;

@@ -1,4 +1,4 @@
-﻿using PenguinTools.Core.Resources;
+﻿using PenguinTools.Core.Chart.Resources;
 
 // ReSharper disable RedundantNameQualifier
 

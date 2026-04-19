@@ -1,5 +1,4 @@
-﻿using PenguinTools.Core.Chart;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using PenguinTools.Core.Resources;
 
 namespace PenguinTools.Core;
@@ -21,15 +20,14 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
 
     public Exception? RelatedException { get; set; }
 
-    public TimeCalculator? TimeCalculator { get; set; }
+    public ITickFormatter? TimeCalculator { get; set; }
     public string? FormattedTime
     {
         get
         {
             if (Time is null) return null;
             if (TimeCalculator is null) return string.Format(Strings.Unit_Tick, Time);
-            var pos = TimeCalculator.GetPositionFromTick(Time.Value);
-            return pos.ToString();
+            return TimeCalculator.FormatTick(Time.Value);
         }
     }
 
@@ -110,7 +108,7 @@ public interface IDiagnosticSink
     IReadOnlyCollection<Diagnostic> Diagnostics { get; }
     bool HasProblem { get; }
     bool HasError { get; }
-    TimeCalculator? TimeCalculator { get; set; }
+    ITickFormatter? TimeCalculator { get; set; }
 
     void Report(Diagnostic item);
     void Report(Exception ex);
@@ -126,7 +124,7 @@ public class Diagnoster : IDiagnosticSink
     public bool HasProblem => !_diags.IsEmpty;
     public bool HasError => _diags.Any(d => d.Severity == Severity.Error);
 
-    public TimeCalculator? TimeCalculator { get; set; }
+    public ITickFormatter? TimeCalculator { get; set; }
 
     public void Report(Diagnostic item)
     {
@@ -161,7 +159,7 @@ public class DiagnosticException(string message, object? target = null, int? tic
     public string? Path { get; } = path;
     public int? Tick { get; } = tick;
 
-    public TimeCalculator? TimeCalculator { get; set; } = null;
+    public ITickFormatter? TimeCalculator { get; set; } = null;
 }
 
 public static class DiagnosticSinkExtensions
@@ -176,4 +174,9 @@ public static class DiagnosticSinkExtensions
             sink.Report(diagnostic.Copy());
         }
     }
+}
+
+public interface ITickFormatter
+{
+    string FormatTick(int tick);
 }

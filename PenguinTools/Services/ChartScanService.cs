@@ -3,7 +3,7 @@ using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Chart.Parser;
 using PenguinTools.Core.Media;
-using PenguinTools.Core.Resources;
+using PenguinTools.Resources;
 using PenguinTools.Models;
 using System.IO;
 

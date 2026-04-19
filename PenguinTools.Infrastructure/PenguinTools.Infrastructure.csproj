@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj" />
+        <ProjectReference Include="..\PenguinTools.Core.Media\PenguinTools.Core.Media.csproj" />
     </ItemGroup>
 
     <ItemGroup>

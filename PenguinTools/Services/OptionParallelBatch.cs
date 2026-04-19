@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using PenguinTools.Core;
-using PenguinTools.Core.Resources;
+using PenguinTools.Resources;
 
 namespace PenguinTools.Services;
 

@@ -1,6 +1,6 @@
 ﻿using PenguinTools.Core.Asset;
 using PenguinTools.Core.Chart.Models;
-using PenguinTools.Core.Resources;
+using PenguinTools.Core.Chart.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
 using PenguinTools.Core.Media;

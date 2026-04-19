@@ -5,7 +5,7 @@ using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Media;
-using PenguinTools.Core.Resources;
+using PenguinTools.Resources;
 using PenguinTools.Infrastructure;
 using PenguinTools.Services;
 using PenguinTools.Views;

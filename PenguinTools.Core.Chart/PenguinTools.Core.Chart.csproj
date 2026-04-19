@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Common.props"/>
+
+    <PropertyGroup>
+        <TargetFramework>$(DotNetVersion)</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj" />
+        <ProjectReference Include="..\PenguinTools.Core.Media\PenguinTools.Core.Media.csproj" />
+    </ItemGroup>
+</Project>

@@ -7,7 +7,7 @@ using PenguinTools.Core.Chart.Models.mgxc;
 
 namespace PenguinTools.Core.Chart;
 
-public class TimeCalculator
+public class TimeCalculator : ITickFormatter
 {
     private readonly int _barTick;
     private readonly BeatEvent[] _timeSignatures;
@@ -55,6 +55,11 @@ public class TimeCalculator
         var tickOffset = (int)(remainder % beatTick);
 
         return new Position(totalBarsBefore + barsSince + 1, beatIndex + 1, tickOffset);
+    }
+
+    public string FormatTick(int tick)
+    {
+        return GetPositionFromTick(tick).ToString();
     }
 
     private int FindTimeSignatureIndex(int tick)

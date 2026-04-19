@@ -1,5 +1,5 @@
 ﻿using PenguinTools.Core.Asset;
-using PenguinTools.Core.Resources;
+using PenguinTools.Core.Chart.Resources;
 using System.Globalization;
 
 namespace PenguinTools.Core.Chart.Parser;

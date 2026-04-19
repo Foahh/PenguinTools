@@ -11,7 +11,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
+    xmlns:res="clr-namespace:PenguinTools.Resources"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <local:TabShell>

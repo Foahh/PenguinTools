@@ -1,5 +1,5 @@
 ﻿using PenguinTools.Core.Chart.Models;
-using PenguinTools.Core.Resources;
+using PenguinTools.Core.Chart.Resources;
 using System.Text;
 
 // ReSharper disable RedundantNameQualifier

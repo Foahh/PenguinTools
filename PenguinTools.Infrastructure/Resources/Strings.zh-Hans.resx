@@ -63,10 +63,4 @@
           PublicKeyToken=b77a5c561934e089
       </value>
   </resheader>
-  <data name="Error_Song_id_is_not_set" xml:space="preserve">
-    <value>未设置歌曲 ID。</value>
-  </data>
-  <data name="Unit_Tick" xml:space="preserve">
-    <value>{0} 刻</value>
-  </data>
   </root>

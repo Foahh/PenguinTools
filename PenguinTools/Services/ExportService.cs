@@ -5,7 +5,7 @@ using PenguinTools.Core.Asset;
 using PenguinTools.Core.Chart.Writer;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Metadata;
-using PenguinTools.Core.Resources;
+using PenguinTools.Resources;
 using PenguinTools.Core.Xml;
 using PenguinTools.Infrastructure;
 using PenguinTools.Models;
