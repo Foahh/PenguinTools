@@ -35,12 +35,9 @@ public partial class UgcParser
     private List<Task> Tasks { get; } = [];
     private mg.Chart Ugc { get; } = new();
 
-#pragma warning disable CS0169, CS0414
     private int _currentTimeline;
     private mg.Note? _lastNote;
     private mg.Note? _lastParentNote;
-    private readonly Dictionary<int, int> _barToTick = new();
-#pragma warning restore CS0169, CS0414
 
     public async Task<OperationResult<mg.Chart>> ParseAsync(CancellationToken ct = default)
     {
@@ -96,8 +93,6 @@ public partial class UgcParser
 
         return text.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
     }
-
-    private void DispatchBodyLine(string line) { }
 
     private void BuildBarAxis()
     {
