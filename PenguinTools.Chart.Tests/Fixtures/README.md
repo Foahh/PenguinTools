@@ -1,5 +1,5 @@
 # Fixtures
 
-Integration tests pull UGC/MGXC sample pairs from `/home/fn/Chunithm/Finished/<song>/MASTER.{ugc,mgxc}`.
-They are referenced by absolute path (not copied into the repo) — the files are licensed charts
-the developer owns locally. Tests that can't find them are skipped, not failed.
+Integration tests use paired `.ugc` / `.mgxc` files under `PenguinTools.Chart.Tests/Assets` (same base name, e.g. `Sample.ugc` and `Sample.mgxc`).
+
+Add or replace samples there locally; paths are resolved from the test project directory at runtime (`ChartTestPaths.AssetsDirectory`), not from machine-specific locations.
