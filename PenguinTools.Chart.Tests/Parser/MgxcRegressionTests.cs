@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using PenguinTools.Chart.Parser;
+using PenguinTools.Chart.Tests;
 using Xunit;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
@@ -9,12 +10,11 @@ namespace PenguinTools.Chart.Tests.Parser;
 
 public class MgxcRegressionTests
 {
-    private const string MasterMgxcPath = "/home/fn/Chunithm/Finished/2765/MASTER.mgxc";
-
     [Fact]
     public async Task ParseKnownSample_StillProducesChart()
     {
-        if (!File.Exists(MasterMgxcPath))
+        var masterMgxcPath = Path.Combine(ChartTestPaths.AssetsDirectory, "Ver seX.mgxc");
+        if (!File.Exists(masterMgxcPath))
             return;
 
         var repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
@@ -24,7 +24,7 @@ public class MgxcRegressionTests
 
         await using var assetsStream = File.OpenRead(assetsPath);
         var assets = new AssetManager(assetsStream);
-        var parser = new MgxcParser(new MgxcParseRequest(MasterMgxcPath, assets), new NullMediaTool());
+        var parser = new MgxcParser(new MgxcParseRequest(masterMgxcPath, assets), new NullMediaTool());
 
         var result = await parser.ParseAsync();
 

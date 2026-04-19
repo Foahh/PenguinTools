@@ -1,32 +1,24 @@
+using PenguinTools.Chart.Tests;
+
 namespace PenguinTools.Chart.Tests.Parser;
 
 /// <summary>
-/// Paired MASTER.ugc / MASTER.mgxc under /home/fn/Chunithm/Finished.
-/// <see cref="ParityVerifiedFolders"/> lists charts where UGC vs MGXC Summarize() matches on this checkout; expand as the parser improves.
+/// Paired chart samples: for each <c>*.ugc</c> in <see cref="ChartTestPaths.AssetsDirectory"/>, the matching <c>*.mgxc</c> with the same file name (without extension).
 /// </summary>
 public static class FinishedChartSampleCases
 {
     public static IEnumerable<object[]> MasterPairs()
     {
-        const string root = "/home/fn/Chunithm/Finished";
+        var root = ChartTestPaths.AssetsDirectory;
         if (!Directory.Exists(root)) yield break;
-        foreach (var dir in Directory.GetDirectories(root))
+
+        foreach (var ugcPath in Directory.EnumerateFiles(root, "*.ugc", SearchOption.TopDirectoryOnly))
         {
-            var name = Path.GetFileName(dir);
-            if (!ParityVerifiedFolders.Contains(name)) continue;
-            var ugc = Path.Combine(dir, "MASTER.ugc");
-            var mgxc = Path.Combine(dir, "MASTER.mgxc");
-            if (File.Exists(ugc) && File.Exists(mgxc))
-                yield return new object[] { name, ugc, mgxc };
+            var stem = Path.GetFileNameWithoutExtension(ugcPath);
+            var mgxcPath = Path.Combine(root, stem + ".mgxc");
+            if (!File.Exists(mgxcPath)) continue;
+
+            yield return new object[] { stem, ugcPath, mgxcPath };
         }
     }
-
-    private static readonly HashSet<string> ParityVerifiedFolders = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "Unsinkable Memory",
-        "Sudden Visitor",
-        "Oracle",
-        "Kannagara",
-        "HEADROOM WITH PLEASANT RHYTHM",
-    };
 }
