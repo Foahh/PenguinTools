@@ -145,6 +145,7 @@ internal sealed partial class ChartPostProcessor
 
     private void FinalizeEvent()
     {
+        var noteSpeedMods = _chart.Events.Children.OfType<mg.NoteSpeedEvent>().ToArray();
         foreach (var e in _chart.Events.Children.OfType<mg.SpeedEventBase>().ToArray()) _chart.Events.RemoveChild(e);
         foreach (var (tilId, events) in _tilGroups)
         {
@@ -159,6 +160,9 @@ internal sealed partial class ChartPostProcessor
                 _chart.Events.AppendChild(newEvent);
             }
         }
+
+        foreach (var e in noteSpeedMods)
+            _chart.Events.AppendChild(e);
     }
 
     private void PlaceSoflanArea()
