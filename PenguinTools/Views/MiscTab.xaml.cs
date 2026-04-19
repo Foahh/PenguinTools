@@ -1,14 +1,13 @@
 ﻿using System.Windows.Controls;
-using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.ViewModels;
 
 namespace PenguinTools.Views;
 
 public partial class MiscTab : UserControl
 {
-    public MiscTab()
+    public MiscTab(MiscViewModel viewModel)
     {
         InitializeComponent();
-        DataContext = App.ServiceProvider.GetRequiredService<MiscViewModel>();
+        DataContext = viewModel;
     }
 }

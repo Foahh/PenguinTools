@@ -7,6 +7,7 @@
     xmlns:converters="clr-namespace:PenguinTools.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools"
+    xmlns:shell="clr-namespace:PenguinTools.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
@@ -22,36 +23,34 @@
         <converters:VersionConverter x:Key="VersionConverter" />
     </UserControl.Resources>
 
-    <Grid Margin="8">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <StackPanel
-            HorizontalAlignment="Center"
-            Margin="8,0,8,8"
-            VerticalAlignment="Center">
-            <TextBlock
-                FontSize="14"
-                Foreground="#555"
+    <shell:TabShell>
+        <shell:TabShell.MainContent>
+            <StackPanel
                 HorizontalAlignment="Center"
-                Margin="0,8,0,0"
-                Text="{Binding Source={x:Static local:App.BuildDate}, StringFormat=Foahh @ {0:yyyy/MM/dd}}" />
+                Margin="8,0,8,8"
+                VerticalAlignment="Center">
+                <TextBlock
+                    FontSize="14"
+                    Foreground="#555"
+                    HorizontalAlignment="Center"
+                    Margin="0,8,0,0"
+                    Text="{Binding Source={x:Static local:App.BuildDate}, StringFormat=Foahh @ {0:yyyy/MM/dd}}" />
 
-            <TextBlock
-                FontSize="12"
-                FontWeight="SemiBold"
-                Foreground="#777"
-                HorizontalAlignment="Center"
-                Margin="0,8,0,0"
-                Text="{Binding Source={x:Static local:App.Version}, Converter={StaticResource VersionConverter}}" />
-        </StackPanel>
-
-        <StackPanel Grid.Row="1">
-            <Button Command="{Binding OpenTempDirectoryCommand}" Content="{x:Static res:Strings.Button_Open_temp_directory}" />
-            <Button Command="{Binding ExtractAfbFileCommand}" Content="{x:Static res:Strings.Button_Extract_dds_from_afb}" />
-            <Button Command="{Binding CollectAssetCommand}" Content="{x:Static res:Strings.Button_Recollect_A000}" />
-        </StackPanel>
-    </Grid>
+                <TextBlock
+                    FontSize="12"
+                    FontWeight="SemiBold"
+                    Foreground="#777"
+                    HorizontalAlignment="Center"
+                    Margin="0,8,0,0"
+                    Text="{Binding Source={x:Static local:App.Version}, Converter={StaticResource VersionConverter}}" />
+            </StackPanel>
+        </shell:TabShell.MainContent>
+        <shell:TabShell.FooterContent>
+            <StackPanel>
+                <Button Command="{Binding OpenTempDirectoryCommand}" Content="{x:Static res:Strings.Button_Open_temp_directory}" />
+                <Button Command="{Binding ExtractAfbFileCommand}" Content="{x:Static res:Strings.Button_Extract_dds_from_afb}" />
+                <Button Command="{Binding CollectAssetCommand}" Content="{x:Static res:Strings.Button_Recollect_A000}" />
+            </StackPanel>
+        </shell:TabShell.FooterContent>
+    </shell:TabShell>
 </UserControl>

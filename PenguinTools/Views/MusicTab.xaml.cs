@@ -1,14 +1,13 @@
 ﻿using System.Windows.Controls;
-using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.ViewModels;
 
 namespace PenguinTools.Views;
 
 public partial class MusicTab : UserControl
 {
-    public MusicTab()
+    public MusicTab(MusicViewModel viewModel)
     {
         InitializeComponent();
-        DataContext = App.ServiceProvider.GetRequiredService<MusicViewModel>();
+        DataContext = viewModel;
     }
 }

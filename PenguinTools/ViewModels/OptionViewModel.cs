@@ -4,6 +4,7 @@ using PenguinTools.Core.Asset;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using PenguinTools.Infrastructure;
+using PenguinTools.Core.Metadata;
 using PenguinTools.Models;
 using PenguinTools.Services;
 using System.IO;
@@ -51,6 +52,25 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         base.SetModel(oldModel, newModel);
         SelectedBook = null;
         SelectedBookItem = null;
+    }
+
+    public void ApplyPreviewTreeSelection(object? newValue)
+    {
+        if (newValue is KeyValuePair<int, Book> kvpBook)
+        {
+            SelectedBookItem = null;
+            SelectedBook = kvpBook.Value;
+        }
+        else if (newValue is KeyValuePair<Difficulty, BookItem> kvpBookItem)
+        {
+            SelectedBookItem = kvpBookItem.Value;
+            SelectedBook = null;
+        }
+        else
+        {
+            SelectedBookItem = null;
+            SelectedBook = null;
+        }
     }
 
     protected override async Task<OperationResult<OptionModel>> ReadModel(string path, CancellationToken ct = default)

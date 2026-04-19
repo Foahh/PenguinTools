@@ -11,7 +11,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:PenguinTools.Core.Resources;assembly=PenguinTools.Core"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
-    xmlns:views="clr-namespace:PenguinTools.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Window.Resources>
@@ -43,28 +42,28 @@
         <TabControl Margin="8">
             <TabItem Header="{x:Static res:Strings.Tab_Option}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <views:OptionTab />
+                    <ContentControl x:Name="OptionTabHost" />
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Song}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <views:WorkflowTab />
+                    <ContentControl x:Name="WorkflowTabHost" />
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Chart}">
-                <views:ChartTab />
+                <ContentControl x:Name="ChartTabHost" />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Jacket}">
-                <views:JacketTab />
+                <ContentControl x:Name="JacketTabHost" />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Music}">
-                <views:MusicTab />
+                <ContentControl x:Name="MusicTabHost" />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Stage}">
-                <views:StageTab />
+                <ContentControl x:Name="StageTabHost" />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Misc}">
-                <views:MiscTab />
+                <ContentControl x:Name="MiscTabHost" />
             </TabItem>
         </TabControl>
     </DockPanel>

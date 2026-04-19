@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Windows;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Models;
@@ -23,7 +23,17 @@ public partial class MetaPropertyGrid : MyPropertyGrid
         };
     }
 
-    public AssetManager AssetManager => App.ServiceProvider.GetRequiredService<AssetManager>();
+    public AssetManager? AssetManager
+    {
+        get => (AssetManager?)GetValue(AssetManagerProperty);
+        set => SetValue(AssetManagerProperty, value);
+    }
+
+    public static readonly DependencyProperty AssetManagerProperty = DependencyProperty.Register(
+        nameof(AssetManager),
+        typeof(AssetManager),
+        typeof(MetaPropertyGrid),
+        new PropertyMetadata(null));
 
     private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

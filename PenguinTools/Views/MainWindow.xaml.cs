@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.Core.Resources;
 using PenguinTools.ViewModels;
 
@@ -8,13 +9,21 @@ public partial class MainWindow : Window
 {
     private readonly MainWindowViewModel _viewModel;
 
-    public MainWindow(MainWindowViewModel viewModel)
+    public MainWindow(MainWindowViewModel viewModel, IServiceProvider services)
     {
         InitializeComponent();
         DataContext = viewModel;
         this._viewModel = viewModel;
         Title = string.Format(Strings.Window_Title, App.Name, App.Version.ToString(3));
         Loaded += OnLoaded;
+
+        OptionTabHost.Content = services.GetRequiredService<OptionTab>();
+        WorkflowTabHost.Content = services.GetRequiredService<WorkflowTab>();
+        ChartTabHost.Content = services.GetRequiredService<ChartTab>();
+        JacketTabHost.Content = services.GetRequiredService<JacketTab>();
+        MusicTabHost.Content = services.GetRequiredService<MusicTab>();
+        StageTabHost.Content = services.GetRequiredService<StageTab>();
+        MiscTabHost.Content = services.GetRequiredService<MiscTab>();
     }
 
     private void OnLoaded(object s, RoutedEventArgs e)
