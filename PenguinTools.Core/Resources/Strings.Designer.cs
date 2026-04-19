@@ -1445,24 +1445,8 @@ namespace PenguinTools.Core.Resources {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string similar to Collecting....
-        /// </summary>
-        public static string Status_collecting {
-            get {
-                return ResourceManager.GetString("Status_collecting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Converting Background....
-        /// </summary>
-        public static string Status_Convert_background {
-            get {
-                return ResourceManager.GetString("Status_Convert_background", resourceCulture);
-            }
-        }
-        
+
+
         /// <summary>
         ///   Looks up a localized string similar to Converted.
         /// </summary>
@@ -1472,33 +1456,8 @@ namespace PenguinTools.Core.Resources {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string similar to Converting Audio....
-        /// </summary>
-        public static string Status_Converting_audio {
-            get {
-                return ResourceManager.GetString("Status_Converting_audio", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Converting Chart....
-        /// </summary>
-        public static string Status_Converting_chart {
-            get {
-                return ResourceManager.GetString("Status_Converting_chart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Converting Jacket....
-        /// </summary>
-        public static string Status_Converting_jacket {
-            get {
-                return ResourceManager.GetString("Status_Converting_jacket", resourceCulture);
-            }
-        }
-        
+
+
         /// <summary>
         ///   Looks up a localized string similar to Done.
         /// </summary>
@@ -1517,15 +1476,8 @@ namespace PenguinTools.Core.Resources {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string similar to Extracting....
-        /// </summary>
-        public static string Status_Extracting {
-            get {
-                return ResourceManager.GetString("Status_Extracting", resourceCulture);
-            }
-        }
-        
+
+
         /// <summary>
         ///   Looks up a localized string similar to Idle.
         /// </summary>
@@ -1544,15 +1496,8 @@ namespace PenguinTools.Core.Resources {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string similar to Saving....
-        /// </summary>
-        public static string Status_Saving {
-            get {
-                return ResourceManager.GetString("Status_Saving", resourceCulture);
-            }
-        }
-        
+
+
         /// <summary>
         ///   Looks up a localized string similar to Searching....
         /// </summary>
@@ -1571,24 +1516,8 @@ namespace PenguinTools.Core.Resources {
             }
         }
         
-        /// <summary>
-        ///   Looks up a localized string similar to Validating....
-        /// </summary>
-        public static string Status_Validate {
-            get {
-                return ResourceManager.GetString("Status_Validate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Writing....
-        /// </summary>
-        public static string Status_Writing {
-            get {
-                return ResourceManager.GetString("Status_Writing", resourceCulture);
-            }
-        }
-        
+
+
         /// <summary>
         ///   Looks up a localized string similar to Chart.
         /// </summary>

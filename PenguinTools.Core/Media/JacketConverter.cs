@@ -23,7 +23,6 @@ public class JacketConverter
     private OperationContext ParentContext { get; }
     private OperationContext CurrentContext { get; set; }
     private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
-    private IProgress<string>? Progress => CurrentContext.Progress;
     private string InPath { get; }
     private string OutPath { get; }
 
@@ -39,7 +38,6 @@ public class JacketConverter
         {
             if (!Validate()) return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
 
-            Progress?.Report(Strings.Status_Converting_jacket);
             ct.ThrowIfCancellationRequested();
             await MediaTool.ConvertJacketAsync(InPath, OutPath, ct);
             ct.ThrowIfCancellationRequested();

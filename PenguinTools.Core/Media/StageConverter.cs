@@ -34,7 +34,6 @@ public class StageConverter
     private OperationContext ParentContext { get; }
     private OperationContext CurrentContext { get; set; }
     private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
-    private IProgress<string>? Progress => CurrentContext.Progress;
     private AssetManager Assets { get; }
     private string BackgroundPath { get; }
     private string?[]? EffectPaths { get; }
@@ -56,8 +55,6 @@ public class StageConverter
         {
             if (!await ValidateAsync(ct)) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
             if (StageId is not { } stageId) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(diagnostics));
-
-            Progress?.Report(Strings.Status_Convert_background);
 
             var xml = new StageXml(stageId, NoteFieldLane);
             var outputDir = await xml.SaveDirectoryAsync(OutFolder);
