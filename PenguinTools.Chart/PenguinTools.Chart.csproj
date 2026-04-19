@@ -3,6 +3,7 @@
 
     <PropertyGroup>
         <TargetFramework>$(DotNetVersion)</TargetFramework>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>

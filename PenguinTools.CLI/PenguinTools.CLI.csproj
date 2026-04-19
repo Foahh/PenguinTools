@@ -5,6 +5,7 @@
         <TargetFramework>$(DotNetVersion)</TargetFramework>
         <OutputType>Exe</OutputType>
         <RootNamespace>PenguinTools.CLI</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>

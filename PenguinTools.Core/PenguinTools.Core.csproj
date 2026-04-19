@@ -4,6 +4,7 @@
     <PropertyGroup>
         <TargetFramework>$(DotNetVersion)</TargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>

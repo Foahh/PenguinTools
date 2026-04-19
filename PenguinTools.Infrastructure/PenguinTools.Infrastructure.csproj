@@ -3,6 +3,7 @@
 
     <PropertyGroup>
         <TargetFramework>$(DotNetVersion)</TargetFramework>
+        <IsAotCompatible>true</IsAotCompatible>
         <PenguinToolsEmbedInfrastructureAssets Condition="'$(PenguinToolsEmbedInfrastructureAssets)' == ''">true</PenguinToolsEmbedInfrastructureAssets>
         <PenguinToolsPublishInfrastructureAssets Condition="'$(PenguinToolsPublishInfrastructureAssets)' == ''">false</PenguinToolsPublishInfrastructureAssets>
         <PenguinToolsUseWindowsMua Condition="'$(PenguinToolsUseWindowsMua)' == '' and $([System.String]::Copy('$(TargetFramework)').Contains('-windows'))">true</PenguinToolsUseWindowsMua>

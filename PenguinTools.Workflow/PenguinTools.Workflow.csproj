@@ -4,6 +4,7 @@
     <PropertyGroup>
         <TargetFramework>$(DotNetVersion)</TargetFramework>
         <RootNamespace>PenguinTools.Workflow</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>
