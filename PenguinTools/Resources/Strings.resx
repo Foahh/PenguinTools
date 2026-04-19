@@ -171,6 +171,9 @@
   <data name="Description_UnlockEventIDOption" xml:space="preserve">
     <value>The event that unlocks the "World's End" or "ULTIMA" charts in the game.</value>
   </data>
+  <data name="Description_ChartFileDiscovery" xml:space="preserve">
+    <value>MGXC only / UGC only: scan one format. MGXC first / UGC first: scan both.</value>
+  </data>
   <data name="Display_Artist" xml:space="preserve">
     <value>Artist</value>
   </data>
@@ -206,6 +209,9 @@
   </data>
   <data name="Display_ConvertChart" xml:space="preserve">
     <value>Convert Chart</value>
+  </data>
+  <data name="Display_ChartFileDiscovery" xml:space="preserve">
+    <value>Chart files</value>
   </data>
   <data name="Display_ConvertJacket" xml:space="preserve">
     <value>Convert Jacket</value>
@@ -341,7 +347,7 @@
     <value>Image Files (*.png;*.jpg;*.jpeg;*.webp)|*.png;*.jpg;*.jpeg;*.webp</value>
   </data>
   <data name="Filefilter_mgxc" xml:space="preserve">
-    <value>Margrete Chart (*.mgxc)|*.mgxc</value>
+    <value>Margrete chart (*.mgxc;*.ugc)|*.mgxc;*.ugc</value>
   </data>
   <data name="Filefilter_sound" xml:space="preserve">
     <value>Sound Files (*.wav;*.ogg;*.mp3)|*.wav;*.ogg;*.mp3</value>

@@ -9,6 +9,8 @@ public sealed class OptionDocument
 
     public bool ConvertChart { get; set; } = true;
 
+    public ChartFileDiscoveryMode ChartFileDiscovery { get; set; } = ChartFileDiscoveryMode.MgxcFirst;
+
     public bool ConvertAudio { get; set; } = true;
 
     public bool ConvertJacket { get; set; } = true;

@@ -23,7 +23,9 @@ public class MgxcRegressionTests
             return;
 
         await using var assetsStream = File.OpenRead(assetsPath);
-        var assets = new AssetManager(assetsStream);
+        var userDir = Path.Combine(Path.GetTempPath(), "PenguinChartTests", "user-assets");
+        Directory.CreateDirectory(userDir);
+        var assets = new AssetManager(assetsStream, userDir);
         var parser = new MgxcParser(new MgxcParseRequest(masterMgxcPath, assets), new NullMediaTool());
 
         var result = await parser.ParseAsync();

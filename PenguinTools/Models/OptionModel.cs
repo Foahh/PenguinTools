@@ -39,6 +39,7 @@ public partial class OptionModel : Model, IPersistable
     {
         OptionName = document.OptionName;
         ConvertChart = document.ConvertChart;
+        ChartFileDiscovery = document.ChartFileDiscovery;
         ConvertAudio = document.ConvertAudio;
         ConvertJacket = document.ConvertJacket;
         ConvertBackground = document.ConvertBackground;
@@ -55,6 +56,7 @@ public partial class OptionModel : Model, IPersistable
         {
             OptionName = OptionName,
             ConvertChart = ConvertChart,
+            ChartFileDiscovery = ChartFileDiscovery,
             ConvertAudio = ConvertAudio,
             ConvertJacket = ConvertJacket,
             ConvertBackground = ConvertBackground,
@@ -83,55 +85,62 @@ public partial class OptionModel : Model, IPersistable
 
     [ObservableProperty]
     [PropertyOrder(2)]
+    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableDisplayName(nameof(Strings.Display_ChartFileDiscovery), typeof(Strings))]
+    [LocalizableDescription(nameof(Strings.Description_ChartFileDiscovery), typeof(Strings))]
+    public partial ChartFileDiscoveryMode ChartFileDiscovery { get; set; } = ChartFileDiscoveryMode.MgxcOnly;
+
+    [ObservableProperty]
+    [PropertyOrder(3)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ConvertAudio), typeof(Strings))]
     public partial bool ConvertAudio { get; set; } = true;
 
     [ObservableProperty]
-    [PropertyOrder(3)]
+    [PropertyOrder(4)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ConvertJacket), typeof(Strings))]
     public partial bool ConvertJacket { get; set; } = true;
 
     [ObservableProperty]
-    [PropertyOrder(4)]
+    [PropertyOrder(5)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ConvertBackground), typeof(Strings))]
     public partial bool ConvertBackground { get; set; } = true;
 
     [ObservableProperty]
-    [PropertyOrder(5)]
+    [PropertyOrder(6)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_GenerateEventXml), typeof(Strings))]
     public partial bool GenerateEventXml { get; set; } = true;
 
     [ObservableProperty]
-    [PropertyOrder(6)]
+    [PropertyOrder(7)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ReleaseTagXml), typeof(Strings))]
     public partial bool GenerateReleaseTagXml { get; set; } = true;
 
     [ObservableProperty]
-    [PropertyOrder(7)]
+    [PropertyOrder(8)]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_UltimaEventId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_UnlockEventIDOption), typeof(Strings))]
     public partial int UltimaEventId { get; set; } = 1000001;
 
     [ObservableProperty]
-    [PropertyOrder(8)]
+    [PropertyOrder(9)]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_WeEventId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_UnlockEventIDOption), typeof(Strings))]
     public partial int WeEventId { get; set; } = 1000002;
 
     [ObservableProperty]
-    [PropertyOrder(9)]
+    [PropertyOrder(10)]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_BatchSize), typeof(Strings))]
     [Range(-1, int.MaxValue)]

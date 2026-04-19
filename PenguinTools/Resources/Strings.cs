@@ -56,6 +56,7 @@ public class Strings
     public static string Description_SortName => ResourceManager.GetString(nameof(Description_SortName), resourceCulture) ?? string.Empty;
     public static string Description_UnlockEventID => ResourceManager.GetString(nameof(Description_UnlockEventID), resourceCulture) ?? string.Empty;
     public static string Description_UnlockEventIDOption => ResourceManager.GetString(nameof(Description_UnlockEventIDOption), resourceCulture) ?? string.Empty;
+    public static string Description_ChartFileDiscovery => ResourceManager.GetString(nameof(Description_ChartFileDiscovery), resourceCulture) ?? string.Empty;
     public static string Display_Artist => ResourceManager.GetString(nameof(Display_Artist), resourceCulture) ?? string.Empty;
     public static string Display_BackgroundFile => ResourceManager.GetString(nameof(Display_BackgroundFile), resourceCulture) ?? string.Empty;
     public static string Display_BackgroundStage => ResourceManager.GetString(nameof(Display_BackgroundStage), resourceCulture) ?? string.Empty;
@@ -68,6 +69,7 @@ public class Strings
     public static string Display_ConvertAudio => ResourceManager.GetString(nameof(Display_ConvertAudio), resourceCulture) ?? string.Empty;
     public static string Display_ConvertBackground => ResourceManager.GetString(nameof(Display_ConvertBackground), resourceCulture) ?? string.Empty;
     public static string Display_ConvertChart => ResourceManager.GetString(nameof(Display_ConvertChart), resourceCulture) ?? string.Empty;
+    public static string Display_ChartFileDiscovery => ResourceManager.GetString(nameof(Display_ChartFileDiscovery), resourceCulture) ?? string.Empty;
     public static string Display_ConvertJacket => ResourceManager.GetString(nameof(Display_ConvertJacket), resourceCulture) ?? string.Empty;
     public static string Display_Denominator => ResourceManager.GetString(nameof(Display_Denominator), resourceCulture) ?? string.Empty;
     public static string Display_Designer => ResourceManager.GetString(nameof(Display_Designer), resourceCulture) ?? string.Empty;

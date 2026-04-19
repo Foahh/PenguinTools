@@ -83,7 +83,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             ActionService.StatusTime = DateTime.Now;
         });
         var model = await LoadModelAsync(path, ct);
-        var scanParams = new ChartScanParameters(FileGlob, diagnostics, model.BatchSize, model.WorkingDirectory);
+        var scanParams = new ChartScanParameters(FileGlob, diagnostics, model.BatchSize, model.WorkingDirectory, model.ChartFileDiscovery);
         var scanResult = await _chartScan.ScanAsync(path, model.Books, scanParams, ct);
 
         if (model.Books.Count == 0) throw new DiagnosticException(Strings.Error_No_charts_are_found_directory);

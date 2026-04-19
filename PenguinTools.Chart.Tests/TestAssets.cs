@@ -13,6 +13,8 @@ internal static class TestAssets
         if (cursor is null)
             throw new FileNotFoundException("assets.json not found above " + dir);
         using var fs = File.OpenRead(Path.Combine(cursor, "assets.json"));
-        return new AssetManager(fs);
+        var userDir = Path.Combine(Path.GetTempPath(), "PenguinChartTests", "user-assets");
+        Directory.CreateDirectory(userDir);
+        return new AssetManager(fs, userDir);
     }
 }

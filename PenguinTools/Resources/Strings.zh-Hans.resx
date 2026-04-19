@@ -171,6 +171,9 @@
   <data name="Description_UnlockEventIDOption" xml:space="preserve">
     <value>用于解锁这些谱面的事件 ID。</value>
   </data>
+  <data name="Description_ChartFileDiscovery" xml:space="preserve">
+    <value>仅 MGXC / 仅 UGC：只扫描一种格式。MGXC 优先 / UGC 优先：两种都扫描；</value>
+  </data>
   <data name="Display_Artist" xml:space="preserve">
     <value>艺术家</value>
   </data>
@@ -206,6 +209,9 @@
   </data>
   <data name="Display_ConvertChart" xml:space="preserve">
     <value>转换谱面</value>
+  </data>
+  <data name="Display_ChartFileDiscovery" xml:space="preserve">
+    <value>谱面文件</value>
   </data>
   <data name="Display_ConvertJacket" xml:space="preserve">
     <value>转换封面</value>
@@ -341,7 +347,7 @@
     <value>图像文件 (*.png;*.jpg;*.jpeg;*.webp)|*.png;*.jpg;*.jpeg;*.webp</value>
   </data>
     <data name="Filefilter_mgxc" xml:space="preserve">
-    <value>Margrete 谱面文件 (*.mgxc)|*.mgxc</value>
+    <value>Margrete 谱面文件 (*.mgxc;*.ugc)|*.mgxc;*.ugc</value>
   </data>
     <data name="Filefilter_sound" xml:space="preserve">
     <value>音频文件 (*.wav;*.ogg;*.mp3)|*.wav;*.ogg;*.mp3</value>

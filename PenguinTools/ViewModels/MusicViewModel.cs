@@ -1,6 +1,7 @@
 ﻿using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Chart.Parser;
+using PenguinTools.Chart.Models;
 using PenguinTools.Media;
 using PenguinTools.Resources;
 using PenguinTools.Infrastructure;
@@ -9,6 +10,8 @@ using PenguinTools.Services;
 using System.IO;
 
 namespace PenguinTools.ViewModels;
+
+using mg = PenguinTools.Chart.Models.mgxc;
 
 public class MusicViewModel : WatchViewModel<MusicModel>
 {
@@ -54,9 +57,23 @@ public class MusicViewModel : WatchViewModel<MusicModel>
 
     protected override async Task<OperationResult<MusicModel>> ReadModel(string path, CancellationToken ct = default)
     {
-        var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool);
-        var chart = await parser.ParseAsync(ct);
-        if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<MusicModel>.Failure().WithDiagnostics(chart.Diagnostics);
-        return OperationResult<MusicModel>.Success(new MusicModel(value)).WithDiagnostics(chart.Diagnostics);
+        OperationResult<mg.Chart> parsed;
+        if (string.Equals(Path.GetExtension(path), ".ugc", StringComparison.OrdinalIgnoreCase))
+        {
+            var r = await new UgcParser(new UgcParseRequest(path, AssetManager), MediaTool).ParseAsync(ct);
+            parsed = r.Succeeded && r.Value is { } v
+                ? OperationResult<mg.Chart>.Success(v).WithDiagnostics(r.Diagnostics)
+                : OperationResult<mg.Chart>.Failure().WithDiagnostics(r.Diagnostics);
+        }
+        else
+        {
+            var r = await new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool).ParseAsync(ct);
+            parsed = r.Succeeded && r.Value is { } v
+                ? OperationResult<mg.Chart>.Success(v).WithDiagnostics(r.Diagnostics)
+                : OperationResult<mg.Chart>.Failure().WithDiagnostics(r.Diagnostics);
+        }
+
+        if (!parsed.Succeeded || parsed.Value is not { } value) return OperationResult<MusicModel>.Failure().WithDiagnostics(parsed.Diagnostics);
+        return OperationResult<MusicModel>.Success(new MusicModel(value)).WithDiagnostics(parsed.Diagnostics);
     }
 }

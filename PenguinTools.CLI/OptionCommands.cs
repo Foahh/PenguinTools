@@ -20,11 +20,11 @@ internal static class OptionCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Directory containing options.json and .mgxc charts (same layout as the GUI option tab)."
+            Description = "Directory containing options.json and .mgxc charts."
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Working directory for export (bundle files are written under the option name subfolder when needed)."
+            Description = "Working directory for export."
         };
 
         var command = new Command("convert", "Load options.json, scan charts, and export the option bundle.");
@@ -65,7 +65,7 @@ internal static class OptionCommands
                 var scanned = await CliOperations.ScanOptionChartsAsync(
                     runtime,
                     input,
-                    "*.mgxc",
+                    json.ChartFileDiscovery,
                     json.BatchSize,
                     output,
                     ct);

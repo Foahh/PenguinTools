@@ -10,9 +10,12 @@ using System.IO;
 
 namespace PenguinTools.Services;
 
+using mg = PenguinTools.Chart.Models.mgxc;
+
 public sealed class ChartScanService : IChartScanService
 {
     private const string MgxcExtension = ".mgxc";
+    private const string UgcExtension = ".ugc";
 
     private readonly AssetManager _assetManager;
     private readonly IMediaTool _mediaTool;
@@ -26,32 +29,63 @@ public sealed class ChartScanService : IChartScanService
     public async Task<OperationResult> ScanAsync(string directory, BookDictionary books, ChartScanParameters parameters, CancellationToken ct)
     {
         var processContext = new OptionExportProcessContext(parameters.Diagnostics, ct, parameters.BatchSize, parameters.WorkingDirectory);
-        var batchDiagnostics = await LoadBooksAsync(directory, parameters.FileGlob, books, processContext, ct);
+        DiagnosticSnapshot batch = parameters.ChartFileDiscovery switch
+        {
+            ChartFileDiscoveryMode.MgxcOnly =>
+                await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, skipIfDifficultyFilled: false, ct),
+            ChartFileDiscoveryMode.UgcOnly =>
+                await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, skipIfDifficultyFilled: false, ct),
+            ChartFileDiscoveryMode.MgxcFirst =>
+                (await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, skipIfDifficultyFilled: false, ct))
+                .Merge(await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, skipIfDifficultyFilled: true, ct)),
+            ChartFileDiscoveryMode.UgcFirst =>
+                (await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, skipIfDifficultyFilled: false, ct))
+                .Merge(await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, skipIfDifficultyFilled: true, ct)),
+            _ => DiagnosticSnapshot.Empty
+        };
+
         FinalizeBooks(books, parameters.Diagnostics, ct);
-        return OperationResult.Success().WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(parameters.Diagnostics)));
+        return OperationResult.Success().WithDiagnostics(batch.Merge(DiagnosticSnapshot.Create(parameters.Diagnostics)));
     }
 
-    private async Task<DiagnosticSnapshot> LoadBooksAsync(string path, string fileGlob, BookDictionary books, OptionExportProcessContext context, CancellationToken ct)
+    private async Task<DiagnosticSnapshot> LoadBooksFromGlobAsync(
+        string path,
+        string fileGlob,
+        BookDictionary books,
+        OptionExportProcessContext context,
+        bool skipIfDifficultyFilled,
+        CancellationToken ct)
     {
         var chartPaths = Directory.EnumerateFiles(path, fileGlob, SearchOption.AllDirectories);
         return await OptionExportBatch.BatchAsync(
             Strings.Status_Checked,
             chartPaths,
-            (filePath, innerDiagnostics) => LoadBookAsync(filePath, books, innerDiagnostics, ct),
+            (filePath, innerDiagnostics) => LoadBookAsync(filePath, books, innerDiagnostics, skipIfDifficultyFilled, ct),
             filePath => filePath,
             context,
             parallel: true);
     }
 
-    private async Task LoadBookAsync(string filePath, BookDictionary books, IDiagnosticSink diagnostics, CancellationToken ct)
+    private async Task LoadBookAsync(string filePath, BookDictionary books, IDiagnosticSink diagnostics, bool skipIfDifficultyFilled, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
-        if (!string.Equals(Path.GetExtension(filePath), MgxcExtension, StringComparison.OrdinalIgnoreCase)) return;
-
-        var parser = new MgxcParser(new MgxcParseRequest(filePath, _assetManager), _mediaTool);
-        var parsed = await parser.ParseAsync(ct);
-        diagnostics.Report(parsed.Diagnostics);
-        if (!parsed.Succeeded || parsed.Value is not { } chart) return;
+        var ext = Path.GetExtension(filePath);
+        mg.Chart? chart = null;
+        if (string.Equals(ext, UgcExtension, StringComparison.OrdinalIgnoreCase))
+        {
+            var r = await new UgcParser(new UgcParseRequest(filePath, _assetManager), _mediaTool).ParseAsync(ct);
+            diagnostics.Report(r.Diagnostics);
+            if (!r.Succeeded || r.Value is not { } ugcChart) return;
+            chart = ugcChart;
+        }
+        else if (string.Equals(ext, MgxcExtension, StringComparison.OrdinalIgnoreCase))
+        {
+            var r = await new MgxcParser(new MgxcParseRequest(filePath, _assetManager), _mediaTool).ParseAsync(ct);
+            diagnostics.Report(r.Diagnostics);
+            if (!r.Succeeded || r.Value is not { } mgxcChart) return;
+            chart = mgxcChart;
+        }
+        else return;
 
         var meta = chart.Meta;
         var id = meta.Id ?? throw new DiagnosticException(Strings.Error_File_ignored_due_to_id_missing);
@@ -69,6 +103,8 @@ public sealed class ChartScanService : IChartScanService
 
         lock (book)
         {
+            if (skipIfDifficultyFilled && book.Items.ContainsKey(meta.Difficulty)) return;
+
             if (book.Items.ContainsKey(meta.Difficulty))
             {
                 diagnostics.Report(Severity.Warning, Strings.Warn_Duplicate_id_and_difficulty);

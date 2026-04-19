@@ -72,7 +72,7 @@ internal static class CliOperations
     internal static Task<OperationResult<IReadOnlyList<OptionBookSnapshot>>> ScanOptionChartsAsync(
         CliRuntime runtime,
         string directory,
-        string fileGlob,
+        ChartFileDiscoveryMode chartFileDiscovery,
         int batchSize,
         string workingDirectory,
         CancellationToken cancellationToken)
@@ -82,7 +82,7 @@ internal static class CliOperations
             runtime.Assets,
             runtime.MediaTool,
             directory,
-            fileGlob,
+            chartFileDiscovery,
             batchSize,
             workingDirectory,
             diagnostics,

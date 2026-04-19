@@ -8,9 +8,12 @@ using PenguinTools.Media;
 
 namespace PenguinTools.Workflow;
 
+using mg = PenguinTools.Chart.Models.mgxc;
+
 public static class OptionChartScanner
 {
     private const string MgxcExtension = ".mgxc";
+    private const string UgcExtension = ".ugc";
 
     private sealed class BookAccumulator
     {
@@ -22,27 +25,53 @@ public static class OptionChartScanner
         AssetManager assets,
         IMediaTool mediaTool,
         string directory,
-        string fileGlob,
+        ChartFileDiscoveryMode discovery,
         int batchSize,
         string workingDirectory,
         IDiagnosticSink diagnostics,
         CancellationToken ct)
     {
-        var chartPaths = Directory.EnumerateFiles(directory, fileGlob, SearchOption.AllDirectories);
-        var booksById = new ConcurrentDictionary<int, BookAccumulator>();
         var processContext = new OptionExportProcessContext(diagnostics, ct, batchSize, workingDirectory);
+        var booksById = new ConcurrentDictionary<int, BookAccumulator>();
 
-        var batchDiagnostics = await OptionExportBatch.BatchAsync(
-            "scan",
-            chartPaths,
-            (filePath, innerDiagnostics) => LoadChartAsync(filePath, assets, mediaTool, booksById, innerDiagnostics, ct),
-            filePath => filePath,
-            processContext,
-            parallel: true);
+        DiagnosticSnapshot batch = discovery switch
+        {
+            ChartFileDiscoveryMode.MgxcOnly =>
+                await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: false, ct),
+            ChartFileDiscoveryMode.UgcOnly =>
+                await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: false, ct),
+            ChartFileDiscoveryMode.MgxcFirst =>
+                (await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: false, ct))
+                .Merge(await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: true, ct)),
+            ChartFileDiscoveryMode.UgcFirst =>
+                (await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: false, ct))
+                .Merge(await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: true, ct)),
+            _ => DiagnosticSnapshot.Empty
+        };
 
         var snapshots = FinalizeAndBuildSnapshots(booksById, diagnostics, ct);
         return OperationResult<IReadOnlyList<OptionBookSnapshot>>.Success(snapshots)
-            .WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
+            .WithDiagnostics(batch.Merge(DiagnosticSnapshot.Create(diagnostics)));
+    }
+
+    private static async Task<DiagnosticSnapshot> ScanGlobAsync(
+        string directory,
+        string fileGlob,
+        ConcurrentDictionary<int, BookAccumulator> booksById,
+        AssetManager assets,
+        IMediaTool mediaTool,
+        OptionExportProcessContext processContext,
+        bool skipIfDifficultyFilled,
+        CancellationToken ct)
+    {
+        var chartPaths = Directory.EnumerateFiles(directory, fileGlob, SearchOption.AllDirectories);
+        return await OptionExportBatch.BatchAsync(
+            "scan",
+            chartPaths,
+            (filePath, innerDiagnostics) => LoadChartAsync(filePath, assets, mediaTool, booksById, innerDiagnostics, skipIfDifficultyFilled, ct),
+            filePath => filePath,
+            processContext,
+            parallel: true);
     }
 
     private static async Task LoadChartAsync(
@@ -51,15 +80,27 @@ public static class OptionChartScanner
         IMediaTool mediaTool,
         ConcurrentDictionary<int, BookAccumulator> booksById,
         IDiagnosticSink diagnostics,
+        bool skipIfDifficultyFilled,
         CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
-        if (!string.Equals(Path.GetExtension(filePath), MgxcExtension, StringComparison.OrdinalIgnoreCase)) return;
-
-        var parser = new MgxcParser(new MgxcParseRequest(filePath, assets), mediaTool);
-        var parsed = await parser.ParseAsync(ct);
-        diagnostics.Report(parsed.Diagnostics);
-        if (!parsed.Succeeded || parsed.Value is not { } chart) return;
+        var ext = Path.GetExtension(filePath);
+        mg.Chart? chart = null;
+        if (string.Equals(ext, UgcExtension, StringComparison.OrdinalIgnoreCase))
+        {
+            var r = await new UgcParser(new UgcParseRequest(filePath, assets), mediaTool).ParseAsync(ct);
+            diagnostics.Report(r.Diagnostics);
+            if (!r.Succeeded || r.Value is not { } ugcChart) return;
+            chart = ugcChart;
+        }
+        else if (string.Equals(ext, MgxcExtension, StringComparison.OrdinalIgnoreCase))
+        {
+            var r = await new MgxcParser(new MgxcParseRequest(filePath, assets), mediaTool).ParseAsync(ct);
+            diagnostics.Report(r.Diagnostics);
+            if (!r.Succeeded || r.Value is not { } mgxcChart) return;
+            chart = mgxcChart;
+        }
+        else return;
 
         var meta = chart.Meta;
         var id = meta.Id ?? throw new DiagnosticException("File ignored because song id is missing.");
@@ -68,6 +109,8 @@ public static class OptionChartScanner
 
         lock (book.Gate)
         {
+            if (skipIfDifficultyFilled && book.Items.ContainsKey(meta.Difficulty)) return;
+
             if (book.Items.ContainsKey(meta.Difficulty))
             {
                 diagnostics.Report(Severity.Warning, "Duplicate song id and difficulty.", target: filePath);
