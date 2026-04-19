@@ -48,6 +48,12 @@
       </Page>
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Strings.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+    </ItemGroup>
+
     <PropertyGroup>
         <MinVerTagPrefix>v</MinVerTagPrefix>
     </PropertyGroup>

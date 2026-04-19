@@ -56,6 +56,9 @@
             <LogicalName>%(ResourceName)</LogicalName>
             <Link>%(PublishPath)</Link>
         </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Strings.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup Condition="'$(PenguinToolsPublishInfrastructureAssets)' == 'true'">
