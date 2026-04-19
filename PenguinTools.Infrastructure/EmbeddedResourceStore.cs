@@ -1,5 +1,6 @@
 using System.Reflection;
 using PenguinTools.Core;
+using System.Diagnostics;
 
 namespace PenguinTools.Infrastructure;
 
@@ -74,10 +75,10 @@ public sealed class EmbeddedResourceStore : IEmbeddedResourceStore, IDisposable
         foreach (var filePath in Directory.GetFiles(TempWorkPath))
         {
             try { File.Delete(filePath); }
-            catch (Exception ex) { Console.WriteLine(ex); }
+            catch (Exception ex) { Debug.WriteLine(ex); }
         }
 
         try { Directory.Delete(TempWorkPath, true); }
-        catch (Exception ex) { Console.WriteLine(ex); }
+        catch (Exception ex) { Debug.WriteLine(ex); }
     }
 }

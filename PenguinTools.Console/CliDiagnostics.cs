@@ -5,12 +5,14 @@ namespace PenguinTools.CLI;
 
 internal static class CliDiagnostics
 {
+    internal static IReadOnlyList<CliDiagnosticPayload> ToPayload(DiagnosticSnapshot snapshot)
+    {
+        return [.. GetOrderedDiagnostics(snapshot).Select(ToPayload)];
+    }
+
     internal static void WriteDiagnostics(DiagnosticSnapshot snapshot)
     {
-        foreach (var diagnostic in snapshot.Diagnostics.OrderByDescending(d => d.Severity)
-                     .ThenBy(d => d.Path, StringComparer.Ordinal)
-                     .ThenBy(d => d.Time)
-                     .ThenBy(d => d.Message, StringComparer.Ordinal))
+        foreach (var diagnostic in GetOrderedDiagnostics(snapshot))
         {
             var writer = diagnostic.Severity == Severity.Information ? Console.Out : Console.Error;
             writer.WriteLine(FormatDiagnostic(diagnostic));
@@ -30,6 +32,26 @@ internal static class CliDiagnostics
                 }
             }
         }
+    }
+
+    internal static DiagnosticSnapshot SnapshotFromException(Exception exception)
+    {
+        var sink = new Diagnoster();
+
+        if (exception is DiagnosticException diagnosticException)
+        {
+            sink.Report(new Diagnostic(
+                Severity.Error,
+                diagnosticException.Message,
+                diagnosticException.Path,
+                diagnosticException.Tick,
+                diagnosticException.Target));
+
+            return DiagnosticSnapshot.Create(sink);
+        }
+
+        sink.Report(Severity.Error, exception.Message);
+        return DiagnosticSnapshot.Create(sink);
     }
 
     internal static string FormatDiagnostic(Diagnostic diagnostic)
@@ -60,14 +82,46 @@ internal static class CliDiagnostics
 
     internal static void WriteException(Exception exception)
     {
-        if (exception is DiagnosticException diagnosticException)
-        {
-            var sink = new Diagnoster();
-            sink.Report(new Diagnostic(Severity.Error, diagnosticException.Message, diagnosticException.Path, diagnosticException.Tick, diagnosticException.Target));
-            WriteDiagnostics(DiagnosticSnapshot.Create(sink));
-            return;
-        }
+        WriteDiagnostics(SnapshotFromException(exception));
+    }
 
-        Console.Error.WriteLine($"error: {exception.Message}");
+    private static IEnumerable<Diagnostic> GetOrderedDiagnostics(DiagnosticSnapshot snapshot)
+    {
+        return snapshot.Diagnostics.OrderByDescending(d => d.Severity)
+            .ThenBy(d => d.Path, StringComparer.Ordinal)
+            .ThenBy(d => d.Time)
+            .ThenBy(d => d.Message, StringComparer.Ordinal);
+    }
+
+    private static CliDiagnosticPayload ToPayload(Diagnostic diagnostic)
+    {
+        return new CliDiagnosticPayload(
+            ToSeverity(diagnostic.Severity),
+            diagnostic.Message,
+            diagnostic.Path,
+            diagnostic.Time,
+            diagnostic.FormattedTime,
+            diagnostic.Target is ProcessCommandResult commandResult ? ToPayload(commandResult) : null);
+    }
+
+    private static CliProcessPayload ToPayload(ProcessCommandResult result)
+    {
+        return new CliProcessPayload(
+            result.Command,
+            (int)result.ExitCode,
+            result.ExitCode.ToString(),
+            string.IsNullOrWhiteSpace(result.StandardOutput) ? null : result.StandardOutput,
+            string.IsNullOrWhiteSpace(result.StandardError) ? null : result.StandardError);
+    }
+
+    private static string ToSeverity(Severity severity)
+    {
+        return severity switch
+        {
+            Severity.Information => "info",
+            Severity.Warning => "warning",
+            Severity.Error => "error",
+            _ => "diagnostic"
+        };
     }
 }

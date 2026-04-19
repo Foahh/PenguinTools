@@ -48,24 +48,21 @@ internal static class WorkflowCommands
             var jacketInput = CliPaths.ResolveOptionalPath(parseResult.GetValue(jacketInputOption));
             var musicOverrides = CommandLineOptions.GetMusicRequestOverrides(parseResult, musicOptions);
             var stageOverrides = CommandLineOptions.GetStageRequestOverrides(parseResult, stageOptions);
+            var outputFormat = RootCommands.GetOutputFormat(parseResult);
 
-            return await CliOperations.ExecuteAsync(async (runtime, ct) =>
+            return await CliOperations.ExecuteAsync("workflow export", outputFormat, async (runtime, ct) =>
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, assetRoot, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
                 {
-                    return parsed.ToResult();
+                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output, AssetRoot: assetRoot));
                 }
 
                 var exported = await CliOperations.ExportWorkflowAsync(runtime, parsed.Value, output, jacketInput, musicOverrides, stageOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, exported);
-
-                if (result.Succeeded)
-                {
-                    Console.WriteLine($"Exported workflow: {output}");
-                }
-
-                return result;
+                var data = CliOperations.CreateWorkflowData(input, output, assetRoot, parsed.Value.Meta, jacketInput, stageOverrides);
+                var message = result.Succeeded ? $"Exported workflow: {output}" : null;
+                return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
         });
 

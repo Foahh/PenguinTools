@@ -37,25 +37,22 @@ internal static class ChartCommands
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
             var assetRoot = CliPaths.ResolveOptionalPath(parseResult.GetValue(assetRootOption));
+            var outputFormat = RootCommands.GetOutputFormat(parseResult);
 
-            return await CliOperations.ExecuteAsync(async (runtime, ct) =>
+            return await CliOperations.ExecuteAsync("chart convert", outputFormat, async (runtime, ct) =>
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, assetRoot, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
                 {
-                    return parsed.ToResult();
+                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputPath: output, AssetRoot: assetRoot));
                 }
 
                 CliPaths.EnsureParentDirectory(output);
                 var written = await new C2SChartWriter(new C2SWriteRequest(output, parsed.Value)).WriteAsync(ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, written);
-
-                if (result.Succeeded)
-                {
-                    Console.WriteLine($"Wrote chart: {output}");
-                }
-
-                return result;
+                var data = CliOperations.CreateChartConvertData(input, output, assetRoot, parsed.Value.Meta);
+                var message = result.Succeeded ? $"Wrote chart: {output}" : null;
+                return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
         });
 
