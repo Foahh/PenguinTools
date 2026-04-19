@@ -75,7 +75,7 @@ internal static class CliOperations
         return await new MgxcParser(new MgxcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(cancellationToken);
     }
 
-    internal static Task<OperationResult> ExportWorkflowAsync(
+    internal static Task<OperationResult> ExportMusicAsync(
         CliRuntime runtime,
         PenguinTools.Chart.Models.mgxc.Chart chart,
         string output,
@@ -83,8 +83,8 @@ internal static class CliOperations
         AudioRequestOverrides audioOverrides,
         StageRequestOverrides stageOverrides,
         CancellationToken cancellationToken) =>
-        WorkflowExporter.ExportAsync(
-            new WorkflowExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
+        MusicExporter.ExportAsync(
+            new MusicExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
             chart,
             output,
             jacketInput,
@@ -98,8 +98,8 @@ internal static class CliOperations
         string output,
         AudioRequestOverrides overrides,
         CancellationToken cancellationToken) =>
-        WorkflowExporter.ConvertAudioAsync(
-            new WorkflowExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
+        MusicExporter.ConvertAudioAsync(
+            new MusicExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
             meta,
             output,
             overrides,
@@ -111,15 +111,15 @@ internal static class CliOperations
         string output,
         StageRequestOverrides overrides,
         CancellationToken cancellationToken) =>
-        WorkflowExporter.BuildStageAsync(
-            new WorkflowExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
+        MusicExporter.BuildStageAsync(
+            new MusicExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
             meta,
             output,
             overrides,
             cancellationToken);
 
     internal static bool ShouldBuildStage(Meta meta, StageRequestOverrides overrides) =>
-        WorkflowExporter.ShouldBuildStage(meta, overrides);
+        MusicExporter.ShouldBuildStage(meta, overrides);
 
     internal static CliChartSummary CreateChartSummary(Meta meta)
     {
@@ -181,7 +181,7 @@ internal static class CliOperations
 
         if (stageId is { } resolvedStageId)
         {
-            var xml = new StageXml(resolvedStageId, WorkflowExporter.CreateNoteFieldEntry(meta.NotesFieldLine, overrides.NoteFieldLaneId, overrides.NoteFieldLaneName, overrides.NoteFieldLaneData));
+            var xml = new StageXml(resolvedStageId, MusicExporter.CreateNoteFieldEntry(meta.NotesFieldLine, overrides.NoteFieldLaneId, overrides.NoteFieldLaneName, overrides.NoteFieldLaneData));
             var stageDirectory = Path.Combine(output, xml.DataName);
             stageName = xml.Name.Str;
             artifacts.Add(new CliArtifact("stage.xml", Path.Combine(stageDirectory, "Stage.xml")));
@@ -222,7 +222,7 @@ internal static class CliOperations
             Artifacts: artifacts.ToArray());
     }
 
-    internal static CliCommandData CreateWorkflowData(
+    internal static CliCommandData CreateMusicData(
         string input,
         string output,
         string? assetRoot,
@@ -251,9 +251,9 @@ internal static class CliOperations
 
         string? stageName = null;
         var stageId = stageOverrides.StageId ?? meta.StageId;
-        if (WorkflowExporter.ShouldBuildStage(meta, stageOverrides) && stageId is { } resolvedStageId)
+        if (MusicExporter.ShouldBuildStage(meta, stageOverrides) && stageId is { } resolvedStageId)
         {
-            var stageXml = new StageXml(resolvedStageId, WorkflowExporter.CreateNoteFieldEntry(meta.NotesFieldLine, stageOverrides.NoteFieldLaneId, stageOverrides.NoteFieldLaneName, stageOverrides.NoteFieldLaneData));
+            var stageXml = new StageXml(resolvedStageId, MusicExporter.CreateNoteFieldEntry(meta.NotesFieldLine, stageOverrides.NoteFieldLaneId, stageOverrides.NoteFieldLaneName, stageOverrides.NoteFieldLaneData));
             var stageDirectory = Path.Combine(output, stageXml.DataName);
             stageName = stageXml.Name.Str;
             artifacts.Add(new CliArtifact("stage.xml", Path.Combine(stageDirectory, "Stage.xml")));

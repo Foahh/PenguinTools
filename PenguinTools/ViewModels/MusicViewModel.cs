@@ -10,12 +10,12 @@ using System.IO;
 
 namespace PenguinTools.ViewModels;
 
-public class WorkflowViewModel : WatchViewModel<WorkflowModel>
+public class MusicViewModel : WatchViewModel<MusicModel>
 {
     private readonly IFileDialogService _fileDialogs;
-    private readonly IWorkflowExportService _workflowExport;
+    private readonly IMusicExportService _musicExport;
 
-    public WorkflowViewModel(
+    public MusicViewModel(
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
@@ -23,11 +23,11 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
         IInfrastructureAssetProvider assetProvider,
         IExternalLauncher externalLauncher,
         IFileDialogService fileDialogs,
-        IWorkflowExportService workflowExport)
+        IMusicExportService musicExport)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
         _fileDialogs = fileDialogs;
-        _workflowExport = workflowExport;
+        _musicExport = musicExport;
     }
 
     protected override async Task<OperationResult> Action(CancellationToken ct = default)
@@ -49,14 +49,14 @@ public class WorkflowViewModel : WatchViewModel<WorkflowModel>
             Path.GetDirectoryName((string?)ModelPath));
         if (path is null) return OperationResult.Success();
 
-        return await _workflowExport.ExportAsync(Model, path, ct);
+        return await _musicExport.ExportAsync(Model, path, ct);
     }
 
-    protected override async Task<OperationResult<WorkflowModel>> ReadModel(string path, CancellationToken ct = default)
+    protected override async Task<OperationResult<MusicModel>> ReadModel(string path, CancellationToken ct = default)
     {
         var parser = new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool);
         var chart = await parser.ParseAsync(ct);
-        if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<WorkflowModel>.Failure().WithDiagnostics(chart.Diagnostics);
-        return OperationResult<WorkflowModel>.Success(new WorkflowModel(value)).WithDiagnostics(chart.Diagnostics);
+        if (!chart.Succeeded || chart.Value is not { } value) return OperationResult<MusicModel>.Failure().WithDiagnostics(chart.Diagnostics);
+        return OperationResult<MusicModel>.Success(new MusicModel(value)).WithDiagnostics(chart.Diagnostics);
     }
 }

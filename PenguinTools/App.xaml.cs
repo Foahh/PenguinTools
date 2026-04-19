@@ -39,7 +39,7 @@ public partial class App : Application
 
         services.AddTransient<IChartScanService, ChartScanService>();
         services.AddTransient<IOptionService, OptionService>();
-        services.AddTransient<IWorkflowExportService, WorkflowExportService>();
+        services.AddTransient<IMusicExportService, MusicExportService>();
 
         services.AddSingleton<IExternalLauncher, ShellExecuteLauncher>();
         services.AddSingleton<IFileDialogService>(sp =>
@@ -51,7 +51,7 @@ public partial class App : Application
         services.AddSingleton<IReleaseService, GitHubReleaseService>();
 
         services.AddTransient<MainWindowViewModel>();
-        services.AddTransient<WorkflowViewModel>();
+        services.AddTransient<MusicViewModel>();
         services.AddTransient<ChartViewModel>();
         services.AddTransient<JacketViewModel>();
         services.AddTransient<AudioViewModel>();
@@ -60,7 +60,7 @@ public partial class App : Application
         services.AddTransient<OptionViewModel>();
 
         services.AddTransient(sp => new OptionTab(sp.GetRequiredService<OptionViewModel>()));
-        services.AddTransient(sp => new WorkflowTab(sp.GetRequiredService<WorkflowViewModel>()));
+        services.AddTransient(sp => new MusicTab(sp.GetRequiredService<MusicViewModel>()));
         services.AddTransient(sp => new ChartTab(sp.GetRequiredService<ChartViewModel>()));
         services.AddTransient(sp => new JacketTab(sp.GetRequiredService<JacketViewModel>()));
         services.AddTransient(sp => new AudioTab(sp.GetRequiredService<AudioViewModel>()));

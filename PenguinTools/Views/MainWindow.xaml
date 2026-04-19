@@ -47,7 +47,7 @@
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Song}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <ContentControl x:Name="WorkflowTabHost" />
+                    <ContentControl x:Name="MusicTabHost" />
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Chart}">

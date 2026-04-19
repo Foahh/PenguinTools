@@ -3,7 +3,7 @@ using PenguinTools.Core.Asset;
 
 namespace PenguinTools.Workflow;
 
-internal static class WorkflowPaths
+internal static class MusicPaths
 {
     internal static OperationResult<T> CreateFailureResultOf<T>(string message, string? path = null)
     {

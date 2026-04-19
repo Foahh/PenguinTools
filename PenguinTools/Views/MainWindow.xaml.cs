@@ -18,7 +18,7 @@ public partial class MainWindow : Window
         Loaded += OnLoaded;
 
         OptionTabHost.Content = services.GetRequiredService<OptionTab>();
-        WorkflowTabHost.Content = services.GetRequiredService<WorkflowTab>();
+        MusicTabHost.Content = services.GetRequiredService<MusicTab>();
         ChartTabHost.Content = services.GetRequiredService<ChartTab>();
         JacketTabHost.Content = services.GetRequiredService<JacketTab>();
         AudioTabHost.Content = services.GetRequiredService<AudioTab>();

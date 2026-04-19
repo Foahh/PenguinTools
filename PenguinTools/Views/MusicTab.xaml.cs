@@ -3,9 +3,9 @@ using PenguinTools.ViewModels;
 
 namespace PenguinTools.Views;
 
-public partial class WorkflowTab : UserControl
+public partial class MusicTab : UserControl
 {
-    public WorkflowTab(WorkflowViewModel viewModel)
+    public MusicTab(MusicViewModel viewModel)
     {
         InitializeComponent();
         DataContext = viewModel;

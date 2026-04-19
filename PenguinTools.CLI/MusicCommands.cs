@@ -3,16 +3,16 @@ using PenguinTools.Core;
 
 namespace PenguinTools.CLI;
 
-internal static class WorkflowCommands
+internal static class MusicCommands
 {
-    internal static Command BuildWorkflowCommand()
+    internal static Command BuildMusicCommand()
     {
-        var command = new Command("workflow", "Export mgxc with jacket and audio.");
-        command.Subcommands.Add(BuildWorkflowExportCommand());
+        var command = new Command("music", "Export mgxc with jacket and audio.");
+        command.Subcommands.Add(BuildMusicExportCommand());
         return command;
     }
 
-    private static Command BuildWorkflowExportCommand()
+    private static Command BuildMusicExportCommand()
     {
         var inputArgument = new Argument<string>("input")
         {
@@ -20,7 +20,7 @@ internal static class WorkflowCommands
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Base folder for the exported workflow files."
+            Description = "Base folder for the exported music bundle files."
         };
         var assetRootOption = new Option<string?>("--asset-root")
         {
@@ -50,7 +50,7 @@ internal static class WorkflowCommands
             var stageOverrides = CommandLineOptions.GetStageRequestOverrides(parseResult, stageOptions);
             var outputFormat = RootCommands.GetOutputFormat(parseResult);
 
-            return await CliOperations.ExecuteAsync("workflow export", outputFormat, async (runtime, ct) =>
+            return await CliOperations.ExecuteAsync("music export", outputFormat, async (runtime, ct) =>
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, assetRoot, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
@@ -58,10 +58,10 @@ internal static class WorkflowCommands
                     return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output, AssetRoot: assetRoot));
                 }
 
-                var exported = await CliOperations.ExportWorkflowAsync(runtime, parsed.Value, output, jacketInput, audioOverrides, stageOverrides, ct);
+                var exported = await CliOperations.ExportMusicAsync(runtime, parsed.Value, output, jacketInput, audioOverrides, stageOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, exported);
-                var data = CliOperations.CreateWorkflowData(input, output, assetRoot, parsed.Value.Meta, jacketInput, stageOverrides);
-                var message = result.Succeeded ? $"Exported workflow: {output}" : null;
+                var data = CliOperations.CreateMusicData(input, output, assetRoot, parsed.Value.Meta, jacketInput, stageOverrides);
+                var message = result.Succeeded ? $"Exported music: {output}" : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
         });

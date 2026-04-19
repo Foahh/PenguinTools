@@ -7,14 +7,14 @@ using PenguinTools.Workflow;
 
 namespace PenguinTools.Services;
 
-public sealed class WorkflowExportService : IWorkflowExportService
+public sealed class MusicExportService : IMusicExportService
 {
     private readonly AssetManager _assetManager;
     private readonly IMediaTool _mediaTool;
     private readonly IResourceStore _resourceStore;
     private readonly IInfrastructureAssetProvider _assetProvider;
 
-    public WorkflowExportService(
+    public MusicExportService(
         AssetManager assetManager,
         IMediaTool mediaTool,
         IResourceStore resourceStore,
@@ -26,10 +26,10 @@ public sealed class WorkflowExportService : IWorkflowExportService
         _assetProvider = assetProvider;
     }
 
-    public Task<OperationResult> ExportAsync(WorkflowModel model, string outputPath, CancellationToken ct)
+    public Task<OperationResult> ExportAsync(MusicModel model, string outputPath, CancellationToken ct)
     {
-        var ctx = new WorkflowExportContext(_assetManager, _mediaTool, _resourceStore, _assetProvider);
-        return WorkflowExporter.ExportAsync(
+        var ctx = new MusicExportContext(_assetManager, _mediaTool, _resourceStore, _assetProvider);
+        return MusicExporter.ExportAsync(
             ctx,
             model.Mgxc,
             outputPath,

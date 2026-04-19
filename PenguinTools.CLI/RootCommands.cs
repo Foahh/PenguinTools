@@ -14,7 +14,7 @@ internal static class RootCommands
         var rootCommand = new RootCommand("Command-line tools for chart conversion and asset export.");
         rootCommand.Options.Add(OutputFormatOption);
         rootCommand.Subcommands.Add(ChartCommands.BuildChartCommand());
-        rootCommand.Subcommands.Add(WorkflowCommands.BuildWorkflowCommand());
+        rootCommand.Subcommands.Add(MusicCommands.BuildMusicCommand());
         rootCommand.Subcommands.Add(MediaCommands.BuildMediaCommand());
         return rootCommand;
     }

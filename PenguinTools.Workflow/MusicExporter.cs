@@ -9,16 +9,16 @@ using PenguinTools.Media;
 
 namespace PenguinTools.Workflow;
 
-public static class WorkflowExporter
+public static class MusicExporter
 {
     public static Entry CreateNoteFieldEntry(Entry current, int? id, string? name, string? data) =>
-        WorkflowPaths.CreateEntry(current, id, name, data);
+        MusicPaths.CreateEntry(current, id, name, data);
 
     public static bool ShouldBuildStage(Meta meta, StageRequestOverrides overrides) =>
         meta.IsCustomStage || overrides.HasBuildInputs;
 
     public static async Task<OperationResult<Entry>> BuildStageAsync(
-        WorkflowExportContext ctx,
+        MusicExportContext ctx,
         Meta meta,
         string output,
         StageRequestOverrides overrides,
@@ -27,10 +27,10 @@ public static class WorkflowExporter
         var backgroundPath = overrides.BackgroundPath ?? meta.FullBgiFilePath;
         if (string.IsNullOrWhiteSpace(backgroundPath))
         {
-            return WorkflowPaths.CreateFailureResultOf<Entry>("A background path is required to build a stage.");
+            return MusicPaths.CreateFailureResultOf<Entry>("A background path is required to build a stage.");
         }
 
-        var noteFieldLane = WorkflowPaths.CreateEntry(
+        var noteFieldLane = MusicPaths.CreateEntry(
             meta.NotesFieldLine,
             overrides.NoteFieldLaneId,
             overrides.NoteFieldLaneName,
@@ -49,7 +49,7 @@ public static class WorkflowExporter
     }
 
     public static async Task<OperationResult> ConvertAudioAsync(
-        WorkflowExportContext ctx,
+        MusicExportContext ctx,
         Meta meta,
         string output,
         AudioRequestOverrides overrides,
@@ -66,7 +66,7 @@ public static class WorkflowExporter
     }
 
     public static async Task<OperationResult> ExportAsync(
-        WorkflowExportContext ctx,
+        MusicExportContext ctx,
         mgxc.Chart chart,
         string output,
         string? jacketInput,
@@ -112,7 +112,7 @@ public static class WorkflowExporter
 
         var chartBundleFolder = await musicXml.SaveDirectoryAsync(output);
         var chartPath = Path.Combine(chartBundleFolder, musicXml[meta.Difficulty].File);
-        WorkflowPaths.EnsureParentDirectory(chartPath);
+        MusicPaths.EnsureParentDirectory(chartPath);
 
         var writtenChart = await new C2SChartWriter(new C2SWriteRequest(chartPath, chart)).WriteAsync(cancellationToken);
         diagnostics = diagnostics.Merge(writtenChart.Diagnostics);

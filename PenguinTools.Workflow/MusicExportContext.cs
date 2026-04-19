@@ -5,7 +5,7 @@ using PenguinTools.Media;
 
 namespace PenguinTools.Workflow;
 
-public sealed record WorkflowExportContext(
+public sealed record MusicExportContext(
     AssetManager Assets,
     IMediaTool MediaTool,
     IResourceStore ResourceStore,

@@ -14,9 +14,9 @@ namespace PenguinTools.Models;
 [LocalizableCategoryOrder(nameof(Strings.Category_Display), 2, typeof(Strings))]
 [LocalizableCategoryOrder(nameof(Strings.Category_BGM), 3, typeof(Strings))]
 [LocalizableCategoryOrder(nameof(Strings.Category_Sync), 4, typeof(Strings))]
-public class WorkflowModel : MetaModel
+public class MusicModel : MetaModel
 {
-    public WorkflowModel(mg.Chart mgxc)
+    public MusicModel(mg.Chart mgxc)
     {
         Mgxc = mgxc;
         BgmInitialTimeSignature = new TimeSignatureModel(Meta);
