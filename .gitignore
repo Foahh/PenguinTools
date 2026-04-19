@@ -405,5 +405,4 @@ FodyWeavers.xsd
 *.sln.iml
 .idea/
 
-# Build Artifacts
-External/ebur128.dll
+.worktrees/
