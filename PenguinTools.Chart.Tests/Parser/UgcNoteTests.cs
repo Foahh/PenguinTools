@@ -80,4 +80,15 @@ public class UgcNoteTests
         Assert.Equal(Joint.C, c.Joint);
         Assert.Equal(Joint.D, e.Joint);
     }
+
+    [Fact]
+    public async Task Air_PairsWithPrecedingTap()
+    {
+        var chart = await Parse("#0'480:t64\n#0'480:a64UN\n");
+        var tap = Assert.Single(chart.Notes.Children.OfType<Models.mgxc.Tap>());
+        var air = Assert.Single(chart.Notes.Children.OfType<Models.mgxc.Air>());
+        Assert.Same(tap, air.PairNote);
+        Assert.Equal(AirDirection.IR, air.Direction);
+        Assert.Equal(Color.DEF, air.Color);
+    }
 }

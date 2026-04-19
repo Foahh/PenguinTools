@@ -79,6 +79,26 @@ public partial class UgcParser
 
         var extras = payload.Length > 3 ? payload[3..] : string.Empty;
 
+        if (typeChar == 'a')
+        {
+            var air = new mg.Air();
+            var dirChar = extras.Length >= 1 ? extras[0] : 'U';
+            var colorChar = extras.Length >= 2 ? extras[1] : 'N';
+            air.Direction = UgcPayload.AirDirectionChar(dirChar);
+            air.Color = UgcPayload.AirColorChar(colorChar);
+
+            air.Timeline = _currentTimeline;
+            Ugc.Notes.AppendChild(air);
+
+            if (_lastNote is mg.PositiveNote pos && pos.Tick.Original == absTick)
+                pos.MakePair(air);
+            else
+                Diagnostic.Report(Severity.Warning, Strings.MgCrit_Pairing_notes_incompatible, absTick);
+
+            _lastNote = air;
+            return;
+        }
+
         mg.Note? note = typeChar switch
         {
             't' => new mg.Tap(),
