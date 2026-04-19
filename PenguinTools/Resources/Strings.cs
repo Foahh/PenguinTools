@@ -144,7 +144,7 @@ public class Strings
     public static string Tab_Chart => ResourceManager.GetString(nameof(Tab_Chart), resourceCulture) ?? string.Empty;
     public static string Tab_Jacket => ResourceManager.GetString(nameof(Tab_Jacket), resourceCulture) ?? string.Empty;
     public static string Tab_Misc => ResourceManager.GetString(nameof(Tab_Misc), resourceCulture) ?? string.Empty;
-    public static string Tab_Music => ResourceManager.GetString(nameof(Tab_Music), resourceCulture) ?? string.Empty;
+    public static string Tab_Audio => ResourceManager.GetString(nameof(Tab_Audio), resourceCulture) ?? string.Empty;
     public static string Tab_Option => ResourceManager.GetString(nameof(Tab_Option), resourceCulture) ?? string.Empty;
     public static string Tab_Song => ResourceManager.GetString(nameof(Tab_Song), resourceCulture) ?? string.Empty;
     public static string Tab_Stage => ResourceManager.GetString(nameof(Tab_Stage), resourceCulture) ?? string.Empty;

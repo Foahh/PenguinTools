@@ -10,7 +10,7 @@ internal static class MediaCommands
     {
         var command = new Command("media", "Media conversion utilities.");
         command.Subcommands.Add(BuildJacketCommand());
-        command.Subcommands.Add(BuildMusicCommand());
+        command.Subcommands.Add(BuildAudioCommand());
         command.Subcommands.Add(BuildStageCommand());
         command.Subcommands.Add(BuildExtractAfbCommand());
         return command;
@@ -71,7 +71,7 @@ internal static class MediaCommands
         return command;
     }
 
-    private static Command BuildMusicCommand()
+    private static Command BuildAudioCommand()
     {
         var inputArgument = new Argument<string>("input")
         {
@@ -85,22 +85,22 @@ internal static class MediaCommands
         {
             Description = "Optional directory to scan for additional asset XML before parsing."
         };
-        var musicOptions = CommandLineOptions.CreateMusicCommandOptions();
+        var audioOptions = CommandLineOptions.CreateAudioCommandOptions();
 
-        var command = new Command("music", "Convert the music referenced by an MGXC chart into ACB/AWB assets.");
+        var command = new Command("audio", "Convert the audio referenced by an MGXC chart into ACB/AWB assets.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         command.Options.Add(assetRootOption);
-        CommandLineOptions.AddMusicCommandOptions(command, musicOptions);
+        CommandLineOptions.AddAudioCommandOptions(command, audioOptions);
         command.SetAction(async (parseResult, cancellationToken) =>
         {
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
             var assetRoot = CliPaths.ResolveOptionalPath(parseResult.GetValue(assetRootOption));
-            var musicOverrides = CommandLineOptions.GetMusicRequestOverrides(parseResult, musicOptions);
+            var audioOverrides = CommandLineOptions.GetAudioRequestOverrides(parseResult, audioOptions);
             var outputFormat = RootCommands.GetOutputFormat(parseResult);
 
-            return await CliOperations.ExecuteAsync("media music", outputFormat, async (runtime, ct) =>
+            return await CliOperations.ExecuteAsync("media audio", outputFormat, async (runtime, ct) =>
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, assetRoot, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
@@ -108,10 +108,10 @@ internal static class MediaCommands
                     return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output, AssetRoot: assetRoot));
                 }
 
-                var converted = await CliOperations.ConvertMusicAsync(runtime, parsed.Value.Meta, output, musicOverrides, ct);
+                var converted = await CliOperations.ConvertAudioAsync(runtime, parsed.Value.Meta, output, audioOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, converted);
-                var data = CliOperations.CreateMusicData(input, output, assetRoot, parsed.Value.Meta);
-                var message = result.Succeeded ? $"Exported music assets: {output}" : null;
+                var data = CliOperations.CreateAudioData(input, output, assetRoot, parsed.Value.Meta);
+                var message = result.Succeeded ? $"Exported audio assets: {output}" : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
         });

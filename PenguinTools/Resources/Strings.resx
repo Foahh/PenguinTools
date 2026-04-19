@@ -438,8 +438,8 @@
   <data name="Tab_Misc" xml:space="preserve">
     <value>Misc</value>
   </data>
-  <data name="Tab_Music" xml:space="preserve">
-    <value>Music</value>
+  <data name="Tab_Audio" xml:space="preserve">
+    <value>Audio</value>
   </data>
   <data name="Tab_Option" xml:space="preserve">
     <value>Option</value>

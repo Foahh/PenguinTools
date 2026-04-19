@@ -54,7 +54,7 @@ public partial class App : Application
         services.AddTransient<WorkflowViewModel>();
         services.AddTransient<ChartViewModel>();
         services.AddTransient<JacketViewModel>();
-        services.AddTransient<MusicViewModel>();
+        services.AddTransient<AudioViewModel>();
         services.AddTransient<StageViewModel>();
         services.AddTransient<MiscViewModel>();
         services.AddTransient<OptionViewModel>();
@@ -63,7 +63,7 @@ public partial class App : Application
         services.AddTransient(sp => new WorkflowTab(sp.GetRequiredService<WorkflowViewModel>()));
         services.AddTransient(sp => new ChartTab(sp.GetRequiredService<ChartViewModel>()));
         services.AddTransient(sp => new JacketTab(sp.GetRequiredService<JacketViewModel>()));
-        services.AddTransient(sp => new MusicTab(sp.GetRequiredService<MusicViewModel>()));
+        services.AddTransient(sp => new AudioTab(sp.GetRequiredService<AudioViewModel>()));
         services.AddTransient(sp => new StageTab(sp.GetRequiredService<StageViewModel>()));
         services.AddTransient(sp => new MiscTab(sp.GetRequiredService<MiscViewModel>()));
 

@@ -5,9 +5,9 @@ namespace PenguinTools.CLI;
 
 internal static class CommandLineOptions
 {
-    internal static MusicCommandOptions CreateMusicCommandOptions()
+    internal static AudioCommandOptions CreateAudioCommandOptions()
     {
-        return new MusicCommandOptions(
+        return new AudioCommandOptions(
             new Option<string?>("--dummy-acb")
             {
                 Description = "Override the dummy ACB template path."
@@ -22,16 +22,16 @@ internal static class CommandLineOptions
             });
     }
 
-    internal static void AddMusicCommandOptions(Command command, MusicCommandOptions options)
+    internal static void AddAudioCommandOptions(Command command, AudioCommandOptions options)
     {
         command.Options.Add(options.DummyAcbPath);
         command.Options.Add(options.WorkingAudioPath);
         command.Options.Add(options.HcaEncryptionKey);
     }
 
-    internal static MusicRequestOverrides GetMusicRequestOverrides(ParseResult parseResult, MusicCommandOptions options)
+    internal static AudioRequestOverrides GetAudioRequestOverrides(ParseResult parseResult, AudioCommandOptions options)
     {
-        return new MusicRequestOverrides(
+        return new AudioRequestOverrides(
             CliPaths.ResolveOptionalPath(parseResult.GetValue(options.DummyAcbPath)),
             CliPaths.ResolveOptionalPath(parseResult.GetValue(options.WorkingAudioPath)),
             parseResult.GetValue(options.HcaEncryptionKey));

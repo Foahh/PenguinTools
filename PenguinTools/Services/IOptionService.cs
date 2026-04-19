@@ -5,7 +5,7 @@ using PenguinTools.Models;
 namespace PenguinTools.Services;
 
 public sealed record ExportOutputPaths(
-    string MusicFolder,
+    string AudioFolder,
     string StageFolder,
     string CueFileFolder,
     string EventFolder,
@@ -13,7 +13,7 @@ public sealed record ExportOutputPaths(
 {
     public static ExportOutputPaths FromOptionDirectory(string rootPath) =>
         new(
-            Path.Combine(rootPath, "music"),
+            Path.Combine(rootPath, "audio"),
             Path.Combine(rootPath, "stage"),
             Path.Combine(rootPath, "cueFile"),
             Path.Combine(rootPath, "event"),

@@ -2,12 +2,12 @@ using PenguinTools.Core.Metadata;
 
 namespace PenguinTools.Media;
 
-public sealed record MusicConvertRequest(
+public sealed record AudioConvertRequest(
     Meta Meta,
     string OutFolder,
     string DummyAcbPath,
     string WorkingAudioPath,
-    ulong HcaEncryptionKey = MusicConvertRequest.DefaultHcaEncryptionKey)
+    ulong HcaEncryptionKey = AudioConvertRequest.DefaultHcaEncryptionKey)
 {
     public const ulong DefaultHcaEncryptionKey = 32931609366120192UL;
 }

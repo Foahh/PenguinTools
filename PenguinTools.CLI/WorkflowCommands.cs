@@ -30,7 +30,7 @@ internal static class WorkflowCommands
         {
             Description = "Override the jacket source path used for export."
         };
-        var musicOptions = CommandLineOptions.CreateMusicCommandOptions();
+        var audioOptions = CommandLineOptions.CreateAudioCommandOptions();
         var stageOptions = CommandLineOptions.CreateStageCommandOptions();
 
         var command = new Command("export", "Export chart, jacket, audio, and optional stage/event XML from one MGXC chart.");
@@ -38,7 +38,7 @@ internal static class WorkflowCommands
         command.Arguments.Add(outputArgument);
         command.Options.Add(assetRootOption);
         command.Options.Add(jacketInputOption);
-        CommandLineOptions.AddMusicCommandOptions(command, musicOptions);
+        CommandLineOptions.AddAudioCommandOptions(command, audioOptions);
         CommandLineOptions.AddStageCommandOptions(command, stageOptions);
         command.SetAction(async (parseResult, cancellationToken) =>
         {
@@ -46,7 +46,7 @@ internal static class WorkflowCommands
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
             var assetRoot = CliPaths.ResolveOptionalPath(parseResult.GetValue(assetRootOption));
             var jacketInput = CliPaths.ResolveOptionalPath(parseResult.GetValue(jacketInputOption));
-            var musicOverrides = CommandLineOptions.GetMusicRequestOverrides(parseResult, musicOptions);
+            var audioOverrides = CommandLineOptions.GetAudioRequestOverrides(parseResult, audioOptions);
             var stageOverrides = CommandLineOptions.GetStageRequestOverrides(parseResult, stageOptions);
             var outputFormat = RootCommands.GetOutputFormat(parseResult);
 
@@ -58,7 +58,7 @@ internal static class WorkflowCommands
                     return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output, AssetRoot: assetRoot));
                 }
 
-                var exported = await CliOperations.ExportWorkflowAsync(runtime, parsed.Value, output, jacketInput, musicOverrides, stageOverrides, ct);
+                var exported = await CliOperations.ExportWorkflowAsync(runtime, parsed.Value, output, jacketInput, audioOverrides, stageOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, exported);
                 var data = CliOperations.CreateWorkflowData(input, output, assetRoot, parsed.Value.Meta, jacketInput, stageOverrides);
                 var message = result.Succeeded ? $"Exported workflow: {output}" : null;

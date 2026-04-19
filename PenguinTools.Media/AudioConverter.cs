@@ -1,4 +1,4 @@
-﻿using System.Buffers.Binary;
+using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,9 +14,9 @@ using VGAudio.Containers.Wave;
 
 namespace PenguinTools.Media;
 
-public class MusicConverter
+public class AudioConverter
 {
-    public MusicConverter(MusicConvertRequest request, IMediaTool mediaTool)
+    public AudioConverter(AudioConvertRequest request, IMediaTool mediaTool)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(mediaTool);

@@ -1,11 +1,11 @@
-﻿using System.Windows.Controls;
+using System.Windows.Controls;
 using PenguinTools.ViewModels;
 
 namespace PenguinTools.Views;
 
-public partial class MusicTab : UserControl
+public partial class AudioTab : UserControl
 {
-    public MusicTab(MusicViewModel viewModel)
+    public AudioTab(AudioViewModel viewModel)
     {
         InitializeComponent();
         DataContext = viewModel;

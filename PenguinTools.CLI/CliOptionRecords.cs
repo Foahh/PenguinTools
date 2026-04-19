@@ -2,7 +2,7 @@ using System.CommandLine;
 
 namespace PenguinTools.CLI;
 
-internal sealed record MusicCommandOptions(
+internal sealed record AudioCommandOptions(
     Option<string?> DummyAcbPath,
     Option<string?> WorkingAudioPath,
     Option<ulong?> HcaEncryptionKey);

@@ -1,11 +1,11 @@
 namespace PenguinTools.Workflow;
 
-public sealed record MusicRequestOverrides(
+public sealed record AudioRequestOverrides(
     string? DummyAcbPath,
     string? WorkingAudioPath,
     ulong? HcaEncryptionKey)
 {
-    public static MusicRequestOverrides Default { get; } = new(null, null, null);
+    public static AudioRequestOverrides Default { get; } = new(null, null, null);
 }
 
 public sealed record StageRequestOverrides(

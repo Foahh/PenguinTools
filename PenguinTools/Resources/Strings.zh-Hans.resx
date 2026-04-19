@@ -438,14 +438,14 @@
   <data name="Tab_Misc" xml:space="preserve">
     <value>其他</value>
   </data>
-    <data name="Tab_Music" xml:space="preserve">
-    <value>音乐</value>
+    <data name="Tab_Audio" xml:space="preserve">
+    <value>音源</value>
   </data>
   <data name="Tab_Option" xml:space="preserve">
     <value>曲包</value>
   </data>
   <data name="Tab_Song" xml:space="preserve">
-    <value>曲目</value>
+    <value>单曲</value>
   </data>
     <data name="Tab_Stage" xml:space="preserve">
     <value>背景</value>

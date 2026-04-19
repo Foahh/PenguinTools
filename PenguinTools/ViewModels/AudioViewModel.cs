@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Media;
@@ -10,9 +10,9 @@ using System.IO;
 
 namespace PenguinTools.ViewModels;
 
-public class MusicViewModel : WatchViewModel<MusicModel>
+public class AudioViewModel : WatchViewModel<AudioModel>
 {
-    public MusicViewModel(
+    public AudioViewModel(
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
@@ -23,11 +23,11 @@ public class MusicViewModel : WatchViewModel<MusicModel>
     {
     }
 
-    protected override Task<OperationResult<MusicModel>> ReadModel(string path, CancellationToken ct = default)
+    protected override Task<OperationResult<AudioModel>> ReadModel(string path, CancellationToken ct = default)
     {
-        var model = new MusicModel();
+        var model = new AudioModel();
         model.Meta.BgmFilePath = ModelPath;
-        return Task.FromResult(OperationResult<MusicModel>.Success(model));
+        return Task.FromResult(OperationResult<AudioModel>.Success(model));
     }
 
     protected override bool CanRun()
@@ -49,8 +49,8 @@ public class MusicViewModel : WatchViewModel<MusicModel>
         if (dlg.ShowDialog() != true) return OperationResult.Success();
         var path = dlg.FolderName;
 
-        var converter = new MusicConverter(
-            new MusicConvertRequest(
+        var converter = new AudioConverter(
+            new AudioConvertRequest(
                 Model.Meta,
                 path,
                 AssetProvider.GetPath(InfrastructureAsset.DummyAcb),

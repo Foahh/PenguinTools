@@ -21,7 +21,7 @@ public partial class MainWindow : Window
         WorkflowTabHost.Content = services.GetRequiredService<WorkflowTab>();
         ChartTabHost.Content = services.GetRequiredService<ChartTab>();
         JacketTabHost.Content = services.GetRequiredService<JacketTab>();
-        MusicTabHost.Content = services.GetRequiredService<MusicTab>();
+        AudioTabHost.Content = services.GetRequiredService<AudioTab>();
         StageTabHost.Content = services.GetRequiredService<StageTab>();
         MiscTabHost.Content = services.GetRequiredService<MiscTab>();
     }

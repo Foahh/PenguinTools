@@ -34,7 +34,7 @@ public sealed class WorkflowExportService : IWorkflowExportService
             model.Mgxc,
             outputPath,
             jacketInput: null,
-            MusicRequestOverrides.Default,
+            AudioRequestOverrides.Default,
             StageRequestOverrides.None,
             ct);
     }

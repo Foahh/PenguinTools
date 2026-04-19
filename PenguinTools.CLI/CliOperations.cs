@@ -80,7 +80,7 @@ internal static class CliOperations
         PenguinTools.Chart.Models.mgxc.Chart chart,
         string output,
         string? jacketInput,
-        MusicRequestOverrides musicOverrides,
+        AudioRequestOverrides audioOverrides,
         StageRequestOverrides stageOverrides,
         CancellationToken cancellationToken) =>
         WorkflowExporter.ExportAsync(
@@ -88,17 +88,17 @@ internal static class CliOperations
             chart,
             output,
             jacketInput,
-            musicOverrides,
+            audioOverrides,
             stageOverrides,
             cancellationToken);
 
-    internal static Task<OperationResult> ConvertMusicAsync(
+    internal static Task<OperationResult> ConvertAudioAsync(
         CliRuntime runtime,
         Meta meta,
         string output,
-        MusicRequestOverrides overrides,
+        AudioRequestOverrides overrides,
         CancellationToken cancellationToken) =>
-        WorkflowExporter.ConvertMusicAsync(
+        WorkflowExporter.ConvertAudioAsync(
             new WorkflowExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
             meta,
             output,
@@ -153,7 +153,7 @@ internal static class CliOperations
             ]);
     }
 
-    internal static CliCommandData CreateMusicData(string input, string output, string? assetRoot, Meta meta)
+    internal static CliCommandData CreateAudioData(string input, string output, string? assetRoot, Meta meta)
     {
         var songId = meta.Id ?? 0;
         var xml = new CueFileXml(songId);
@@ -168,8 +168,8 @@ internal static class CliOperations
             Artifacts:
             [
                 new CliArtifact("cue-file.xml", Path.Combine(cueDirectory, "CueFile.xml")),
-                new CliArtifact("music.acb", Path.Combine(cueDirectory, xml.AcbFile)),
-                new CliArtifact("music.awb", Path.Combine(cueDirectory, xml.AwbFile))
+                new CliArtifact("audio.acb", Path.Combine(cueDirectory, xml.AcbFile)),
+                new CliArtifact("audio.awb", Path.Combine(cueDirectory, xml.AwbFile))
             ]);
     }
 
@@ -236,18 +236,18 @@ internal static class CliOperations
             [meta.Difficulty] = meta
         };
         var musicXml = new MusicXml(metaMap, meta.Difficulty);
-        var musicDirectory = Path.Combine(output, musicXml.DataName);
+        var chartBundleDirectory = Path.Combine(output, musicXml.DataName);
 
-        artifacts.Add(new CliArtifact("music.xml", Path.Combine(musicDirectory, "Music.xml")));
-        artifacts.Add(new CliArtifact("chart.c2s", Path.Combine(musicDirectory, musicXml[meta.Difficulty].File)));
-        artifacts.Add(new CliArtifact("jacket.dds", Path.Combine(musicDirectory, musicXml.JaketFile)));
+        artifacts.Add(new CliArtifact("music.xml", Path.Combine(chartBundleDirectory, "Music.xml")));
+        artifacts.Add(new CliArtifact("chart.c2s", Path.Combine(chartBundleDirectory, musicXml[meta.Difficulty].File)));
+        artifacts.Add(new CliArtifact("jacket.dds", Path.Combine(chartBundleDirectory, musicXml.JaketFile)));
 
         var songId = meta.Id ?? 0;
         var cueXml = new CueFileXml(songId);
         var cueDirectory = Path.Combine(output, cueXml.DataName);
         artifacts.Add(new CliArtifact("cue-file.xml", Path.Combine(cueDirectory, "CueFile.xml")));
-        artifacts.Add(new CliArtifact("music.acb", Path.Combine(cueDirectory, cueXml.AcbFile)));
-        artifacts.Add(new CliArtifact("music.awb", Path.Combine(cueDirectory, cueXml.AwbFile)));
+        artifacts.Add(new CliArtifact("audio.acb", Path.Combine(cueDirectory, cueXml.AcbFile)));
+        artifacts.Add(new CliArtifact("audio.awb", Path.Combine(cueDirectory, cueXml.AwbFile)));
 
         string? stageName = null;
         var stageId = stageOverrides.StageId ?? meta.StageId;

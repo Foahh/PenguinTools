@@ -56,8 +56,8 @@
             <TabItem Header="{x:Static res:Strings.Tab_Jacket}">
                 <ContentControl x:Name="JacketTabHost" />
             </TabItem>
-            <TabItem Header="{x:Static res:Strings.Tab_Music}">
-                <ContentControl x:Name="MusicTabHost" />
+            <TabItem Header="{x:Static res:Strings.Tab_Audio}">
+                <ContentControl x:Name="AudioTabHost" />
             </TabItem>
             <TabItem Header="{x:Static res:Strings.Tab_Stage}">
                 <ContentControl x:Name="StageTabHost" />

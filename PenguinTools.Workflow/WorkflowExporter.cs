@@ -48,21 +48,21 @@ public static class WorkflowExporter
         return await new StageConverter(request, ctx.MediaTool).BuildAsync(cancellationToken);
     }
 
-    public static async Task<OperationResult> ConvertMusicAsync(
+    public static async Task<OperationResult> ConvertAudioAsync(
         WorkflowExportContext ctx,
         Meta meta,
         string output,
-        MusicRequestOverrides overrides,
+        AudioRequestOverrides overrides,
         CancellationToken cancellationToken)
     {
-        var request = new MusicConvertRequest(
+        var request = new AudioConvertRequest(
             meta,
             output,
             overrides.DummyAcbPath ?? ctx.AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
             overrides.WorkingAudioPath ?? ctx.ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(meta.FullBgmFilePath)}.wav"),
-            overrides.HcaEncryptionKey ?? MusicConvertRequest.DefaultHcaEncryptionKey);
+            overrides.HcaEncryptionKey ?? AudioConvertRequest.DefaultHcaEncryptionKey);
 
-        return await new MusicConverter(request, ctx.MediaTool).ConvertAsync(cancellationToken);
+        return await new AudioConverter(request, ctx.MediaTool).ConvertAsync(cancellationToken);
     }
 
     public static async Task<OperationResult> ExportAsync(
@@ -70,7 +70,7 @@ public static class WorkflowExporter
         mgxc.Chart chart,
         string output,
         string? jacketInput,
-        MusicRequestOverrides musicOverrides,
+        AudioRequestOverrides audioOverrides,
         StageRequestOverrides stageOverrides,
         CancellationToken cancellationToken)
     {
@@ -110,8 +110,8 @@ public static class WorkflowExporter
             StageName = stage
         };
 
-        var musicFolder = await musicXml.SaveDirectoryAsync(output);
-        var chartPath = Path.Combine(musicFolder, musicXml[meta.Difficulty].File);
+        var chartBundleFolder = await musicXml.SaveDirectoryAsync(output);
+        var chartPath = Path.Combine(chartBundleFolder, musicXml[meta.Difficulty].File);
         WorkflowPaths.EnsureParentDirectory(chartPath);
 
         var writtenChart = await new C2SChartWriter(new C2SWriteRequest(chartPath, chart)).WriteAsync(cancellationToken);
@@ -123,7 +123,7 @@ public static class WorkflowExporter
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var jacketPath = Path.Combine(musicFolder, musicXml.JaketFile);
+        var jacketPath = Path.Combine(chartBundleFolder, musicXml.JaketFile);
         var convertedJacket = await new JacketConverter(
             new JacketConvertRequest(jacketInput ?? meta.FullJacketFilePath, jacketPath),
             ctx.MediaTool).ConvertAsync(cancellationToken);
@@ -135,8 +135,8 @@ public static class WorkflowExporter
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var convertedMusic = await ConvertMusicAsync(ctx, meta, output, musicOverrides, cancellationToken);
-        diagnostics = diagnostics.Merge(convertedMusic.Diagnostics);
-        return (convertedMusic.Succeeded ? OperationResult.Success() : OperationResult.Failure()).WithDiagnostics(diagnostics);
+        var convertedAudio = await ConvertAudioAsync(ctx, meta, output, audioOverrides, cancellationToken);
+        diagnostics = diagnostics.Merge(convertedAudio.Diagnostics);
+        return (convertedAudio.Succeeded ? OperationResult.Success() : OperationResult.Failure()).WithDiagnostics(diagnostics);
     }
 }

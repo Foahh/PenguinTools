@@ -66,7 +66,7 @@ public sealed class OptionService : IOptionService
 
         if (exportContext.Settings.ConvertChart || exportContext.Settings.ConvertJacket)
         {
-            (xml, chartFolder) = await CreateMusicXmlAsync(book, stage, exportContext.OutputPaths.MusicFolder);
+            (xml, chartFolder) = await CreateMusicXmlAsync(book, stage, exportContext.OutputPaths.AudioFolder);
         }
 
         if (exportContext.Settings.ConvertChart && xml is not null && chartFolder is not null)
@@ -110,7 +110,7 @@ public sealed class OptionService : IOptionService
         return stageEntry;
     }
 
-    private static async Task<(MusicXml Xml, string ChartFolder)> CreateMusicXmlAsync(Book book, Entry stage, string musicFolder)
+    private static async Task<(MusicXml Xml, string ChartFolder)> CreateMusicXmlAsync(Book book, Entry stage, string audioFolder)
     {
         var metaMap = book.Items.ToDictionary(item => item.Key, item => item.Value.Meta);
         var xml = new MusicXml(metaMap, book.Difficulty)
@@ -118,7 +118,7 @@ public sealed class OptionService : IOptionService
             StageName = stage
         };
 
-        var chartFolder = await xml.SaveDirectoryAsync(musicFolder);
+        var chartFolder = await xml.SaveDirectoryAsync(audioFolder);
         return (xml, chartFolder);
     }
 
@@ -185,16 +185,16 @@ public sealed class OptionService : IOptionService
 
     private async Task ConvertAudioAsync(Book book, string cueFileFolder, IDiagnosticSink diagnostics, CancellationToken ct)
     {
-        var musicConverter = new MusicConverter(
-            new MusicConvertRequest(
+        var audioConverter = new AudioConverter(
+            new AudioConvertRequest(
                 book.Meta,
                 cueFileFolder,
                 _assetProvider.GetPath(InfrastructureAsset.DummyAcb),
                 _resourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(book.Meta.FullBgmFilePath)}.wav")),
             _mediaTool);
-        var convertedMusic = await musicConverter.ConvertAsync(ct);
-        diagnostics.Report(convertedMusic.Diagnostics);
-        if (!convertedMusic.Succeeded) return;
+        var convertedAudio = await audioConverter.ConvertAsync(ct);
+        diagnostics.Report(convertedAudio.Diagnostics);
+        if (!convertedAudio.Succeeded) return;
 
         ct.ThrowIfCancellationRequested();
     }

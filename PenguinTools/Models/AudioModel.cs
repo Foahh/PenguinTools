@@ -1,4 +1,4 @@
-﻿using PenguinTools.Attributes;
+using PenguinTools.Attributes;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Resources;
 using System.ComponentModel;
@@ -9,9 +9,9 @@ namespace PenguinTools.Models;
 
 [LocalizableCategoryOrder(nameof(Strings.Category_BGM), 0, typeof(Strings))]
 [LocalizableCategoryOrder(nameof(Strings.Category_Sync), 1, typeof(Strings))]
-public class MusicModel : Model
+public class AudioModel : Model
 {
-    public MusicModel()
+    public AudioModel()
     {
         PropertyChanged += (_, e) =>
         {
