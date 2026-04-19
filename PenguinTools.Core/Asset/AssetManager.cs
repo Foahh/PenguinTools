@@ -5,11 +5,13 @@ namespace PenguinTools.Core.Asset;
 
 public class AssetManager : INotifyPropertyChanged
 {
+    public const string PlusAssetsFileName = "assets.user.json";
+
     public AssetManager(Stream hardAssets)
     {
         MergeAssets = new AssetDictionary();
         HardAssets = new AssetDictionary(hardAssets);
-        PlusAssets = new AssetDictionary("assets.json");
+        PlusAssets = new AssetDictionary(PlusAssetsFileName);
         UserAssets = new AssetDictionary();
         Merge();
         NotifyAssetChanged();
@@ -40,7 +42,7 @@ public class AssetManager : INotifyPropertyChanged
         PlusAssets.MergeWith(await AssetDictionary.CollectAsync(workDir, ct));
         PlusAssets.SubtractWith(HardAssets);
 
-        await PlusAssets.SaveAsync("assets.json", ct);
+        await PlusAssets.SaveAsync(PlusAssetsFileName, ct);
 
         Merge();
         NotifyAssetChanged();
