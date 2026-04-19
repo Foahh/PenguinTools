@@ -1,15 +1,29 @@
 ﻿using Microsoft.Win32;
 using PenguinTools.Core;
+using PenguinTools.Core.Asset;
 using PenguinTools.Core.Chart.Writer;
 using PenguinTools.Core.Chart.Parser;
+using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
+using PenguinTools.Infrastructure;
 using PenguinTools.Models;
+using PenguinTools.Services;
 using System.IO;
 
 namespace PenguinTools.ViewModels;
 
 public class ChartViewModel : WatchViewModel<ChartModel>
 {
+    public ChartViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+    {
+    }
+
     protected override async Task<OperationResult> Action(CancellationToken ct = default)
     {
         if (Model == null) return OperationResult.Success();

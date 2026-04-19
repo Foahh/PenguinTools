@@ -1,15 +1,27 @@
 ﻿using Microsoft.Win32;
 using PenguinTools.Core;
+using PenguinTools.Core.Asset;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using PenguinTools.Infrastructure;
 using PenguinTools.Models;
+using PenguinTools.Services;
 using System.IO;
 
 namespace PenguinTools.ViewModels;
 
 public class MusicViewModel : WatchViewModel<MusicModel>
 {
+    public MusicViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+    {
+    }
+
     protected override Task<OperationResult<MusicModel>> ReadModel(string path, CancellationToken ct = default)
     {
         var model = new MusicModel();

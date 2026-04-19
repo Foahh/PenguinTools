@@ -1,14 +1,27 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Win32;
 using PenguinTools.Core;
+using PenguinTools.Core.Asset;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
+using PenguinTools.Infrastructure;
+using PenguinTools.Services;
 using System.IO;
 
 namespace PenguinTools.ViewModels;
 
 public partial class JacketViewModel : ActionViewModel
 {
+    public JacketViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+    {
+    }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(DestinationFileName))]
     public partial int? JacketId { get; set; }

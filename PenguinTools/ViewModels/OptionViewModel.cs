@@ -10,6 +10,7 @@ using PenguinTools.Core.Resources;
 using PenguinTools.Core.Xml;
 using PenguinTools.Infrastructure;
 using PenguinTools.Models;
+using PenguinTools.Services;
 using System.Collections.Concurrent;
 using System.IO;
 
@@ -17,6 +18,16 @@ namespace PenguinTools.ViewModels;
 
 public partial class OptionViewModel : WatchViewModel<OptionModel>
 {
+    public OptionViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+    {
+    }
+
     private const string MgxcExtension = ".mgxc";
 
     [ObservableProperty]

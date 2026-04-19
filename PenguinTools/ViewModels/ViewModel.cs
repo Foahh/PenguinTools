@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Media;
@@ -17,11 +16,25 @@ namespace PenguinTools.ViewModels;
 
 public abstract partial class ViewModel : ObservableObject
 {
-    public ActionService ActionService { get; } = App.ServiceProvider.GetRequiredService<ActionService>();
-    public AssetManager AssetManager { get; } = App.ServiceProvider.GetRequiredService<AssetManager>();
-    public IMediaTool MediaTool { get; } = App.ServiceProvider.GetRequiredService<IMediaTool>();
-    public IEmbeddedResourceStore ResourceStore { get; } = App.ServiceProvider.GetRequiredService<IEmbeddedResourceStore>();
-    public IInfrastructureAssetProvider AssetProvider { get; } = App.ServiceProvider.GetRequiredService<IInfrastructureAssetProvider>();
+    public ActionService ActionService { get; }
+    public AssetManager AssetManager { get; }
+    public IMediaTool MediaTool { get; }
+    public IEmbeddedResourceStore ResourceStore { get; }
+    public IInfrastructureAssetProvider AssetProvider { get; }
+
+    protected ViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+    {
+        ActionService = actionService;
+        AssetManager = assetManager;
+        MediaTool = mediaTool;
+        ResourceStore = resourceStore;
+        AssetProvider = assetProvider;
+    }
 
     protected static Dispatcher Dispatcher => Application.Current.Dispatcher;
 
@@ -45,7 +58,13 @@ public abstract partial class ViewModel : ObservableObject
 
 public abstract class ActionViewModel : ViewModel
 {
-    protected ActionViewModel()
+    protected ActionViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
     {
         ActionCommand = new AsyncRelayCommand(() => ActionService.RunAsync(Action), () => ActionService.CanRun() && CanRun());
         ActionService.PropertyChanged += (_, e) =>
@@ -63,7 +82,13 @@ public abstract class ActionViewModel : ViewModel
 
 public abstract class ReloadableActionViewModel : ActionViewModel
 {
-    protected ReloadableActionViewModel()
+    protected ReloadableActionViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
     {
         ReloadCommand = new AsyncRelayCommand(Reload, () => ActionService.CanRun() && CanReload());
         ActionService.PropertyChanged += (_, e) =>
@@ -83,7 +108,13 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
 {
     private FileSystemWatcher? _fileWatcher;
 
-    protected WatchViewModel()
+    protected WatchViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
     {
         ActionService.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
     }

@@ -6,13 +6,20 @@ using PenguinTools.Core.Asset;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
 using PenguinTools.Infrastructure;
+using PenguinTools.Services;
 using System.IO;
 
 namespace PenguinTools.ViewModels;
 
 public partial class StageViewModel : ActionViewModel
 {
-    public StageViewModel()
+    public StageViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
     {
         NoteFieldsLine = AssetManager.FieldLines.FirstOrDefault(p => p.Str == "Orange") ?? Entry.Default;
     }

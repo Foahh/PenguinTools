@@ -1,7 +1,11 @@
 ﻿using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PenguinTools.Core;
+using PenguinTools.Core.Asset;
+using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
+using PenguinTools.Infrastructure;
 using PenguinTools.Services;
 
 namespace PenguinTools.ViewModels;
@@ -10,7 +14,14 @@ public partial class MainWindowViewModel : ViewModel
 {
     private readonly IReleaseService _releaseService;
 
-    public MainWindowViewModel(IReleaseService releaseService)
+    public MainWindowViewModel(
+        IReleaseService releaseService,
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
     {
         _releaseService = releaseService;
         ActionService.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);

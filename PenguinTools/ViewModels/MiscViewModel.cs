@@ -1,17 +1,33 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using PenguinTools.Core;
+using PenguinTools.Core.Asset;
 using PenguinTools.Core.Media;
 using PenguinTools.Core.Resources;
+using PenguinTools.Infrastructure;
+using PenguinTools.Services;
 using PenguinTools.Views;
 
 namespace PenguinTools.ViewModels;
 
 public partial class MiscViewModel : ViewModel
 {
+    private readonly MainWindow _mainWindow;
+
+    public MiscViewModel(
+        MainWindow mainWindow,
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+    {
+        _mainWindow = mainWindow;
+    }
+
     [RelayCommand]
     private void OpenTempDirectory()
     {
@@ -28,8 +44,6 @@ public partial class MiscViewModel : ViewModel
     [RelayCommand]
     private async Task ExtractAfbFile()
     {
-        var window = App.ServiceProvider.GetRequiredService<MainWindow>();
-
         var openDlg = new OpenFileDialog
         {
             Title = Strings.Title_Select_the_input_file,
@@ -38,7 +52,7 @@ public partial class MiscViewModel : ViewModel
             AddExtension = true,
             ValidateNames = true
         };
-        var result = openDlg.ShowDialog(window);
+        var result = openDlg.ShowDialog(_mainWindow);
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FileName)) { return; }
 
         var baseDir = Path.GetDirectoryName(openDlg.FileName);
@@ -62,14 +76,13 @@ public partial class MiscViewModel : ViewModel
     [RelayCommand]
     private async Task CollectAsset()
     {
-        var window = App.ServiceProvider.GetRequiredService<MainWindow>();
         var openDlg = new OpenFolderDialog
         {
             Title = Strings.Title_Select_the_game_folder,
             Multiselect = false,
             ValidateNames = true
         };
-        var result = openDlg.ShowDialog(window);
+        var result = openDlg.ShowDialog(_mainWindow);
         if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) { return; }
 
         await ActionService.RunAsync(ct => AssetManager.CollectAssetsAsync(openDlg.FolderName, ct));

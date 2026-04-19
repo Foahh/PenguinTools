@@ -9,12 +9,23 @@ using PenguinTools.Core.Resources;
 using PenguinTools.Core.Xml;
 using PenguinTools.Infrastructure;
 using PenguinTools.Models;
+using PenguinTools.Services;
 using System.IO;
 
 namespace PenguinTools.ViewModels;
 
 public class WorkflowViewModel : WatchViewModel<WorkflowModel>
 {
+    public WorkflowViewModel(
+        ActionService actionService,
+        AssetManager assetManager,
+        IMediaTool mediaTool,
+        IEmbeddedResourceStore resourceStore,
+        IInfrastructureAssetProvider assetProvider)
+        : base(actionService, assetManager, mediaTool, resourceStore, assetProvider)
+    {
+    }
+
     protected override async Task<OperationResult> Action(CancellationToken ct = default)
     {
         if (Model == null) return OperationResult.Success();
