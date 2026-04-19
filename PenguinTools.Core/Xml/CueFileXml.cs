@@ -1,5 +1,5 @@
-﻿using PenguinTools.Core.Asset;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
+using PenguinTools.Core.Asset;
 
 namespace PenguinTools.Core.Xml;
 
@@ -20,12 +20,9 @@ public class CueFileXml : XmlElement<CueFileXml>
 
     protected override string FileName => "CueFile.xml";
 
-    [XmlElement("name")]
-    public Entry Name { get; set; } = Entry.Default;
+    [XmlElement("name")] public Entry Name { get; set; } = Entry.Default;
 
-    [XmlElement("acbFile")]
-    public PathElement AcbFile { get; set; } = new();
+    [XmlElement("acbFile")] public PathElement AcbFile { get; set; } = new();
 
-    [XmlElement("awbFile")]
-    public PathElement AwbFile { get; set; } = new();
+    [XmlElement("awbFile")] public PathElement AwbFile { get; set; } = new();
 }

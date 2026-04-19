@@ -28,23 +28,17 @@ internal static class ResourceStoreHelpers
         if (!Directory.Exists(directoryPath)) return;
 
         foreach (var entryPath in Directory.GetFileSystemEntries(directoryPath))
-        {
             try
             {
                 if (Directory.Exists(entryPath))
-                {
                     Directory.Delete(entryPath, true);
-                }
                 else
-                {
                     File.Delete(entryPath);
-                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
             }
-        }
 
         if (!deleteRoot) return;
 

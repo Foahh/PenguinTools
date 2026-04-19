@@ -11,11 +11,13 @@ public sealed record OptionExportProcessContext(
 
 public static class OptionExportBatch
 {
-    public static Diagnoster CreateDiagnoster(IDiagnosticSink? parent = null) =>
-        new()
+    public static Diagnoster CreateDiagnoster(IDiagnosticSink? parent = null)
+    {
+        return new Diagnoster
         {
             TimeCalculator = parent?.TimeCalculator
         };
+    }
 
     public static async Task<DiagnosticSnapshot> ProcessItemsAsync<T>(
         string prefix,
@@ -29,17 +31,14 @@ public static class OptionExportBatch
         var diagnostics = new ConcurrentBag<DiagnosticSnapshot>();
 
         if (parallel)
-        {
             await Parallel.ForEachAsync(itemList, new ParallelOptions
             {
                 CancellationToken = main.CancellationToken,
                 MaxDegreeOfParallelism = main.BatchSize
             }, ProcessItemAsync);
-        }
         else
-        {
-            foreach (var item in itemList) await ProcessItemAsync(item, main.CancellationToken);
-        }
+            foreach (var item in itemList)
+                await ProcessItemAsync(item, main.CancellationToken);
 
         return diagnostics.Aggregate(DiagnosticSnapshot.Empty, (current, snapshot) => current.Merge(snapshot));
 
@@ -80,6 +79,8 @@ public static class OptionExportBatch
         Func<T, IDiagnosticSink, Task> action,
         Func<T, string> getPath,
         OptionExportProcessContext context,
-        bool parallel = false) =>
-        ProcessItemsAsync(prefix, items, action, getPath, context, parallel);
+        bool parallel = false)
+    {
+        return ProcessItemsAsync(prefix, items, action, getPath, context, parallel);
+    }
 }

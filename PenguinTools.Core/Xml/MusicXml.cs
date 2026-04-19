@@ -1,7 +1,7 @@
-﻿using PenguinTools.Core.Asset;
+﻿using System.Xml.Serialization;
+using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Resources;
-using System.Xml.Serialization;
 
 namespace PenguinTools.Core.Xml;
 
@@ -66,26 +66,19 @@ public class MusicXml : XmlElement<MusicXml>
 
     public MusicFumenData this[Difficulty diff] => Fumens.First(f => f.Type == DiffMap[diff]);
 
-    [XmlElement("releaseTagName")]
-    public Entry ReleaseTagName { get; set; } = ReleaseTag.Default.Name;
+    [XmlElement("releaseTagName")] public Entry ReleaseTagName { get; set; } = ReleaseTag.Default.Name;
 
-    [XmlElement("netOpenName")]
-    public Entry NetOpenName { get; set; } = XmlConstants.NetOpenName;
+    [XmlElement("netOpenName")] public Entry NetOpenName { get; set; } = XmlConstants.NetOpenName;
 
-    [XmlElement("disableFlag")]
-    public bool DisableFlag { get; set; }
+    [XmlElement("disableFlag")] public bool DisableFlag { get; set; }
 
-    [XmlElement("exType")]
-    public int ExType { get; set; }
+    [XmlElement("exType")] public int ExType { get; set; }
 
-    [XmlElement("name")]
-    public Entry Name { get; set; } = Entry.Default;
+    [XmlElement("name")] public Entry Name { get; set; } = Entry.Default;
 
-    [XmlElement("sortName")]
-    public string SortName { get; set; } = string.Empty;
+    [XmlElement("sortName")] public string SortName { get; set; } = string.Empty;
 
-    [XmlElement("artistName")]
-    public Entry ArtistName { get; set; } = Entry.Default;
+    [XmlElement("artistName")] public Entry ArtistName { get; set; } = Entry.Default;
 
     [XmlElement("genreNames")]
     public EntryCollection GenreNames { get; set; } = new List<Entry>
@@ -93,41 +86,29 @@ public class MusicXml : XmlElement<MusicXml>
         Entry.Default
     };
 
-    [XmlElement("worksName")]
-    public Entry WorksName { get; set; } = Entry.Default;
+    [XmlElement("worksName")] public Entry WorksName { get; set; } = Entry.Default;
 
-    [XmlElement("labelName")]
-    public Entry LabelName { get; set; } = Entry.Default;
+    [XmlElement("labelName")] public Entry LabelName { get; set; } = Entry.Default;
 
-    [XmlElement("jaketFile")]
-    public PathElement JaketFile { get; set; } = new();
+    [XmlElement("jaketFile")] public PathElement JaketFile { get; set; } = new();
 
-    [XmlElement("firstLock")]
-    public bool FirstLock { get; set; }
+    [XmlElement("firstLock")] public bool FirstLock { get; set; }
 
-    [XmlElement("enableUltima")]
-    public bool EnableUltima { get; set; }
+    [XmlElement("enableUltima")] public bool EnableUltima { get; set; }
 
-    [XmlElement("isGiftMusic")]
-    public bool IsGiftMusic { get; set; }
+    [XmlElement("isGiftMusic")] public bool IsGiftMusic { get; set; }
 
-    [XmlElement("releaseDate")]
-    public string ReleaseDate { get; set; } = string.Empty;
+    [XmlElement("releaseDate")] public string ReleaseDate { get; set; } = string.Empty;
 
-    [XmlElement("priority")]
-    public int Priority { get; set; }
+    [XmlElement("priority")] public int Priority { get; set; }
 
-    [XmlElement("cueFileName")]
-    public Entry CueFileName { get; set; } = Entry.Default;
+    [XmlElement("cueFileName")] public Entry CueFileName { get; set; } = Entry.Default;
 
-    [XmlElement("worldsEndTagName")]
-    public Entry WorldsEndTagName { get; set; } = Entry.Default;
+    [XmlElement("worldsEndTagName")] public Entry WorldsEndTagName { get; set; } = Entry.Default;
 
-    [XmlElement("starDifType")]
-    public int StarDifType { get; set; }
+    [XmlElement("starDifType")] public int StarDifType { get; set; }
 
-    [XmlElement("stageName")]
-    public Entry StageName { get; set; } = Entry.Default;
+    [XmlElement("stageName")] public Entry StageName { get; set; } = Entry.Default;
 
     [XmlArray("fumens")]
     [XmlArrayItem("MusicFumenData")]
@@ -147,24 +128,17 @@ public class MusicXml : XmlElement<MusicXml>
 
 public class MusicFumenData
 {
-    [XmlElement("type")]
-    public Entry Type { get; set; } = Entry.Default;
+    [XmlElement("type")] public Entry Type { get; set; } = Entry.Default;
 
-    [XmlElement("enable")]
-    public bool Enable { get; set; }
+    [XmlElement("enable")] public bool Enable { get; set; }
 
-    [XmlElement("file")]
-    public PathElement File { get; set; } = string.Empty;
+    [XmlElement("file")] public PathElement File { get; set; } = string.Empty;
 
-    [XmlElement("level")]
-    public int Level { get; set; }
+    [XmlElement("level")] public int Level { get; set; }
 
-    [XmlElement("levelDecimal")]
-    public int LevelDecimal { get; set; }
+    [XmlElement("levelDecimal")] public int LevelDecimal { get; set; }
 
-    [XmlElement("notesDesigner")]
-    public string NotesDesigner { get; set; } = string.Empty;
+    [XmlElement("notesDesigner")] public string NotesDesigner { get; set; } = string.Empty;
 
-    [XmlElement("defaultBpm")]
-    public decimal DefaultBpm { get; set; }
+    [XmlElement("defaultBpm")] public decimal DefaultBpm { get; set; }
 }

@@ -1,11 +1,23 @@
-﻿using PenguinTools.Core;
+﻿using System.Text;
 using PenguinTools.Chart.Resources;
-using System.Text;
+using PenguinTools.Core;
 
 namespace PenguinTools.Chart.Parser;
 
 internal static class Extensions
 {
+    public static decimal Round(this object obj, int decimals = 6)
+    {
+        return obj switch
+        {
+            double d => Math.Round((decimal)d, decimals),
+            int i => i,
+            short s => s,
+            byte b => b,
+            _ => Math.Round((decimal)obj, decimals)
+        };
+    }
+
     extension(BinaryReader br)
     {
         public void ReadBlock(string expected, Action<BinaryReader> action)
@@ -66,17 +78,5 @@ internal static class Extensions
             var msg = string.Format(Strings.MgCrit_Unrecognized_data_type, type);
             throw new DiagnosticException(msg, path: null, line: checked((int)br.BaseStream.Position));
         }
-    }
-
-    public static decimal Round(this object obj, int decimals = 6)
-    {
-        return obj switch
-        {
-            double d => Math.Round((decimal)d, decimals),
-            int i => i,
-            short s => s,
-            byte b => b,
-            _ => Math.Round((decimal)obj, decimals)
-        };
     }
 }

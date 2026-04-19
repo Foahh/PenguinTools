@@ -36,9 +36,7 @@ internal static class ChartCommands
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
-                {
-                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputPath: output));
-                }
+                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(input, output));
 
                 CliPaths.EnsureParentDirectory(output);
                 var written = await new C2SChartWriter(new C2SWriteRequest(output, parsed.Value)).WriteAsync(ct);

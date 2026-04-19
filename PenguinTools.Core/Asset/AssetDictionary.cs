@@ -11,29 +11,27 @@ public enum AssetType
 {
     [JsonStringEnumMemberName("genreNames")]
     GenreNames,
+
     [JsonStringEnumMemberName("notesFieldLine")]
     FieldLines,
+
     [JsonStringEnumMemberName("stageName")]
     StageNames,
+
     [JsonStringEnumMemberName("worldsEndTagName")]
     WeTagNames
 }
 
 public class AssetDictionary
 {
-    private readonly Dictionary<AssetType, SortedSet<Entry>> _database;
-
-    public IReadOnlySet<Entry> GenreNames => _database[AssetType.GenreNames];
-    public IReadOnlySet<Entry> FieldLines => _database[AssetType.FieldLines];
-    public IReadOnlySet<Entry> StageNames => _database[AssetType.StageNames];
-    public IReadOnlySet<Entry> WeTagNames => _database[AssetType.WeTagNames];
-
     private static readonly AssetJsonSerializerContext JsonContext = new(new JsonSerializerOptions
     {
         WriteIndented = true,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     });
+
+    private readonly Dictionary<AssetType, SortedSet<Entry>> _database;
 
     public AssetDictionary()
     {
@@ -54,6 +52,17 @@ public class AssetDictionary
         Load(json);
     }
 
+    public IReadOnlySet<Entry> GenreNames => _database[AssetType.GenreNames];
+    public IReadOnlySet<Entry> FieldLines => _database[AssetType.FieldLines];
+    public IReadOnlySet<Entry> StageNames => _database[AssetType.StageNames];
+    public IReadOnlySet<Entry> WeTagNames => _database[AssetType.WeTagNames];
+
+    public SortedSet<Entry> this[AssetType type]
+    {
+        get => _database[type];
+        set => _database[type] = value;
+    }
+
     private void Load(string json)
     {
         var dict = JsonSerializer.Deserialize(json, JsonContext.AssetDatabase);
@@ -62,16 +71,13 @@ public class AssetDictionary
     }
 
     /// <summary>
-    /// Loads plus-tier JSON from disk when present and valid. Returns false if the file is missing,
-    /// empty, unreadable, or invalid JSON; <paramref name="dictionary"/> is empty in that case.
+    ///     Loads plus-tier JSON from disk when present and valid. Returns false if the file is missing,
+    ///     empty, unreadable, or invalid JSON; <paramref name="dictionary" /> is empty in that case.
     /// </summary>
     public static bool TryLoadPlusAssetsFromFile(string path, out AssetDictionary dictionary)
     {
         dictionary = new AssetDictionary();
-        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
-        {
-            return false;
-        }
+        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return false;
 
         string json;
         try
@@ -87,18 +93,12 @@ public class AssetDictionary
             return false;
         }
 
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            return false;
-        }
+        if (string.IsNullOrWhiteSpace(json)) return false;
 
         try
         {
             var dict = JsonSerializer.Deserialize(json, JsonContext.AssetDatabase);
-            if (dict is null)
-            {
-                return false;
-            }
+            if (dict is null) return false;
 
             dictionary.MergeWith(dict);
             return true;
@@ -111,32 +111,21 @@ public class AssetDictionary
 
     public void MergeWith(Dictionary<AssetType, SortedSet<Entry>> databases)
     {
-        foreach (var (assetType, sourceSet) in databases)
-        {
-            _database[assetType].UnionWith(sourceSet);
-        }
+        foreach (var (assetType, sourceSet) in databases) _database[assetType].UnionWith(sourceSet);
     }
 
     public void MergeWith(params AssetDictionary[] databases)
     {
         foreach (var db in databases)
-        {
-            foreach (var (assetType, sourceSet) in db._database)
-            {
-                _database[assetType].UnionWith(sourceSet);
-            }
-        }
+        foreach (var (assetType, sourceSet) in db._database)
+            _database[assetType].UnionWith(sourceSet);
     }
 
     public void SubtractWith(params AssetDictionary[] databases)
     {
         foreach (var db in databases)
-        {
-            foreach (var (assetType, sourceSet) in db._database)
-            {
-                _database[assetType].ExceptWith(sourceSet);
-            }
-        }
+        foreach (var (assetType, sourceSet) in db._database)
+            _database[assetType].ExceptWith(sourceSet);
     }
 
     public async Task SaveAsync(string path, CancellationToken ct = default)
@@ -147,21 +136,13 @@ public class AssetDictionary
 
     public void Clear()
     {
-        foreach (var set in _database.Values)
-        {
-            set.Clear();
-        }
-    }
-
-    public SortedSet<Entry> this[AssetType type]
-    {
-        get => _database[type];
-        set => _database[type] = value;
+        foreach (var set in _database.Values) set.Clear();
     }
 
     #region Collect
 
-    public static async Task<Dictionary<AssetType, SortedSet<Entry>>> CollectAsync(string workDir, CancellationToken ct = default)
+    public static async Task<Dictionary<AssetType, SortedSet<Entry>>> CollectAsync(string workDir,
+        CancellationToken ct = default)
     {
         var specs = new (string FileName, AssetType Type)[]
         {
@@ -173,7 +154,8 @@ public class AssetDictionary
         return await CollectManyAsync(workDir, specs, ct);
     }
 
-    private static async Task<List<Entry>> ReadEntriesAsync(string path, string entryName, CancellationToken ct = default)
+    private static async Task<List<Entry>> ReadEntriesAsync(string path, string entryName,
+        CancellationToken ct = default)
     {
         var entries = new List<Entry>();
         XDocument doc;
@@ -208,10 +190,7 @@ public class AssetDictionary
                 var id = (stringIdNode.Element("id")?.Value ?? string.Empty).Trim();
                 var str = (stringIdNode.Element("str")?.Value ?? string.Empty).Trim();
                 var data = (stringIdNode.Element("data")?.Value ?? string.Empty).Trim();
-                if (int.TryParse(id, out var val))
-                {
-                    entries.Add(new Entry(val, str, data));
-                }
+                if (int.TryParse(id, out var val)) entries.Add(new Entry(val, str, data));
             }
         }
         else
@@ -219,16 +198,14 @@ public class AssetDictionary
             var id = (node.Element("id")?.Value ?? string.Empty).Trim();
             var str = (node.Element("str")?.Value ?? string.Empty).Trim();
             var data = (node.Element("data")?.Value ?? string.Empty).Trim();
-            if (int.TryParse(id, out var val))
-            {
-                entries.Add(new Entry(val, str, data));
-            }
+            if (int.TryParse(id, out var val)) entries.Add(new Entry(val, str, data));
         }
 
         return entries;
     }
 
-    private static async Task<SortedSet<Entry>> CollectOneAsync(string root, string fileName, string entryName, CancellationToken ct = default)
+    private static async Task<SortedSet<Entry>> CollectOneAsync(string root, string fileName, string entryName,
+        CancellationToken ct = default)
     {
         var result = new SortedSet<Entry>();
         var walker = Directory.EnumerateFiles(root, fileName, SearchOption.AllDirectories);
@@ -238,10 +215,12 @@ public class AssetDictionary
             var entries = await ReadEntriesAsync(xmlFile, entryName, ct);
             foreach (var entry in entries) result.Add(entry);
         }
+
         return result;
     }
 
-    public static async Task<Dictionary<AssetType, SortedSet<Entry>>> CollectManyAsync(string root, IEnumerable<(string FileName, AssetType Type)> specs, CancellationToken ct = default)
+    public static async Task<Dictionary<AssetType, SortedSet<Entry>>> CollectManyAsync(string root,
+        IEnumerable<(string FileName, AssetType Type)> specs, CancellationToken ct = default)
     {
         var aggregated = CreateDatabase();
 

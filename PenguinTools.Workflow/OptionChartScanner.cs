@@ -8,18 +8,12 @@ using PenguinTools.Media;
 
 namespace PenguinTools.Workflow;
 
-using umgr = PenguinTools.Chart.Models.umgr;
+using umgr = Chart.Models.umgr;
 
 public static class OptionChartScanner
 {
     private const string MgxcExtension = ".mgxc";
     private const string UgcExtension = ".ugc";
-
-    private sealed class BookAccumulator
-    {
-        public readonly object Gate = new();
-        public readonly Dictionary<Difficulty, OptionDifficultySnapshot> Items = new();
-    }
 
     public static async Task<OperationResult<IReadOnlyList<OptionBookSnapshot>>> ScanDirectoryAsync(
         AssetManager assets,
@@ -34,18 +28,19 @@ public static class OptionChartScanner
         var processContext = new OptionExportProcessContext(diagnostics, ct, batchSize, workingDirectory);
         var booksById = new ConcurrentDictionary<int, BookAccumulator>();
 
-        DiagnosticSnapshot batch = discovery switch
+        var batch = discovery switch
         {
             ChartFileDiscoveryMode.MgxcOnly =>
-                await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: false, ct),
+                await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, false, ct),
             ChartFileDiscoveryMode.UgcOnly =>
-                await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: false, ct),
+                await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, false, ct),
             ChartFileDiscoveryMode.MgxcFirst =>
-                (await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: false, ct))
-                .Merge(await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: true, ct)),
+                (await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, false, ct))
+                .Merge(await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, true, ct)),
             ChartFileDiscoveryMode.UgcFirst =>
-                (await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: false, ct))
-                .Merge(await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, skipIfDifficultyFilled: true, ct)),
+                (await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, false, ct))
+                .Merge(await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, true,
+                    ct)),
             _ => DiagnosticSnapshot.Empty
         };
 
@@ -68,10 +63,11 @@ public static class OptionChartScanner
         return await OptionExportBatch.BatchAsync(
             "scan",
             chartPaths,
-            (filePath, innerDiagnostics) => LoadChartAsync(filePath, assets, mediaTool, booksById, innerDiagnostics, skipIfDifficultyFilled, ct),
+            (filePath, innerDiagnostics) => LoadChartAsync(filePath, assets, mediaTool, booksById, innerDiagnostics,
+                skipIfDifficultyFilled, ct),
             filePath => filePath,
             processContext,
-            parallel: true);
+            true);
     }
 
     private static async Task LoadChartAsync(
@@ -100,7 +96,10 @@ public static class OptionChartScanner
             if (!r.Succeeded || r.Value is not { } mgxcChart) return;
             chart = mgxcChart;
         }
-        else return;
+        else
+        {
+            return;
+        }
 
         var meta = chart.Meta;
         var id = meta.Id ?? throw new DiagnosticException("File ignored because song id is missing.");
@@ -112,9 +111,7 @@ public static class OptionChartScanner
             if (skipIfDifficultyFilled && book.Items.ContainsKey(meta.Difficulty)) return;
 
             if (book.Items.ContainsKey(meta.Difficulty))
-            {
                 diagnostics.Report(Severity.Warning, "Duplicate song id and difficulty.", target: filePath);
-            }
 
             book.Items[meta.Difficulty] = item;
         }
@@ -145,20 +142,15 @@ public static class OptionChartScanner
             lock (book.Gate)
             {
                 if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1)
-                {
-                    diagnostics.Report(Severity.Warning, "World's End chart must be the only difficulty for its song id.", target: items);
-                }
+                    diagnostics.Report(Severity.Warning,
+                        "World's End chart must be the only difficulty for its song id.", target: items);
             }
 
             var mainItems = items.Where(i => i.Meta.IsMain).ToArray();
             if (mainItems.Length > 1)
-            {
                 diagnostics.Report(Severity.Warning, "More than one chart is marked as main.", target: mainItems);
-            }
             else if (mainItems.Length == 0 && items.Length > 1)
-            {
                 diagnostics.Report(Severity.Warning, "No chart is marked as main.", target: items);
-            }
 
             var mainItem = mainItems.FirstOrDefault() ?? items.OrderByDescending(i => i.Difficulty).FirstOrDefault();
             if (mainItem is null)
@@ -184,5 +176,11 @@ public static class OptionChartScanner
         }
 
         return list;
+    }
+
+    private sealed class BookAccumulator
+    {
+        public readonly object Gate = new();
+        public readonly Dictionary<Difficulty, OptionDifficultySnapshot> Items = new();
     }
 }

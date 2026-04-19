@@ -1,13 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using PenguinTools.Resources;
-using PenguinTools.Infrastructure;
 using PenguinTools.Services;
-using System.IO;
 
 namespace PenguinTools.ViewModels;
 
@@ -29,23 +29,17 @@ public partial class StageViewModel : ActionViewModel
     [NotifyCanExecuteChangedFor(nameof(ActionCommand))]
     public partial string BackgroundPath { get; set; } = string.Empty;
 
-    [ObservableProperty]
-    public partial string? EffectPath0 { get; set; }
+    [ObservableProperty] public partial string? EffectPath0 { get; set; }
 
-    [ObservableProperty]
-    public partial string? EffectPath1 { get; set; }
+    [ObservableProperty] public partial string? EffectPath1 { get; set; }
 
-    [ObservableProperty]
-    public partial string? EffectPath2 { get; set; }
+    [ObservableProperty] public partial string? EffectPath2 { get; set; }
 
-    [ObservableProperty]
-    public partial string? EffectPath3 { get; set; }
+    [ObservableProperty] public partial string? EffectPath3 { get; set; }
 
-    [ObservableProperty]
-    public partial Entry NoteFieldsLine { get; set; }
+    [ObservableProperty] public partial Entry NoteFieldsLine { get; set; }
 
-    [ObservableProperty]
-    public partial int StageId { get; set; }
+    [ObservableProperty] public partial int StageId { get; set; }
 
     protected override bool CanRun()
     {

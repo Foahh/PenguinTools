@@ -1,9 +1,9 @@
-﻿using PenguinTools.Attributes;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using PenguinTools.Attributes;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Resources;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using umgr = PenguinTools.Chart.Models.umgr;
 
@@ -22,8 +22,7 @@ public class MusicModel : MetaModel
         BgmInitialTimeSignature = new TimeSignatureModel(Meta);
     }
 
-    [Browsable(false)]
-    public override umgr.Chart Mgxc { get; }
+    [Browsable(false)] public override umgr.Chart Mgxc { get; }
 
     [PropertyOrder(0)]
     [LocalizableCategory(nameof(Strings.Category_Song), typeof(Strings))]

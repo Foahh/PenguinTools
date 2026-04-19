@@ -13,7 +13,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
-        this._viewModel = viewModel;
+        _viewModel = viewModel;
         Title = string.Format(Strings.Window_Title, App.Name, App.Version.ToString(3));
         Loaded += OnLoaded;
 

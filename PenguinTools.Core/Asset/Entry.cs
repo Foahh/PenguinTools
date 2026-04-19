@@ -47,7 +47,7 @@ public class Entry : IComparable<Entry>, IEquatable<Entry>
 
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is Entry other && Equals(other);
+        return ReferenceEquals(this, obj) || (obj is Entry other && Equals(other));
     }
 
     public override int GetHashCode()

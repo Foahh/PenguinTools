@@ -51,10 +51,11 @@ public partial class C2SChartWriter
                 error = string.Empty;
                 return true;
             case c2s.Slide slide:
-                line = $"{FormatNote(slide)}\t{slide.Length.Scaled}\t{slide.EndLane}\t{slide.EndWidth}\tSLD{FormatEffect(slide.Effect)}";
+                line =
+                    $"{FormatNote(slide)}\t{slide.Length.Scaled}\t{slide.EndLane}\t{slide.EndWidth}\tSLD{FormatEffect(slide.Effect)}";
                 error = string.Empty;
                 return true;
-            case c2s.Air air when air.Parent is null:
+            case c2s.Air { Parent: null }:
                 line = string.Empty;
                 error = Strings.MgCrit_Air_parent_null;
                 return false;
@@ -62,16 +63,18 @@ public partial class C2SChartWriter
                 line = $"{FormatNote(air)}\t{parent.Id}\t{air.Color}";
                 error = string.Empty;
                 return true;
-            case c2s.AirSlide airSlide when airSlide.Parent is null:
+            case c2s.AirSlide { Parent: null }:
                 line = string.Empty;
                 error = Strings.MgCrit_Air_slide_parent_null;
                 return false;
             case c2s.AirSlide { Parent: { } parent } airSlide:
-                line = $"{FormatNote(airSlide)}\t{parent.Id}\t{airSlide.Height.Result:F1}\t{airSlide.Length.Scaled}\t{airSlide.EndLane}\t{airSlide.EndWidth}\t{airSlide.EndHeight.Result:F1}\t{airSlide.Color}";
+                line =
+                    $"{FormatNote(airSlide)}\t{parent.Id}\t{airSlide.Height.Result:F1}\t{airSlide.Length.Scaled}\t{airSlide.EndLane}\t{airSlide.EndWidth}\t{airSlide.EndHeight.Result:F1}\t{airSlide.Color}";
                 error = string.Empty;
                 return true;
             case c2s.AirCrash airCrash:
-                line = $"{FormatNote(airCrash)}\t{airCrash.Density.Scaled}\t{airCrash.Height.Result:F1}\t{airCrash.Length.Scaled}\t{airCrash.EndLane}\t{airCrash.EndWidth}\t{airCrash.EndHeight.Result:F1}\t{airCrash.Color}";
+                line =
+                    $"{FormatNote(airCrash)}\t{airCrash.Density.Scaled}\t{airCrash.Height.Result:F1}\t{airCrash.Length.Scaled}\t{airCrash.EndLane}\t{airCrash.EndWidth}\t{airCrash.EndHeight.Result:F1}\t{airCrash.Color}";
                 error = string.Empty;
                 return true;
             default:

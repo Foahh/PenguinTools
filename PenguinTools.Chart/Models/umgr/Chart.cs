@@ -1,4 +1,5 @@
-﻿using PenguinTools.Core.Metadata;
+using PenguinTools.Chart.Parser;
+using PenguinTools.Core.Metadata;
 
 namespace PenguinTools.Chart.Models.umgr;
 
@@ -20,10 +21,16 @@ public class Chart
         var firstEvent = beatEvents.FirstOrDefault();
         if (firstEvent is not { Bar: 0 })
         {
-            var newEvent = new BeatEvent { Bar = 0, Numerator = 4, Denominator = 4 };
+            var newEvent = new BeatEvent
+            {
+                Bar = 0,
+                Numerator = UmiguriParserCommon.DefaultBeatNumerator,
+                Denominator = UmiguriParserCommon.DefaultBeatDenominator
+            };
             Events.InsertBefore(newEvent, firstEvent);
             beatEvents.Insert(0, newEvent);
         }
+
         return new TimeCalculator(ChartResolution.UmiguriTick, beatEvents);
     }
 }

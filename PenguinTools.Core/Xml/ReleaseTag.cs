@@ -1,5 +1,5 @@
-﻿using PenguinTools.Core.Asset;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
+using PenguinTools.Core.Asset;
 
 namespace PenguinTools.Core.Xml;
 
@@ -23,9 +23,7 @@ public class ReleaseTag : XmlElement<ReleaseTag>
 
     protected override string FileName => "ReleaseTag.xml";
 
-    [XmlElement("name")]
-    public Entry Name { get; set; } = Entry.Default;
+    [XmlElement("name")] public Entry Name { get; set; } = Entry.Default;
 
-    [XmlElement("titleName")]
-    public string TitleName { get; set; } = string.Empty;
+    [XmlElement("titleName")] public string TitleName { get; set; } = string.Empty;
 }

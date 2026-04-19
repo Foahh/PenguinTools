@@ -1,6 +1,5 @@
 ﻿using PenguinTools.Chart.Resources;
 using PenguinTools.Core;
-using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 
 namespace PenguinTools.Chart.Parser.mgxc;
@@ -36,17 +35,9 @@ public partial class MgxcParser
         }
         else if (name == "diff")
         {
-            Mgxc.Meta.Difficulty = (int)data switch
-            {
-                0 => Difficulty.Basic,
-                1 => Difficulty.Advanced,
-                2 => Difficulty.Expert,
-                3 => Difficulty.Master,
-                4 => Difficulty.WorldsEnd,
-                5 => Difficulty.Ultima,
-                _ => Difficulty.Master
-            };
-            if (Mgxc.Meta.Difficulty == Difficulty.WorldsEnd) Mgxc.Meta.Stage = new Entry(0, "WORLD'S END0001_ノイズ");
+            Mgxc.Meta.Difficulty = UmiguriParserCommon.DifficultyFromValue((int)data);
+            if (Mgxc.Meta.Difficulty == Difficulty.WorldsEnd)
+                Mgxc.Meta.Stage = UmiguriParserCommon.CreateWorldsEndStage();
         }
         else if (name == "plvl")
         {
@@ -82,13 +73,11 @@ public partial class MgxcParser
         {
             Mgxc.Meta.BgmFilePath = (string)data;
             if (!string.IsNullOrWhiteSpace(Mgxc.Meta.BgmFilePath))
-            {
                 QueueValidation(
                     MediaTool.CheckAudioValidAsync(Mgxc.Meta.FullBgmFilePath),
                     Mgxc.Meta.FullBgmFilePath,
                     Strings.Error_Invalid_audio,
                     () => Mgxc.Meta.BgmFilePath = string.Empty);
-            }
         }
         else if (name == "wvof")
         {
@@ -106,13 +95,11 @@ public partial class MgxcParser
         {
             Mgxc.Meta.JacketFilePath = (string)data;
             if (!string.IsNullOrWhiteSpace(Mgxc.Meta.JacketFilePath))
-            {
                 QueueValidation(
                     MediaTool.CheckImageValidAsync(Mgxc.Meta.FullJacketFilePath),
                     Mgxc.Meta.FullJacketFilePath,
                     Strings.Error_Invalid_jk_image,
                     () => Mgxc.Meta.JacketFilePath = string.Empty);
-            }
         }
         else if (name == "bgfn")
         {
@@ -134,21 +121,10 @@ public partial class MgxcParser
         }
         else if (name == "flcx")
         {
-            // FIELD COLOR
-            var col = (int)data switch
-            {
-                0 => "White",
-                1 => "Red",
-                2 => "Orange",
-                3 => "Yellow",
-                4 => "Olive", // Lime
-                5 => "Green",
-                6 => "SkyBlue", // Teal
-                7 => "Blue",
-                8 => "Purple",
-                _ => "Orange"
-            };
-            Mgxc.Meta.NotesFieldLine = Assets.FieldLines.FirstOrDefault(x => x.Str == col) ?? Mgxc.Meta.NotesFieldLine;
+            var col = UmiguriParserCommon.FieldLineNameFromIndex((int)data);
+            if (col != null)
+                Mgxc.Meta.NotesFieldLine =
+                    Assets.FieldLines.FirstOrDefault(x => x.Str == col) ?? Mgxc.Meta.NotesFieldLine;
         }
         else if (name == "flbg")
         {

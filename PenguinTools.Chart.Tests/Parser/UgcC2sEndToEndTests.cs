@@ -8,12 +8,14 @@ namespace PenguinTools.Chart.Tests.Parser;
 public class UgcC2sEndToEndTests
 {
     /// <summary>
-    /// Writes both charts with <see cref="C2SChartWriter"/> and compares output from the start through the line before the first <c>SLP</c> (scroll) row.
-    /// Full first-100-line identity is still sensitive to TIL-derived <c>SLP</c> ordering on some charts.
+    ///     Writes both charts with <see cref="C2SChartWriter" /> and compares output from the start through the line before
+    ///     the first <c>SLP</c> (scroll) row.
+    ///     Full first-100-line identity is still sensitive to TIL-derived <c>SLP</c> ordering on some charts.
     /// </summary>
     [Theory]
     [MemberData(nameof(FinishedChartSampleCases.MasterPairs), MemberType = typeof(FinishedChartSampleCases))]
-    public async Task UgcProducedC2s_MatchesMgxcProducedC2s_FirstHundredLines(string name, string ugcPath, string mgxcPath)
+    public async Task UgcProducedC2s_MatchesMgxcProducedC2s_FirstHundredLines(string name, string ugcPath,
+        string mgxcPath)
     {
         var assets = TestAssets.Load();
         var media = TestMediaTool.Instance;

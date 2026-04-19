@@ -1,17 +1,17 @@
+using System.IO;
+using PenguinTools.Chart.Parser.mgxc;
+using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Media;
-using PenguinTools.Resources;
 using PenguinTools.Models;
+using PenguinTools.Resources;
 using PenguinTools.Workflow;
-using System.IO;
-using PenguinTools.Chart.Parser.mgxc;
-using PenguinTools.Chart.Parser.ugc;
 
 namespace PenguinTools.Services;
 
-using umgr = PenguinTools.Chart.Models.umgr;
+using umgr = Chart.Models.umgr;
 
 public sealed class ChartScanService : IChartScanService
 {
@@ -27,26 +27,29 @@ public sealed class ChartScanService : IChartScanService
         _mediaTool = mediaTool;
     }
 
-    public async Task<OperationResult> ScanAsync(string directory, BookDictionary books, ChartScanParameters parameters, CancellationToken ct)
+    public async Task<OperationResult> ScanAsync(string directory, BookDictionary books, ChartScanParameters parameters,
+        CancellationToken ct)
     {
-        var processContext = new OptionExportProcessContext(parameters.Diagnostics, ct, parameters.BatchSize, parameters.WorkingDirectory);
-        DiagnosticSnapshot batch = parameters.ChartFileDiscovery switch
+        var processContext = new OptionExportProcessContext(parameters.Diagnostics, ct, parameters.BatchSize,
+            parameters.WorkingDirectory);
+        var batch = parameters.ChartFileDiscovery switch
         {
             ChartFileDiscoveryMode.MgxcOnly =>
-                await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, skipIfDifficultyFilled: false, ct),
+                await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, false, ct),
             ChartFileDiscoveryMode.UgcOnly =>
-                await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, skipIfDifficultyFilled: false, ct),
+                await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, false, ct),
             ChartFileDiscoveryMode.MgxcFirst =>
-                (await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, skipIfDifficultyFilled: false, ct))
-                .Merge(await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, skipIfDifficultyFilled: true, ct)),
+                (await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, false, ct))
+                .Merge(await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, true, ct)),
             ChartFileDiscoveryMode.UgcFirst =>
-                (await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, skipIfDifficultyFilled: false, ct))
-                .Merge(await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, skipIfDifficultyFilled: true, ct)),
+                (await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, false, ct))
+                .Merge(await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, true, ct)),
             _ => DiagnosticSnapshot.Empty
         };
 
         FinalizeBooks(books, parameters.Diagnostics, ct);
-        return OperationResult.Success().WithDiagnostics(batch.Merge(DiagnosticSnapshot.Create(parameters.Diagnostics)));
+        return OperationResult.Success()
+            .WithDiagnostics(batch.Merge(DiagnosticSnapshot.Create(parameters.Diagnostics)));
     }
 
     private async Task<DiagnosticSnapshot> LoadBooksFromGlobAsync(
@@ -61,13 +64,15 @@ public sealed class ChartScanService : IChartScanService
         return await OptionExportBatch.BatchAsync(
             Strings.Status_Checked,
             chartPaths,
-            (filePath, innerDiagnostics) => LoadBookAsync(filePath, books, innerDiagnostics, skipIfDifficultyFilled, ct),
+            (filePath, innerDiagnostics) =>
+                LoadBookAsync(filePath, books, innerDiagnostics, skipIfDifficultyFilled, ct),
             filePath => filePath,
             context,
-            parallel: true);
+            true);
     }
 
-    private async Task LoadBookAsync(string filePath, BookDictionary books, IDiagnosticSink diagnostics, bool skipIfDifficultyFilled, CancellationToken ct)
+    private async Task LoadBookAsync(string filePath, BookDictionary books, IDiagnosticSink diagnostics,
+        bool skipIfDifficultyFilled, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
         var ext = Path.GetExtension(filePath);
@@ -86,7 +91,10 @@ public sealed class ChartScanService : IChartScanService
             if (!r.Succeeded || r.Value is not { } mgxcChart) return;
             chart = mgxcChart;
         }
-        else return;
+        else
+        {
+            return;
+        }
 
         var meta = chart.Meta;
         var id = meta.Id ?? throw new DiagnosticException(Strings.Error_File_ignored_due_to_id_missing);
@@ -107,9 +115,7 @@ public sealed class ChartScanService : IChartScanService
             if (skipIfDifficultyFilled && book.Items.ContainsKey(meta.Difficulty)) return;
 
             if (book.Items.ContainsKey(meta.Difficulty))
-            {
                 diagnostics.Report(Severity.Warning, Strings.Warn_Duplicate_id_and_difficulty);
-            }
 
             book.Items[meta.Difficulty] = item;
         }
@@ -128,21 +134,16 @@ public sealed class ChartScanService : IChartScanService
             }
 
             if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1)
-            {
                 diagnostics.Report(Severity.Warning, Strings.Warn_We_chart_must_be_unique_id, target: items);
-            }
 
             var mainItems = items.Where(item => item.Mgxc.Meta.IsMain).ToArray();
             if (mainItems.Length > 1)
-            {
                 diagnostics.Report(Severity.Warning, Strings.Warn_More_than_one_chart_marked_main, target: mainItems);
-            }
             else if (mainItems.Length == 0 && items.Length > 1)
-            {
                 diagnostics.Report(Severity.Warning, Strings.Warn_No_chart_marked_main, target: items);
-            }
 
-            var mainItem = mainItems.FirstOrDefault() ?? items.OrderByDescending(item => item.Difficulty).FirstOrDefault();
+            var mainItem = mainItems.FirstOrDefault() ??
+                           items.OrderByDescending(item => item.Difficulty).FirstOrDefault();
             if (mainItem == null)
             {
                 books.Remove(id);

@@ -1,7 +1,6 @@
 using System.Globalization;
 using PenguinTools.Chart.Resources;
 using PenguinTools.Core;
-using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 
 namespace PenguinTools.Chart.Parser.ugc;
@@ -71,6 +70,7 @@ public partial class UgcParser
                     Log("WEATTR", args);
                     return;
                 }
+
                 var attr = Assets.WeTagNames.FirstOrDefault(x => x.Str == args[0]);
                 if (attr != null) Ugc.Meta.WeTag = attr;
                 break;
@@ -85,11 +85,16 @@ public partial class UgcParser
         }
     }
 
-    private static string Str(string[] args) => args.Length >= 1 ? args[0] : string.Empty;
+    private static string Str(string[] args)
+    {
+        return args.Length >= 1 ? args[0] : string.Empty;
+    }
 
-    private void Log(string name, string[] args) =>
+    private void Log(string name, string[] args)
+    {
         ReportAtCurrentLine(Severity.Information,
             string.Format(Strings.Mg_Unrecognized_meta, name, string.Join(' ', args)));
+    }
 
     private void HandleVer(string[] args)
     {
@@ -121,18 +126,9 @@ public partial class UgcParser
     private void HandleDiff(string[] args)
     {
         if (args.Length < 1 || !int.TryParse(args[0], out var d)) return;
-        Ugc.Meta.Difficulty = d switch
-        {
-            0 => Difficulty.Basic,
-            1 => Difficulty.Advanced,
-            2 => Difficulty.Expert,
-            3 => Difficulty.Master,
-            4 => Difficulty.WorldsEnd,
-            5 => Difficulty.Ultima,
-            _ => Difficulty.Master
-        };
+        Ugc.Meta.Difficulty = UmiguriParserCommon.DifficultyFromValue(d);
         if (Ugc.Meta.Difficulty == Difficulty.WorldsEnd)
-            Ugc.Meta.Stage = new Entry(0, "WORLD'S END0001_ノイズ");
+            Ugc.Meta.Stage = UmiguriParserCommon.CreateWorldsEndStage();
     }
 
     private void HandleLevel(string[] args)
@@ -177,13 +173,11 @@ public partial class UgcParser
         if (args.Length < 1) return;
         Ugc.Meta.BgmFilePath = args[0];
         if (!string.IsNullOrWhiteSpace(Ugc.Meta.BgmFilePath))
-        {
             QueueValidation(
                 MediaTool.CheckAudioValidAsync(Ugc.Meta.FullBgmFilePath),
                 Ugc.Meta.FullBgmFilePath,
                 Strings.Error_Invalid_audio,
                 () => Ugc.Meta.BgmFilePath = string.Empty);
-        }
     }
 
     private void HandleBgmPreview(string[] args)
@@ -199,13 +193,11 @@ public partial class UgcParser
         if (args.Length < 1) return;
         Ugc.Meta.JacketFilePath = args[0];
         if (!string.IsNullOrWhiteSpace(Ugc.Meta.JacketFilePath))
-        {
             QueueValidation(
                 MediaTool.CheckImageValidAsync(Ugc.Meta.FullJacketFilePath),
                 Ugc.Meta.FullJacketFilePath,
                 Strings.Error_Invalid_jk_image,
                 () => Ugc.Meta.JacketFilePath = string.Empty);
-        }
     }
 
     private void HandleBgImg(string[] args)
@@ -219,17 +211,19 @@ public partial class UgcParser
     private void HandleFldCol(string[] args)
     {
         if (args.Length < 1 || !int.TryParse(args[0], out var idx) || idx < 0) return;
-        var col = idx switch
-        {
-            0 => "White", 1 => "Red", 2 => "Orange", 3 => "Yellow", 4 => "Olive",
-            5 => "Green", 6 => "SkyBlue", 7 => "Blue", 8 => "Purple", _ => "Orange"
-        };
-        Ugc.Meta.NotesFieldLine = Assets.FieldLines.FirstOrDefault(x => x.Str == col) ?? Ugc.Meta.NotesFieldLine;
+        var col = UmiguriParserCommon.FieldLineNameFromIndex(idx);
+        if (col != null)
+            Ugc.Meta.NotesFieldLine = Assets.FieldLines.FirstOrDefault(x => x.Str == col) ?? Ugc.Meta.NotesFieldLine;
     }
 
     private void HandleFlag(string[] args)
     {
-        if (args.Length < 2) { Log("FLAG", args); return; }
+        if (args.Length < 2)
+        {
+            Log("FLAG", args);
+            return;
+        }
+
         var key = args[0].ToUpperInvariant();
         var boolVal = ParseBool(args[1]);
         switch (key)

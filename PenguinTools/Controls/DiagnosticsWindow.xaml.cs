@@ -15,19 +15,17 @@ public partial class DiagnosticsWindow
 
 public partial class DiagnosticsWindowViewModel : ObservableObject
 {
-    [ObservableProperty] public partial string Title { get; set; } = $"{Strings.Title_Diagnostics} v{App.Version.ToString(3)} ({App.BuildDate.ToShortDateString()})";
-
     [ObservableProperty]
-    public partial ConcurrentObservableSortedSet<Diagnostic>? Diagnostics { get; set; }
+    public partial string Title { get; set; } =
+        $"{Strings.Title_Diagnostics} v{App.Version.ToString(3)} ({App.BuildDate.ToShortDateString()})";
 
-    [ObservableProperty]
-    public partial Diagnostic? SelectedDiagnostic { get; set; }
+    [ObservableProperty] public partial ConcurrentObservableSortedSet<Diagnostic>? Diagnostics { get; set; }
 
-    [ObservableProperty]
-    public partial double PathColumnWidth { get; private set; } = double.NaN;
+    [ObservableProperty] public partial Diagnostic? SelectedDiagnostic { get; set; }
 
-    [ObservableProperty]
-    public partial double TimeColumnWidth { get; private set; } = double.NaN;
+    [ObservableProperty] public partial double PathColumnWidth { get; private set; } = double.NaN;
+
+    [ObservableProperty] public partial double TimeColumnWidth { get; private set; } = double.NaN;
 
     partial void OnDiagnosticsChanged(ConcurrentObservableSortedSet<Diagnostic>? value)
     {

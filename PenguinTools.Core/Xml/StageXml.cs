@@ -1,5 +1,5 @@
-﻿using PenguinTools.Core.Asset;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
+using PenguinTools.Core.Asset;
 
 namespace PenguinTools.Core.Xml;
 
@@ -21,24 +21,17 @@ public class StageXml : XmlElement<StageXml>
 
     protected override string FileName => "Stage.xml";
 
-    [XmlElement("netOpenName")]
-    public Entry NetOpenName { get; set; } = XmlConstants.NetOpenName;
+    [XmlElement("netOpenName")] public Entry NetOpenName { get; set; } = XmlConstants.NetOpenName;
 
-    [XmlElement("releaseTagName")]
-    public Entry ReleaseTagName { get; set; } = ReleaseTag.Default.Name;
+    [XmlElement("releaseTagName")] public Entry ReleaseTagName { get; set; } = ReleaseTag.Default.Name;
 
-    [XmlElement("name")]
-    public Entry Name { get; set; } = Entry.Default;
+    [XmlElement("name")] public Entry Name { get; set; } = Entry.Default;
 
-    [XmlElement("notesFieldLine")]
-    public Entry NotesFieldLine { get; set; } = Entry.Default;
+    [XmlElement("notesFieldLine")] public Entry NotesFieldLine { get; set; } = Entry.Default;
 
-    [XmlElement("notesFieldFile")]
-    public PathElement NotesFieldFile { get; set; } = new();
+    [XmlElement("notesFieldFile")] public PathElement NotesFieldFile { get; set; } = new();
 
-    [XmlElement("baseFile")]
-    public PathElement BaseFile { get; set; } = new();
+    [XmlElement("baseFile")] public PathElement BaseFile { get; set; } = new();
 
-    [XmlElement("objectFile")]
-    public PathElement ObjectFile { get; set; } = new();
+    [XmlElement("objectFile")] public PathElement ObjectFile { get; set; } = new();
 }

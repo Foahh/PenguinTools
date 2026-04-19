@@ -1,10 +1,10 @@
-using PenguinTools.Core;
-using PenguinTools.Core.Asset;
-using PenguinTools.Chart.Models;
-using PenguinTools.Chart.Resources;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using PenguinTools.Chart.Models;
+using PenguinTools.Chart.Resources;
+using PenguinTools.Core;
+using PenguinTools.Core.Asset;
 
 namespace PenguinTools.Chart.Parser;
 
@@ -12,9 +12,9 @@ using umgr = Models.umgr;
 
 internal sealed partial class ChartPostProcessor
 {
+    private readonly AssetManager _assets;
     private readonly umgr.Chart _chart;
     private readonly IDiagnosticSink _diag;
-    private readonly AssetManager _assets;
 
     private readonly Dictionary<int, List<umgr.Note>> _noteGroups = [];
     private readonly Dictionary<int, List<umgr.ScrollSpeedEvent>> _tilGroups = [];
@@ -46,7 +46,8 @@ internal sealed partial class ChartPostProcessor
     private void ProcessEvent()
     {
         var bpmEvents = _chart.Events.Children.OfType<umgr.BpmEvent>().OrderBy(e => e.Tick).ToArray();
-        if (bpmEvents.Length <= 0 || bpmEvents[0].Tick.Original != 0) throw new DiagnosticException(Strings.Mg_Head_BPM_not_found);
+        if (bpmEvents.Length <= 0 || bpmEvents[0].Tick.Original != 0)
+            throw new DiagnosticException(Strings.Mg_Head_BPM_not_found);
 
         var beatEvents = _chart.Events.Children.OfType<umgr.BeatEvent>().OrderBy(e => e.Bar).ToList();
         var firstBeatEvent = beatEvents.FirstOrDefault();
@@ -98,6 +99,7 @@ internal sealed partial class ChartPostProcessor
                 effectSet = [];
                 exEffects[exTap.Tick] = effectSet;
             }
+
             effectSet.Add(exTap.Effect);
 
             if (!noteGroup.TryGetValue(exTap.Tick, out var notesAtTick)) continue;
@@ -105,7 +107,7 @@ internal sealed partial class ChartPostProcessor
             foreach (var note in notesAtTick)
             {
                 var covering = exTap.Lane <= note.Lane && exTap.Lane + exTap.Width >= note.Lane + note.Width;
-                if (!covering) { continue; }
+                if (!covering) continue;
 
                 note.Effect = exTap.Effect;
 
@@ -148,17 +150,15 @@ internal sealed partial class ChartPostProcessor
         var noteSpeedMods = _chart.Events.Children.OfType<umgr.NoteSpeedEvent>().ToArray();
         foreach (var e in _chart.Events.Children.OfType<umgr.SpeedEventBase>().ToArray()) _chart.Events.RemoveChild(e);
         foreach (var (tilId, events) in _tilGroups)
+        foreach (var e in events)
         {
-            foreach (var e in events)
+            var newEvent = new umgr.ScrollSpeedEvent
             {
-                var newEvent = new umgr.ScrollSpeedEvent
-                {
-                    Tick = e.Tick,
-                    Timeline = tilId,
-                    Speed = e.Speed
-                };
-                _chart.Events.AppendChild(newEvent);
-            }
+                Tick = e.Tick,
+                Timeline = tilId,
+                Speed = e.Speed
+            };
+            _chart.Events.AppendChild(newEvent);
         }
 
         foreach (var e in noteSpeedMods)
@@ -167,7 +167,6 @@ internal sealed partial class ChartPostProcessor
 
     private void PlaceSoflanArea()
     {
-
         foreach (var tils in _tilGroups.Values.ToArray()) tils.Sort((a, b) => a.Tick.CompareTo(b.Tick));
         var slaSet = new HashSet<(int Tick, int Timeline, int Lane, int Width)>();
         foreach (var (id, notes) in _noteGroups)
@@ -179,10 +178,14 @@ internal sealed partial class ChartPostProcessor
                 note.Timeline = id;
 
                 // magic optimization: when the crash is transparent, it is not necessary to add the SLA on the control joint
-                if (note is umgr.AirCrashJoint { Parent: umgr.AirCrash { Color: Color.NON }, Density.Original: 0x7FFFFFFF or 0 }) continue;
+                if (note is umgr.AirCrashJoint
+                    {
+                        Parent: umgr.AirCrash { Color: Color.NON }, Density.Original: 0x7FFFFFFF or 0
+                    }) continue;
 
                 // find the speed that is just before the note
-                var prevTil = events.Where(p => p.Tick.Original <= note.Tick.Original).OrderByDescending(p => p.Tick).FirstOrDefault();
+                var prevTil = events.Where(p => p.Tick.Original <= note.Tick.Original).OrderByDescending(p => p.Tick)
+                    .FirstOrDefault();
                 if (prevTil?.Speed is null) continue;
                 if (slaSet.Contains((note.Tick.Original, id, note.Lane, note.Width))) continue;
 
@@ -235,6 +238,7 @@ internal sealed partial class ChartPostProcessor
             _diag.Report(Severity.Information, msg);
             return;
         }
+
         SwapGroup(mainTil, 0);
     }
 
@@ -245,13 +249,13 @@ internal sealed partial class ChartPostProcessor
             var mappedNotes = _noteGroups[id];
             var maxTick = mappedNotes.Select(p => p.Tick).Append(0).Max();
             if (mappedNotes.Count == 0 && _chart.Notes.Children.Count > 0) _tilGroups.Remove(id);
-            else if (events.Count > 0 && maxTick.Original > 0) events.RemoveAll(p => p.Tick.Original > maxTick.Original + ChartResolution.SingleTick);
+            else if (events.Count > 0 && maxTick.Original > 0)
+                events.RemoveAll(p => p.Tick.Original > maxTick.Original + ChartResolution.SingleTick);
         }
 
         foreach (var (id, notes) in _noteGroups.ToArray())
-        {
-            if (notes.Count == 0) _noteGroups.Remove(id);
-        }
+            if (notes.Count == 0)
+                _noteGroups.Remove(id);
     }
 
     private void CreateGroup(int id)
@@ -295,17 +299,16 @@ internal sealed partial class ChartPostProcessor
         {
             var notesInGroup = group.ToArray();
             for (var i = 0; i < notesInGroup.Length; i++)
+            for (var j = i + 1; j < notesInGroup.Length; j++)
             {
-                for (var j = i + 1; j < notesInGroup.Length; j++)
-                {
-                    if (!notesInGroup[i].IsViolate(notesInGroup[j])) continue;
-                    violations.Add(notesInGroup[i]);
-                    violations.Add(notesInGroup[j]);
-                }
+                if (!notesInGroup[i].IsViolate(notesInGroup[j])) continue;
+                violations.Add(notesInGroup[i]);
+                violations.Add(notesInGroup[j]);
             }
         }
 
-        foreach (var note in violations) _diag.Report(Severity.Warning, Strings.Mg_Note_overlapped_in_different_TIL, note.Tick.Original, note);
+        foreach (var note in violations)
+            _diag.Report(Severity.Warning, Strings.Mg_Note_overlapped_in_different_TIL, note.Tick.Original, note);
     }
 
     private void MetaEntryHandler(string name, string[] args, Action<Entry> setter, AssetType type)
@@ -319,7 +322,9 @@ internal sealed partial class ChartPostProcessor
 
         if (args.Length >= 2)
         {
-            var newId = int.TryParse(args[0], out var parsedId) ? parsedId : throw new DiagnosticException(Strings.Mg_Meta_First_argument_must_int);
+            var newId = int.TryParse(args[0], out var parsedId)
+                ? parsedId
+                : throw new DiagnosticException(Strings.Mg_Meta_First_argument_must_int);
             var data = args.Length >= 3 ? args[2] : null;
             var newEntry = new Entry(newId, args[1], data ?? string.Empty);
             setter(newEntry);
@@ -444,7 +449,6 @@ internal sealed partial class ChartPostProcessor
             var tagArgs = parts.Skip(1).ToArray();
 
             if (config.TryGetValue(tagName, out var handler))
-            {
                 try
                 {
                     handler(tagArgs);
@@ -453,15 +457,12 @@ internal sealed partial class ChartPostProcessor
                 {
                     _diag.Report(ex);
                 }
-            }
             else
-            {
                 _diag.Report(
                     Severity.Warning,
                     string.Format(Strings.Mg_Meta_Unknown_tag, tagName),
                     target: parts
                 );
-            }
         }
     }
 
@@ -477,6 +478,9 @@ internal sealed partial class ChartPostProcessor
 
 internal sealed partial class ChartPostProcessor
 {
-    [GeneratedRegex(@"\s+")] private static partial Regex WhitespaceRegex();
-    [GeneratedRegex(@"[^\p{L}\p{N}_]")] private static partial Regex SpecialCharacterRegex();
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex WhitespaceRegex();
+
+    [GeneratedRegex(@"[^\p{L}\p{N}_]")]
+    private static partial Regex SpecialCharacterRegex();
 }

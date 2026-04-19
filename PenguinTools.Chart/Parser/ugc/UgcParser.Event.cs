@@ -7,11 +7,11 @@ using umgr = Models.umgr;
 
 public partial class UgcParser
 {
+    private const int DefaultBeatNumerator = 4;
+    private const int DefaultBeatDenominator = 4;
     private readonly List<(int Bar, int Tick, decimal Bpm)> _pendingBpms = [];
     private readonly List<(int Bar, int Tick, decimal Speed)> _pendingSpdMods = [];
     private readonly List<(int Timeline, int Bar, int Tick, decimal Speed)> _pendingTils = [];
-    private const int DefaultBeatNumerator = 4;
-    private const int DefaultBeatDenominator = 4;
 
     private void HandleBpm(string[] args)
     {
@@ -45,7 +45,7 @@ public partial class UgcParser
         var idx = s.IndexOf('\'');
         if (idx <= 0) return false;
         return int.TryParse(s.AsSpan(0, idx), out bar)
-            && int.TryParse(s.AsSpan(idx + 1), out tick);
+               && int.TryParse(s.AsSpan(idx + 1), out tick);
     }
 
     internal int BarTickToAbsTick(int bar, int tick)
@@ -53,20 +53,18 @@ public partial class UgcParser
         var beats = Ugc.Events.Children.OfType<umgr.BeatEvent>().OrderBy(b => b.Bar).ToList();
         if (beats.Count == 0)
         {
-            var defaultTicksPerBar = ChartResolution.UmiguriTick * DefaultBeatNumerator / DefaultBeatDenominator;
+            const int defaultTicksPerBar = ChartResolution.UmiguriTick * DefaultBeatNumerator / DefaultBeatDenominator;
             return bar * defaultTicksPerBar + tick;
         }
 
         umgr.BeatEvent? active = null;
         foreach (var b in beats)
-        {
             if (b.Bar <= bar) active = b;
             else break;
-        }
 
         if (active is null)
         {
-            var defaultTicksPerBar = ChartResolution.UmiguriTick * DefaultBeatNumerator / DefaultBeatDenominator;
+            const int defaultTicksPerBar = ChartResolution.UmiguriTick * DefaultBeatNumerator / DefaultBeatDenominator;
             return bar * defaultTicksPerBar + tick;
         }
 

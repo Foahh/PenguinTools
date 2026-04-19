@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Core;
 using PenguinTools.Resources;
-using System.Media;
 
 namespace PenguinTools.Services;
 
@@ -37,11 +37,12 @@ public partial class ActionService : ObservableObject
         await ExecuteAsync(action, ct);
     }
 
-    private async Task<OperationResult> ExecuteAsync(Func<CancellationToken, Task<OperationResult>> action, CancellationToken ct)
+    private async Task<OperationResult> ExecuteAsync(Func<CancellationToken, Task<OperationResult>> action,
+        CancellationToken ct)
     {
         if (!CanRun()) return OperationResult.Failure();
         var diagnostics = new Diagnoster();
-        OperationResult result = OperationResult.Failure();
+        var result = OperationResult.Failure();
         var wasCancelled = false;
         IsBusy = true;
 
@@ -88,9 +89,10 @@ public partial class ActionService : ObservableObject
         return result;
     }
 
-    public async Task<OperationResult<T>> RunAsync<T>(Func<CancellationToken, Task<OperationResult<T>>> action, CancellationToken ct = default)
+    public async Task<OperationResult<T>> RunAsync<T>(Func<CancellationToken, Task<OperationResult<T>>> action,
+        CancellationToken ct = default)
     {
-        OperationResult<T> result = OperationResult<T>.Failure();
+        var result = OperationResult<T>.Failure();
         var wrapper = await ExecuteAsync(async innerCt =>
         {
             result = await action(innerCt);

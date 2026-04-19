@@ -7,9 +7,9 @@
     xmlns:converters="clr-namespace:PenguinTools.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools"
-    xmlns:shell="clr-namespace:PenguinTools.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:PenguinTools.Resources"
+    xmlns:shell="clr-namespace:PenguinTools.Controls"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>

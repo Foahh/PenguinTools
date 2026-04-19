@@ -1,8 +1,8 @@
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using PenguinTools.Attributes;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Resources;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace PenguinTools.Models;
@@ -15,19 +15,20 @@ public class AudioModel : Model
     {
         PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName != nameof(BgmOffset) && e.PropertyName != nameof(BgmEnableBarOffset) && e.PropertyName != nameof(BgmInitialBpm) && e.PropertyName != nameof(BgmInitialTimeSignature)) return;
+            if (e.PropertyName != nameof(BgmOffset) && e.PropertyName != nameof(BgmEnableBarOffset) &&
+                e.PropertyName != nameof(BgmInitialBpm) && e.PropertyName != nameof(BgmInitialTimeSignature)) return;
             OnPropertyChanged(nameof(RealOffset));
         };
         BgmInitialTimeSignature = new TimeSignatureModel(Meta);
         BgmInitialTimeSignature.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName != nameof(TimeSignatureModel.Numerator) && e.PropertyName != nameof(TimeSignatureModel.Denominator)) return;
+            if (e.PropertyName != nameof(TimeSignatureModel.Numerator) &&
+                e.PropertyName != nameof(TimeSignatureModel.Denominator)) return;
             OnPropertyChanged(nameof(BgmInitialTimeSignature));
         };
     }
 
-    [Browsable(false)]
-    public Meta Meta { get; } = new();
+    [Browsable(false)] public Meta Meta { get; } = new();
 
     [PropertyOrder(-1)]
     [LocalizableCategory(nameof(Strings.Category_BGM), typeof(Strings))]

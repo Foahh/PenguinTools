@@ -1,5 +1,5 @@
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -35,7 +35,8 @@ public static class JsonPersistence
         TypeInfoResolver = new ModelJsonTypeInfoResolver()
     };
 
-    public static async Task LoadIntoAsync(object target, string directory, string jsonFileName, CancellationToken cancellationToken = default)
+    public static async Task LoadIntoAsync(object target, string directory, string jsonFileName,
+        CancellationToken cancellationToken = default)
     {
         var path = Path.Combine(directory, jsonFileName);
         if (!File.Exists(path)) return;
@@ -51,7 +52,6 @@ public static class JsonPersistence
                 .Where(p => p is { CanRead: true, CanWrite: true })
                 .Where(p => p.GetMethod?.IsStatic == false);
             foreach (var property in properties)
-            {
                 try
                 {
                     var value = property.GetValue(obj);
@@ -61,7 +61,6 @@ public static class JsonPersistence
                 {
                     Debug.WriteLine(ex);
                 }
-            }
         }
         catch (Exception ex)
         {
@@ -69,7 +68,8 @@ public static class JsonPersistence
         }
     }
 
-    public static async Task SaveFromAsync(object source, string directory, string jsonFileName, CancellationToken cancellationToken = default)
+    public static async Task SaveFromAsync(object source, string directory, string jsonFileName,
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(directory)) throw new ArgumentNullException(nameof(directory));
         var path = Path.Combine(directory, jsonFileName);

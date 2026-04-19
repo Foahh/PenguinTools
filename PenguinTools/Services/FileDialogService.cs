@@ -8,7 +8,10 @@ public sealed class FileDialogService : IFileDialogService
 {
     private readonly Lazy<MainWindow> _mainWindow;
 
-    public FileDialogService(Lazy<MainWindow> mainWindow) => _mainWindow = mainWindow;
+    public FileDialogService(Lazy<MainWindow> mainWindow)
+    {
+        _mainWindow = mainWindow;
+    }
 
     public Task<string?> PickFolderAsync(string title, string? initialDirectory, Guid? clientGuid = null)
     {

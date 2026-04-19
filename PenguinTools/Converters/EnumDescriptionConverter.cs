@@ -12,7 +12,8 @@ public class EnumDescriptionConverter : IValueConverter
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value == null) return null;
-        if (value is IEnumerable enumerable) return enumerable.OfType<Enum>().Select(v => new EnumDescription(v, v.GetDescription()));
+        if (value is IEnumerable enumerable)
+            return enumerable.OfType<Enum>().Select(v => new EnumDescription(v, v.GetDescription()));
         var type = value.GetType();
         if (!type.IsEnum) return null;
         var enums = Enum.GetValues(type).Cast<Enum>();

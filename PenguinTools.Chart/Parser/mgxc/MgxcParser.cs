@@ -50,31 +50,40 @@ public partial class MgxcParser
 
     public async Task<OperationResult<umgr.Chart>> ParseAsync(CancellationToken ct = default)
     {
-        Mgxc.Meta.FilePath = Path;
+        try
+        {
+            Mgxc.Meta.FilePath = Path;
 
-        await using var fs = File.OpenRead(Path);
-        using var br = new BinaryReader(fs);
+            await using var fs = File.OpenRead(Path);
+            using var br = new BinaryReader(fs);
 
-        var header = br.ReadUtf8String(4);
-        if (header != HeaderMgxc) throw new DiagnosticException(string.Format(Strings.Error_Invalid_Header, header, HeaderMgxc));
+            var header = br.ReadUtf8String(4);
+            if (header != HeaderMgxc)
+                ThrowAtPosition(string.Format(Strings.Error_Invalid_Header, header, HeaderMgxc), fs.Position - 4);
 
-        br.ReadInt32(); // MGXC Block Size
-        br.ReadInt32(); // unknown
+            br.ReadInt32(); // MGXC Block Size
+            br.ReadInt32(); // unknown
 
-        br.ReadBlock(HeaderMeta, ParseMeta);
+            br.ReadBlock(HeaderMeta, ParseMeta);
 
-        br.ReadBlock(HeaderEvnt, ParseEvent);
+            br.ReadBlock(HeaderEvnt, ParseEvent);
 
-        Diagnostic.TimeCalculator = Mgxc.GetCalculator();
+            Diagnostic.TimeCalculator = Mgxc.GetCalculator();
 
-        br.ReadBlock(HeaderDat2, ParseNote);
+            br.ReadBlock(HeaderDat2, ParseNote);
 
-        var post = new ChartPostProcessor(Mgxc, Diagnostic, Assets);
-        post.Run();
-        ProcessMeta();
+            var post = new ChartPostProcessor(Mgxc, Diagnostic, Assets);
+            post.Run();
+            ProcessMeta();
 
-        await Task.WhenAll(Tasks);
-        return OperationResult<umgr.Chart>.Success(Mgxc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            await Task.WhenAll(Tasks);
+            return OperationResult<umgr.Chart>.Success(Mgxc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        }
+        catch (DiagnosticException ex)
+        {
+            Diagnostic.Report(ex);
+            return OperationResult<umgr.Chart>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        }
     }
 
     private void ProcessMeta()
@@ -86,7 +95,6 @@ public partial class MgxcParser
         }
 
         if (Mgxc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(Mgxc.Meta.FullBgiFilePath))
-        {
             QueueValidation(
                 MediaTool.CheckImageValidAsync(Mgxc.Meta.FullBgiFilePath),
                 Mgxc.Meta.FullBgiFilePath,
@@ -96,15 +104,16 @@ public partial class MgxcParser
                     Mgxc.Meta.IsCustomStage = false;
                     Mgxc.Meta.BgiFilePath = string.Empty;
                 });
-        }
     }
 
-    private void QueueValidation(Task<ProcessCommandResult> validationTask, string path, string message, Action onFailure)
+    private void QueueValidation(Task<ProcessCommandResult> validationTask, string path, string message,
+        Action onFailure)
     {
         Tasks.Add(HandleValidationAsync(validationTask, path, message, onFailure));
     }
 
-    private async Task HandleValidationAsync(Task<ProcessCommandResult> validationTask, string path, string message, Action onFailure)
+    private async Task HandleValidationAsync(Task<ProcessCommandResult> validationTask, string path, string message,
+        Action onFailure)
     {
         try
         {

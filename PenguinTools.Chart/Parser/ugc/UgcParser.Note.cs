@@ -61,7 +61,7 @@ public partial class UgcParser
 
     private void HandleParentPayload(int absTick, string payload, string suffix)
     {
-        if (payload.Length == 1 && payload[0] == 'c')
+        if (payload is ['c'])
         {
             _lastNote = null;
             return;
@@ -92,11 +92,13 @@ public partial class UgcParser
                 return;
             }
 
-            var air = new umgr.Air();
-            air.Direction = UgcPayload.AirDirectionCode(extras.AsSpan(0, 2));
-            air.Color = UgcPayload.AirColorChar(extras[2]);
+            var air = new umgr.Air
+            {
+                Direction = UgcPayload.AirDirectionCode(extras.AsSpan(0, 2)),
+                Color = UgcPayload.AirColorChar(extras[2]),
+                Timeline = _currentTimeline
+            };
 
-            air.Timeline = _currentTimeline;
             Ugc.Notes.AppendChild(air);
 
             var pairPositive = FindPairPositive(absTick);
@@ -122,8 +124,11 @@ public partial class UgcParser
                 return;
             }
 
-            var airSlide = new umgr.AirSlide { Height = height, Color = color };
-            airSlide.Timeline = _currentTimeline;
+            var airSlide = new umgr.AirSlide
+            {
+                Height = height, Color = color,
+                Timeline = _currentTimeline
+            };
             Ugc.Notes.AppendChild(airSlide);
 
             if (_lastNote is umgr.Air oldAir && oldAir.Tick.Original == absTick)
@@ -160,19 +165,19 @@ public partial class UgcParser
             {
                 Color = UgcPayload.CrushColorChar(extras[2]),
                 Height = height,
-                Density = UgcPayload.AirCrashInterval(suffix)
+                Density = UgcPayload.AirCrashInterval(suffix),
+                Tick = absTick,
+                Lane = x,
+                Width = w,
+                Timeline = _currentTimeline
             };
-            crash.Tick = absTick;
-            crash.Lane = x;
-            crash.Width = w;
-            crash.Timeline = _currentTimeline;
             Ugc.Notes.AppendChild(crash);
             _lastParentNote = crash;
             _lastNote = crash;
             return;
         }
 
-        umgr.Note? note = typeChar switch
+        var note = typeChar switch
         {
             't' => new umgr.Tap(),
             'x' => MakeExTap(extras),
@@ -208,18 +213,22 @@ public partial class UgcParser
 
     private static umgr.ExTap MakeExTap(string extras)
     {
-        var exNote = new umgr.ExTap();
-        exNote.Effect = extras.Length >= 1 ? UgcPayload.ExEffectChar(extras[0]) : ExEffect.UP;
+        var exNote = new umgr.ExTap
+        {
+            Effect = extras.Length >= 1 ? UgcPayload.ExEffectChar(extras[0]) : ExEffect.UP
+        };
         return exNote;
     }
 
-    private umgr.Note? HandleLongNoteParent(char typeChar, string extras, string suffix) =>
-        typeChar switch
+    private umgr.Note? HandleLongNoteParent(char typeChar, string extras, string suffix)
+    {
+        return typeChar switch
         {
             'h' => new umgr.Hold(),
             's' => new umgr.Slide(),
             _ => null
         };
+    }
 
     private void HandleChildPayload(int offsetTick, string payload)
     {
@@ -334,6 +343,7 @@ public partial class UgcParser
 
                     child = new umgr.AirCrashJoint { Height = height };
                 }
+
                 break;
         }
 
@@ -347,9 +357,13 @@ public partial class UgcParser
         _lastNote = child;
     }
 
-    private void WarnMalformed(string what) =>
+    private void WarnMalformed(string what)
+    {
         ReportAtCurrentLine(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, what));
+    }
 
-    private void WarnUnknownType(char c) =>
+    private void WarnUnknownType(char c)
+    {
         ReportAtCurrentLine(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, c.ToString()));
+    }
 }

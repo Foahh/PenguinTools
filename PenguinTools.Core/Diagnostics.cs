@@ -10,7 +10,13 @@ public enum Severity
     Error = 3
 }
 
-public class Diagnostic(Severity severity, string message, string? path = null, int? time = null, object? target = null, int? line = null) : IComparable<Diagnostic>, IComparable
+public class Diagnostic(
+    Severity severity,
+    string message,
+    string? path = null,
+    int? time = null,
+    object? target = null,
+    int? line = null) : IComparable<Diagnostic>, IComparable
 {
     public Severity Severity { get; set; } = severity;
     public string Message { get; set; } = message;
@@ -22,14 +28,12 @@ public class Diagnostic(Severity severity, string message, string? path = null, 
     public Exception? RelatedException { get; set; }
 
     public ITickFormatter? TimeCalculator { get; set; }
+
     public string? FormattedLocation
     {
         get
         {
-            if (string.IsNullOrWhiteSpace(Path))
-            {
-                return Line is null ? null : $"0x{Line.Value:X2}";
-            }
+            if (string.IsNullOrWhiteSpace(Path)) return Line is null ? null : $"0x{Line.Value:X2}";
 
             if (Line is null) return Path;
 
@@ -156,9 +160,11 @@ public class Diagnoster : IDiagnosticSink
     {
         if (ex is DiagnosticException dEx)
         {
-            _diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target, dEx.Line) { RelatedException = dEx });
+            _diags.Add(new Diagnostic(Severity.Error, ex.Message, dEx.Path, dEx.Tick, dEx.Target, dEx.Line)
+                { RelatedException = dEx });
             return;
         }
+
         Report(new Diagnostic(Severity.Error, ex.Message) { RelatedException = ex });
     }
 
@@ -173,7 +179,12 @@ public class Diagnoster : IDiagnosticSink
     }
 }
 
-public class DiagnosticException(string message, object? target = null, int? tick = null, string? path = null, int? line = null) : Exception(message)
+public class DiagnosticException(
+    string message,
+    object? target = null,
+    int? tick = null,
+    string? path = null,
+    int? line = null) : Exception(message)
 {
     public object? Target { get; } = target;
     public string? Path { get; } = path;
@@ -190,10 +201,7 @@ public static class DiagnosticSinkExtensions
         ArgumentNullException.ThrowIfNull(sink);
         ArgumentNullException.ThrowIfNull(snapshot);
 
-        foreach (var diagnostic in snapshot.Diagnostics)
-        {
-            sink.Report(diagnostic.Copy());
-        }
+        foreach (var diagnostic in snapshot.Diagnostics) sink.Report(diagnostic.Copy());
     }
 }
 

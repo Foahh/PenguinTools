@@ -1,28 +1,22 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using PenguinTools.Core;
-using PenguinTools.Core.Asset;
-using PenguinTools.Media;
-using PenguinTools.Resources;
-using PenguinTools.Infrastructure;
-using PenguinTools.Models;
-using PenguinTools.Services;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using PenguinTools.Core;
+using PenguinTools.Core.Asset;
+using PenguinTools.Infrastructure;
+using PenguinTools.Media;
+using PenguinTools.Models;
+using PenguinTools.Resources;
+using PenguinTools.Services;
 
 namespace PenguinTools.ViewModels;
 
 public abstract partial class ViewModel : ObservableObject
 {
     private readonly IExternalLauncher _externalLauncher;
-
-    public ActionService ActionService { get; }
-    public AssetManager AssetManager { get; }
-    public IMediaTool MediaTool { get; }
-    public IResourceStore ResourceStore { get; }
-    public IInfrastructureAssetProvider AssetProvider { get; }
 
     protected ViewModel(
         ActionService actionService,
@@ -40,10 +34,19 @@ public abstract partial class ViewModel : ObservableObject
         _externalLauncher = externalLauncher;
     }
 
+    public ActionService ActionService { get; }
+    public AssetManager AssetManager { get; }
+    public IMediaTool MediaTool { get; }
+    public IResourceStore ResourceStore { get; }
+    public IInfrastructureAssetProvider AssetProvider { get; }
+
     protected static Dispatcher Dispatcher => Application.Current.Dispatcher;
 
     [RelayCommand]
-    private void OpenWiki() => _externalLauncher.Launch(Strings.Link_Documentation);
+    private void OpenWiki()
+    {
+        _externalLauncher.Launch(Strings.Link_Documentation);
+    }
 }
 
 public abstract class ActionViewModel : ViewModel
@@ -57,7 +60,8 @@ public abstract class ActionViewModel : ViewModel
         IExternalLauncher externalLauncher)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
-        ActionCommand = new AsyncRelayCommand(() => ActionService.RunAsync(Action), () => ActionService.CanRun() && CanRun());
+        ActionCommand =
+            new AsyncRelayCommand(() => ActionService.RunAsync(Action), () => ActionService.CanRun() && CanRun());
         ActionService.PropertyChanged += (_, e) =>
         {
             OnPropertyChanged(e.PropertyName);
@@ -113,10 +117,23 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         ActionService.PropertyChanged += OnWatchViewModelActionServicePropertyChanged;
     }
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ActionCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ReloadCommand))]
+    public partial string ModelPath { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ActionCommand))]
+    public partial TModel? Model { get; set; }
+
+    [ObservableProperty] public partial DateTime? LastModifiedTime { get; set; }
+
+    protected virtual string FileGlob => "*.*";
+
     private void OnWatchViewModelActionServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         OnPropertyChanged(e.PropertyName);
-        if (e.PropertyName != nameof(ActionService.IsBusy) || ActionService.IsBusy || !_pendingReload) { return; }
+        if (e.PropertyName != nameof(ActionService.IsBusy) || ActionService.IsBusy || !_pendingReload) return;
 
         ConsiderEnqueueReloadFromFileWatch();
     }
@@ -133,20 +150,6 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
         _pendingReload = false;
         _ = ActionService.RunAsync(ReadModelInternal);
     }
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ActionCommand))]
-    [NotifyCanExecuteChangedFor(nameof(ReloadCommand))]
-    public partial string ModelPath { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ActionCommand))]
-    public partial TModel? Model { get; set; }
-
-    [ObservableProperty]
-    public partial DateTime? LastModifiedTime { get; set; }
-
-    protected virtual string FileGlob => "*.*";
 
     partial void OnModelPathChanged(string value)
     {
@@ -169,7 +172,8 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
             _fileWatcher = new FileSystemWatcher(value, FileGlob)
             {
                 IncludeSubdirectories = true,
-                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.CreationTime
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName |
+                               NotifyFilters.Size | NotifyFilters.CreationTime
             };
         }
 
@@ -180,7 +184,8 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
             if (string.IsNullOrEmpty(directory) || string.IsNullOrEmpty(fileName)) return;
             _fileWatcher = new FileSystemWatcher(directory, fileName)
             {
-                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.CreationTime
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName |
+                               NotifyFilters.Size | NotifyFilters.CreationTime
             };
         }
 
@@ -214,6 +219,7 @@ public abstract partial class WatchViewModel<TModel> : ReloadableActionViewModel
             await Dispatcher.InvokeAsync(() => SetModel(Model, null));
             return OperationResult.Success();
         }
+
         await Dispatcher.InvokeAsync(() =>
         {
             ActionService.Status = Strings.Status_Reading;

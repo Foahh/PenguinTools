@@ -1,73 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PenguinTools.Attributes;
-using PenguinTools.Resources;
-using PenguinTools.Workflow;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CommunityToolkit.Mvvm.ComponentModel;
+using PenguinTools.Attributes;
+using PenguinTools.Resources;
+using PenguinTools.Workflow;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace PenguinTools.Models;
 
 public partial class OptionModel : Model, IPersistable
 {
-    public string PersistenceFileName => "options.json";
-
-    public async Task LoadAsync(string directory, CancellationToken cancellationToken = default)
-    {
-        var path = Path.Combine(directory, PersistenceFileName);
-        if (!File.Exists(path)) return;
-
-        await using var stream = File.OpenRead(path);
-        var document = await JsonSerializer.DeserializeAsync<OptionDocument>(stream, OptionDocumentJson.Default, cancellationToken);
-        if (document is null) return;
-
-        Apply(document);
-    }
-
-    public async Task SaveAsync(string directory, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(directory)) throw new ArgumentNullException(nameof(directory));
-        var path = Path.Combine(directory, PersistenceFileName);
-        await using var stream = File.Create(path);
-        await JsonSerializer.SerializeAsync(stream, ToDocument(), OptionDocumentJson.Default, cancellationToken);
-    }
-
-    public void Apply(OptionDocument document)
-    {
-        OptionName = document.OptionName;
-        ConvertChart = document.ConvertChart;
-        ChartFileDiscovery = document.ChartFileDiscovery;
-        ConvertAudio = document.ConvertAudio;
-        ConvertJacket = document.ConvertJacket;
-        ConvertBackground = document.ConvertBackground;
-        GenerateEventXml = document.GenerateEventXml;
-        GenerateReleaseTagXml = document.GenerateReleaseTagXml;
-        UltimaEventId = document.UltimaEventId;
-        WeEventId = document.WeEventId;
-        BatchSize = document.BatchSize;
-        WorkingDirectory = document.WorkingDirectory;
-    }
-
-    public OptionDocument ToDocument() =>
-        new()
-        {
-            OptionName = OptionName,
-            ConvertChart = ConvertChart,
-            ChartFileDiscovery = ChartFileDiscovery,
-            ConvertAudio = ConvertAudio,
-            ConvertJacket = ConvertJacket,
-            ConvertBackground = ConvertBackground,
-            GenerateEventXml = GenerateEventXml,
-            GenerateReleaseTagXml = GenerateReleaseTagXml,
-            UltimaEventId = UltimaEventId,
-            WeEventId = WeEventId,
-            BatchSize = BatchSize,
-            WorkingDirectory = WorkingDirectory
-        };
-
     [ObservableProperty]
     [MinLength(4)]
     [MaxLength(4)]
@@ -146,8 +91,7 @@ public partial class OptionModel : Model, IPersistable
     [Range(-1, int.MaxValue)]
     public partial int BatchSize { get; set; } = 8;
 
-    [Browsable(false)]
-    public string WorkingDirectory { get; set; } = string.Empty;
+    [Browsable(false)] public string WorkingDirectory { get; set; } = string.Empty;
 
     [LocalizableCategory(nameof(Strings.Category_Misc), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_LastExport), typeof(Strings))]
@@ -168,4 +112,63 @@ public partial class OptionModel : Model, IPersistable
     [Browsable(false)]
     [JsonIgnore]
     public partial BookDictionary Books { get; set; } = new();
+
+    public string PersistenceFileName => "options.json";
+
+    public async Task LoadAsync(string directory, CancellationToken cancellationToken = default)
+    {
+        var path = Path.Combine(directory, PersistenceFileName);
+        if (!File.Exists(path)) return;
+
+        await using var stream = File.OpenRead(path);
+        var document =
+            await JsonSerializer.DeserializeAsync<OptionDocument>(stream, OptionDocumentJson.Default,
+                cancellationToken);
+        if (document is null) return;
+
+        Apply(document);
+    }
+
+    public async Task SaveAsync(string directory, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(directory)) throw new ArgumentNullException(nameof(directory));
+        var path = Path.Combine(directory, PersistenceFileName);
+        await using var stream = File.Create(path);
+        await JsonSerializer.SerializeAsync(stream, ToDocument(), OptionDocumentJson.Default, cancellationToken);
+    }
+
+    public void Apply(OptionDocument document)
+    {
+        OptionName = document.OptionName;
+        ConvertChart = document.ConvertChart;
+        ChartFileDiscovery = document.ChartFileDiscovery;
+        ConvertAudio = document.ConvertAudio;
+        ConvertJacket = document.ConvertJacket;
+        ConvertBackground = document.ConvertBackground;
+        GenerateEventXml = document.GenerateEventXml;
+        GenerateReleaseTagXml = document.GenerateReleaseTagXml;
+        UltimaEventId = document.UltimaEventId;
+        WeEventId = document.WeEventId;
+        BatchSize = document.BatchSize;
+        WorkingDirectory = document.WorkingDirectory;
+    }
+
+    public OptionDocument ToDocument()
+    {
+        return new OptionDocument
+        {
+            OptionName = OptionName,
+            ConvertChart = ConvertChart,
+            ChartFileDiscovery = ChartFileDiscovery,
+            ConvertAudio = ConvertAudio,
+            ConvertJacket = ConvertJacket,
+            ConvertBackground = ConvertBackground,
+            GenerateEventXml = GenerateEventXml,
+            GenerateReleaseTagXml = GenerateReleaseTagXml,
+            UltimaEventId = UltimaEventId,
+            WeEventId = WeEventId,
+            BatchSize = BatchSize,
+            WorkingDirectory = WorkingDirectory
+        };
+    }
 }

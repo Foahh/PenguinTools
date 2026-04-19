@@ -38,6 +38,7 @@ public class UgcSampleParityTests
             if (n is umgr.SoflanArea or umgr.SoflanAreaJoint) continue;
             summary.Notes.Add($"{n.GetType().Name}|{n.Tick.Original}|{n.Lane}|{n.Width}|{n.Timeline}");
         }
+
         foreach (var b in c.Events.Children.OfType<umgr.BpmEvent>())
             summary.Bpms.Add($"{b.Tick.Original}|{FormatBpm(b.Bpm)}");
         foreach (var b in c.Events.Children.OfType<umgr.BeatEvent>())

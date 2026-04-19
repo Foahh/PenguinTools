@@ -1,3 +1,4 @@
+using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 
@@ -10,7 +11,7 @@ public class PayloadTests
     [InlineData('9', 9)]
     [InlineData('a', 10)]
     [InlineData('z', 35)]
-    [InlineData('A', 10)]  // uppercase also accepted
+    [InlineData('A', 10)] // uppercase also accepted
     [InlineData('Z', 35)]
     public void Base36_ValidChars_MapsCorrectly(char c, int expected)
     {
@@ -26,35 +27,35 @@ public class PayloadTests
     }
 
     [Theory]
-    [InlineData('U', PenguinTools.Chart.Models.ExEffect.UP)]
-    [InlineData('D', PenguinTools.Chart.Models.ExEffect.DW)]
-    [InlineData('C', PenguinTools.Chart.Models.ExEffect.CE)]
-    [InlineData('L', PenguinTools.Chart.Models.ExEffect.RS)]
-    [InlineData('R', PenguinTools.Chart.Models.ExEffect.LS)]
-    [InlineData('A', PenguinTools.Chart.Models.ExEffect.RC)]
-    [InlineData('W', PenguinTools.Chart.Models.ExEffect.LC)]
-    [InlineData('I', PenguinTools.Chart.Models.ExEffect.BS)]   // in-out burst
-    public void ExEffectChar_MapsToExpectedEffect(char c, PenguinTools.Chart.Models.ExEffect expected)
+    [InlineData('U', ExEffect.UP)]
+    [InlineData('D', ExEffect.DW)]
+    [InlineData('C', ExEffect.CE)]
+    [InlineData('L', ExEffect.RS)]
+    [InlineData('R', ExEffect.LS)]
+    [InlineData('A', ExEffect.RC)]
+    [InlineData('W', ExEffect.LC)]
+    [InlineData('I', ExEffect.BS)] // in-out burst
+    public void ExEffectChar_MapsToExpectedEffect(char c, ExEffect expected)
     {
         Assert.Equal(expected, UgcPayload.ExEffectChar(c));
     }
 
     [Theory]
-    [InlineData("UC", PenguinTools.Chart.Models.AirDirection.IR)]
-    [InlineData("UL", PenguinTools.Chart.Models.AirDirection.UR)]
-    [InlineData("UR", PenguinTools.Chart.Models.AirDirection.UL)]
-    [InlineData("DC", PenguinTools.Chart.Models.AirDirection.DW)]
-    [InlineData("DL", PenguinTools.Chart.Models.AirDirection.DR)]
-    [InlineData("DR", PenguinTools.Chart.Models.AirDirection.DL)]
-    public void AirDirectionCode_MapsToExpectedDirection(string code, PenguinTools.Chart.Models.AirDirection expected)
+    [InlineData("UC", AirDirection.IR)]
+    [InlineData("UL", AirDirection.UR)]
+    [InlineData("UR", AirDirection.UL)]
+    [InlineData("DC", AirDirection.DW)]
+    [InlineData("DL", AirDirection.DR)]
+    [InlineData("DR", AirDirection.DL)]
+    public void AirDirectionCode_MapsToExpectedDirection(string code, AirDirection expected)
     {
         Assert.Equal(expected, UgcPayload.AirDirectionCode(code));
     }
 
     [Theory]
-    [InlineData('N', PenguinTools.Chart.Models.Color.DEF)]
-    [InlineData('I', PenguinTools.Chart.Models.Color.PNK)]
-    public void AirColorChar_MapsToExpectedColor(char c, PenguinTools.Chart.Models.Color expected)
+    [InlineData('N', Color.DEF)]
+    [InlineData('I', Color.PNK)]
+    public void AirColorChar_MapsToExpectedColor(char c, Color expected)
     {
         Assert.Equal(expected, UgcPayload.AirColorChar(c));
     }

@@ -1,10 +1,10 @@
-﻿using PenguinTools.Attributes;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using PenguinTools.Attributes;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Resources;
 using Swordfish.NET.Collections;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using umgr = PenguinTools.Chart.Models.umgr;
 
@@ -20,14 +20,11 @@ public class BookDictionary : ConcurrentObservableSortedDictionary<int, Book>;
 [LocalizableCategoryOrder(nameof(Strings.Category_Sync), 5, typeof(Strings))]
 public class Book : MetaModel
 {
-    [Browsable(false)]
-    public ConcurrentObservableSortedDictionary<Difficulty, BookItem> Items { get; } = [];
+    [Browsable(false)] public ConcurrentObservableSortedDictionary<Difficulty, BookItem> Items { get; } = [];
 
-    [Browsable(false)]
-    public override umgr.Chart Mgxc => Items[MainDifficulty].Mgxc;
+    [Browsable(false)] public override umgr.Chart Mgxc => Items[MainDifficulty].Mgxc;
 
-    [Browsable(false)]
-    public IEnumerable<Difficulty> AvailableDifficulties => Items.Keys;
+    [Browsable(false)] public IEnumerable<Difficulty> AvailableDifficulties => Items.Keys;
 
     [PropertyOrder(-1)]
     [LocalizableCategory(nameof(Strings.Category_Misc), typeof(Strings))]

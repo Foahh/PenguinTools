@@ -1,7 +1,8 @@
 namespace PenguinTools.Chart.Tests.Parser;
 
 /// <summary>
-/// Paired chart samples: for each <c>*.ugc</c> in <see cref="ChartTestPaths.AssetsDirectory"/>, the matching <c>*.mgxc</c> with the same file name (without extension).
+///     Paired chart samples: for each <c>*.ugc</c> in <see cref="ChartTestPaths.AssetsDirectory" />, the matching
+///     <c>*.mgxc</c> with the same file name (without extension).
 /// </summary>
 public static class FinishedChartSampleCases
 {

@@ -1,12 +1,12 @@
+using System.IO;
 using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Media;
-using PenguinTools.Resources;
 using PenguinTools.Infrastructure;
+using PenguinTools.Media;
 using PenguinTools.Models;
+using PenguinTools.Resources;
 using PenguinTools.Services;
-using System.IO;
 
 namespace PenguinTools.ViewModels;
 
@@ -25,8 +25,13 @@ public class AudioViewModel : WatchViewModel<AudioModel>
 
     protected override Task<OperationResult<AudioModel>> ReadModel(string path, CancellationToken ct = default)
     {
-        var model = new AudioModel();
-        model.Meta.BgmFilePath = ModelPath;
+        var model = new AudioModel
+        {
+            Meta =
+            {
+                BgmFilePath = ModelPath
+            }
+        };
         return Task.FromResult(OperationResult<AudioModel>.Success(model));
     }
 

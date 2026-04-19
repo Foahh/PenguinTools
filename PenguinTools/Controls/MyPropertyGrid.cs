@@ -32,7 +32,8 @@ public class MyPropertyGrid : PropertyGrid
         PropertyDefinitions.Clear();
 
         var definitions = PropertyDefinitions.Where(def => def.TargetProperties != null);
-        var existingProperties = definitions.SelectMany(def => def.TargetProperties.OfType<string>()).ToHashSet(StringComparer.Ordinal);
+        var existingProperties = definitions.SelectMany(def => def.TargetProperties.OfType<string>())
+            .ToHashSet(StringComparer.Ordinal);
         var metaProps = Target.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
         for (var i = 0; i < metaProps.Length; i++)

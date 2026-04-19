@@ -10,30 +10,8 @@ public sealed class MuaMediaTool(string executablePath) : IMediaTool
         ? throw new ArgumentNullException(nameof(executablePath))
         : executablePath;
 
-    private async Task<ProcessCommandResult> RunAsync(IEnumerable<string> args, CancellationToken ct = default)
-    {
-        var psi = new ProcessStartInfo
-        {
-            FileName = ExecutablePath,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
-        };
-
-        foreach (var arg in args) psi.ArgumentList.Add(arg);
-
-        using var proc = new Process();
-        proc.StartInfo = psi;
-        proc.Start();
-
-        var stdoutTask = proc.StandardOutput.ReadToEndAsync(ct);
-        var stderrTask = proc.StandardError.ReadToEndAsync(ct);
-        await Task.WhenAll(proc.WaitForExitAsync(ct), stdoutTask, stderrTask);
-
-        return new ProcessCommandResult(psi, proc.ExitCode, await stdoutTask, await stderrTask);
-    }
-
-    public async Task<ProcessCommandResult> NormalizeAudioAsync(string src, string dst, decimal offset, CancellationToken ct = default)
+    public async Task<ProcessCommandResult> NormalizeAudioAsync(string src, string dst, decimal offset,
+        CancellationToken ct = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(src);
         ArgumentException.ThrowIfNullOrWhiteSpace(dst);
@@ -70,7 +48,8 @@ public sealed class MuaMediaTool(string executablePath) : IMediaTool
         ret.ThrowIfFailed();
     }
 
-    public async Task ConvertStageAsync(string bg, string stSrc, string stDst, string?[]? fxPaths, CancellationToken ct = default)
+    public async Task ConvertStageAsync(string bg, string stSrc, string stDst, string?[]? fxPaths,
+        CancellationToken ct = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(bg);
         ArgumentException.ThrowIfNullOrWhiteSpace(stSrc);
@@ -104,5 +83,28 @@ public sealed class MuaMediaTool(string executablePath) : IMediaTool
 
         var ret = await RunAsync(["extract_dds", "-s", src, "-d", dst], ct);
         ret.ThrowIfFailed();
+    }
+
+    private async Task<ProcessCommandResult> RunAsync(IEnumerable<string> args, CancellationToken ct = default)
+    {
+        var psi = new ProcessStartInfo
+        {
+            FileName = ExecutablePath,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            CreateNoWindow = true
+        };
+
+        foreach (var arg in args) psi.ArgumentList.Add(arg);
+
+        using var proc = new Process();
+        proc.StartInfo = psi;
+        proc.Start();
+
+        var stdoutTask = proc.StandardOutput.ReadToEndAsync(ct);
+        var stderrTask = proc.StandardError.ReadToEndAsync(ct);
+        await Task.WhenAll(proc.WaitForExitAsync(ct), stdoutTask, stderrTask);
+
+        return new ProcessCommandResult(psi, proc.ExitCode, await stdoutTask, await stderrTask);
     }
 }

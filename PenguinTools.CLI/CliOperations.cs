@@ -46,10 +46,7 @@ internal static class CliOperations
     {
         var sink = new Diagnoster();
 
-        foreach (var error in parseResult.Errors)
-        {
-            sink.Report(Severity.Error, error.Message);
-        }
+        foreach (var error in parseResult.Errors) sink.Report(Severity.Error, error.Message);
 
         return new CliCommandOutcome(
             OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(sink)),
@@ -62,20 +59,16 @@ internal static class CliOperations
         CancellationToken cancellationToken)
     {
         if (!File.Exists(input))
-        {
             return CliPaths.CreateFailureResultOf<umgr.Chart>($"Chart file not found: {input}", input);
-        }
 
         var ext = Path.GetExtension(input);
         if (string.Equals(ext, ".ugc", StringComparison.OrdinalIgnoreCase))
-        {
-            return await new UgcParser(new UgcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(cancellationToken);
-        }
+            return await new UgcParser(new UgcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(
+                cancellationToken);
 
         if (string.Equals(ext, ".mgxc", StringComparison.OrdinalIgnoreCase))
-        {
-            return await new MgxcParser(new MgxcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(cancellationToken);
-        }
+            return await new MgxcParser(new MgxcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(
+                cancellationToken);
 
         return CliPaths.CreateFailureResultOf<umgr.Chart>(
             $"Expected a .mgxc or .ugc chart file. Got extension: \"{ext}\".",
@@ -108,14 +101,16 @@ internal static class CliOperations
         ExportOutputPaths outputPaths,
         IReadOnlyList<OptionBookSnapshot> books,
         string diagnosticsWorkingDirectory,
-        CancellationToken cancellationToken) =>
-        OptionExporter.ExportAsync(
+        CancellationToken cancellationToken)
+    {
+        return OptionExporter.ExportAsync(
             new MusicExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
             settings,
             outputPaths,
             books,
             diagnosticsWorkingDirectory,
             cancellationToken);
+    }
 
     internal static Task<OperationResult> ExportMusicAsync(
         CliRuntime runtime,
@@ -124,8 +119,9 @@ internal static class CliOperations
         string? jacketInput,
         AudioRequestOverrides audioOverrides,
         StageRequestOverrides stageOverrides,
-        CancellationToken cancellationToken) =>
-        MusicExporter.ExportAsync(
+        CancellationToken cancellationToken)
+    {
+        return MusicExporter.ExportAsync(
             new MusicExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
             chart,
             output,
@@ -133,35 +129,42 @@ internal static class CliOperations
             audioOverrides,
             stageOverrides,
             cancellationToken);
+    }
 
     internal static Task<OperationResult> ConvertAudioAsync(
         CliRuntime runtime,
         Meta meta,
         string output,
         AudioRequestOverrides overrides,
-        CancellationToken cancellationToken) =>
-        MusicExporter.ConvertAudioAsync(
+        CancellationToken cancellationToken)
+    {
+        return MusicExporter.ConvertAudioAsync(
             new MusicExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
             meta,
             output,
             overrides,
             cancellationToken);
+    }
 
     internal static Task<OperationResult<Entry>> BuildStageAsync(
         CliRuntime runtime,
         Meta meta,
         string output,
         StageRequestOverrides overrides,
-        CancellationToken cancellationToken) =>
-        MusicExporter.BuildStageAsync(
+        CancellationToken cancellationToken)
+    {
+        return MusicExporter.BuildStageAsync(
             new MusicExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
             meta,
             output,
             overrides,
             cancellationToken);
+    }
 
-    internal static bool ShouldBuildStage(Meta meta, StageRequestOverrides overrides) =>
-        MusicExporter.ShouldBuildStage(meta, overrides);
+    internal static bool ShouldBuildStage(Meta meta, StageRequestOverrides overrides)
+    {
+        return MusicExporter.ShouldBuildStage(meta, overrides);
+    }
 
     internal static CliChartSummary CreateChartSummary(Meta meta)
     {
@@ -171,8 +174,8 @@ internal static class CliOperations
     internal static CliCommandData CreateChartConvertData(string input, string output, Meta meta)
     {
         return new CliCommandData(
-            InputPath: input,
-            OutputPath: output,
+            input,
+            output,
             Chart: CreateChartSummary(meta),
             Artifacts:
             [
@@ -183,8 +186,8 @@ internal static class CliOperations
     internal static CliCommandData CreateJacketData(string input, string output, string sourcePath, Meta meta)
     {
         return new CliCommandData(
-            InputPath: input,
-            OutputPath: output,
+            input,
+            output,
             SourcePath: sourcePath,
             Chart: CreateChartSummary(meta),
             Artifacts:
@@ -200,7 +203,7 @@ internal static class CliOperations
         var cueDirectory = Path.Combine(output, xml.DataName);
 
         return new CliCommandData(
-            InputPath: input,
+            input,
             OutputDirectory: output,
             SourcePath: meta.FullBgmFilePath,
             Chart: CreateChartSummary(meta),
@@ -212,7 +215,8 @@ internal static class CliOperations
             ]);
     }
 
-    internal static CliCommandData CreateStageData(string input, string output, Meta meta, StageRequestOverrides overrides)
+    internal static CliCommandData CreateStageData(string input, string output, Meta meta,
+        StageRequestOverrides overrides)
     {
         var stageId = overrides.StageId ?? meta.StageId;
         var artifacts = new List<CliArtifact>();
@@ -220,7 +224,9 @@ internal static class CliOperations
 
         if (stageId is { } resolvedStageId)
         {
-            var xml = new StageXml(resolvedStageId, MusicExporter.CreateNoteFieldEntry(meta.NotesFieldLine, overrides.NoteFieldLaneId, overrides.NoteFieldLaneName, overrides.NoteFieldLaneData));
+            var xml = new StageXml(resolvedStageId,
+                MusicExporter.CreateNoteFieldEntry(meta.NotesFieldLine, overrides.NoteFieldLaneId,
+                    overrides.NoteFieldLaneName, overrides.NoteFieldLaneData));
             var stageDirectory = Path.Combine(output, xml.DataName);
             stageName = xml.Name.Str;
             artifacts.Add(new CliArtifact("stage.xml", Path.Combine(stageDirectory, "Stage.xml")));
@@ -229,7 +235,7 @@ internal static class CliOperations
         }
 
         return new CliCommandData(
-            InputPath: input,
+            input,
             OutputDirectory: output,
             SourcePath: overrides.BackgroundPath ?? meta.FullBgiFilePath,
             StageId: stageId,
@@ -246,15 +252,13 @@ internal static class CliOperations
         };
 
         if (Directory.Exists(output))
-        {
             artifacts.AddRange(
                 Directory.EnumerateFiles(output, "*.dds", SearchOption.TopDirectoryOnly)
                     .OrderBy(path => path, StringComparer.Ordinal)
                     .Select(path => new CliArtifact("dds.file", path)));
-        }
 
         return new CliCommandData(
-            InputPath: input,
+            input,
             OutputDirectory: output,
             SourcePath: input,
             Artifacts: artifacts.ToArray());
@@ -290,12 +294,15 @@ internal static class CliOperations
         var stageId = stageOverrides.StageId ?? meta.StageId;
         if (MusicExporter.ShouldBuildStage(meta, stageOverrides) && stageId is { } resolvedStageId)
         {
-            var stageXml = new StageXml(resolvedStageId, MusicExporter.CreateNoteFieldEntry(meta.NotesFieldLine, stageOverrides.NoteFieldLaneId, stageOverrides.NoteFieldLaneName, stageOverrides.NoteFieldLaneData));
+            var stageXml = new StageXml(resolvedStageId,
+                MusicExporter.CreateNoteFieldEntry(meta.NotesFieldLine, stageOverrides.NoteFieldLaneId,
+                    stageOverrides.NoteFieldLaneName, stageOverrides.NoteFieldLaneData));
             var stageDirectory = Path.Combine(output, stageXml.DataName);
             stageName = stageXml.Name.Str;
             artifacts.Add(new CliArtifact("stage.xml", Path.Combine(stageDirectory, "Stage.xml")));
             artifacts.Add(new CliArtifact("stage.base-afb", Path.Combine(stageDirectory, stageXml.BaseFile)));
-            artifacts.Add(new CliArtifact("stage.notes-field-afb", Path.Combine(stageDirectory, stageXml.NotesFieldFile)));
+            artifacts.Add(new CliArtifact("stage.notes-field-afb",
+                Path.Combine(stageDirectory, stageXml.NotesFieldFile)));
         }
 
         if (meta is { Difficulty: Difficulty.WorldsEnd or Difficulty.Ultima, UnlockEventId: { } eventId })
@@ -305,7 +312,7 @@ internal static class CliOperations
         }
 
         return new CliCommandData(
-            InputPath: input,
+            input,
             OutputDirectory: output,
             SourcePath: jacketInput ?? meta.FullJacketFilePath,
             StageId: stageId,

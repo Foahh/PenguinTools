@@ -4,8 +4,8 @@ using System.Security.Cryptography;
 using System.Text;
 using PenguinTools.Core;
 using PenguinTools.Core.Metadata;
-using PenguinTools.Media.Resources;
 using PenguinTools.Core.Xml;
+using PenguinTools.Media.Resources;
 using SonicAudioLib.Archives;
 using SonicAudioLib.CriMw;
 using VGAudio.Codecs.CriHca;
@@ -47,13 +47,13 @@ public class AudioConverter
 
         var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
-        if (Meta.BgmPreviewStart > 120) { Diagnostic.Report(Severity.Warning, Strings.Warn_Preview_later_than_120); }
+        if (Meta.BgmPreviewStart > 120) Diagnostic.Report(Severity.Warning, Strings.Warn_Preview_later_than_120);
 
         var srcPath = Meta.FullBgmFilePath;
         var wavPath = WorkingAudioPath;
 
         var ret = await MediaTool.NormalizeAudioAsync(srcPath, wavPath, Meta.BgmRealOffset, ct);
-        if (ret.IsNoOperation) { wavPath = srcPath; }
+        if (ret.IsNoOperation) wavPath = srcPath;
 
         ct.ThrowIfCancellationRequested();
 
@@ -76,12 +76,15 @@ public class AudioConverter
 
         if (originalPvStart > maxSeconds)
         {
-            var msg = string.Format(Strings.Hint_Preview_value_clamped, nameof(Meta.BgmPreviewStart), originalPvStart, maxSeconds);
+            var msg = string.Format(Strings.Hint_Preview_value_clamped, nameof(Meta.BgmPreviewStart), originalPvStart,
+                maxSeconds);
             Diagnostic.Report(Severity.Information, msg);
         }
+
         if (originalPvStop > maxSeconds)
         {
-            var msg = string.Format(Strings.Hint_Preview_value_clamped, nameof(Meta.BgmPreviewStop), originalPvStop, maxSeconds);
+            var msg = string.Format(Strings.Hint_Preview_value_clamped, nameof(Meta.BgmPreviewStop), originalPvStop,
+                maxSeconds);
             Diagnostic.Report(Severity.Information, msg);
         }
 
@@ -95,9 +98,7 @@ public class AudioConverter
 
         var wav = waveReader.ReadFormat(wavPath);
         if (wav.ChannelCount != 2 || wav.SampleRate != 48000)
-        {
             throw new DiagnosticException(Strings.Error_Audio_format_not_supported);
-        }
 
         ct.ThrowIfCancellationRequested();
 
@@ -143,6 +144,7 @@ public class AudioConverter
             cmdStream.Position = 17;
             bw.WriteUInt32BigEndian((uint)(pvStop * 1000.0m));
         }
+
         trackEventTable.Rows[1]["Command"] = cmdStream.ToArray();
         cueSheetTable.Rows[0]["TrackEventTable"] = trackEventTable.Save();
 

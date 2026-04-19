@@ -5,6 +5,18 @@ namespace PenguinTools.Controls;
 
 public partial class TabShell : UserControl
 {
+    public static readonly DependencyProperty MainContentProperty = DependencyProperty.Register(
+        nameof(MainContent),
+        typeof(object),
+        typeof(TabShell),
+        new PropertyMetadata(null));
+
+    public static readonly DependencyProperty FooterContentProperty = DependencyProperty.Register(
+        nameof(FooterContent),
+        typeof(object),
+        typeof(TabShell),
+        new PropertyMetadata(null));
+
     public TabShell()
     {
         InitializeComponent();
@@ -16,21 +28,9 @@ public partial class TabShell : UserControl
         set => SetValue(MainContentProperty, value);
     }
 
-    public static readonly DependencyProperty MainContentProperty = DependencyProperty.Register(
-        nameof(MainContent),
-        typeof(object),
-        typeof(TabShell),
-        new PropertyMetadata(null));
-
     public object? FooterContent
     {
         get => GetValue(FooterContentProperty);
         set => SetValue(FooterContentProperty, value);
     }
-
-    public static readonly DependencyProperty FooterContentProperty = DependencyProperty.Register(
-        nameof(FooterContent),
-        typeof(object),
-        typeof(TabShell),
-        new PropertyMetadata(null));
 }

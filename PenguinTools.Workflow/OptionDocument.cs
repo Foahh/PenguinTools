@@ -29,11 +29,14 @@ public sealed class OptionDocument
 
     public string WorkingDirectory { get; set; } = string.Empty;
 
-    public bool HasExportableWork() =>
-        ConvertChart || ConvertAudio || ConvertJacket || ConvertBackground || GenerateEventXml;
+    public bool HasExportableWork()
+    {
+        return ConvertChart || ConvertAudio || ConvertJacket || ConvertBackground || GenerateEventXml;
+    }
 
-    public OptionExportSettings ToExportSettings() =>
-        new(
+    public OptionExportSettings ToExportSettings()
+    {
+        return new OptionExportSettings(
             ConvertChart,
             ConvertJacket,
             ConvertAudio,
@@ -43,6 +46,7 @@ public sealed class OptionDocument
             UltimaEventId,
             WeEventId,
             BatchSize);
+    }
 }
 
 public static class OptionDocumentJson

@@ -22,14 +22,10 @@ internal static class CliDiagnostics
                 writer.WriteLine($"  command: {commandResult.Command}");
 
                 if (!string.IsNullOrWhiteSpace(commandResult.StandardOutput))
-                {
                     writer.WriteLine($"  stdout: {commandResult.StandardOutput}");
-                }
 
                 if (!string.IsNullOrWhiteSpace(commandResult.StandardError))
-                {
                     writer.WriteLine($"  stderr: {commandResult.StandardError}");
-                }
             }
         }
     }
@@ -73,15 +69,9 @@ internal static class CliDiagnostics
         };
 
         var details = new List<string>();
-        if (!string.IsNullOrWhiteSpace(diagnostic.FormattedLocation))
-        {
-            details.Add(diagnostic.FormattedLocation);
-        }
+        if (!string.IsNullOrWhiteSpace(diagnostic.FormattedLocation)) details.Add(diagnostic.FormattedLocation);
 
-        if (!string.IsNullOrWhiteSpace(diagnostic.FormattedTime))
-        {
-            details.Add(diagnostic.FormattedTime);
-        }
+        if (!string.IsNullOrWhiteSpace(diagnostic.FormattedTime)) details.Add(diagnostic.FormattedTime);
 
         return details.Count == 0
             ? $"{severity}: {diagnostic.Message}"

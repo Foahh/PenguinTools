@@ -1,19 +1,19 @@
-﻿using Microsoft.Win32;
-using PenguinTools.Core;
-using PenguinTools.Core.Asset;
-using PenguinTools.Chart.Writer;
-using PenguinTools.Media;
-using PenguinTools.Resources;
-using PenguinTools.Infrastructure;
-using PenguinTools.Models;
-using PenguinTools.Services;
-using System.IO;
+﻿using System.IO;
+using Microsoft.Win32;
 using PenguinTools.Chart.Parser.mgxc;
 using PenguinTools.Chart.Parser.ugc;
+using PenguinTools.Chart.Writer;
+using PenguinTools.Core;
+using PenguinTools.Core.Asset;
+using PenguinTools.Infrastructure;
+using PenguinTools.Media;
+using PenguinTools.Models;
+using PenguinTools.Resources;
+using PenguinTools.Services;
 
 namespace PenguinTools.ViewModels;
 
-using umgr = PenguinTools.Chart.Models.umgr;
+using umgr = Chart.Models.umgr;
 
 public class ChartViewModel : WatchViewModel<ChartModel>
 {
@@ -55,19 +55,20 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         if (string.Equals(Path.GetExtension(path), ".ugc", StringComparison.OrdinalIgnoreCase))
         {
             var r = await new UgcParser(new UgcParseRequest(path, AssetManager), MediaTool).ParseAsync(ct);
-            parsed = r.Succeeded && r.Value is { } v
+            parsed = r is { Succeeded: true, Value: { } v }
                 ? OperationResult<umgr.Chart>.Success(v).WithDiagnostics(r.Diagnostics)
                 : OperationResult<umgr.Chart>.Failure().WithDiagnostics(r.Diagnostics);
         }
         else
         {
             var r = await new MgxcParser(new MgxcParseRequest(path, AssetManager), MediaTool).ParseAsync(ct);
-            parsed = r.Succeeded && r.Value is { } v
+            parsed = r is { Succeeded: true, Value: { } v }
                 ? OperationResult<umgr.Chart>.Success(v).WithDiagnostics(r.Diagnostics)
                 : OperationResult<umgr.Chart>.Failure().WithDiagnostics(r.Diagnostics);
         }
 
-        if (!parsed.Succeeded || parsed.Value is not { } value) return OperationResult<ChartModel>.Failure().WithDiagnostics(parsed.Diagnostics);
+        if (!parsed.Succeeded || parsed.Value is not { } value)
+            return OperationResult<ChartModel>.Failure().WithDiagnostics(parsed.Diagnostics);
         return OperationResult<ChartModel>.Success(new ChartModel(value)).WithDiagnostics(parsed.Diagnostics);
     }
 }

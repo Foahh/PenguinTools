@@ -1,3 +1,4 @@
+using System.Text.Json;
 using PenguinTools.Core;
 
 namespace PenguinTools.CLI;
@@ -50,10 +51,7 @@ internal static class CliOutput
     {
         CliDiagnostics.WriteDiagnostics(outcome.Result.Diagnostics);
 
-        if (string.IsNullOrWhiteSpace(outcome.Message))
-        {
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(outcome.Message)) return;
 
         var writer = outcome.Result.Succeeded ? Console.Out : Console.Error;
         writer.WriteLine(outcome.Message);
@@ -62,15 +60,15 @@ internal static class CliOutput
     private static void WriteJson(string commandName, int exitCode, CliCommandOutcome outcome)
     {
         var response = new CliResponse(
-            SchemaVersion: 1,
-            Command: commandName,
-            Success: outcome.Result.Succeeded,
-            ExitCode: exitCode,
-            Message: outcome.Message,
-            Data: outcome.Data,
-            Diagnostics: CliDiagnostics.ToPayload(outcome.Result.Diagnostics));
+            1,
+            commandName,
+            outcome.Result.Succeeded,
+            exitCode,
+            outcome.Message,
+            outcome.Data,
+            CliDiagnostics.ToPayload(outcome.Result.Diagnostics));
 
-        Console.Out.WriteLine(System.Text.Json.JsonSerializer.Serialize(response, CliJsonSerializerContext.Default.CliResponse));
+        Console.Out.WriteLine(JsonSerializer.Serialize(response, CliJsonSerializerContext.Default.CliResponse));
     }
 }
 

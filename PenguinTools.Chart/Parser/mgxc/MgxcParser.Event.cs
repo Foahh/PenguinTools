@@ -1,5 +1,4 @@
 ﻿using PenguinTools.Chart.Resources;
-using PenguinTools.Core;
 
 namespace PenguinTools.Chart.Parser.mgxc;
 
@@ -78,6 +77,7 @@ public partial class MgxcParser
             var msg = string.Format(Strings.MgCrit_Unrecognized_event, name);
             ThrowAtPosition(msg, br.BaseStream.Position, Mgxc);
         }
+
         Mgxc.Events.AppendChild(e);
 
         br.ReadInt32(); // 00 00 00 00

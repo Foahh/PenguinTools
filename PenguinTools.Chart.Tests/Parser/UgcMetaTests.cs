@@ -7,7 +7,7 @@ namespace PenguinTools.Chart.Tests.Parser;
 
 public class UgcMetaTests
 {
-    private static async Task<OperationResult<PenguinTools.Chart.Models.umgr.Chart>> Parse(string ugc)
+    private static async Task<OperationResult<Models.umgr.Chart>> Parse(string ugc)
     {
         var tmp = Path.GetTempFileName() + ".ugc";
         await File.WriteAllTextAsync(tmp, ugc);

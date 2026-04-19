@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using PenguinTools.Resources;
-using PenguinTools.Infrastructure;
 using PenguinTools.Services;
 
 namespace PenguinTools.ViewModels;
@@ -65,7 +65,7 @@ public partial class MainWindowViewModel : ViewModel
     [RelayCommand(CanExecute = nameof(IsUpdateAvailable))]
     private void DownloadUpdate()
     {
-        if (string.IsNullOrWhiteSpace(DownloadUrl)) { return; }
+        if (string.IsNullOrWhiteSpace(DownloadUrl)) return;
 
         Process.Start(new ProcessStartInfo
         {

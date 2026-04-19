@@ -1,6 +1,6 @@
-﻿using PenguinTools.Core.Asset;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using System.Xml.Serialization;
+using PenguinTools.Core.Asset;
 
 namespace PenguinTools.Core.Xml;
 
@@ -8,8 +8,7 @@ public abstract class XmlElement<T>
 {
     protected abstract string FileName { get; }
 
-    [XmlElement("dataName")]
-    public string DataName { get; set; } = string.Empty;
+    [XmlElement("dataName")] public string DataName { get; set; } = string.Empty;
 
     public async Task<string> SaveDirectoryAsync(string baseFolder)
     {
@@ -27,8 +26,7 @@ public abstract class XmlElement<T>
 
 public class PathElement
 {
-    [XmlElement("path")]
-    public string Path { get; set; } = string.Empty;
+    [XmlElement("path")] public string Path { get; set; } = string.Empty;
 
     public static implicit operator string(PathElement elem)
     {
@@ -43,8 +41,7 @@ public class PathElement
 
 public class ValueElement
 {
-    [XmlElement("value")]
-    public int Value { get; set; }
+    [XmlElement("value")] public int Value { get; set; }
 
     public static implicit operator int(ValueElement elem)
     {

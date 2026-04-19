@@ -42,9 +42,7 @@ public sealed class FileResourceStore : IResourceStore
         lock (_lock)
         {
             if (!Path.GetFullPath(sourcePath).Equals(Path.GetFullPath(destinationPath), StringComparison.Ordinal))
-            {
-                File.Copy(sourcePath, destinationPath, overwrite: true);
-            }
+                File.Copy(sourcePath, destinationPath, true);
 
             ResourceStoreHelpers.EnsureExecutableIfNeeded(destinationPath, resourceName);
         }
@@ -72,18 +70,16 @@ public sealed class FileResourceStore : IResourceStore
 
     public void Dispose()
     {
-        ResourceStoreHelpers.ClearDirectory(TempWorkPath, deleteRoot: true);
+        ResourceStoreHelpers.ClearDirectory(TempWorkPath, true);
     }
 
     private string GetResourcePath(string resourceName)
     {
         var path = Path.Combine(_assetRootPath, resourceName);
         if (!File.Exists(path))
-        {
             throw new FileNotFoundException(
                 $"Resource '{resourceName}' was not found in asset directory '{_assetRootPath}'.",
                 path);
-        }
 
         return path;
     }

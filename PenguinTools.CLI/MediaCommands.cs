@@ -45,9 +45,7 @@ internal static class MediaCommands
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
-                {
-                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputPath: output));
-                }
+                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(input, output));
 
                 var sourcePath = jacketInput ?? parsed.Value.Meta.FullJacketFilePath;
                 CliPaths.EnsureParentDirectory(output);
@@ -91,11 +89,11 @@ internal static class MediaCommands
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
-                {
-                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output));
-                }
+                    return new CliCommandOutcome(parsed.ToResult(),
+                        Data: new CliCommandData(input, OutputDirectory: output));
 
-                var converted = await CliOperations.ConvertAudioAsync(runtime, parsed.Value.Meta, output, audioOverrides, ct);
+                var converted =
+                    await CliOperations.ConvertAudioAsync(runtime, parsed.Value.Meta, output, audioOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, converted);
                 var data = CliOperations.CreateAudioData(input, output, parsed.Value.Meta);
                 var message = result.Succeeded ? $"Exported audio assets: {output}" : null;
@@ -133,9 +131,8 @@ internal static class MediaCommands
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
-                {
-                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output));
-                }
+                    return new CliCommandOutcome(parsed.ToResult(),
+                        Data: new CliCommandData(input, OutputDirectory: output));
 
                 var built = await CliOperations.BuildStageAsync(runtime, parsed.Value.Meta, output, stageOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, built.ToResult());
@@ -170,8 +167,11 @@ internal static class MediaCommands
 
             return await CliOperations.ExecuteAsync("media extract-afb", outputFormat, async (runtime, ct) =>
             {
-                var extracted = await new AfbExtractor(new AfbExtractRequest(input, output), runtime.MediaTool).ExtractAsync(ct);
-                var data = extracted.Succeeded ? CliOperations.CreateExtractAfbData(input, output) : new CliCommandData(InputPath: input, OutputDirectory: output, SourcePath: input);
+                var extracted = await new AfbExtractor(new AfbExtractRequest(input, output), runtime.MediaTool)
+                    .ExtractAsync(ct);
+                var data = extracted.Succeeded
+                    ? CliOperations.CreateExtractAfbData(input, output)
+                    : new CliCommandData(input, OutputDirectory: output, SourcePath: input);
                 var message = extracted.Succeeded ? $"Extracted DDS files: {output}" : null;
                 return new CliCommandOutcome(extracted, message, data);
             }, cancellationToken);

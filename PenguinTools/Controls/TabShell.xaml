@@ -13,7 +13,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ContentPresenter Grid.Row="0" Content="{Binding MainContent, RelativeSource={RelativeSource AncestorType=local:TabShell}}" />
-        <ContentPresenter Grid.Row="1" Content="{Binding FooterContent, RelativeSource={RelativeSource AncestorType=local:TabShell}}" />
+        <ContentPresenter Content="{Binding MainContent, RelativeSource={RelativeSource AncestorType=local:TabShell}}" Grid.Row="0" />
+        <ContentPresenter Content="{Binding FooterContent, RelativeSource={RelativeSource AncestorType=local:TabShell}}" Grid.Row="1" />
     </Grid>
 </UserControl>

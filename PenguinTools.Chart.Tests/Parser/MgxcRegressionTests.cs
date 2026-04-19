@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using PenguinTools.Chart.Parser.mgxc;
-using Xunit;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Media;
+using Xunit;
 
 namespace PenguinTools.Chart.Tests.Parser;
 
@@ -36,25 +36,42 @@ public class MgxcRegressionTests
 
     private sealed class NullMediaTool : IMediaTool
     {
-        private static ProcessCommandResult Ok() =>
-            new(new ProcessStartInfo { FileName = "null" }, (int)InterExitCode.Success, "", "");
+        public Task<ProcessCommandResult> NormalizeAudioAsync(string src, string dst, decimal offset,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(Ok());
+        }
 
-        public Task<ProcessCommandResult> NormalizeAudioAsync(string src, string dst, decimal offset, CancellationToken ct = default) =>
-            Task.FromResult(Ok());
+        public Task<ProcessCommandResult> CheckAudioValidAsync(string src, CancellationToken ct = default)
+        {
+            return Task.FromResult(Ok());
+        }
 
-        public Task<ProcessCommandResult> CheckAudioValidAsync(string src, CancellationToken ct = default) =>
-            Task.FromResult(Ok());
+        public Task<ProcessCommandResult> CheckImageValidAsync(string src, CancellationToken ct = default)
+        {
+            return Task.FromResult(Ok());
+        }
 
-        public Task<ProcessCommandResult> CheckImageValidAsync(string src, CancellationToken ct = default) =>
-            Task.FromResult(Ok());
+        public Task ConvertJacketAsync(string src, string dst, CancellationToken ct = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task ConvertJacketAsync(string src, string dst, CancellationToken ct = default) =>
-            Task.CompletedTask;
+        public Task ConvertStageAsync(string bg, string stSrc, string stDst, string?[]? fxPaths,
+            CancellationToken ct = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task ConvertStageAsync(string bg, string stSrc, string stDst, string?[]? fxPaths, CancellationToken ct = default) =>
-            Task.CompletedTask;
+        public Task ExtractDdsAsync(string src, string dst, CancellationToken ct = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task ExtractDdsAsync(string src, string dst, CancellationToken ct = default) =>
-            Task.CompletedTask;
+        private static ProcessCommandResult Ok()
+        {
+            return new ProcessCommandResult(new ProcessStartInfo { FileName = "null" }, (int)InterExitCode.Success, "",
+                "");
+        }
     }
 }

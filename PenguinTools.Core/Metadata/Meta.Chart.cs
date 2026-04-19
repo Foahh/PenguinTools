@@ -1,5 +1,5 @@
-﻿using PenguinTools.Core.Asset;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using PenguinTools.Core.Asset;
 
 namespace PenguinTools.Core.Metadata;
 
@@ -36,32 +36,20 @@ public partial record Meta
 
 public enum Difficulty
 {
-    [Description("Basic")]
-    Basic = 0,
-    [Description("Advanced")]
-    Advanced = 1,
-    [Description("Expert")]
-    Expert = 2,
-    [Description("Master")]
-    Master = 3,
-    [Description("Ultima")]
-    Ultima = 4,
-    [Description("World's End")]
-    WorldsEnd = 5
+    [Description("Basic")] Basic = 0,
+    [Description("Advanced")] Advanced = 1,
+    [Description("Expert")] Expert = 2,
+    [Description("Master")] Master = 3,
+    [Description("Ultima")] Ultima = 4,
+    [Description("World's End")] WorldsEnd = 5
 }
 
 public enum StarDifficulty
 {
-    [Description("N/A")]
-    Na = 0,
-    [Description("⭐")]
-    S1 = 1,
-    [Description("⭐⭐")]
-    S2 = 3,
-    [Description("⭐⭐⭐")]
-    S3 = 5,
-    [Description("⭐⭐⭐⭐")]
-    S4 = 7,
-    [Description("⭐⭐⭐⭐⭐")]
-    S5 = 9
+    [Description("N/A")] Na = 0,
+    [Description("⭐")] S1 = 1,
+    [Description("⭐⭐")] S2 = 3,
+    [Description("⭐⭐⭐")] S3 = 5,
+    [Description("⭐⭐⭐⭐")] S4 = 7,
+    [Description("⭐⭐⭐⭐⭐")] S5 = 9
 }

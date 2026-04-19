@@ -45,6 +45,7 @@ public abstract class TimeNode<T> where T : TimeNode<T>
         {
             newNode.PreviousSibling = null;
         }
+
         newNode.NextSibling = null;
 
         return newNode;
@@ -158,7 +159,8 @@ public class Note : TimeNode<Note>
 
     public bool IsViolate(Note other)
     {
-        return !ReferenceEquals(this, other) && Tick.Original == other.Tick.Original && Lane == other.Lane && Width == other.Width && Timeline != other.Timeline;
+        return !ReferenceEquals(this, other) && Tick.Original == other.Tick.Original && Lane == other.Lane &&
+               Width == other.Width && Timeline != other.Timeline;
     }
 
     public override void Sort()
@@ -206,13 +208,15 @@ public abstract class ExTapableNote : Note
 }
 
 // you may get confused, but I just want to achieve type safety here
-public abstract class PairableNote<TSelf, TPair> : Note where TSelf : PairableNote<TSelf, TPair> where TPair : PairableNote<TPair, TSelf>
+public abstract class PairableNote<TSelf, TPair> : Note where TSelf : PairableNote<TSelf, TPair>
+    where TPair : PairableNote<TPair, TSelf>
 {
     public TPair? PairNote { get; set; }
 
     public void MakePair(TPair? targetNote)
     {
-        if ((targetNote?.IsVirtual ?? false) || IsVirtual) throw new InvalidOperationException("Cannot pair virtual notes");
+        if ((targetNote?.IsVirtual ?? false) || IsVirtual)
+            throw new InvalidOperationException("Cannot pair virtual notes");
         if (PairNote != null) PairNote.PairNote = null;
         if (targetNote == null)
         {

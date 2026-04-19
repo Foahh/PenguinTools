@@ -1,12 +1,15 @@
-﻿using Microsoft.Xaml.Behaviors;
-using System.Windows;
+﻿using System.Windows;
+using Microsoft.Xaml.Behaviors;
 
 namespace PenguinTools.Behaviors;
 
 public class HideIfNullValueBehavior : Behavior<UIElement>
 {
-    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object), typeof(HideIfNullValueBehavior), new PropertyMetadata(null, OnValueChanged));
-    public static readonly DependencyProperty InvertProperty = DependencyProperty.Register(nameof(Invert), typeof(bool), typeof(HideIfNullValueBehavior), new PropertyMetadata(false, OnInvertChanged));
+    public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(object),
+        typeof(HideIfNullValueBehavior), new PropertyMetadata(null, OnValueChanged));
+
+    public static readonly DependencyProperty InvertProperty = DependencyProperty.Register(nameof(Invert), typeof(bool),
+        typeof(HideIfNullValueBehavior), new PropertyMetadata(false, OnInvertChanged));
 
     public object? Value
     {

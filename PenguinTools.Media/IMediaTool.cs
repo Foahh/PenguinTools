@@ -2,7 +2,8 @@ namespace PenguinTools.Media;
 
 public interface IMediaTool
 {
-    Task<ProcessCommandResult> NormalizeAudioAsync(string src, string dst, decimal offset, CancellationToken ct = default);
+    Task<ProcessCommandResult> NormalizeAudioAsync(string src, string dst, decimal offset,
+        CancellationToken ct = default);
 
     Task<ProcessCommandResult> CheckAudioValidAsync(string src, CancellationToken ct = default);
 

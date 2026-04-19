@@ -1,3 +1,4 @@
+using PenguinTools.Chart.Models.umgr;
 using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 
@@ -5,13 +6,14 @@ namespace PenguinTools.Chart.Tests.Parser;
 
 public class UgcEventTests
 {
-    private static async Task<PenguinTools.Chart.Models.umgr.Chart> Parse(string ugc)
+    private static async Task<Models.umgr.Chart> Parse(string ugc)
     {
         var tmp = Path.GetTempFileName() + ".ugc";
         await File.WriteAllTextAsync(tmp, ugc);
         try
         {
-            var r = await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
+            var r =
+                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
             Assert.True(r.Succeeded, r.ToString());
             return r.Value!;
         }
@@ -31,7 +33,7 @@ public class UgcEventTests
             "@BEAT\t0\t4\t4\n";
 
         var chart = await Parse(ugc);
-        var bpms = chart.Events.Children.OfType<PenguinTools.Chart.Models.umgr.BpmEvent>()
+        var bpms = chart.Events.Children.OfType<BpmEvent>()
             .OrderBy(e => e.Tick).ToArray();
         Assert.Equal(2, bpms.Length);
         Assert.Equal(0, bpms[0].Tick.Original);
@@ -50,7 +52,7 @@ public class UgcEventTests
             "@BEAT\t2\t3\t4\n";
 
         var chart = await Parse(ugc);
-        var beats = chart.Events.Children.OfType<PenguinTools.Chart.Models.umgr.BeatEvent>()
+        var beats = chart.Events.Children.OfType<BeatEvent>()
             .OrderBy(e => e.Bar).ToArray();
         Assert.Equal(2, beats.Length);
         Assert.Equal(0, beats[0].Bar);
@@ -68,7 +70,7 @@ public class UgcEventTests
             "@SPDMOD\t1'0\t0.5\n";
 
         var chart = await Parse(ugc);
-        var smod = chart.Events.Children.OfType<PenguinTools.Chart.Models.umgr.NoteSpeedEvent>().Single();
+        var smod = chart.Events.Children.OfType<NoteSpeedEvent>().Single();
         Assert.Equal(1920, smod.Tick.Original);
         Assert.Equal(0.5m, smod.Speed);
     }
@@ -82,7 +84,7 @@ public class UgcEventTests
             "#2'240:t64\n";
 
         var chart = await Parse(ugc);
-        var tap = Assert.Single(chart.Notes.Children.OfType<PenguinTools.Chart.Models.umgr.Tap>());
+        var tap = Assert.Single(chart.Notes.Children.OfType<Tap>());
         Assert.Equal(4080, tap.Tick.Original);
     }
 }

@@ -18,7 +18,8 @@ internal static class AssetCommands
     {
         var gameRootArgument = new Argument<string>("game-root")
         {
-            Description = "Directory to scan recursively for Music.xml and Stage.xml (typically the game or data install root)."
+            Description =
+                "Directory to scan recursively for Music.xml and Stage.xml (typically the game or data install root)."
         };
 
         var command = new Command(
@@ -33,19 +34,17 @@ internal static class AssetCommands
             return await CliOperations.ExecuteAsync("assets collect", outputFormat, async (runtime, ct) =>
             {
                 if (!Directory.Exists(gameRoot))
-                {
                     return new CliCommandOutcome(
                         OperationResult.Failure().WithDiagnostics(
                             CliDiagnostics.SnapshotFromMessage($"Directory not found: {gameRoot}")),
                         $"Directory not found: {gameRoot}");
-                }
 
                 await runtime.Assets.CollectAssetsAsync(gameRoot, ct);
                 var writtenPath = runtime.Assets.PlusAssetsPath;
                 return new CliCommandOutcome(
                     OperationResult.Success(),
                     $"Collected assets and wrote {writtenPath}.",
-                    new CliCommandData(InputPath: gameRoot, OutputPath: writtenPath));
+                    new CliCommandData(gameRoot, writtenPath));
             }, cancellationToken);
         });
 

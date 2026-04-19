@@ -1,8 +1,8 @@
-﻿using PenguinTools.Attributes;
+﻿using System.ComponentModel;
+using System.IO;
+using PenguinTools.Attributes;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Resources;
-using System.ComponentModel;
-using System.IO;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using umgr = PenguinTools.Chart.Models.umgr;
 
@@ -10,11 +10,9 @@ namespace PenguinTools.Models;
 
 public class BookItem(umgr.Chart mgxc) : MetaModel
 {
-    [Browsable(false)]
-    public override umgr.Chart Mgxc { get; } = mgxc;
+    [Browsable(false)] public override umgr.Chart Mgxc { get; } = mgxc;
 
-    [Browsable(false)]
-    public string FileName => Path.GetFileName(Meta.FilePath);
+    [Browsable(false)] public string FileName => Path.GetFileName(Meta.FilePath);
 
     [LocalizableCategory(nameof(Strings.Category_Chart), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_FilePath), typeof(Strings))]

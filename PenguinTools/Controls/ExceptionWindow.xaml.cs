@@ -4,7 +4,8 @@ namespace PenguinTools.Controls;
 
 public partial class ExceptionWindow : Window
 {
-    private static readonly DependencyProperty StackTraceProperty = DependencyProperty.Register(nameof(StackTrace), typeof(string), typeof(ExceptionWindow), new PropertyMetadata(string.Empty));
+    private static readonly DependencyProperty StackTraceProperty = DependencyProperty.Register(nameof(StackTrace),
+        typeof(string), typeof(ExceptionWindow), new PropertyMetadata(string.Empty));
 
     public ExceptionWindow()
     {

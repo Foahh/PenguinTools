@@ -9,7 +9,10 @@ public sealed class DiagnosticsPresenter : IDiagnosticsPresenter
 {
     private readonly Lazy<MainWindow> _mainWindow;
 
-    public DiagnosticsPresenter(Lazy<MainWindow> mainWindow) => _mainWindow = mainWindow;
+    public DiagnosticsPresenter(Lazy<MainWindow> mainWindow)
+    {
+        _mainWindow = mainWindow;
+    }
 
     public void Show(DiagnosticSnapshot snapshot)
     {

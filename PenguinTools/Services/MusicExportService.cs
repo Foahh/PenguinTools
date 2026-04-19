@@ -10,9 +10,9 @@ namespace PenguinTools.Services;
 public sealed class MusicExportService : IMusicExportService
 {
     private readonly AssetManager _assetManager;
+    private readonly IInfrastructureAssetProvider _assetProvider;
     private readonly IMediaTool _mediaTool;
     private readonly IResourceStore _resourceStore;
-    private readonly IInfrastructureAssetProvider _assetProvider;
 
     public MusicExportService(
         AssetManager assetManager,
@@ -33,7 +33,7 @@ public sealed class MusicExportService : IMusicExportService
             ctx,
             model.Mgxc,
             outputPath,
-            jacketInput: null,
+            null,
             AudioRequestOverrides.Default,
             StageRequestOverrides.None,
             ct);

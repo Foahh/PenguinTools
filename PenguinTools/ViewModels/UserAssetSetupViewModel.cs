@@ -38,10 +38,7 @@ public partial class UserAssetSetupViewModel : ObservableObject
             ValidateNames = true
         };
 
-        if (dlg.ShowDialog(_window) != true || string.IsNullOrWhiteSpace(dlg.FolderName))
-        {
-            return;
-        }
+        if (dlg.ShowDialog(_window) != true || string.IsNullOrWhiteSpace(dlg.FolderName)) return;
 
         try
         {

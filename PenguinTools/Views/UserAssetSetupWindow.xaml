@@ -15,19 +15,17 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
 
-    <Border Padding="20" MinWidth="420">
+    <Border MinWidth="420" Padding="20">
         <StackPanel>
             <TextBlock
                 FontSize="14"
                 Margin="0,0,0,12"
                 Text="{Binding ExplanationText}"
                 TextWrapping="Wrap" />
-            <StackPanel
-                Margin="0,0,0,12"
-                Visibility="{Binding IsProcessing, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Margin="0,0,0,12" Visibility="{Binding IsProcessing, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock
-                    Margin="0,0,0,8"
                     FontWeight="SemiBold"
+                    Margin="0,0,0,8"
                     Text="{Binding ProcessingText}"
                     TextWrapping="Wrap" />
                 <ProgressBar Height="6" IsIndeterminate="True" />

@@ -15,11 +15,13 @@ public sealed record ExportOutputPaths(
         return folder == optionName ? workingDirectory : Path.Combine(workingDirectory, optionName);
     }
 
-    public static ExportOutputPaths FromOptionDirectory(string rootPath) =>
-        new(
+    public static ExportOutputPaths FromOptionDirectory(string rootPath)
+    {
+        return new ExportOutputPaths(
             Path.Combine(rootPath, "audio"),
             Path.Combine(rootPath, "stage"),
             Path.Combine(rootPath, "cueFile"),
             Path.Combine(rootPath, "event"),
             Path.Combine(rootPath, "releaseTag"));
+    }
 }

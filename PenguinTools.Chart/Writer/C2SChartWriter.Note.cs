@@ -1,5 +1,5 @@
-﻿using PenguinTools.Core;
-using PenguinTools.Chart.Resources;
+﻿using PenguinTools.Chart.Resources;
+using PenguinTools.Core;
 
 namespace PenguinTools.Chart.Writer;
 
@@ -11,7 +11,8 @@ public partial class C2SChartWriter
     private readonly Dictionary<umgr.NegativeNote, c2s.IPairable> _negativePairRoots = [];
     private readonly Dictionary<umgr.PositiveNote, c2s.Note> _positivePairTargets = [];
 
-    private T CreateNote<TSource, T>(TSource source, Action<T>? action = null) where TSource : umgr.Note where T : c2s.Note, new()
+    private T CreateNote<TSource, T>(TSource source, Action<T>? action = null)
+        where TSource : umgr.Note where T : c2s.Note, new()
     {
         var note = new T
         {
@@ -50,10 +51,7 @@ public partial class C2SChartWriter
         foreach (var (source, root) in _negativePairRoots)
         {
             if (source.PairNote is null) continue;
-            if (_positivePairTargets.TryGetValue(source.PairNote, out var parent))
-            {
-                root.Parent = parent;
-            }
+            if (_positivePairTargets.TryGetValue(source.PairNote, out var parent)) root.Parent = parent;
         }
     }
 
@@ -120,7 +118,8 @@ public partial class C2SChartWriter
 
     private void ProcessAirSlide(umgr.AirSlide airSlide)
     {
-        if (airSlide.PairNote?.PairNote != airSlide) throw new DiagnosticException(Strings.MgCrit_Invalid_AirSlide_parent, airSlide, airSlide.Tick.Original);
+        if (airSlide.PairNote?.PairNote != airSlide)
+            throw new DiagnosticException(Strings.MgCrit_Invalid_AirSlide_parent, airSlide, airSlide.Tick.Original);
 
         var joints = airSlide.Children.OfType<umgr.AirSlideJoint>().Prepend(airSlide.AsChild()).ToArray();
         c2s.AirSlide? firstSegment = null;
@@ -145,15 +144,13 @@ public partial class C2SChartWriter
             previousSegment = segment;
         }
 
-        if (firstSegment != null)
-        {
-            RegisterNegativePairRoot(airSlide, firstSegment);
-        }
+        if (firstSegment != null) RegisterNegativePairRoot(airSlide, firstSegment);
     }
 
     private void ProcessAir(umgr.Air airNote)
     {
-        if (airNote.PairNote?.PairNote != airNote) throw new DiagnosticException(Strings.MgCrit_Invalid_Air_parent, airNote, airNote.Tick.Original);
+        if (airNote.PairNote?.PairNote != airNote)
+            throw new DiagnosticException(Strings.MgCrit_Invalid_Air_parent, airNote, airNote.Tick.Original);
 
         var note = CreateNote<umgr.Air, c2s.Air>(airNote, x =>
         {
@@ -180,26 +177,22 @@ public partial class C2SChartWriter
                 x.Effect = index == 0 ? slide.Effect : null;
             });
             // pair the last joint with air
-            if (i == joints.Length - 2)
-            {
-                RegisterPositivePairTarget(next, note);
-            }
+            if (i == joints.Length - 2) RegisterPositivePairTarget(next, note);
         }
     }
 
     private void ProcessSoflanArea(umgr.SoflanArea sla)
     {
-        if (sla.LastChild is not umgr.SoflanAreaJoint tail) throw new DiagnosticException(Strings.MgCrit_SoflanArea_has_no_tail, sla, sla.Tick.Original);
+        if (sla.LastChild is not umgr.SoflanAreaJoint tail)
+            throw new DiagnosticException(Strings.MgCrit_SoflanArea_has_no_tail, sla, sla.Tick.Original);
 
-        CreateNote<umgr.SoflanArea, c2s.Sla>(sla, x =>
-        {
-            x.Length = tail.Tick.Round - sla.Tick.Round;
-        });
+        CreateNote<umgr.SoflanArea, c2s.Sla>(sla, x => { x.Length = tail.Tick.Round - sla.Tick.Round; });
     }
 
     private void ProcessHold(umgr.Hold hold)
     {
-        if (hold.LastChild is not umgr.HoldJoint tail) throw new DiagnosticException(Strings.MgCrit_Hold_has_no_tail, hold, hold.Tick.Original);
+        if (hold.LastChild is not umgr.HoldJoint tail)
+            throw new DiagnosticException(Strings.MgCrit_Hold_has_no_tail, hold, hold.Tick.Original);
 
         var note = CreateNote<umgr.Hold, c2s.Hold>(hold, x =>
         {

@@ -13,10 +13,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
         <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
-        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6"/>
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142"/>
         <PackageReference Include="Swordfish.NET.CollectionsV3" Version="3.3.16"/>
     </ItemGroup>
 
@@ -41,17 +41,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Page Update="Views\MainWindow.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
+        <Page Update="Views\MainWindow.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <XamlRuntime>Wpf</XamlRuntime>
+            <SubType>Designer</SubType>
+        </Page>
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Update="Resources\Strings.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-      </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Strings.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
     </ItemGroup>
 
     <PropertyGroup>
@@ -59,7 +59,7 @@
     </PropertyGroup>
 
     <Target Name="PenguinToolsCreatePublishZip" AfterTargets="Publish" Condition="'$(PenguinToolsCreateZipPackage)' == 'true'">
-        <Delete Files="$(PenguinToolsPublishZipPath)" Condition="Exists('$(PenguinToolsPublishZipPath)')" />
-        <ZipDirectory SourceDirectory="$(PublishDir)" DestinationFile="$(PenguinToolsPublishZipPath)" />
+        <Delete Files="$(PenguinToolsPublishZipPath)" Condition="Exists('$(PenguinToolsPublishZipPath)')"/>
+        <ZipDirectory SourceDirectory="$(PublishDir)" DestinationFile="$(PenguinToolsPublishZipPath)"/>
     </Target>
 </Project>

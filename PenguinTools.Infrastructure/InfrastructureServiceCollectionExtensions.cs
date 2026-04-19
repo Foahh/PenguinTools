@@ -8,7 +8,8 @@ namespace PenguinTools.Infrastructure;
 
 public static class InfrastructureServiceCollectionExtensions
 {
-    public static IServiceCollection AddPenguinInfrastructure(this IServiceCollection services, Assembly resourceAssembly)
+    public static IServiceCollection AddPenguinInfrastructure(this IServiceCollection services,
+        Assembly resourceAssembly)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(resourceAssembly);

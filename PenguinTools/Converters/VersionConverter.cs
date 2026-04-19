@@ -6,7 +6,7 @@ namespace PenguinTools.Converters;
 
 public class VersionConverter : IValueConverter
 {
-    public int FieldCount { set; get; } = 3;
+    public int FieldCount { get; set; } = 3;
 
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
@@ -16,7 +16,8 @@ public class VersionConverter : IValueConverter
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not string versionString || string.IsNullOrWhiteSpace(versionString)) return DependencyProperty.UnsetValue;
+        if (value is not string versionString || string.IsNullOrWhiteSpace(versionString))
+            return DependencyProperty.UnsetValue;
         return Version.TryParse(versionString, out var result) ? result : DependencyProperty.UnsetValue;
     }
 }

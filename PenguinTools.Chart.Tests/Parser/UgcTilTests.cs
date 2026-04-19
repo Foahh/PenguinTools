@@ -1,3 +1,4 @@
+using PenguinTools.Chart.Models.umgr;
 using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Core;
 using Xunit;
@@ -17,10 +18,11 @@ public class UgcTilTests
         await File.WriteAllTextAsync(tmp, ugc);
         try
         {
-            var r = await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
+            var r =
+                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
             Assert.True(r.Succeeded);
             var sse = r.Value!.Events.Children
-                .OfType<PenguinTools.Chart.Models.umgr.ScrollSpeedEvent>()
+                .OfType<ScrollSpeedEvent>()
                 .SingleOrDefault(e => e.Speed == 10000.0m);
             Assert.NotNull(sse);
             Assert.Equal(240, sse!.Tick.Original);
@@ -42,7 +44,8 @@ public class UgcTilTests
         await File.WriteAllTextAsync(tmp, ugc);
         try
         {
-            var r = await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
+            var r =
+                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
             Assert.True(r.Succeeded);
             var errors = r.Diagnostics.Diagnostics.Where(d => d.Severity >= Severity.Warning).ToList();
             Assert.DoesNotContain(errors, d => d.Message.Contains("MAINTIL"));

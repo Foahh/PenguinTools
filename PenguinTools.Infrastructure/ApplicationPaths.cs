@@ -3,7 +3,8 @@ using PenguinTools.Core;
 namespace PenguinTools.Infrastructure;
 
 /// <summary>
-/// Resolves temp and user-data directories. Override with <c>PENGUIN_TOOLS_TEMP</c> and <c>PENGUIN_TOOLS_USER_DATA</c>.
+///     Resolves temp and user-data directories. Override with <c>PENGUIN_TOOLS_TEMP</c> and <c>PENGUIN_TOOLS_USER_DATA</c>
+///     .
 /// </summary>
 public sealed class ApplicationPaths : IApplicationPaths
 {
@@ -35,10 +36,7 @@ public sealed class ApplicationPaths : IApplicationPaths
     private static string ResolveTempWorkPath()
     {
         var fromEnv = Environment.GetEnvironmentVariable(TempEnvironmentVariable);
-        if (!string.IsNullOrWhiteSpace(fromEnv))
-        {
-            return Path.GetFullPath(fromEnv.Trim());
-        }
+        if (!string.IsNullOrWhiteSpace(fromEnv)) return Path.GetFullPath(fromEnv.Trim());
 
         return Path.Combine(Path.GetTempPath(), DefaultTempSubfolder);
     }
@@ -46,10 +44,7 @@ public sealed class ApplicationPaths : IApplicationPaths
     private static string ResolveUserDataPath()
     {
         var fromEnv = Environment.GetEnvironmentVariable(UserDataEnvironmentVariable);
-        if (!string.IsNullOrWhiteSpace(fromEnv))
-        {
-            return Path.GetFullPath(fromEnv.Trim());
-        }
+        if (!string.IsNullOrWhiteSpace(fromEnv)) return Path.GetFullPath(fromEnv.Trim());
 
         var baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         return Path.Combine(baseDir, AppFolderName);

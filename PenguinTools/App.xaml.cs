@@ -37,13 +37,13 @@ public partial class App : Application
         {
             var errorWindow = new ExceptionWindow { StackTrace = ex.Exception.ToString() };
             errorWindow.ShowDialog();
-            if (ex.Exception is OperationCanceledException or DiagnosticException) { ex.Handled = true; }
+            if (ex.Exception is OperationCanceledException or DiagnosticException) ex.Handled = true;
         };
 
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
         var basePath = Path.GetDirectoryName(AppContext.BaseDirectory);
-        if (basePath != null) { Directory.SetCurrentDirectory(basePath); }
+        if (basePath != null) Directory.SetCurrentDirectory(basePath);
 
         var services = new ServiceCollection();
         services.AddPenguinInfrastructure(typeof(EmbeddedResourceStore).Assembly);

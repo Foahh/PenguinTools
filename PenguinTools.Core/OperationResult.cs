@@ -4,9 +4,15 @@ public readonly record struct OperationResult(bool Succeeded)
 {
     public DiagnosticSnapshot Diagnostics { get; init; } = DiagnosticSnapshot.Empty;
 
-    public static OperationResult Success() => new(true);
+    public static OperationResult Success()
+    {
+        return new OperationResult(true);
+    }
 
-    public static OperationResult Failure() => new(false);
+    public static OperationResult Failure()
+    {
+        return new OperationResult(false);
+    }
 
     public OperationResult WithDiagnostics(DiagnosticSnapshot diagnostics)
     {
@@ -18,9 +24,15 @@ public readonly record struct OperationResult<T>(bool Succeeded, T? Value)
 {
     public DiagnosticSnapshot Diagnostics { get; init; } = DiagnosticSnapshot.Empty;
 
-    public static OperationResult<T> Success(T value) => new(true, value);
+    public static OperationResult<T> Success(T value)
+    {
+        return new OperationResult<T>(true, value);
+    }
 
-    public static OperationResult<T> Failure() => new(false, default);
+    public static OperationResult<T> Failure()
+    {
+        return new OperationResult<T>(false, default);
+    }
 
     public OperationResult ToResult()
     {

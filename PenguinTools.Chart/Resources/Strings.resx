@@ -1,157 +1,157 @@
 <?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  
-  <xs:schema id="root">
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xs:element name="root" ns1:IsDataSet="true">
-      <xs:complexType>
-        <xs:choice maxOccurs="unbounded">
-          <xs:element name="metadata">
+
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xs:element name="root" ns1:IsDataSet="true">
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="value" type="xsd:string" minOccurs="0" />
-              </xs:sequence>
-              <xs:attribute name="name" use="required" type="xsd:string" />
-              <xs:attribute name="type" type="xsd:string" />
-              <xs:attribute name="mimetype" type="xsd:string" />
-              <xs:attribute ref="xml:space" />
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string"/>
+                            <xs:attribute name="type" type="xsd:string"/>
+                            <xs:attribute name="mimetype" type="xsd:string"/>
+                            <xs:attribute ref="xml:space"/>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string"/>
+                            <xs:attribute name="name" type="xsd:string"/>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1"/>
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2"/>
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1"/>
+                            <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3"/>
+                            <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4"/>
+                            <xs:attribute ref="xml:space"/>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1"/>
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
             </xs:complexType>
-          </xs:element>
-          <xs:element name="assembly">
-            <xs:complexType>
-              <xs:attribute name="alias" type="xsd:string" />
-              <xs:attribute name="name" type="xsd:string" />
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="data">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
-                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
-              </xs:sequence>
-              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
-              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
-              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
-              <xs:attribute ref="xml:space" />
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="resheader">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
-              </xs:sequence>
-              <xs:attribute name="name" type="xsd:string" use="required" />
-            </xs:complexType>
-          </xs:element>
-        </xs:choice>
-      </xs:complexType>
-    </xs:element>
-  </xs:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
-  <data name="Error_Invalid_Header" xml:space="preserve">
+        </xs:element>
+    </xs:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Error_Invalid_Header" xml:space="preserve">
     <value>The header {0} in the chart file does not match {1}.</value>
   </data>
-  <data name="Error_Invalid_audio" xml:space="preserve">
+    <data name="Error_Invalid_audio" xml:space="preserve">
     <value>Invalid audio format.</value>
   </data>
 
-  <data name="Error_Invalid_bg_image" xml:space="preserve">
+    <data name="Error_Invalid_bg_image" xml:space="preserve">
     <value>Invalid background image format.</value>
   </data>
-  <data name="Error_Invalid_jk_image" xml:space="preserve">
+    <data name="Error_Invalid_jk_image" xml:space="preserve">
     <value>Invalid jacket image format.</value>
   </data>
-  <data name="Error_Size_Incompatible" xml:space="preserve">
+    <data name="Error_Size_Incompatible" xml:space="preserve">
     <value>Expected to read {0} bytes for {1} but only got {2}.</value>
   </data>
-  <data name="MgCrit_Air_parent_null" xml:space="preserve">
+    <data name="MgCrit_Air_parent_null" xml:space="preserve">
     <value>Parent of Air cannot be null.</value>
   </data>
-  <data name="MgCrit_Air_slide_parent_null" xml:space="preserve">
+    <data name="MgCrit_Air_slide_parent_null" xml:space="preserve">
     <value>Parent of AirSlide cannot be null.</value>
   </data>
-  <data name="MgCrit_Hold_has_no_tail" xml:space="preserve">
+    <data name="MgCrit_Hold_has_no_tail" xml:space="preserve">
     <value>The Hold is missing a tail.</value>
   </data>
-  <data name="MgCrit_Invalid_AirSlide_parent" xml:space="preserve">
+    <data name="MgCrit_Invalid_AirSlide_parent" xml:space="preserve">
     <value>The specified AirSlide parent is invalid.</value>
   </data>
-  <data name="MgCrit_Invalid_Air_parent" xml:space="preserve">
+    <data name="MgCrit_Invalid_Air_parent" xml:space="preserve">
     <value>The specified Air parent is invalid.</value>
   </data>
-  <data name="MgCrit_Pairing_notes_incompatible" xml:space="preserve">
+    <data name="MgCrit_Pairing_notes_incompatible" xml:space="preserve">
     <value>Note are incompatible for pairing.</value>
   </data>
-  <data name="MgCrit_SoflanArea_has_no_tail" xml:space="preserve">
+    <data name="MgCrit_SoflanArea_has_no_tail" xml:space="preserve">
     <value>The SoflanArea is missing a tail.</value>
   </data>
-  <data name="MgCrit_Unrecognized_data_type" xml:space="preserve">
+    <data name="MgCrit_Unrecognized_data_type" xml:space="preserve">
     <value>Unknown type {0}.</value>
   </data>
-  <data name="MgCrit_Unrecognized_event" xml:space="preserve">
+    <data name="MgCrit_Unrecognized_event" xml:space="preserve">
     <value>Unknown event mark {0}.</value>
   </data>
-  <data name="Mg_Concurrent_ex_effects" xml:space="preserve">
+    <data name="Mg_Concurrent_ex_effects" xml:space="preserve">
     <value>Different EX effects coexist at the same tick: {0}. The game will only display one of these.</value>
   </data>
-  <data name="Mg_Head_BPM_not_found" xml:space="preserve">
+    <data name="Mg_Head_BPM_not_found" xml:space="preserve">
     <value>No BPM change event was found at tick 0.</value>
   </data>
-  <data name="Mg_Head_Time_Signature_event_not_found" xml:space="preserve">
+    <data name="Mg_Head_Time_Signature_event_not_found" xml:space="preserve">
     <value>No Time Signature event was found at bar 0. Defaulting to a 4/4 time signature.</value>
   </data>
-  <data name="Mg_Invalid_joint_type_note" xml:space="preserve">
+    <data name="Mg_Invalid_joint_type_note" xml:space="preserve">
     <value>Invalid joint type for {0}.</value>
   </data>
-  <data name="Mg_Length_smaller_than_unit" xml:space="preserve">
+    <data name="Mg_Length_smaller_than_unit" xml:space="preserve">
     <value>Nodes in the original lengthy note having spacing less than 1/{1}.</value>
   </data>
-  <data name="Mg_Main_timeline_not_found" xml:space="preserve">
+    <data name="Mg_Main_timeline_not_found" xml:space="preserve">
     <value>There was no events found on main TIL {0}.</value>
   </data>
-  <data name="Mg_Meta_Argument_count_min_one" xml:space="preserve">
+    <data name="Mg_Meta_Argument_count_min_one" xml:space="preserve">
     <value>Command '{0}' requires at least one argument.</value>
   </data>
-  <data name="Mg_Meta_First_argument_must_int" xml:space="preserve">
+    <data name="Mg_Meta_First_argument_must_int" xml:space="preserve">
     <value>First argument must be a valid integer.</value>
   </data>
-  <data name="Mg_Meta_Invalid_date" xml:space="preserve">
+    <data name="Mg_Meta_Invalid_date" xml:space="preserve">
     <value>Invalid date format. Expected 'YYYYMMDD'.</value>
   </data>
-  <data name="Mg_Meta_Unknown_tag" xml:space="preserve">
+    <data name="Mg_Meta_Unknown_tag" xml:space="preserve">
     <value>Unknown tag '{0}'.</value>
   </data>
-  <data name="Mg_No_sortname_provided" xml:space="preserve">
+    <data name="Mg_No_sortname_provided" xml:space="preserve">
     <value>No SortName was provided. A new SortName has been generated from the Title.</value>
   </data>
-  <data name="Mg_Note_overlapped_in_different_TIL" xml:space="preserve">
+    <data name="Mg_Note_overlapped_in_different_TIL" xml:space="preserve">
     <value>This note overlaps with note in other TILs. This may cause problems in the scroll speed of this note.</value>
   </data>
-  <data name="Mg_Overlapping_air_parent_slide" xml:space="preserve">
+    <data name="Mg_Overlapping_air_parent_slide" xml:space="preserve">
     <value>Due to multiple overlapping Slide nodes existing simultaneously on this Air's position, it is unknown to determine from which Slide node the Air should start. Please try to space them apart in single ticks.</value>
   </data>
-  <data name="Mg_String_id_not_found" xml:space="preserve">
+    <data name="Mg_String_id_not_found" xml:space="preserve">
     <value>The specified StringID (id or str) {0} could not be found in '{1}'. Please check your input or run "Recollect Game Assets" to refresh the database. If you want to use your custom StringID, please provide both (i.e. "#meta ... [ID] [String]").</value>
   </data>
-  <data name="Mg_Unrecognized_meta" xml:space="preserve">
+    <data name="Mg_Unrecognized_meta" xml:space="preserve">
     <value>Unknown property mark {0}, data: {1}.</value>
   </data>
-  <data name="Mg_Unrecognized_note" xml:space="preserve">
+    <data name="Mg_Unrecognized_note" xml:space="preserve">
     <value>Unknown note type {0}.</value>
   </data>
-  </root>
+</root>

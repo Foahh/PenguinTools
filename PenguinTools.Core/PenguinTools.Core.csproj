@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <EmbeddedResource Update="Resources\Strings.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-      </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Strings.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
     </ItemGroup>
 </Project>

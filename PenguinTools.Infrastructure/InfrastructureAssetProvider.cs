@@ -41,25 +41,13 @@ public sealed class InfrastructureAssetProvider(IResourceStore resources) : IInf
 
     private string ResolveMuaExecutablePath()
     {
-        if (OperatingSystem.IsWindows() && Resources.HasResource("mua.exe"))
-        {
-            return Resources.ExtractToTemp("mua.exe");
-        }
+        if (OperatingSystem.IsWindows() && Resources.HasResource("mua.exe")) return Resources.ExtractToTemp("mua.exe");
 
-        if (OperatingSystem.IsLinux() && Resources.HasResource("mua"))
-        {
-            return Resources.ExtractToTemp("mua");
-        }
+        if (OperatingSystem.IsLinux() && Resources.HasResource("mua")) return Resources.ExtractToTemp("mua");
 
-        if (Resources.HasResource("mua.exe"))
-        {
-            return Resources.ExtractToTemp("mua.exe");
-        }
+        if (Resources.HasResource("mua.exe")) return Resources.ExtractToTemp("mua.exe");
 
-        if (Resources.HasResource("mua"))
-        {
-            return Resources.ExtractToTemp("mua");
-        }
+        if (Resources.HasResource("mua")) return Resources.ExtractToTemp("mua");
 
         return OperatingSystem.IsWindows() ? "mua.exe" : "mua";
     }

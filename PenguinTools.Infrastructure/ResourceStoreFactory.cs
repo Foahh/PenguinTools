@@ -14,9 +14,7 @@ public static class ResourceStoreFactory
         var assetDirectory = Path.Combine(appBaseDirectory, "assets");
 
         if (File.Exists(Path.Combine(assetDirectory, "assets.json")))
-        {
             return new FileResourceStore(assetDirectory, tempWorkPath);
-        }
 
         return new EmbeddedResourceStore(assembly, tempWorkPath);
     }

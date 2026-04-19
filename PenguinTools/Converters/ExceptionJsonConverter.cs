@@ -44,6 +44,7 @@ public class ExceptionJsonConverter : JsonConverter<Exception>
             writer.WritePropertyName("InnerException");
             JsonSerializer.Serialize(writer, value.InnerException, options);
         }
+
         writer.WriteEndObject();
     }
 }

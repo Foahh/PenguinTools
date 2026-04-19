@@ -10,9 +10,9 @@ namespace PenguinTools.Services;
 public sealed class OptionService : IOptionService
 {
     private readonly AssetManager _assetManager;
+    private readonly IInfrastructureAssetProvider _assetProvider;
     private readonly IMediaTool _mediaTool;
     private readonly IResourceStore _resourceStore;
-    private readonly IInfrastructureAssetProvider _assetProvider;
 
     public OptionService(
         AssetManager assetManager,
@@ -36,13 +36,16 @@ public sealed class OptionService : IOptionService
         return OptionExporter.ExportAsync(ctx, exportSettings, outputPaths, snapshots, settings.WorkingDirectory, ct);
     }
 
-    private static OptionBookSnapshot ToSnapshot(Book book) =>
-        new(
+    private static OptionBookSnapshot ToSnapshot(Book book)
+    {
+        return new OptionBookSnapshot(
             book.Meta,
             book.IsCustomStage,
             book.StageId,
             book.NotesFieldLine,
             book.Stage,
             book.Title,
-            book.Items.ToDictionary(kv => kv.Key, kv => new OptionDifficultySnapshot(kv.Value.Difficulty, kv.Value.Id, kv.Value.Mgxc, kv.Value.Meta)));
+            book.Items.ToDictionary(kv => kv.Key,
+                kv => new OptionDifficultySnapshot(kv.Value.Difficulty, kv.Value.Id, kv.Value.Mgxc, kv.Value.Meta)));
+    }
 }

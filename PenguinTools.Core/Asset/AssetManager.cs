@@ -7,19 +7,17 @@ public class AssetManager : INotifyPropertyChanged
 {
     public const string PlusAssetsFileName = "assets.user.json";
 
-    private readonly string _plusAssetsPath;
-
     public AssetManager(Stream hardAssets, string userDataDirectory)
     {
         ArgumentNullException.ThrowIfNull(hardAssets);
         ArgumentException.ThrowIfNullOrWhiteSpace(userDataDirectory);
 
         Directory.CreateDirectory(userDataDirectory);
-        _plusAssetsPath = Path.Combine(userDataDirectory, PlusAssetsFileName);
+        PlusAssetsPath = Path.Combine(userDataDirectory, PlusAssetsFileName);
 
         MergeAssets = new AssetDictionary();
         HardAssets = new AssetDictionary(hardAssets);
-        var plusOk = AssetDictionary.TryLoadPlusAssetsFromFile(_plusAssetsPath, out var plus);
+        var plusOk = AssetDictionary.TryLoadPlusAssetsFromFile(PlusAssetsPath, out var plus);
         PlusAssets = plus;
         ShouldPromptForOptionalAssetsImport = !plusOk;
         UserAssets = new AssetDictionary();
@@ -27,11 +25,11 @@ public class AssetManager : INotifyPropertyChanged
         NotifyAssetChanged();
     }
 
-    /// <summary>True when <see cref="PlusAssetsFileName"/> was missing or not valid JSON at startup.</summary>
+    /// <summary>True when <see cref="PlusAssetsFileName" /> was missing or not valid JSON at startup.</summary>
     public bool ShouldPromptForOptionalAssetsImport { get; }
 
     /// <summary>Absolute path to the merged plus-tier asset JSON on disk.</summary>
-    public string PlusAssetsPath => _plusAssetsPath;
+    public string PlusAssetsPath { get; }
 
     // Asset Dictionary that merges all assets from various sources below
     public AssetDictionary MergeAssets { get; }
@@ -53,12 +51,12 @@ public class AssetManager : INotifyPropertyChanged
 
     public async Task CollectAssetsAsync(string workDir, CancellationToken ct = default)
     {
-        if (!Directory.Exists(workDir)) { return; }
+        if (!Directory.Exists(workDir)) return;
 
         PlusAssets.MergeWith(await AssetDictionary.CollectAsync(workDir, ct));
         PlusAssets.SubtractWith(HardAssets);
 
-        await PlusAssets.SaveAsync(_plusAssetsPath, ct);
+        await PlusAssets.SaveAsync(PlusAssetsPath, ct);
 
         Merge();
         NotifyAssetChanged();

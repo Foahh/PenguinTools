@@ -70,6 +70,7 @@ public class Air : NegativeNote
 {
     public AirDirection Direction { get; set; } = AirDirection.IR;
     public Color Color { get; set; }
+
     public override int Lane
     {
         get => PairNote?.Lane ?? 0;
@@ -78,6 +79,7 @@ public class Air : NegativeNote
             // do nothing
         }
     }
+
     public override int Width
     {
         get => PairNote?.Width ?? 1;
@@ -86,6 +88,7 @@ public class Air : NegativeNote
             // do nothing
         }
     }
+
     public override Time Tick
     {
         get => PairNote?.Tick ?? 0;

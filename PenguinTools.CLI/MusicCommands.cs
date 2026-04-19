@@ -28,7 +28,8 @@ internal static class MusicCommands
         var audioOptions = CommandLineOptions.CreateAudioCommandOptions();
         var stageOptions = CommandLineOptions.CreateStageCommandOptions();
 
-        var command = new Command("export", "Export chart, jacket, audio, and optional stage/event XML from one MGXC or UGC chart.");
+        var command = new Command("export",
+            "Export chart, jacket, audio, and optional stage/event XML from one MGXC or UGC chart.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         command.Options.Add(jacketInputOption);
@@ -47,11 +48,11 @@ internal static class MusicCommands
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
-                {
-                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output));
-                }
+                    return new CliCommandOutcome(parsed.ToResult(),
+                        Data: new CliCommandData(input, OutputDirectory: output));
 
-                var exported = await CliOperations.ExportMusicAsync(runtime, parsed.Value, output, jacketInput, audioOverrides, stageOverrides, ct);
+                var exported = await CliOperations.ExportMusicAsync(runtime, parsed.Value, output, jacketInput,
+                    audioOverrides, stageOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, exported);
                 var data = CliOperations.CreateMusicData(input, output, parsed.Value.Meta, jacketInput, stageOverrides);
                 var message = result.Succeeded ? $"Exported music: {output}" : null;

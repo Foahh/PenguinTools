@@ -1,7 +1,7 @@
 namespace PenguinTools.Core;
 
 /// <summary>
-/// Application-managed filesystem locations (scratch temp and durable user data).
+///     Application-managed filesystem locations (scratch temp and durable user data).
 /// </summary>
 public interface IApplicationPaths
 {

@@ -90,19 +90,21 @@ public partial class MgxcParser
         }
         else if (type == NoteType.ExTap)
         {
-            var exNote = new umgr.ExTap();
-            exNote.Effect = direction switch
+            var exNote = new umgr.ExTap
             {
-                Direction.Up => ExEffect.UP,
-                Direction.Down => ExEffect.DW,
-                Direction.Center => ExEffect.CE,
-                Direction.Left => ExEffect.LS,
-                Direction.Right => ExEffect.RS,
-                Direction.RotateLeft => ExEffect.LC,
-                Direction.RotateRight => ExEffect.RC,
-                Direction.InOut => ExEffect.BS,
-                Direction.OutIn => ExEffect.CE,
-                _ => ExEffect.UP
+                Effect = direction switch
+                {
+                    Direction.Up => ExEffect.UP,
+                    Direction.Down => ExEffect.DW,
+                    Direction.Center => ExEffect.CE,
+                    Direction.Left => ExEffect.LS,
+                    Direction.Right => ExEffect.RS,
+                    Direction.RotateLeft => ExEffect.LC,
+                    Direction.RotateRight => ExEffect.RC,
+                    Direction.InOut => ExEffect.BS,
+                    Direction.OutIn => ExEffect.CE,
+                    _ => ExEffect.UP
+                }
             };
             note = exNote;
         }
@@ -153,6 +155,7 @@ public partial class MgxcParser
                     var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(umgr.SlideJoint));
                     Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
                 }
+
                 note = exNote;
                 isChildNote = true;
             }
@@ -170,6 +173,7 @@ public partial class MgxcParser
                 case Direction.DownRight: exNote.Direction = AirDirection.DR; break;
                 default: exNote.Direction = AirDirection.IR; break;
             }
+
             exNote.Color = exAttr == ExAttr.Invert ? Color.PNK : Color.DEF;
             note = exNote;
             isPairNote = true;
@@ -206,6 +210,7 @@ public partial class MgxcParser
                     var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(umgr.AirSlideJoint));
                     Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
                 }
+
                 exNote.Height = height;
                 note = exNote;
                 isChildNote = true;
@@ -237,10 +242,12 @@ public partial class MgxcParser
 
             if (longAttr == LongAttr.Begin)
             {
-                var exNote = new umgr.AirCrash();
-                exNote.Color = color;
-                exNote.Height = height;
-                exNote.Density = optionValue;
+                var exNote = new umgr.AirCrash
+                {
+                    Color = color,
+                    Height = height,
+                    Density = optionValue
+                };
                 note = exNote;
             }
             else
@@ -251,6 +258,7 @@ public partial class MgxcParser
                     var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(umgr.AirCrashJoint));
                     Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
                 }
+
                 exNote.Height = height;
                 note = exNote;
                 isChildNote = true;
@@ -281,7 +289,6 @@ public partial class MgxcParser
         else Mgxc.Notes.AppendChild(note);
 
         if (isPairNote)
-        {
             switch (_lastNote)
             {
                 case umgr.PositiveNote lastP when note is umgr.NegativeNote newN:
@@ -297,7 +304,6 @@ public partial class MgxcParser
                         _lastNote
                     }, note.Tick.Original);
             }
-        }
 
         if (!isChildNote) _lastParentNote = note;
 

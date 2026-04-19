@@ -1,7 +1,7 @@
-﻿using PenguinTools.Attributes;
+﻿using System.ComponentModel;
+using PenguinTools.Attributes;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Resources;
-using System.ComponentModel;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using umgr = PenguinTools.Chart.Models.umgr;
 
@@ -11,8 +11,7 @@ namespace PenguinTools.Models;
 [LocalizableCategoryOrder(nameof(Strings.Category_Chart), 1, typeof(Strings))]
 public class ChartModel(umgr.Chart mgxc) : MetaModel
 {
-    [Browsable(false)]
-    public override umgr.Chart Mgxc { get; } = mgxc;
+    [Browsable(false)] public override umgr.Chart Mgxc { get; } = mgxc;
 
     [PropertyOrder(0)]
     [LocalizableCategory(nameof(Strings.Category_Song), typeof(Strings))]

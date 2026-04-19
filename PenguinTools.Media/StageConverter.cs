@@ -1,7 +1,7 @@
 ﻿using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Media.Resources;
 using PenguinTools.Core.Xml;
+using PenguinTools.Media.Resources;
 
 namespace PenguinTools.Media;
 
@@ -41,8 +41,10 @@ public class StageConverter
 
     public async Task<OperationResult<Entry>> BuildAsync(CancellationToken ct = default)
     {
-        if (!await ValidateAsync(ct)) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
-        if (StageId is not { } stageId) return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        if (!await ValidateAsync(ct))
+            return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        if (StageId is not { } stageId)
+            return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
 
         var xml = new StageXml(stageId, NoteFieldLane);
         var outputDir = await xml.SaveDirectoryAsync(OutFolder);
@@ -60,9 +62,7 @@ public class StageConverter
         var hasError = false;
         var duplicates = Assets.StageNames.Where(p => p.Id == StageId);
         foreach (var d in duplicates)
-        {
             Diagnostic.Report(Severity.Warning, string.Format(Strings.Warn_Stage_already_exists, d, StageId));
-        }
 
         if (StageId is null)
         {
@@ -98,10 +98,9 @@ public class StageConverter
         }
 
         if (EffectPaths is not null)
-        {
             foreach (var p in EffectPaths)
             {
-                if (string.IsNullOrWhiteSpace(p)) { continue; }
+                if (string.IsNullOrWhiteSpace(p)) continue;
 
                 if (!File.Exists(p))
                 {
@@ -117,7 +116,6 @@ public class StageConverter
                     hasError = true;
                 }
             }
-        }
 
         return !hasError;
     }

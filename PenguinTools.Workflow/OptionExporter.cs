@@ -21,21 +21,24 @@ public static class OptionExporter
         CancellationToken ct)
     {
         var diagnostics = OptionExportBatch.CreateDiagnoster();
-        var processContext = new OptionExportProcessContext(diagnostics, ct, settings.BatchSize, diagnosticsWorkingDirectory);
+        var processContext =
+            new OptionExportProcessContext(diagnostics, ct, settings.BatchSize, diagnosticsWorkingDirectory);
         var weEntries = new ConcurrentBag<Entry>();
         var ultEntries = new ConcurrentBag<Entry>();
 
         var batchDiagnostics = await OptionExportBatch.BatchAsync(
             "convert",
             books,
-            (book, innerDiagnostics) => ConvertBookAsync(ctx, book, settings, outputPaths, innerDiagnostics, weEntries, ultEntries, ct),
+            (book, innerDiagnostics) => ConvertBookAsync(ctx, book, settings, outputPaths, innerDiagnostics, weEntries,
+                ultEntries, ct),
             book => book.BookMeta.FilePath,
             processContext,
-            parallel: true);
+            true);
 
         await GenerateAuxiliaryFilesAsync(settings, outputPaths, weEntries, ultEntries, ct);
 
-        return OperationResult.Success().WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
+        return OperationResult.Success()
+            .WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
     }
 
     private static async Task ConvertBookAsync(
@@ -53,24 +56,15 @@ public static class OptionExporter
         MusicXml? xml = null;
 
         if (settings.ConvertChart || settings.ConvertJacket)
-        {
             (xml, chartFolder) = await CreateMusicXmlAsync(book, stage, outputPaths.AudioFolder);
-        }
 
         if (settings.ConvertChart && xml is not null && chartFolder is not null)
-        {
             await ConvertChartsAsync(book, xml, chartFolder, diagnostics, weEntries, ultEntries, ct);
-        }
 
         if (settings.ConvertJacket && xml is not null && chartFolder is not null)
-        {
             await ConvertJacketAsync(book, xml, chartFolder, ctx, diagnostics, ct);
-        }
 
-        if (settings.ConvertAudio)
-        {
-            await ConvertAudioAsync(book, outputPaths.CueFileFolder, ctx, diagnostics, ct);
-        }
+        if (settings.ConvertAudio) await ConvertAudioAsync(book, outputPaths.CueFileFolder, ctx, diagnostics, ct);
     }
 
     private static async Task<Entry?> BuildStageAsync(
@@ -120,16 +114,12 @@ public static class OptionExporter
         return (xml, chartFolder);
     }
 
-    private static void TrackEventEntry(OptionBookSnapshot book, Difficulty difficulty, int songId, ConcurrentBag<Entry> weEntries, ConcurrentBag<Entry> ultEntries)
+    private static void TrackEventEntry(OptionBookSnapshot book, Difficulty difficulty, int songId,
+        ConcurrentBag<Entry> weEntries, ConcurrentBag<Entry> ultEntries)
     {
         if (difficulty == Difficulty.WorldsEnd)
-        {
             weEntries.Add(new Entry(songId, book.Title));
-        }
-        else if (difficulty == Difficulty.Ultima)
-        {
-            ultEntries.Add(new Entry(songId, book.Title));
-        }
+        else if (difficulty == Difficulty.Ultima) ultEntries.Add(new Entry(songId, book.Title));
     }
 
     private static async Task ConvertChartsAsync(
@@ -194,7 +184,8 @@ public static class OptionExporter
                 book.BookMeta,
                 cueFileFolder,
                 ctx.AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
-                ctx.ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(book.BookMeta.FullBgmFilePath)}.wav")),
+                ctx.ResourceStore.GetTempPath(
+                    $"c_{Path.GetFileNameWithoutExtension(book.BookMeta.FullBgmFilePath)}.wav")),
             ctx.MediaTool);
         var convertedAudio = await audioConverter.ConvertAsync(ct);
         diagnostics.Report(convertedAudio.Diagnostics);
@@ -210,10 +201,7 @@ public static class OptionExporter
         ConcurrentBag<Entry> ultEntries,
         CancellationToken ct)
     {
-        if (settings.GenerateReleaseTagXml)
-        {
-            await ReleaseTag.Default.SaveDirectoryAsync(outputPaths.ReleaseTagPath);
-        }
+        if (settings.GenerateReleaseTagXml) await ReleaseTag.Default.SaveDirectoryAsync(outputPaths.ReleaseTagPath);
 
         if (settings.GenerateEventXml && !ultEntries.IsEmpty)
         {

@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
@@ -50,7 +50,7 @@ public partial class MiscViewModel : ViewModel
             ValidateNames = true
         };
         var result = openDlg.ShowDialog(Application.Current.MainWindow);
-        if (result is not true || string.IsNullOrWhiteSpace(openDlg.FileName)) { return; }
+        if (result is not true || string.IsNullOrWhiteSpace(openDlg.FileName)) return;
 
         var baseDir = Path.GetDirectoryName(openDlg.FileName);
         var saveDlg = new OpenFolderDialog
@@ -61,7 +61,7 @@ public partial class MiscViewModel : ViewModel
             Multiselect = false,
             ValidateNames = true
         };
-        if (saveDlg.ShowDialog() != true) { return; }
+        if (saveDlg.ShowDialog() != true) return;
 
         await ActionService.RunAsync(async ct =>
         {
@@ -80,7 +80,7 @@ public partial class MiscViewModel : ViewModel
             ValidateNames = true
         };
         var result = openDlg.ShowDialog(Application.Current.MainWindow);
-        if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) { return; }
+        if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) return;
 
         await ActionService.RunAsync(ct => AssetManager.CollectAssetsAsync(openDlg.FolderName, ct));
     }

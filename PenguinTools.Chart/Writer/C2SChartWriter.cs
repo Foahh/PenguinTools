@@ -1,7 +1,7 @@
-﻿using PenguinTools.Core;
+﻿using System.Text;
 using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Resources;
-using System.Text;
+using PenguinTools.Core;
 
 namespace PenguinTools.Chart.Writer;
 
@@ -39,7 +39,8 @@ public partial class C2SChartWriter
         var allAirs = Notes.OfType<c2s.IPairable>().Where(p => p.Parent is c2s.Slide).Cast<c2s.Note>();
 
         var airsLookup = allAirs.GroupBy(a => (a.Tick, a.Lane, a.Width)).ToDictionary(g => g.Key, g => g.Count());
-        var slidesLookup = allSlides.GroupBy(s => (s.EndTick, s.EndLane, s.EndWidth)).ToDictionary(g => g.Key, g => g.Count());
+        var slidesLookup = allSlides.GroupBy(s => (s.EndTick, s.EndLane, s.EndWidth))
+            .ToDictionary(g => g.Key, g => g.Count());
 
         foreach (var (pos, airsCount) in airsLookup)
         {
@@ -54,13 +55,15 @@ public partial class C2SChartWriter
             if (length >= ChartResolution.SingleTick) continue;
 
             var tick = longNote.Tick.Original;
-            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length, ChartResolution.UmiguriTick / ChartResolution.SingleTick);
+            var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length,
+                ChartResolution.UmiguriTick / ChartResolution.SingleTick);
             Diagnostic.Report(Severity.Warning, msg, tick, longNote);
         }
 
         if (Mgxc.Meta.BgmEnableBarOffset)
         {
-            var offset = (int)Math.Round((decimal)ChartResolution.UmiguriTick / Mgxc.Meta.BgmInitialDenominator * Mgxc.Meta.BgmInitialNumerator);
+            var offset = (int)Math.Round((decimal)ChartResolution.UmiguriTick / Mgxc.Meta.BgmInitialDenominator *
+                                         Mgxc.Meta.BgmInitialNumerator);
             foreach (var e in Events.Where(e => e.Tick.Original != 0)) e.Tick = e.Tick.Original + offset;
             foreach (var n in Notes)
             {
@@ -76,7 +79,8 @@ public partial class C2SChartWriter
         sb.AppendLine("DIFFICULT\t0");
         sb.AppendLine("LEVEL\t0.0");
         sb.AppendLine($"CREATOR\t{Mgxc.Meta.Designer}");
-        sb.AppendLine($"BPM_DEF\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}");
+        sb.AppendLine(
+            $"BPM_DEF\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}\t{Mgxc.Meta.MainBpm:F3}");
         sb.AppendLine($"MET_DEF\t{Mgxc.Meta.BgmInitialDenominator}\t{Mgxc.Meta.BgmInitialNumerator}");
         sb.AppendLine("RESOLUTION\t384");
         sb.AppendLine("CLK_DEF\t384");
@@ -88,9 +92,7 @@ public partial class C2SChartWriter
         AppendFormattedEvents(sb);
         sb.AppendLine();
         if (!AppendFormattedNotes(sb))
-        {
             return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
-        }
 
         await File.WriteAllTextAsync(OutPath, sb.ToString(), ct);
         return OperationResult.Success().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
@@ -98,10 +100,7 @@ public partial class C2SChartWriter
 
     private void AppendFormattedEvents(StringBuilder sb)
     {
-        foreach (var e in Events)
-        {
-            sb.AppendLine(Format(e));
-        }
+        foreach (var e in Events) sb.AppendLine(Format(e));
     }
 
     private bool AppendFormattedNotes(StringBuilder sb)

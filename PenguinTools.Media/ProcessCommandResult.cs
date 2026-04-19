@@ -1,5 +1,5 @@
-using PenguinTools.Core;
 using System.Diagnostics;
+using PenguinTools.Core;
 using PenguinTools.Media.Resources;
 
 namespace PenguinTools.Media;

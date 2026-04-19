@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using PenguinTools.Resources;
-using PenguinTools.Infrastructure;
 using PenguinTools.Services;
-using System.IO;
 
 namespace PenguinTools.ViewModels;
 
@@ -37,7 +37,9 @@ public partial class JacketViewModel : ActionViewModel
         get
         {
             if (JacketId is { } id) return $"[CHU_UI_Jacket_{id:0000}.dds]";
-            return !string.IsNullOrWhiteSpace(JacketPath) ? $"[CHU_UI_Jacket_{Path.GetFileNameWithoutExtension((string?)JacketPath)}.dds]" : string.Empty;
+            return !string.IsNullOrWhiteSpace(JacketPath)
+                ? $"[CHU_UI_Jacket_{Path.GetFileNameWithoutExtension((string?)JacketPath)}.dds]"
+                : string.Empty;
         }
     }
 
@@ -48,7 +50,9 @@ public partial class JacketViewModel : ActionViewModel
 
     protected override async Task<OperationResult> Action(CancellationToken ct = default)
     {
-        var fileName = JacketId is null ? Path.GetFileNameWithoutExtension((string?)JacketPath) : $"{(int)JacketId:0000}";
+        var fileName = JacketId is null
+            ? Path.GetFileNameWithoutExtension((string?)JacketPath)
+            : $"{(int)JacketId:0000}";
         var dlg = new SaveFileDialog
         {
             Filter = Strings.Filefilter_dds,

@@ -72,6 +72,6 @@ public sealed class EmbeddedResourceStore : IResourceStore
 
     public void Dispose()
     {
-        ResourceStoreHelpers.ClearDirectory(TempWorkPath, deleteRoot: true);
+        ResourceStoreHelpers.ClearDirectory(TempWorkPath, true);
     }
 }

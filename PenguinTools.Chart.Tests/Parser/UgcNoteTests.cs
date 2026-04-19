@@ -1,4 +1,5 @@
 using PenguinTools.Chart.Models;
+using PenguinTools.Chart.Models.umgr;
 using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 
@@ -15,7 +16,8 @@ public class UgcNoteTests
         await File.WriteAllTextAsync(tmp, Header + body);
         try
         {
-            var r = await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
+            var r =
+                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
             Assert.True(r.Succeeded, r.ToString());
             return r.Value!;
         }
@@ -29,7 +31,7 @@ public class UgcNoteTests
     public async Task Tap_Simple()
     {
         var chart = await Parse("#0'480:t64\n");
-        var tap = Assert.Single(chart.Notes.Children.OfType<Models.umgr.Tap>());
+        var tap = Assert.Single(chart.Notes.Children.OfType<Tap>());
         Assert.Equal(480, tap.Tick.Original);
         Assert.Equal(6, tap.Lane);
         Assert.Equal(4, tap.Width);
@@ -39,7 +41,7 @@ public class UgcNoteTests
     public async Task ExTap_WithEffect()
     {
         var chart = await Parse("#0'480:x64U\n");
-        var ex = Assert.Single(chart.Notes.Children.OfType<Models.umgr.ExTap>());
+        var ex = Assert.Single(chart.Notes.Children.OfType<ExTap>());
         Assert.Equal(ExEffect.UP, ex.Effect);
     }
 
@@ -47,8 +49,8 @@ public class UgcNoteTests
     public async Task Flick_And_Damage()
     {
         var chart = await Parse("#0'480:f24\n#0'960:d24\n");
-        Assert.Single(chart.Notes.Children.OfType<Models.umgr.Flick>());
-        Assert.Single(chart.Notes.Children.OfType<Models.umgr.Damage>());
+        Assert.Single(chart.Notes.Children.OfType<Flick>());
+        Assert.Single(chart.Notes.Children.OfType<Damage>());
     }
 
     [Fact]
@@ -62,9 +64,9 @@ public class UgcNoteTests
     public async Task Hold_ParentAndEnd()
     {
         var chart = await Parse("#0'0:h64\n#480:s\n");
-        var hold = Assert.Single(chart.Notes.Children.OfType<Models.umgr.Hold>());
+        var hold = Assert.Single(chart.Notes.Children.OfType<Hold>());
         Assert.Equal(0, hold.Tick.Original);
-        var end = Assert.Single(hold.Children.OfType<Models.umgr.HoldJoint>());
+        var end = Assert.Single(hold.Children.OfType<HoldJoint>());
         Assert.Equal(480, end.Tick.Original);
     }
 
@@ -72,10 +74,10 @@ public class UgcNoteTests
     public async Task Slide_WithControlAndEnd()
     {
         var chart = await Parse("#0'0:s14\n#240:c24\n#480:s34\n");
-        var slide = Assert.Single(chart.Notes.Children.OfType<Models.umgr.Slide>());
+        var slide = Assert.Single(chart.Notes.Children.OfType<Slide>());
         Assert.Equal(2, slide.Children.Count);
-        var c = Assert.IsType<Models.umgr.SlideJoint>(slide.Children[0]);
-        var e = Assert.IsType<Models.umgr.SlideJoint>(slide.Children[1]);
+        var c = Assert.IsType<SlideJoint>(slide.Children[0]);
+        var e = Assert.IsType<SlideJoint>(slide.Children[1]);
         Assert.Equal(Joint.C, c.Joint);
         Assert.Equal(Joint.D, e.Joint);
     }
@@ -84,8 +86,8 @@ public class UgcNoteTests
     public async Task Air_PairsWithPrecedingTap()
     {
         var chart = await Parse("#0'480:t64\n#0'480:a64ULI\n");
-        var tap = Assert.Single(chart.Notes.Children.OfType<Models.umgr.Tap>());
-        var air = Assert.Single(chart.Notes.Children.OfType<Models.umgr.Air>());
+        var tap = Assert.Single(chart.Notes.Children.OfType<Tap>());
+        var air = Assert.Single(chart.Notes.Children.OfType<Air>());
         Assert.Same(tap, air.PairNote);
         Assert.Equal(AirDirection.UR, air.Direction);
         Assert.Equal(Color.PNK, air.Color);
@@ -95,9 +97,9 @@ public class UgcNoteTests
     public async Task AirHold_ParentAndChild()
     {
         var chart = await Parse("#0'0:t14\n#0'0:H14I\n#480:c\n");
-        var sl = Assert.Single(chart.Notes.Children.OfType<Models.umgr.AirSlide>());
+        var sl = Assert.Single(chart.Notes.Children.OfType<AirSlide>());
         Assert.Equal(Color.PNK, sl.Color);
-        var child = Assert.Single(sl.Children.OfType<Models.umgr.AirSlideJoint>());
+        var child = Assert.Single(sl.Children.OfType<AirSlideJoint>());
         Assert.Equal(Joint.C, child.Joint);
         Assert.Equal(0m, child.Height);
     }
@@ -106,11 +108,11 @@ public class UgcNoteTests
     public async Task AirCrush_WithIntervalAndColor()
     {
         var chart = await Parse("#0'0:C140A1,$\n#480:c24ZZ\n");
-        var crash = Assert.Single(chart.Notes.Children.OfType<Models.umgr.AirCrash>());
+        var crash = Assert.Single(chart.Notes.Children.OfType<AirCrash>());
         Assert.Equal(Color.RED, crash.Color);
         Assert.Equal(10m, crash.Height);
         Assert.Equal(0x7FFFFFFF, crash.Density.Original);
-        var end = Assert.Single(crash.Children.OfType<Models.umgr.AirCrashJoint>());
+        var end = Assert.Single(crash.Children.OfType<AirCrashJoint>());
         Assert.Equal(1295m, end.Height);
     }
 
@@ -118,11 +120,11 @@ public class UgcNoteTests
     public async Task AirSlide_UsesTwoDigitHeightAndSpecChildSyntax()
     {
         var chart = await Parse("#0'0:t14\n#0'0:S140AI\n#480:s24ZZ\n");
-        var airSlide = Assert.Single(chart.Notes.Children.OfType<Models.umgr.AirSlide>());
+        var airSlide = Assert.Single(chart.Notes.Children.OfType<AirSlide>());
         Assert.Equal(10m, airSlide.Height);
         Assert.Equal(Color.PNK, airSlide.Color);
 
-        var child = Assert.Single(airSlide.Children.OfType<Models.umgr.AirSlideJoint>());
+        var child = Assert.Single(airSlide.Children.OfType<AirSlideJoint>());
         Assert.Equal(1295m, child.Height);
         Assert.Equal(Joint.D, child.Joint);
     }

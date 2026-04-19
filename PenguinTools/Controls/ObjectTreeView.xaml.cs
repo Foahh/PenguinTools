@@ -1,17 +1,23 @@
-﻿using PenguinTools.Converters;
-using System.Text.Encodings.Web;
+﻿using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
+using PenguinTools.Converters;
 
 namespace PenguinTools.Controls;
 
 public partial class ObjectTreeView : UserControl
 {
-    public static readonly DependencyProperty JsonRepresentationProperty = DependencyProperty.Register(nameof(JsonRepresentation), typeof(string), typeof(ObjectTreeView));
-    public static readonly DependencyProperty SelectedObjectProperty = DependencyProperty.Register(nameof(SelectedObject), typeof(object), typeof(ObjectTreeView), new PropertyMetadata(null, OnObjectChanged));
-    public static readonly DependencyProperty TreeNodesProperty = DependencyProperty.Register(nameof(TreeNodes), typeof(List<ObjectTreeNode>), typeof(ObjectTreeView), new PropertyMetadata(null));
+    public static readonly DependencyProperty JsonRepresentationProperty =
+        DependencyProperty.Register(nameof(JsonRepresentation), typeof(string), typeof(ObjectTreeView));
+
+    public static readonly DependencyProperty SelectedObjectProperty =
+        DependencyProperty.Register(nameof(SelectedObject), typeof(object), typeof(ObjectTreeView),
+            new PropertyMetadata(null, OnObjectChanged));
+
+    public static readonly DependencyProperty TreeNodesProperty = DependencyProperty.Register(nameof(TreeNodes),
+        typeof(List<ObjectTreeNode>), typeof(ObjectTreeView), new PropertyMetadata(null));
 
     public ObjectTreeView()
     {
@@ -45,6 +51,7 @@ public partial class ObjectTreeView : UserControl
             otv.JsonRepresentation = null;
             return;
         }
+
         var (json, tree) = ObjectTreeNode.CreateTree(e.NewValue);
         otv.TreeNodes = [tree];
         otv.JsonRepresentation = json;
@@ -52,10 +59,7 @@ public partial class ObjectTreeView : UserControl
 
     private void MenuItem_OnClick(object sender, RoutedEventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(JsonRepresentation))
-        {
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(JsonRepresentation)) return;
 
         try
         {

@@ -19,4 +19,3 @@ internal sealed record StageCommandOptions(
     Option<string?> NoteFieldLaneData,
     Option<string?> StageTemplatePath,
     Option<string?> NotesFieldTemplatePath);
-

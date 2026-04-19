@@ -1,21 +1,25 @@
 using PenguinTools.Chart.Writer;
-using umgr = PenguinTools.Chart.Models.umgr;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Xml;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
+using umgr = PenguinTools.Chart.Models.umgr;
 
 namespace PenguinTools.Workflow;
 
 public static class MusicExporter
 {
-    public static Entry CreateNoteFieldEntry(Entry current, int? id, string? name, string? data) =>
-        MusicPaths.CreateEntry(current, id, name, data);
+    public static Entry CreateNoteFieldEntry(Entry current, int? id, string? name, string? data)
+    {
+        return MusicPaths.CreateEntry(current, id, name, data);
+    }
 
-    public static bool ShouldBuildStage(Meta meta, StageRequestOverrides overrides) =>
-        meta.IsCustomStage || overrides.HasBuildInputs;
+    public static bool ShouldBuildStage(Meta meta, StageRequestOverrides overrides)
+    {
+        return meta.IsCustomStage || overrides.HasBuildInputs;
+    }
 
     public static async Task<OperationResult<Entry>> BuildStageAsync(
         MusicExportContext ctx,
@@ -26,9 +30,7 @@ public static class MusicExporter
     {
         var backgroundPath = overrides.BackgroundPath ?? meta.FullBgiFilePath;
         if (string.IsNullOrWhiteSpace(backgroundPath))
-        {
             return MusicPaths.CreateFailureResultOf<Entry>("A background path is required to build a stage.");
-        }
 
         var noteFieldLane = MusicPaths.CreateEntry(
             meta.NotesFieldLine,
@@ -59,7 +61,8 @@ public static class MusicExporter
             meta,
             output,
             overrides.DummyAcbPath ?? ctx.AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
-            overrides.WorkingAudioPath ?? ctx.ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(meta.FullBgmFilePath)}.wav"),
+            overrides.WorkingAudioPath ??
+            ctx.ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(meta.FullBgmFilePath)}.wav"),
             overrides.HcaEncryptionKey ?? AudioConvertRequest.DefaultHcaEncryptionKey);
 
         return await new AudioConverter(request, ctx.MediaTool).ConvertAsync(cancellationToken);
@@ -85,9 +88,7 @@ public static class MusicExporter
             var builtStage = await BuildStageAsync(ctx, meta, output, stageOverrides, cancellationToken);
             diagnostics = diagnostics.Merge(builtStage.Diagnostics);
             if (!builtStage.Succeeded || builtStage.Value is null)
-            {
                 return OperationResult.Failure().WithDiagnostics(diagnostics);
-            }
 
             stage = builtStage.Value;
         }
@@ -114,12 +115,10 @@ public static class MusicExporter
         var chartPath = Path.Combine(chartBundleFolder, musicXml[meta.Difficulty].File);
         MusicPaths.EnsureParentDirectory(chartPath);
 
-        var writtenChart = await new C2SChartWriter(new C2SWriteRequest(chartPath, chart)).WriteAsync(cancellationToken);
+        var writtenChart =
+            await new C2SChartWriter(new C2SWriteRequest(chartPath, chart)).WriteAsync(cancellationToken);
         diagnostics = diagnostics.Merge(writtenChart.Diagnostics);
-        if (!writtenChart.Succeeded)
-        {
-            return OperationResult.Failure().WithDiagnostics(diagnostics);
-        }
+        if (!writtenChart.Succeeded) return OperationResult.Failure().WithDiagnostics(diagnostics);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -128,15 +127,13 @@ public static class MusicExporter
             new JacketConvertRequest(jacketInput ?? meta.FullJacketFilePath, jacketPath),
             ctx.MediaTool).ConvertAsync(cancellationToken);
         diagnostics = diagnostics.Merge(convertedJacket.Diagnostics);
-        if (!convertedJacket.Succeeded)
-        {
-            return OperationResult.Failure().WithDiagnostics(diagnostics);
-        }
+        if (!convertedJacket.Succeeded) return OperationResult.Failure().WithDiagnostics(diagnostics);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         var convertedAudio = await ConvertAudioAsync(ctx, meta, output, audioOverrides, cancellationToken);
         diagnostics = diagnostics.Merge(convertedAudio.Diagnostics);
-        return (convertedAudio.Succeeded ? OperationResult.Success() : OperationResult.Failure()).WithDiagnostics(diagnostics);
+        return (convertedAudio.Succeeded ? OperationResult.Success() : OperationResult.Failure())
+            .WithDiagnostics(diagnostics);
     }
 }

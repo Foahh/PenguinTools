@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using PenguinTools.Views;
 
 namespace PenguinTools.Controls;
@@ -15,12 +15,29 @@ public enum PickerMode
 
 public partial class FileFolderPicker : UserControl
 {
-    public static readonly DependencyProperty LabelProperty = DependencyProperty.Register(nameof(Label), typeof(string), typeof(FileFolderPicker), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-    public static readonly DependencyProperty PathProperty = DependencyProperty.Register(nameof(Path), typeof(string), typeof(FileFolderPicker), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-    public static readonly DependencyProperty FilterProperty = DependencyProperty.Register(nameof(Filter), typeof(string), typeof(FileFolderPicker), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-    public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string), typeof(FileFolderPicker), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-    public static readonly DependencyProperty RequiredProperty = DependencyProperty.Register(nameof(Required), typeof(bool), typeof(FileFolderPicker), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-    public static readonly DependencyProperty ModeProperty = DependencyProperty.Register(nameof(Mode), typeof(PickerMode), typeof(FileFolderPicker), new FrameworkPropertyMetadata(PickerMode.File, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+    public static readonly DependencyProperty LabelProperty = DependencyProperty.Register(nameof(Label), typeof(string),
+        typeof(FileFolderPicker),
+        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+    public static readonly DependencyProperty PathProperty = DependencyProperty.Register(nameof(Path), typeof(string),
+        typeof(FileFolderPicker),
+        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+    public static readonly DependencyProperty FilterProperty = DependencyProperty.Register(nameof(Filter),
+        typeof(string), typeof(FileFolderPicker),
+        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+    public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(nameof(Title), typeof(string),
+        typeof(FileFolderPicker),
+        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+    public static readonly DependencyProperty RequiredProperty = DependencyProperty.Register(nameof(Required),
+        typeof(bool), typeof(FileFolderPicker),
+        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+    public static readonly DependencyProperty ModeProperty = DependencyProperty.Register(nameof(Mode),
+        typeof(PickerMode), typeof(FileFolderPicker),
+        new FrameworkPropertyMetadata(PickerMode.File, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
     public FileFolderPicker()
     {
@@ -94,7 +111,10 @@ public partial class FileFolderPicker : UserControl
             result = dlg.ShowDialog(window);
             path = dlg.FolderName;
         }
-        else throw new InvalidOperationException("Invalid PickerMode");
+        else
+        {
+            throw new InvalidOperationException("Invalid PickerMode");
+        }
 
         if (result is not true || string.IsNullOrWhiteSpace(path)) return;
         Path = path;

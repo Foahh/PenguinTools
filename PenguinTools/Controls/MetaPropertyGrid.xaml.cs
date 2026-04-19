@@ -1,14 +1,20 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Models;
-using System.ComponentModel;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace PenguinTools.Controls;
 
 public partial class MetaPropertyGrid : MyPropertyGrid
 {
+    public static readonly DependencyProperty AssetManagerProperty = DependencyProperty.Register(
+        nameof(AssetManager),
+        typeof(AssetManager),
+        typeof(MetaPropertyGrid),
+        new PropertyMetadata(null));
+
     private readonly HashSet<PropertyDefinition> _hidden = [];
 
     public MetaPropertyGrid()
@@ -28,12 +34,6 @@ public partial class MetaPropertyGrid : MyPropertyGrid
         get => (AssetManager?)GetValue(AssetManagerProperty);
         set => SetValue(AssetManagerProperty, value);
     }
-
-    public static readonly DependencyProperty AssetManagerProperty = DependencyProperty.Register(
-        nameof(AssetManager),
-        typeof(AssetManager),
-        typeof(MetaPropertyGrid),
-        new PropertyMetadata(null));
 
     private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -69,7 +69,8 @@ public partial class MetaPropertyGrid : MyPropertyGrid
             if (value is not Difficulty diff) return;
             if (diff == Difficulty.WorldsEnd) HidePropertyDefinitions(nameof(Meta.Level));
             else HidePropertyDefinitions(nameof(Meta.WeTag), nameof(Meta.WeDifficulty));
-            if (diff is not (Difficulty.Ultima or Difficulty.WorldsEnd)) HidePropertyDefinitions(nameof(Meta.UnlockEventId));
+            if (diff is not (Difficulty.Ultima or Difficulty.WorldsEnd))
+                HidePropertyDefinitions(nameof(Meta.UnlockEventId));
         }
     }
 
@@ -77,7 +78,8 @@ public partial class MetaPropertyGrid : MyPropertyGrid
     {
         if (names.Length == 0) return;
         var nameSet = new HashSet<string>(names, StringComparer.Ordinal);
-        var toRemove = PropertyDefinitions.Where(def => def.TargetProperties.Cast<string>().Any(nameSet.Contains)).ToArray();
+        var toRemove = PropertyDefinitions.Where(def => def.TargetProperties.Cast<string>().Any(nameSet.Contains))
+            .ToArray();
         foreach (var def in toRemove.Where(def => _hidden.Add(def))) PropertyDefinitions.Remove(def);
     }
 }

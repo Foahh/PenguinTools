@@ -32,7 +32,6 @@ public class Slp : SpeedEventBase
     public override string Id => "SLP";
 }
 
-
 [Obsolete]
 public class Sfl : SpeedEventBase
 {

@@ -13,5 +13,6 @@ public sealed record ChartScanParameters(
 
 public interface IChartScanService
 {
-    Task<OperationResult> ScanAsync(string directory, BookDictionary books, ChartScanParameters parameters, CancellationToken ct);
+    Task<OperationResult> ScanAsync(string directory, BookDictionary books, ChartScanParameters parameters,
+        CancellationToken ct);
 }

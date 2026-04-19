@@ -1,8 +1,8 @@
-﻿using PenguinTools.Core.Metadata;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using PenguinTools.Core.Metadata;
 
 namespace PenguinTools.Converters;
 

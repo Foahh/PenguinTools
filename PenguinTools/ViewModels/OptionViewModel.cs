@@ -1,22 +1,22 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Media;
-using PenguinTools.Resources;
-using PenguinTools.Infrastructure;
 using PenguinTools.Core.Metadata;
+using PenguinTools.Infrastructure;
+using PenguinTools.Media;
 using PenguinTools.Models;
+using PenguinTools.Resources;
 using PenguinTools.Services;
 using PenguinTools.Workflow;
-using System.IO;
 
 namespace PenguinTools.ViewModels;
 
 public partial class OptionViewModel : WatchViewModel<OptionModel>
 {
-    private readonly IFileDialogService _fileDialogs;
     private readonly IChartScanService _chartScan;
     private readonly IOptionService _export;
+    private readonly IFileDialogService _fileDialogs;
 
     public OptionViewModel(
         ActionService actionService,
@@ -35,18 +35,18 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         _export = export;
     }
 
-    [ObservableProperty]
-    public partial Book? SelectedBook { get; set; }
+    [ObservableProperty] public partial Book? SelectedBook { get; set; }
 
-    [ObservableProperty]
-    public partial BookItem? SelectedBookItem { get; set; }
+    [ObservableProperty] public partial BookItem? SelectedBookItem { get; set; }
 
     protected override string FileGlob => "*.mgxc";
 
-    protected override bool IsFileChanged(string path) =>
-        Model?.Books.Values
+    protected override bool IsFileChanged(string path)
+    {
+        return Model?.Books.Values
             .SelectMany(book => book.Items.Values)
             .Any(item => string.Equals(item.Meta.FilePath, path, StringComparison.OrdinalIgnoreCase)) == true;
+    }
 
     protected override void SetModel(OptionModel? oldModel, OptionModel? newModel)
     {
@@ -83,7 +83,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
             ActionService.StatusTime = DateTime.Now;
         });
         var model = await LoadModelAsync(path, ct);
-        var scanParams = new ChartScanParameters(FileGlob, diagnostics, model.BatchSize, model.WorkingDirectory, model.ChartFileDiscovery);
+        var scanParams = new ChartScanParameters(FileGlob, diagnostics, model.BatchSize, model.WorkingDirectory,
+            model.ChartFileDiscovery);
         var scanResult = await _chartScan.ScanAsync(path, model.Books, scanParams, ct);
 
         if (model.Books.Count == 0) throw new DiagnosticException(Strings.Error_No_charts_are_found_directory);
@@ -121,25 +122,23 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         await model.LoadAsync(path, ct);
 
         if (string.IsNullOrWhiteSpace(model.WorkingDirectory) || !Directory.Exists(model.WorkingDirectory))
-        {
             model.WorkingDirectory = path;
-        }
 
         return model;
     }
 
-    private Task<string?> SelectOutputDirectoryAsync(OptionModel settings) =>
-        _fileDialogs.PickFolderAsync(
+    private Task<string?> SelectOutputDirectoryAsync(OptionModel settings)
+    {
+        return _fileDialogs.PickFolderAsync(
             Strings.Title_Select_the_output_folder,
             GetInitialOutputDirectory(settings),
             new Guid("C81454B6-EA09-41D6-90B2-4BD4FB3D5449"));
+    }
 
     private string GetInitialOutputDirectory(OptionModel settings)
     {
         if (!string.IsNullOrWhiteSpace(settings.WorkingDirectory) && Directory.Exists(settings.WorkingDirectory))
-        {
             return settings.WorkingDirectory;
-        }
 
         var modelDirectory = Path.GetDirectoryName(ModelPath);
         return !string.IsNullOrWhiteSpace(modelDirectory) && Directory.Exists(modelDirectory)

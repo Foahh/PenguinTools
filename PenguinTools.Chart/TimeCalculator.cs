@@ -3,17 +3,17 @@
    Original Author: paralleltree
 */
 
-using PenguinTools.Core;
 using PenguinTools.Chart.Models.umgr;
+using PenguinTools.Core;
 
 namespace PenguinTools.Chart;
 
 public class TimeCalculator : ITickFormatter
 {
     private readonly int _barTick;
-    private readonly BeatEvent[] _timeSignatures;
-    private readonly int[] _measureLengths;
     private readonly int[] _cumulativeBars;
+    private readonly int[] _measureLengths;
+    private readonly BeatEvent[] _timeSignatures;
 
     public TimeCalculator(int resolution, IEnumerable<BeatEvent> beatEvents)
     {
@@ -36,8 +36,14 @@ public class TimeCalculator : ITickFormatter
                 var prevMeasureLength = _measureLengths[i - 1];
                 barCount += ticksUnderCurrent / prevMeasureLength;
             }
+
             _cumulativeBars[i] = barCount;
         }
+    }
+
+    public string FormatTick(int tick)
+    {
+        return GetPositionFromTick(tick).ToString();
     }
 
     public Position GetPositionFromTick(int tick)
@@ -58,11 +64,6 @@ public class TimeCalculator : ITickFormatter
         return new Position(totalBarsBefore + barsSince + 1, beatIndex + 1, tickOffset);
     }
 
-    public string FormatTick(int tick)
-    {
-        return GetPositionFromTick(tick).ToString();
-    }
-
     private int FindTimeSignatureIndex(int tick)
     {
         int low = 0, high = _timeSignatures.Length - 1;
@@ -80,6 +81,7 @@ public class TimeCalculator : ITickFormatter
                 high = mid - 1;
             }
         }
+
         throw new InvalidOperationException($"Tick {tick} is before all time signatures.");
     }
 
@@ -90,6 +92,9 @@ public class TimeCalculator : ITickFormatter
 
     public readonly record struct Position(int BarIndex, int BeatIndex, int TickOffset)
     {
-        public override string ToString() => $"{BarIndex}:{BeatIndex}.{TickOffset}";
+        public override string ToString()
+        {
+            return $"{BarIndex}:{BeatIndex}.{TickOffset}";
+        }
     }
 }

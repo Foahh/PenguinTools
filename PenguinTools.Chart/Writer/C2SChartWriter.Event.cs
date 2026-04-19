@@ -13,23 +13,19 @@ public partial class C2SChartWriter
 
         var events = mgxc.Events.Children;
         foreach (var e in events.OfType<umgr.BpmEvent>().OrderBy(e => e.Tick))
-        {
             Events.Add(new c2s.Bpm
             {
                 Tick = e.Tick,
                 Value = e.Bpm
             });
-        }
 
         foreach (var e in events.OfType<umgr.BeatEvent>().OrderBy(e => e.Tick))
-        {
             Events.Add(new c2s.Met
             {
                 Tick = e.Tick,
                 Numerator = e.Numerator,
                 Denominator = e.Denominator
             });
-        }
 
         ConvertDcm([.. events.OfType<umgr.NoteSpeedEvent>().OrderBy(e => e.Tick)], lastTick);
         ConvertSlp(mgxc, [.. events.OfType<umgr.ScrollSpeedEvent>().OrderBy(e => e.Tick)]);
@@ -43,7 +39,7 @@ public partial class C2SChartWriter
             var curr = events[i];
             if (curr.Speed == 1m) continue;
             var next = events[i + 1];
-            var note = new c2s.Dcm()
+            var note = new c2s.Dcm
             {
                 Tick = curr.Tick,
                 Length = next.Tick.Round - curr.Tick.Round,
@@ -86,6 +82,7 @@ public partial class C2SChartWriter
                     Speed = curr.Speed
                 });
             }
+
             var lastEvent = grouped[^1];
             convertSlp.Add(new c2s.Slp
             {

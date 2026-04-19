@@ -11,7 +11,11 @@ using umgr = Models.umgr;
 
 public partial class UgcParser
 {
-    private readonly record struct SourceLine(int Number, string Text);
+    private int? _currentLineNumber;
+
+    private int _currentTimeline;
+    private umgr.Note? _lastNote;
+    private umgr.Note? _lastParentNote;
 
     static UgcParser()
     {
@@ -36,11 +40,6 @@ public partial class UgcParser
     private AssetManager Assets { get; }
     private List<Task> Tasks { get; } = [];
     private umgr.Chart Ugc { get; } = new();
-
-    private int _currentTimeline;
-    private umgr.Note? _lastNote;
-    private umgr.Note? _lastParentNote;
-    private int? _currentLineNumber;
 
     public async Task<OperationResult<umgr.Chart>> ParseAsync(CancellationToken ct = default)
     {
@@ -91,7 +90,7 @@ public partial class UgcParser
         string text;
         try
         {
-            text = new UTF8Encoding(false, throwOnInvalidBytes: true).GetString(bytes);
+            text = new UTF8Encoding(false, true).GetString(bytes);
         }
         catch (DecoderFallbackException)
         {
@@ -100,9 +99,9 @@ public partial class UgcParser
 
         using var reader = new StringReader(text);
         var lines = new List<SourceLine>();
-        for (var lineNumber = 1; ; lineNumber++)
+        for (var lineNumber = 1;; lineNumber++)
         {
-            var line = reader.ReadLine();
+            var line = await reader.ReadLineAsync(ct);
             if (line is null) break;
             lines.Add(new SourceLine(lineNumber, line));
         }
@@ -171,7 +170,8 @@ public partial class UgcParser
             Ugc.Events.AppendChild(new umgr.NoteSpeedEvent { Tick = BarTickToAbsTick(bar, tick), Speed = spd });
 
         foreach (var (tilId, bar, tick, spd) in _pendingTils)
-            Ugc.Events.AppendChild(new umgr.ScrollSpeedEvent { Timeline = tilId, Tick = BarTickToAbsTick(bar, tick), Speed = spd });
+            Ugc.Events.AppendChild(new umgr.ScrollSpeedEvent
+                { Timeline = tilId, Tick = BarTickToAbsTick(bar, tick), Speed = spd });
     }
 
     private void ProcessMeta()
@@ -183,7 +183,6 @@ public partial class UgcParser
         }
 
         if (Ugc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(Ugc.Meta.FullBgiFilePath))
-        {
             QueueValidation(
                 MediaTool.CheckImageValidAsync(Ugc.Meta.FullBgiFilePath),
                 Ugc.Meta.FullBgiFilePath,
@@ -193,15 +192,16 @@ public partial class UgcParser
                     Ugc.Meta.IsCustomStage = false;
                     Ugc.Meta.BgiFilePath = string.Empty;
                 });
-        }
     }
 
-    private void QueueValidation(Task<ProcessCommandResult> validationTask, string path, string message, Action onFailure)
+    private void QueueValidation(Task<ProcessCommandResult> validationTask, string path, string message,
+        Action onFailure)
     {
         Tasks.Add(HandleValidationAsync(validationTask, path, message, onFailure));
     }
 
-    private async Task HandleValidationAsync(Task<ProcessCommandResult> validationTask, string path, string message, Action onFailure)
+    private async Task HandleValidationAsync(Task<ProcessCommandResult> validationTask, string path, string message,
+        Action onFailure)
     {
         try
         {
@@ -217,4 +217,6 @@ public partial class UgcParser
             Diagnostic.Report(Severity.Warning, message, path, ex);
         }
     }
+
+    private readonly record struct SourceLine(int Number, string Text);
 }
