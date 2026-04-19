@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using PenguinTools.Core.Resources;
 
 namespace PenguinTools.Core.Asset;
 

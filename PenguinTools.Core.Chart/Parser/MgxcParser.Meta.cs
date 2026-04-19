@@ -1,5 +1,4 @@
 ﻿using PenguinTools.Core.Asset;
-using PenguinTools.Core.Media;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Chart.Resources;
 

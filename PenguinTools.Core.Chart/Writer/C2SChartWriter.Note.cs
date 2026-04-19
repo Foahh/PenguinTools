@@ -31,7 +31,7 @@ public partial class C2SChartWriter
     private T CreatePositiveNote<TSource, T>(TSource source, Action<T>? action = null)
         where TSource : mg.PositiveNote where T : c2s.Note, new()
     {
-        var note = CreateNote<TSource, T>(source, action);
+        var note = CreateNote(source, action);
         RegisterPositivePairTarget(source, note);
         return note;
     }
@@ -130,9 +130,10 @@ public partial class C2SChartWriter
         {
             var curr = joints[i];
             var next = joints[i + 1];
+            var prevSeg = previousSegment;
             var segment = CreateNote<mg.AirSlideJoint, c2s.AirSlide>(curr, x =>
             {
-                x.Parent = previousSegment;
+                x.Parent = prevSeg;
                 x.Color = airSlide.Color;
                 x.Height = curr.Height;
                 x.Joint = next.Joint;

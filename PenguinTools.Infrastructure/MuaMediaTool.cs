@@ -22,7 +22,8 @@ public sealed class MuaMediaTool(string executablePath) : IMediaTool
 
         foreach (var arg in args) psi.ArgumentList.Add(arg);
 
-        using var proc = new Process { StartInfo = psi };
+        using var proc = new Process();
+        proc.StartInfo = psi;
         proc.Start();
 
         var stdoutTask = proc.StandardOutput.ReadToEndAsync(ct);
