@@ -68,4 +68,16 @@ public class UgcNoteTests
         var end = Assert.Single(hold.Children.OfType<Models.mgxc.HoldJoint>());
         Assert.Equal(480, end.Tick.Original);
     }
+
+    [Fact]
+    public async Task Slide_WithControlAndEnd()
+    {
+        var chart = await Parse("#0'0:s14\n#240>s24C\n#480>s34D\n");
+        var slide = Assert.Single(chart.Notes.Children.OfType<Models.mgxc.Slide>());
+        Assert.Equal(2, slide.Children.Count);
+        var c = Assert.IsType<Models.mgxc.SlideJoint>(slide.Children[0]);
+        var e = Assert.IsType<Models.mgxc.SlideJoint>(slide.Children[1]);
+        Assert.Equal(Joint.C, c.Joint);
+        Assert.Equal(Joint.D, e.Joint);
+    }
 }

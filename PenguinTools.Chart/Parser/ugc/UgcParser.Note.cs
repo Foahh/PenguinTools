@@ -116,6 +116,7 @@ public partial class UgcParser
         typeChar switch
         {
             'h' => new mg.Hold(),
+            's' => new mg.Slide(),
             _ => null
         };
 
@@ -150,6 +151,19 @@ public partial class UgcParser
             case 's' when _lastParentNote is mg.Hold:
                 child = new mg.HoldJoint();
                 break;
+            case 's' when _lastParentNote is mg.Slide:
+            {
+                var jointChar = payload.Length >= 4 ? payload[3] : 'D';
+                var jointKind = jointChar switch
+                {
+                    'C' => Joint.C,
+                    'D' => Joint.D,
+                    'E' => Joint.D,
+                    _ => Joint.D
+                };
+                child = new mg.SlideJoint { Joint = jointKind };
+                break;
+            }
         }
 
         if (child is null) return;
