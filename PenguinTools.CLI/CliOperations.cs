@@ -59,17 +59,11 @@ internal static class CliOperations
     internal static async Task<OperationResult<PenguinTools.Chart.Models.mgxc.Chart>> ParseChartAsync(
         CliRuntime runtime,
         string input,
-        string? assetRoot,
         CancellationToken cancellationToken)
     {
         if (!File.Exists(input))
         {
             return CliPaths.CreateFailureResultOf<PenguinTools.Chart.Models.mgxc.Chart>($"Chart file not found: {input}", input);
-        }
-
-        if (!string.IsNullOrWhiteSpace(assetRoot))
-        {
-            await runtime.Assets.CollectAssetsAsync(assetRoot, cancellationToken);
         }
 
         return await new MgxcParser(new MgxcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(cancellationToken);
@@ -161,12 +155,11 @@ internal static class CliOperations
         return new CliChartSummary(meta.MgxcId, meta.Id, meta.Title, meta.Difficulty.ToString(), meta.Level);
     }
 
-    internal static CliCommandData CreateChartConvertData(string input, string output, string? assetRoot, Meta meta)
+    internal static CliCommandData CreateChartConvertData(string input, string output, Meta meta)
     {
         return new CliCommandData(
             InputPath: input,
             OutputPath: output,
-            AssetRoot: assetRoot,
             Chart: CreateChartSummary(meta),
             Artifacts:
             [
@@ -174,12 +167,11 @@ internal static class CliOperations
             ]);
     }
 
-    internal static CliCommandData CreateJacketData(string input, string output, string? assetRoot, string sourcePath, Meta meta)
+    internal static CliCommandData CreateJacketData(string input, string output, string sourcePath, Meta meta)
     {
         return new CliCommandData(
             InputPath: input,
             OutputPath: output,
-            AssetRoot: assetRoot,
             SourcePath: sourcePath,
             Chart: CreateChartSummary(meta),
             Artifacts:
@@ -188,7 +180,7 @@ internal static class CliOperations
             ]);
     }
 
-    internal static CliCommandData CreateAudioData(string input, string output, string? assetRoot, Meta meta)
+    internal static CliCommandData CreateAudioData(string input, string output, Meta meta)
     {
         var songId = meta.Id ?? 0;
         var xml = new CueFileXml(songId);
@@ -197,7 +189,6 @@ internal static class CliOperations
         return new CliCommandData(
             InputPath: input,
             OutputDirectory: output,
-            AssetRoot: assetRoot,
             SourcePath: meta.FullBgmFilePath,
             Chart: CreateChartSummary(meta),
             Artifacts:
@@ -208,7 +199,7 @@ internal static class CliOperations
             ]);
     }
 
-    internal static CliCommandData CreateStageData(string input, string output, string? assetRoot, Meta meta, StageRequestOverrides overrides)
+    internal static CliCommandData CreateStageData(string input, string output, Meta meta, StageRequestOverrides overrides)
     {
         var stageId = overrides.StageId ?? meta.StageId;
         var artifacts = new List<CliArtifact>();
@@ -227,7 +218,6 @@ internal static class CliOperations
         return new CliCommandData(
             InputPath: input,
             OutputDirectory: output,
-            AssetRoot: assetRoot,
             SourcePath: overrides.BackgroundPath ?? meta.FullBgiFilePath,
             StageId: stageId,
             StageName: stageName,
@@ -260,7 +250,6 @@ internal static class CliOperations
     internal static CliCommandData CreateMusicData(
         string input,
         string output,
-        string? assetRoot,
         Meta meta,
         string? jacketInput,
         StageRequestOverrides stageOverrides)
@@ -305,7 +294,6 @@ internal static class CliOperations
         return new CliCommandData(
             InputPath: input,
             OutputDirectory: output,
-            AssetRoot: assetRoot,
             SourcePath: jacketInput ?? meta.FullJacketFilePath,
             StageId: stageId,
             StageName: stageName,

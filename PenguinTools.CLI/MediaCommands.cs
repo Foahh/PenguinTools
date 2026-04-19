@@ -26,10 +26,6 @@ internal static class MediaCommands
         {
             Description = "Path to the output jacket file."
         };
-        var assetRootOption = new Option<string?>("--asset-root")
-        {
-            Description = "Optional directory to scan for additional asset XML before parsing."
-        };
         var jacketInputOption = new Option<string?>("--jacket-input")
         {
             Description = "Override the jacket source path instead of using the path from the MGXC metadata."
@@ -38,22 +34,20 @@ internal static class MediaCommands
         var command = new Command("jacket", "Convert the jacket referenced by an MGXC chart.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
-        command.Options.Add(assetRootOption);
         command.Options.Add(jacketInputOption);
         command.SetAction(async (parseResult, cancellationToken) =>
         {
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
-            var assetRoot = CliPaths.ResolveOptionalPath(parseResult.GetValue(assetRootOption));
             var jacketInput = CliPaths.ResolveOptionalPath(parseResult.GetValue(jacketInputOption));
             var outputFormat = RootCommands.GetOutputFormat(parseResult);
 
             return await CliOperations.ExecuteAsync("media jacket", outputFormat, async (runtime, ct) =>
             {
-                var parsed = await CliOperations.ParseChartAsync(runtime, input, assetRoot, ct);
+                var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
                 {
-                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputPath: output, AssetRoot: assetRoot));
+                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputPath: output));
                 }
 
                 var sourcePath = jacketInput ?? parsed.Value.Meta.FullJacketFilePath;
@@ -62,7 +56,7 @@ internal static class MediaCommands
                     new JacketConvertRequest(sourcePath, output),
                     runtime.MediaTool).ConvertAsync(ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, converted);
-                var data = CliOperations.CreateJacketData(input, output, assetRoot, sourcePath, parsed.Value.Meta);
+                var data = CliOperations.CreateJacketData(input, output, sourcePath, parsed.Value.Meta);
                 var message = result.Succeeded ? $"Wrote jacket: {output}" : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
@@ -81,36 +75,30 @@ internal static class MediaCommands
         {
             Description = "Base folder for cue file export."
         };
-        var assetRootOption = new Option<string?>("--asset-root")
-        {
-            Description = "Optional directory to scan for additional asset XML before parsing."
-        };
         var audioOptions = CommandLineOptions.CreateAudioCommandOptions();
 
         var command = new Command("audio", "Convert the audio referenced by an MGXC chart into ACB/AWB assets.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
-        command.Options.Add(assetRootOption);
         CommandLineOptions.AddAudioCommandOptions(command, audioOptions);
         command.SetAction(async (parseResult, cancellationToken) =>
         {
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
-            var assetRoot = CliPaths.ResolveOptionalPath(parseResult.GetValue(assetRootOption));
             var audioOverrides = CommandLineOptions.GetAudioRequestOverrides(parseResult, audioOptions);
             var outputFormat = RootCommands.GetOutputFormat(parseResult);
 
             return await CliOperations.ExecuteAsync("media audio", outputFormat, async (runtime, ct) =>
             {
-                var parsed = await CliOperations.ParseChartAsync(runtime, input, assetRoot, ct);
+                var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
                 {
-                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output, AssetRoot: assetRoot));
+                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output));
                 }
 
                 var converted = await CliOperations.ConvertAudioAsync(runtime, parsed.Value.Meta, output, audioOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, converted);
-                var data = CliOperations.CreateAudioData(input, output, assetRoot, parsed.Value.Meta);
+                var data = CliOperations.CreateAudioData(input, output, parsed.Value.Meta);
                 var message = result.Succeeded ? $"Exported audio assets: {output}" : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
@@ -129,36 +117,30 @@ internal static class MediaCommands
         {
             Description = "Base folder for stage export."
         };
-        var assetRootOption = new Option<string?>("--asset-root")
-        {
-            Description = "Optional directory to scan for additional asset XML before parsing."
-        };
         var stageOptions = CommandLineOptions.CreateStageCommandOptions();
 
         var command = new Command("stage", "Build the custom stage referenced by an MGXC chart.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
-        command.Options.Add(assetRootOption);
         CommandLineOptions.AddStageCommandOptions(command, stageOptions);
         command.SetAction(async (parseResult, cancellationToken) =>
         {
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
-            var assetRoot = CliPaths.ResolveOptionalPath(parseResult.GetValue(assetRootOption));
             var stageOverrides = CommandLineOptions.GetStageRequestOverrides(parseResult, stageOptions);
             var outputFormat = RootCommands.GetOutputFormat(parseResult);
 
             return await CliOperations.ExecuteAsync("media stage", outputFormat, async (runtime, ct) =>
             {
-                var parsed = await CliOperations.ParseChartAsync(runtime, input, assetRoot, ct);
+                var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
                 {
-                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output, AssetRoot: assetRoot));
+                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output));
                 }
 
                 var built = await CliOperations.BuildStageAsync(runtime, parsed.Value.Meta, output, stageOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, built.ToResult());
-                var data = CliOperations.CreateStageData(input, output, assetRoot, parsed.Value.Meta, stageOverrides);
+                var data = CliOperations.CreateStageData(input, output, parsed.Value.Meta, stageOverrides);
                 var message = result.Succeeded && built.Value is not null ? $"Built stage: {built.Value}" : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);

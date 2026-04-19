@@ -17,6 +17,7 @@ internal static class RootCommands
         rootCommand.Subcommands.Add(MusicCommands.BuildMusicCommand());
         rootCommand.Subcommands.Add(OptionCommands.BuildOptionCommand());
         rootCommand.Subcommands.Add(MediaCommands.BuildMediaCommand());
+        rootCommand.Subcommands.Add(AssetCommands.BuildAssetCommand());
         return rootCommand;
     }
 

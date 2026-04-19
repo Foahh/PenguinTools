@@ -26,20 +26,14 @@ internal static class OptionCommands
         {
             Description = "Working directory for export (bundle files are written under the option name subfolder when needed)."
         };
-        var assetRootOption = new Option<string?>("--asset-root")
-        {
-            Description = "Optional directory to scan for additional asset XML before parsing charts."
-        };
 
         var command = new Command("convert", "Load options.json, scan charts, and export the option bundle.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
-        command.Options.Add(assetRootOption);
         command.SetAction(async (parseResult, cancellationToken) =>
         {
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
-            var assetRoot = CliPaths.ResolveOptionalPath(parseResult.GetValue(assetRootOption));
             var outputFormat = RootCommands.GetOutputFormat(parseResult);
 
             return await CliOperations.ExecuteAsync("option convert", outputFormat, async (runtime, ct) =>
@@ -68,11 +62,6 @@ internal static class OptionCommands
                         "Enable at least one of convert chart, jacket, audio, background, or event XML in options.json.");
                 }
 
-                if (!string.IsNullOrWhiteSpace(assetRoot))
-                {
-                    await runtime.Assets.CollectAssetsAsync(assetRoot, ct);
-                }
-
                 var scanned = await CliOperations.ScanOptionChartsAsync(
                     runtime,
                     input,
@@ -85,7 +74,7 @@ internal static class OptionCommands
                 {
                     return new CliCommandOutcome(
                         scanned.ToResult(),
-                        Data: new CliCommandData(InputPath: input, OutputDirectory: output, AssetRoot: assetRoot));
+                        Data: new CliCommandData(InputPath: input, OutputDirectory: output));
                 }
 
                 if (scanned.Value.Count == 0)
@@ -93,7 +82,7 @@ internal static class OptionCommands
                     return new CliCommandOutcome(
                         OperationResult.Failure().WithDiagnostics(scanned.Diagnostics),
                         "No charts were found to export.",
-                        new CliCommandData(InputPath: input, OutputDirectory: output, AssetRoot: assetRoot));
+                        new CliCommandData(InputPath: input, OutputDirectory: output));
                 }
 
                 var exportSettings = json.ToExportSettings();
@@ -114,7 +103,7 @@ internal static class OptionCommands
                 return new CliCommandOutcome(
                     result,
                     message,
-                    new CliCommandData(InputPath: input, OutputDirectory: bundleRoot, AssetRoot: assetRoot));
+                    new CliCommandData(InputPath: input, OutputDirectory: bundleRoot));
             }, cancellationToken);
         });
 

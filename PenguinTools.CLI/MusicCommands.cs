@@ -22,10 +22,6 @@ internal static class MusicCommands
         {
             Description = "Base folder for the exported music bundle files."
         };
-        var assetRootOption = new Option<string?>("--asset-root")
-        {
-            Description = "Optional directory to scan for additional asset XML before parsing."
-        };
         var jacketInputOption = new Option<string?>("--jacket-input")
         {
             Description = "Override the jacket source path used for export."
@@ -36,7 +32,6 @@ internal static class MusicCommands
         var command = new Command("export", "Export chart, jacket, audio, and optional stage/event XML from one MGXC chart.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
-        command.Options.Add(assetRootOption);
         command.Options.Add(jacketInputOption);
         CommandLineOptions.AddAudioCommandOptions(command, audioOptions);
         CommandLineOptions.AddStageCommandOptions(command, stageOptions);
@@ -44,7 +39,6 @@ internal static class MusicCommands
         {
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
-            var assetRoot = CliPaths.ResolveOptionalPath(parseResult.GetValue(assetRootOption));
             var jacketInput = CliPaths.ResolveOptionalPath(parseResult.GetValue(jacketInputOption));
             var audioOverrides = CommandLineOptions.GetAudioRequestOverrides(parseResult, audioOptions);
             var stageOverrides = CommandLineOptions.GetStageRequestOverrides(parseResult, stageOptions);
@@ -52,15 +46,15 @@ internal static class MusicCommands
 
             return await CliOperations.ExecuteAsync("music export", outputFormat, async (runtime, ct) =>
             {
-                var parsed = await CliOperations.ParseChartAsync(runtime, input, assetRoot, ct);
+                var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)
                 {
-                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output, AssetRoot: assetRoot));
+                    return new CliCommandOutcome(parsed.ToResult(), Data: new CliCommandData(InputPath: input, OutputDirectory: output));
                 }
 
                 var exported = await CliOperations.ExportMusicAsync(runtime, parsed.Value, output, jacketInput, audioOverrides, stageOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, exported);
-                var data = CliOperations.CreateMusicData(input, output, assetRoot, parsed.Value.Meta, jacketInput, stageOverrides);
+                var data = CliOperations.CreateMusicData(input, output, parsed.Value.Meta, jacketInput, stageOverrides);
                 var message = result.Succeeded ? $"Exported music: {output}" : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);

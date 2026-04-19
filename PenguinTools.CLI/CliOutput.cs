@@ -22,7 +22,6 @@ internal sealed record CliCommandData(
     string? InputPath = null,
     string? OutputPath = null,
     string? OutputDirectory = null,
-    string? AssetRoot = null,
     string? SourcePath = null,
     int? StageId = null,
     string? StageName = null,
