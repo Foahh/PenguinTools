@@ -58,4 +58,14 @@ public class UgcNoteTests
         var chart = await Parse("#0'480:c24\n");
         Assert.Empty(chart.Notes.Children);
     }
+
+    [Fact]
+    public async Task Hold_ParentAndEnd()
+    {
+        var chart = await Parse("#0'0:h64\n#480>s64\n");
+        var hold = Assert.Single(chart.Notes.Children.OfType<Models.mgxc.Hold>());
+        Assert.Equal(0, hold.Tick.Original);
+        var end = Assert.Single(hold.Children.OfType<Models.mgxc.HoldJoint>());
+        Assert.Equal(480, end.Tick.Original);
+    }
 }

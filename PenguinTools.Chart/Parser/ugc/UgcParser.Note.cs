@@ -112,9 +112,55 @@ public partial class UgcParser
         return exNote;
     }
 
-    private mg.Note? HandleLongNoteParent(char typeChar, string extras, string suffix) => null;
+    private mg.Note? HandleLongNoteParent(char typeChar, string extras, string suffix) =>
+        typeChar switch
+        {
+            'h' => new mg.Hold(),
+            _ => null
+        };
 
-    private void HandleChildPayload(int offsetTick, string payload) { }
+    private void HandleChildPayload(int offsetTick, string payload)
+    {
+        if (payload.Length < 3)
+        {
+            WarnMalformed(payload);
+            return;
+        }
+
+        if (_lastParentNote is null)
+        {
+            WarnMalformed(payload);
+            return;
+        }
+
+        var typeChar = payload[0];
+        var x = UgcPayload.Base36(payload[1]);
+        var w = UgcPayload.Base36(payload[2]);
+        if (x < 0 || w < 0)
+        {
+            WarnMalformed(payload);
+            return;
+        }
+
+        var absTick = _lastParentNote.Tick.Original + offsetTick;
+
+        mg.Note? child = null;
+        switch (typeChar)
+        {
+            case 's' when _lastParentNote is mg.Hold:
+                child = new mg.HoldJoint();
+                break;
+        }
+
+        if (child is null) return;
+
+        child.Tick = absTick;
+        child.Lane = x;
+        child.Width = w;
+        child.Timeline = _lastParentNote.Timeline;
+        _lastParentNote.AppendChild(child);
+        _lastNote = child;
+    }
 
     private void WarnMalformed(string what) =>
         Diagnostic.Report(Severity.Warning, string.Format(Strings.Mg_Unrecognized_note, what, 0));
