@@ -5,18 +5,19 @@ namespace PenguinTools.Infrastructure;
 
 public static class ResourceStoreFactory
 {
-    public static IResourceStore Create(Assembly assembly, string? baseDirectory = null)
+    public static IResourceStore Create(Assembly assembly, string tempWorkPath, string? baseDirectory = null)
     {
         ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentException.ThrowIfNullOrWhiteSpace(tempWorkPath);
 
         var appBaseDirectory = string.IsNullOrWhiteSpace(baseDirectory) ? AppContext.BaseDirectory : baseDirectory;
         var assetDirectory = Path.Combine(appBaseDirectory, "assets");
 
         if (File.Exists(Path.Combine(assetDirectory, "assets.json")))
         {
-            return new FileResourceStore(assetDirectory);
+            return new FileResourceStore(assetDirectory, tempWorkPath);
         }
 
-        return new EmbeddedResourceStore(assembly);
+        return new EmbeddedResourceStore(assembly, tempWorkPath);
     }
 }

@@ -13,7 +13,12 @@ public static class InfrastructureServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(resourceAssembly);
 
-        services.AddSingleton<IResourceStore>(_ => ResourceStoreFactory.Create(resourceAssembly));
+        services.AddSingleton<IApplicationPaths>(_ => ApplicationPaths.Create());
+        services.AddSingleton<IResourceStore>(sp =>
+        {
+            var paths = sp.GetRequiredService<IApplicationPaths>();
+            return ResourceStoreFactory.Create(resourceAssembly, paths.TempWorkPath);
+        });
         services.AddSingleton<IInfrastructureAssetProvider, InfrastructureAssetProvider>();
         services.AddSingleton<IMediaTool>(provider =>
         {
@@ -23,8 +28,9 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<AssetManager>(provider =>
         {
             var resources = provider.GetRequiredService<IResourceStore>();
+            var paths = provider.GetRequiredService<IApplicationPaths>();
             using var stream = resources.OpenRead("assets.json");
-            return new AssetManager(stream);
+            return new AssetManager(stream, paths.UserDataPath);
         });
 
         return services;

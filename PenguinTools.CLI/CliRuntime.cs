@@ -15,19 +15,22 @@ internal sealed class CliRuntime(IResourceStore resourceStore, AssetManager asse
     public static CliRuntime Create()
     {
 #pragma warning disable CA2000
-        var resourceStore = ResourceStoreFactory.Create(typeof(InfrastructureAssetProvider).Assembly);
+        IResourceStore? resourceStore = null;
 #pragma warning restore CA2000
 
         try
         {
+            var paths = ApplicationPaths.Create();
+
+            resourceStore = ResourceStoreFactory.Create(typeof(InfrastructureAssetProvider).Assembly, paths.TempWorkPath);
             var assetProvider = new InfrastructureAssetProvider(resourceStore);
-            var assets = new AssetManager(resourceStore.OpenRead("assets.json"));
+            var assets = new AssetManager(resourceStore.OpenRead("assets.json"), paths.UserDataPath);
             var mediaTool = new MuaMediaTool(assetProvider.GetPath(InfrastructureAsset.MuaExecutable));
             return new CliRuntime(resourceStore, assets, mediaTool, assetProvider);
         }
         catch
         {
-            resourceStore.Dispose();
+            resourceStore?.Dispose();
             throw;
         }
     }

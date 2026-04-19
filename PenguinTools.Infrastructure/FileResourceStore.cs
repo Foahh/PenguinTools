@@ -7,13 +7,13 @@ public sealed class FileResourceStore : IResourceStore
     private readonly string _assetRootPath;
     private readonly Lock _lock = new();
 
-    public FileResourceStore(string assetRootPath, string root = "PenguinTools.Temp")
+    public FileResourceStore(string assetRootPath, string tempWorkPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(assetRootPath);
-        ArgumentException.ThrowIfNullOrWhiteSpace(root);
+        ArgumentException.ThrowIfNullOrWhiteSpace(tempWorkPath);
 
         _assetRootPath = assetRootPath;
-        TempWorkPath = Path.Combine(Path.GetTempPath(), root);
+        TempWorkPath = tempWorkPath;
         Directory.CreateDirectory(TempWorkPath);
     }
 

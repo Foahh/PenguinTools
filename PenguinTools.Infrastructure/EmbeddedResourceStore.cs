@@ -8,13 +8,13 @@ public sealed class EmbeddedResourceStore : IResourceStore
     private readonly Assembly _assembly;
     private readonly Lock _lock = new();
 
-    public EmbeddedResourceStore(Assembly assembly, string root = "PenguinTools.Temp")
+    public EmbeddedResourceStore(Assembly assembly, string tempWorkPath)
     {
         ArgumentNullException.ThrowIfNull(assembly);
-        ArgumentException.ThrowIfNullOrWhiteSpace(root);
+        ArgumentException.ThrowIfNullOrWhiteSpace(tempWorkPath);
 
         _assembly = assembly;
-        TempWorkPath = Path.Combine(Path.GetTempPath(), root);
+        TempWorkPath = tempWorkPath;
         Directory.CreateDirectory(TempWorkPath);
     }
 

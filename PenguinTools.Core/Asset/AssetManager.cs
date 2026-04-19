@@ -7,15 +7,26 @@ public class AssetManager : INotifyPropertyChanged
 {
     public const string PlusAssetsFileName = "assets.user.json";
 
-    public AssetManager(Stream hardAssets)
+    private readonly string _plusAssetsPath;
+
+    public AssetManager(Stream hardAssets, string userDataDirectory)
     {
+        ArgumentNullException.ThrowIfNull(hardAssets);
+        ArgumentException.ThrowIfNullOrWhiteSpace(userDataDirectory);
+
+        Directory.CreateDirectory(userDataDirectory);
+        _plusAssetsPath = Path.Combine(userDataDirectory, PlusAssetsFileName);
+
         MergeAssets = new AssetDictionary();
         HardAssets = new AssetDictionary(hardAssets);
-        PlusAssets = new AssetDictionary(PlusAssetsFileName);
+        PlusAssets = new AssetDictionary(_plusAssetsPath);
         UserAssets = new AssetDictionary();
         Merge();
         NotifyAssetChanged();
     }
+
+    /// <summary>Absolute path to the merged plus-tier asset JSON on disk.</summary>
+    public string PlusAssetsPath => _plusAssetsPath;
 
     // Asset Dictionary that merges all assets from various sources below
     public AssetDictionary MergeAssets { get; }
@@ -42,7 +53,7 @@ public class AssetManager : INotifyPropertyChanged
         PlusAssets.MergeWith(await AssetDictionary.CollectAsync(workDir, ct));
         PlusAssets.SubtractWith(HardAssets);
 
-        await PlusAssets.SaveAsync(PlusAssetsFileName, ct);
+        await PlusAssets.SaveAsync(_plusAssetsPath, ct);
 
         Merge();
         NotifyAssetChanged();

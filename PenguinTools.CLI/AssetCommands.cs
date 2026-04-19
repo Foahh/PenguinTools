@@ -1,6 +1,7 @@
 using System.CommandLine;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Infrastructure;
 
 namespace PenguinTools.CLI;
 
@@ -22,7 +23,7 @@ internal static class AssetCommands
 
         var command = new Command(
             "collect",
-            $"Scan game XML and merge entries into {AssetManager.PlusAssetsFileName} in the current working directory.");
+            $"Scan game XML and merge entries into {AssetManager.PlusAssetsFileName} under the per-user data directory (see {ApplicationPaths.UserDataEnvironmentVariable}).");
         command.Arguments.Add(gameRootArgument);
         command.SetAction(async (parseResult, cancellationToken) =>
         {
@@ -40,7 +41,7 @@ internal static class AssetCommands
                 }
 
                 await runtime.Assets.CollectAssetsAsync(gameRoot, ct);
-                var writtenPath = Path.GetFullPath(AssetManager.PlusAssetsFileName);
+                var writtenPath = runtime.Assets.PlusAssetsPath;
                 return new CliCommandOutcome(
                     OperationResult.Success(),
                     $"Collected assets and wrote {writtenPath}.",
