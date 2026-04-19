@@ -486,10 +486,12 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         bool parallel = false) =>
         ProcessItemsAsync(prefix, items, action, getPath, context, parallel);
 
-    protected override Task Reload()
+    protected override async Task Reload()
     {
-        Model?.SaveAsync(ModelPath);
-        return base.Reload();
+        if (Model is not null && !string.IsNullOrWhiteSpace(ModelPath))
+            await Model.SaveAsync(ModelPath);
+
+        await base.Reload();
     }
 
     private sealed class ProcessContext
