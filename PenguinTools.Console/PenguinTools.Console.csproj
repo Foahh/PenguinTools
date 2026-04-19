@@ -4,10 +4,18 @@
     <PropertyGroup>
         <TargetFramework>$(DotNetVersion)</TargetFramework>
         <OutputType>Exe</OutputType>
+        <RootNamespace>PenguinTools.CLI</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="System.CommandLine" Version="2.0.6" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\PenguinTools.Chart\PenguinTools.Chart.csproj" />
+      <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj" />
+      <ProjectReference Include="..\PenguinTools.Infrastructure\PenguinTools.Infrastructure.csproj" />
+      <ProjectReference Include="..\PenguinTools.Media\PenguinTools.Media.csproj" />
     </ItemGroup>
 
 </Project>
