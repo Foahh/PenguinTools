@@ -128,8 +128,8 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
     protected override async Task Reload()
     {
-        if (Model is not null && !string.IsNullOrWhiteSpace(ModelPath))
-            await Model.SaveAsync(ModelPath);
+        if (Model is IPersistable persistable && !string.IsNullOrWhiteSpace(ModelPath))
+            await persistable.SaveAsync(ModelPath);
 
         await base.Reload();
     }

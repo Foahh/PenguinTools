@@ -9,9 +9,15 @@ using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace PenguinTools.Models;
 
-public partial class OptionModel : Model
+public partial class OptionModel : Model, IPersistable
 {
-    protected override string JsonName => "options.json";
+    public string PersistenceFileName => "options.json";
+
+    public Task LoadAsync(string directory, CancellationToken cancellationToken = default) =>
+        JsonPersistence.LoadIntoAsync(this, directory, PersistenceFileName, cancellationToken);
+
+    public Task SaveAsync(string directory, CancellationToken cancellationToken = default) =>
+        JsonPersistence.SaveFromAsync(this, directory, PersistenceFileName, cancellationToken);
 
     [ObservableProperty]
     [MinLength(4)]
