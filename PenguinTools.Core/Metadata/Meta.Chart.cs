@@ -15,7 +15,7 @@ public partial record Meta
             field = value;
         }
     }
-    
+
     public string Title { get; set; } = string.Empty;
     public string SortName { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;

@@ -19,13 +19,16 @@ public class Entry : IComparable<Entry>, IEquatable<Entry>
         Data = data;
     }
 
-    [JsonPropertyName("id")] [XmlElement("id")]
+    [JsonPropertyName("id")]
+    [XmlElement("id")]
     public int Id { get; init; } = -1;
 
-    [JsonPropertyName("str")] [XmlElement("str")]
+    [JsonPropertyName("str")]
+    [XmlElement("str")]
     public string Str { get; init; } = "Invalid";
 
-    [JsonPropertyName("data")] [XmlElement("data")]
+    [JsonPropertyName("data")]
+    [XmlElement("data")]
     public string Data { get; init; } = string.Empty;
 
     public override string ToString()

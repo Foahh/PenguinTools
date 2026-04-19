@@ -46,15 +46,15 @@ public class AssetDictionary
         var json = File.ReadAllText(path);
         Load(json);
     }
-    
+
     public AssetDictionary(Stream stream) : this()
     {
         using var reader = new StreamReader(stream, Encoding.UTF8);
         var json = reader.ReadToEnd();
         Load(json);
     }
-    
-    private void Load(string json) 
+
+    private void Load(string json)
     {
         var dict = JsonSerializer.Deserialize<Dictionary<AssetType, SortedSet<Entry>>>(json, Options);
         if (dict == null) return;
@@ -68,7 +68,7 @@ public class AssetDictionary
             _database[assetType].UnionWith(sourceSet);
         }
     }
-    
+
     public void MergeWith(params AssetDictionary[] databases)
     {
         foreach (var db in databases)

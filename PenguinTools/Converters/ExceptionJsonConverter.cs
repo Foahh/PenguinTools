@@ -28,11 +28,11 @@ public class ExceptionJsonConverter : JsonConverter<Exception>
         {
             writer.WritePropertyName(nameof(DiagnosticException.Target));
             JsonSerializer.Serialize(writer, dEx.Target, options);
-            
+
             writer.WriteString(nameof(DiagnosticException.Path), dEx.Path);
-            
+
             writer.WriteString(nameof(DiagnosticException.Tick), dEx.Tick?.ToString());
-            
+
             writer.WritePropertyName(nameof(DiagnosticException.TimeCalculator));
             JsonSerializer.Serialize(writer, dEx.TimeCalculator, options);
         }

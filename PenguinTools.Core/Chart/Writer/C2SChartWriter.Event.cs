@@ -30,9 +30,9 @@ public partial class C2SChartWriter
                 Denominator = e.Denominator
             });
         }
-        
-        ConvertDcm([..events.OfType<mg.NoteSpeedEvent>().OrderBy(e => e.Tick)], lastTick);
-        ConvertSlp(mgxc, [..events.OfType<mg.ScrollSpeedEvent>().OrderBy(e => e.Tick)]);
+
+        ConvertDcm([.. events.OfType<mg.NoteSpeedEvent>().OrderBy(e => e.Tick)], lastTick);
+        ConvertSlp(mgxc, [.. events.OfType<mg.ScrollSpeedEvent>().OrderBy(e => e.Tick)]);
     }
 
     private void ConvertDcm(List<mg.NoteSpeedEvent> events, Time lastTick)
