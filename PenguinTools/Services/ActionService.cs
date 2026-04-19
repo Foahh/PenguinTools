@@ -4,13 +4,19 @@ using PenguinTools.Core;
 using PenguinTools.Core.Resources;
 using System.Media;
 using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.Views;
 
 namespace PenguinTools.Services;
 
 public partial class ActionService : ObservableObject
 {
+    private readonly Lazy<MainWindow> _mainWindow;
+
+    public ActionService(Lazy<MainWindow> mainWindow)
+    {
+        _mainWindow = mainWindow;
+    }
+
     [ObservableProperty] public partial bool IsBusy { get; set; }
     [ObservableProperty] public partial string Status { get; set; } = Strings.Status_Idle;
     [ObservableProperty] public partial DateTime StatusTime { get; set; } = DateTime.Now;
@@ -88,7 +94,7 @@ public partial class ActionService : ObservableObject
         var window = new DiagnosticsWindow
         {
             DataContext = model,
-            Owner = App.ServiceProvider.GetRequiredService<MainWindow>()
+            Owner = _mainWindow.Value
         };
         window.ShowDialog();
         return result;

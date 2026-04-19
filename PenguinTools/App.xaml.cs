@@ -38,7 +38,7 @@ public partial class App : Application
         services.AddPenguinInfrastructure(typeof(EmbeddedResourceStore).Assembly);
 
         services.AddSingleton<MainWindow>();
-        services.AddSingleton<ActionService>();
+        services.AddSingleton(sp => new ActionService(new Lazy<MainWindow>(() => sp.GetRequiredService<MainWindow>())));
         services.AddSingleton<IReleaseService, GitHubReleaseService>();
 
         services.AddTransient<MainWindowViewModel>();
