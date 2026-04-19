@@ -90,8 +90,9 @@ public partial class UgcParser
             air.Timeline = _currentTimeline;
             Ugc.Notes.AppendChild(air);
 
-            if (_lastNote is mg.PositiveNote pos && pos.Tick.Original == absTick)
-                pos.MakePair(air);
+            var pairPositive = FindPairPositive(absTick);
+            if (pairPositive != null)
+                pairPositive.MakePair(air);
             else
                 Diagnostic.Report(Severity.Warning, Strings.MgCrit_Pairing_notes_incompatible, absTick);
 
@@ -117,8 +118,9 @@ public partial class UgcParser
                 _lastNote = oldAir.PairNote;
             }
 
-            if (_lastNote is mg.PositiveNote pos)
-                pos.MakePair(airSlide);
+            var pairPositive = FindPairPositive(absTick);
+            if (pairPositive != null)
+                pairPositive.MakePair(airSlide);
 
             _lastParentNote = airSlide;
             _lastNote = airSlide;
@@ -178,6 +180,15 @@ public partial class UgcParser
         _lastNote = note;
     }
 
+    // Last PositiveNote at absTick when _lastNote is a non-positive long parent (Hold/Slide).
+    private mg.PositiveNote? FindPairPositive(int absTick)
+    {
+        if (_lastNote is mg.PositiveNote lastP && lastP.Tick.Original == absTick)
+            return lastP;
+
+        return Ugc.Notes.Children.OfType<mg.PositiveNote>().LastOrDefault(p => p.Tick.Original == absTick);
+    }
+
     private static mg.ExTap MakeExTap(string extras)
     {
         var exNote = new mg.ExTap();
@@ -195,13 +206,27 @@ public partial class UgcParser
 
     private void HandleChildPayload(int offsetTick, string payload)
     {
-        if (payload.Length < 3)
+        if (_lastParentNote is null)
         {
             WarnMalformed(payload);
             return;
         }
 
-        if (_lastParentNote is null)
+        if (payload.Trim() == "s" && _lastParentNote is mg.Hold hold)
+        {
+            var hj = new mg.HoldJoint
+            {
+                Tick = hold.Tick.Original + offsetTick,
+                Lane = hold.Lane,
+                Width = hold.Width,
+                Timeline = hold.Timeline
+            };
+            hold.AppendChild(hj);
+            _lastNote = hj;
+            return;
+        }
+
+        if (payload.Length < 3)
         {
             WarnMalformed(payload);
             return;
