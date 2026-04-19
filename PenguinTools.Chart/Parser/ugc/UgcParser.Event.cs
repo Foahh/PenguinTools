@@ -36,21 +36,6 @@ public partial class UgcParser
         _pendingSpdMods.Add((bar, tick, speed));
     }
 
-    private void HandleTil(string[] args)
-    {
-        if (args.Length < 3) return;
-        if (!int.TryParse(args[0], out var id)) return;
-        if (!TryParseBarTick(args[1], out var bar, out var tick)) return;
-        if (!decimal.TryParse(args[2], CultureInfo.InvariantCulture, out var speed)) return;
-        _pendingTils.Add((id, bar, tick, speed));
-    }
-
-    private void HandleMainTil(string[] args)
-    {
-        if (args.Length < 1 || !int.TryParse(args[0], out var id)) return;
-        Ugc.Meta.MainTil = id;
-    }
-
     private static bool TryParseBarTick(string s, out int bar, out int tick)
     {
         bar = 0;

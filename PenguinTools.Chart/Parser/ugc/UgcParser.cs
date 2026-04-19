@@ -125,8 +125,6 @@ public partial class UgcParser
             Ugc.Events.AppendChild(new mg.ScrollSpeedEvent { Timeline = tilId, Tick = BarTickToAbsTick(bar, tick), Speed = spd });
     }
 
-    private void ApplyUseTil(string line) { }
-
     private void ProcessMeta()
     {
         if (string.IsNullOrWhiteSpace(Ugc.Meta.SortName))

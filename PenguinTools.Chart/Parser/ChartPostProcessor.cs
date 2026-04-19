@@ -244,7 +244,7 @@ internal sealed partial class ChartPostProcessor
         {
             var mappedNotes = _noteGroups[id];
             var maxTick = mappedNotes.Select(p => p.Tick).Append(0).Max();
-            if (mappedNotes.Count == 0) _tilGroups.Remove(id);
+            if (mappedNotes.Count == 0 && _chart.Notes.Children.Count > 0) _tilGroups.Remove(id);
             else if (events.Count > 0 && maxTick.Original > 0) events.RemoveAll(p => p.Tick.Original > maxTick.Original + ChartResolution.SingleTick);
         }
 
