@@ -6,7 +6,7 @@ namespace PenguinTools.Chart.Tests.Parser;
 
 public class UgcSkeletonTests
 {
-    [Fact(Skip = "pending header dispatch in Task 6")]
+    [Fact]
     public async Task EmptyUgc_ReturnsEmptyChart()
     {
         var tmp = Path.GetTempFileName() + ".ugc";

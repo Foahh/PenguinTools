@@ -1,3 +1,4 @@
+using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Resources;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
@@ -43,31 +44,41 @@ public partial class UgcParser
 
     public async Task<OperationResult<mg.Chart>> ParseAsync(CancellationToken ct = default)
     {
-        Ugc.Meta.FilePath = Path;
-        var lines = await ReadLinesAsync(Path, ct);
-
-        foreach (var line in lines)
+        try
         {
-            ct.ThrowIfCancellationRequested();
-            if (line.StartsWith('@')) DispatchHeaderLine(line);
+            Ugc.Meta.FilePath = Path;
+            var lines = await ReadLinesAsync(Path, ct);
+
+            foreach (var line in lines)
+            {
+                ct.ThrowIfCancellationRequested();
+                if (line.StartsWith('@')) DispatchHeaderLine(line);
+            }
+
+            BuildBarAxis();
+
+            _currentTimeline = 0;
+            foreach (var line in lines)
+            {
+                ct.ThrowIfCancellationRequested();
+                if (line.StartsWith("@USETIL", StringComparison.Ordinal)) ApplyUseTil(line);
+                else if (line.StartsWith('#')) DispatchBodyLine(line);
+            }
+
+            Diagnostic.TimeCalculator = Ugc.GetCalculator();
+
+            var post = new ChartPostProcessor(Ugc, Diagnostic, Assets);
+            post.Run();
+            ProcessMeta();
+
+            await Task.WhenAll(Tasks);
+            return OperationResult<mg.Chart>.Success(Ugc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
         }
-
-        BuildBarAxis();
-
-        _currentTimeline = 0;
-        foreach (var line in lines)
+        catch (DiagnosticException ex)
         {
-            ct.ThrowIfCancellationRequested();
-            if (line.StartsWith("@USETIL", StringComparison.Ordinal)) ApplyUseTil(line);
-            else if (line.StartsWith('#')) DispatchBodyLine(line);
+            Diagnostic.Report(ex);
+            return OperationResult<mg.Chart>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
         }
-
-        var post = new ChartPostProcessor(Ugc, Diagnostic, Assets);
-        post.Run();
-        ProcessMeta();
-
-        await Task.WhenAll(Tasks);
-        return OperationResult<mg.Chart>.Success(Ugc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
     }
 
     private static async Task<string[]> ReadLinesAsync(string path, CancellationToken ct)
@@ -86,11 +97,33 @@ public partial class UgcParser
         return text.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
     }
 
-    private void DispatchHeaderLine(string line) { }
-
     private void DispatchBodyLine(string line) { }
 
-    private void BuildBarAxis() { }
+    private void BuildBarAxis()
+    {
+        var beats = Ugc.Events.Children.OfType<mg.BeatEvent>().OrderBy(b => b.Bar).ToList();
+        if (beats.Count > 0)
+        {
+            beats[0].Tick = 0;
+            var accum = 0;
+            for (var i = 0; i < beats.Count - 1; i++)
+            {
+                var curr = beats[i];
+                var next = beats[i + 1];
+                accum += ChartResolution.MarResolution * curr.Numerator / curr.Denominator * (next.Bar - curr.Bar);
+                next.Tick = accum;
+            }
+        }
+
+        foreach (var (bar, tick, bpm) in _pendingBpms)
+            Ugc.Events.AppendChild(new mg.BpmEvent { Tick = BarTickToAbsTick(bar, tick), Bpm = bpm });
+
+        foreach (var (bar, tick, spd) in _pendingSpdMods)
+            Ugc.Events.AppendChild(new mg.NoteSpeedEvent { Tick = BarTickToAbsTick(bar, tick), Speed = spd });
+
+        foreach (var (tilId, bar, tick, spd) in _pendingTils)
+            Ugc.Events.AppendChild(new mg.ScrollSpeedEvent { Timeline = tilId, Tick = BarTickToAbsTick(bar, tick), Speed = spd });
+    }
 
     private void ApplyUseTil(string line) { }
 
