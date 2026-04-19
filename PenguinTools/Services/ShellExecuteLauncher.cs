@@ -16,7 +16,7 @@ public sealed class ShellExecuteLauncher : IExternalLauncher
         }
         catch
         {
-            // ignored — same behavior as previous ViewModel.OpenWiki
+            // ignored
         }
     }
 }
