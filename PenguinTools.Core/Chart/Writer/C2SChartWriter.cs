@@ -27,7 +27,6 @@ public partial class C2SChartWriter
     private OperationContext ParentContext { get; }
     private OperationContext CurrentContext { get; set; }
     private IDiagnosticSink Diagnostic => CurrentContext.Diagnostic;
-    private IProgress<string>? Progress => CurrentContext.Progress;
     private string OutPath { get; }
     private mg.Chart Mgxc { get; }
     private List<c2s.Note> Notes { get; } = [];
@@ -43,8 +42,6 @@ public partial class C2SChartWriter
 
         try
         {
-            Progress?.Report(Strings.Status_Converting_chart);
-
             Diagnostic.TimeCalculator = Mgxc.GetCalculator();
 
             foreach (var note in Mgxc.Notes.Children) ConvertNote(note);
@@ -52,7 +49,6 @@ public partial class C2SChartWriter
             ConvertEvent(Mgxc);
 
             // Post Validation
-            Progress?.Report(Strings.Status_Validate);
             var allSlides = Notes.OfType<c2s.Slide>();
             var allAirs = Notes.OfType<c2s.IPairable>().Where(p => p.Parent is c2s.Slide).Cast<c2s.Note>();
 
@@ -86,8 +82,6 @@ public partial class C2SChartWriter
                     if (n is c2s.LongNote longNote) longNote.EndTick = longNote.EndTick.Original + offset;
                 }
             }
-
-            Progress?.Report(Strings.Status_Writing);
 
             var sb = new StringBuilder();
             sb.AppendLine("VERSION\t1.13.00\t1.13.00");

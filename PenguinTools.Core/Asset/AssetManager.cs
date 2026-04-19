@@ -34,17 +34,13 @@ public class AssetManager : INotifyPropertyChanged
     public IReadOnlySet<Entry> StageNames => MergeAssets.StageNames;
     public IReadOnlySet<Entry> WeTagNames => MergeAssets.WeTagNames;
 
-    public async Task CollectAssetsAsync(string workDir, IProgress<string>? progress = null,
-        CancellationToken ct = default)
+    public async Task CollectAssetsAsync(string workDir, CancellationToken ct = default)
     {
         if (!Directory.Exists(workDir)) { return; }
-
-        progress?.Report(Strings.Status_collecting);
 
         PlusAssets.MergeWith(await AssetDictionary.CollectAsync(workDir, ct));
         PlusAssets.SubtractWith(HardAssets);
 
-        progress?.Report(Strings.Status_Saving);
         await PlusAssets.SaveAsync("assets.json", ct);
 
         Merge();
