@@ -37,6 +37,10 @@ public partial class App : Application
         var services = new ServiceCollection();
         services.AddPenguinInfrastructure(typeof(EmbeddedResourceStore).Assembly);
 
+        services.AddTransient<IChartScanService, ChartScanService>();
+        services.AddTransient<IExportService, ExportService>();
+        services.AddTransient<IWorkflowExportService, WorkflowExportService>();
+
         services.AddSingleton<IExternalLauncher, ShellExecuteLauncher>();
         services.AddSingleton<IFileDialogService>(sp =>
             new FileDialogService(new Lazy<MainWindow>(() => sp.GetRequiredService<MainWindow>())));
