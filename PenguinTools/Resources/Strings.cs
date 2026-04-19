@@ -158,6 +158,10 @@ public class Strings
     public static string Update_Failed => ResourceManager.GetString(nameof(Update_Failed), resourceCulture) ?? string.Empty;
     public static string Update_New_Version_Available => ResourceManager.GetString(nameof(Update_New_Version_Available), resourceCulture) ?? string.Empty;
     public static string Update_Tooltip => ResourceManager.GetString(nameof(Update_Tooltip), resourceCulture) ?? string.Empty;
+    public static string UserAssetSetup_Body => ResourceManager.GetString(nameof(UserAssetSetup_Body), resourceCulture) ?? string.Empty;
+    public static string UserAssetSetup_Browse_install => ResourceManager.GetString(nameof(UserAssetSetup_Browse_install), resourceCulture) ?? string.Empty;
+    public static string UserAssetSetup_Skip => ResourceManager.GetString(nameof(UserAssetSetup_Skip), resourceCulture) ?? string.Empty;
+    public static string UserAssetSetup_Title => ResourceManager.GetString(nameof(UserAssetSetup_Title), resourceCulture) ?? string.Empty;
     public static string Warn_Duplicate_id_and_difficulty => ResourceManager.GetString(nameof(Warn_Duplicate_id_and_difficulty), resourceCulture) ?? string.Empty;
     public static string Warn_More_than_one_chart_marked_main => ResourceManager.GetString(nameof(Warn_More_than_one_chart_marked_main), resourceCulture) ?? string.Empty;
     public static string Warn_No_chart_marked_main => ResourceManager.GetString(nameof(Warn_No_chart_marked_main), resourceCulture) ?? string.Empty;

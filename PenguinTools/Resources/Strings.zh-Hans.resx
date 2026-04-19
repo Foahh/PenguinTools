@@ -480,6 +480,18 @@
     <data name="Update_Tooltip" xml:space="preserve">
     <value>点击检查最新版本</value>
   </data>
+  <data name="UserAssetSetup_Body" xml:space="preserve">
+    <value>保存在 {0} 的素材列表缺失或无法读取。您现在可以扫描 CHUNITHM 游戏数据文件夹（可选），或跳过并仅使用内置默认值。之后仍可在「其他」选项卡中通过「读取游戏素材」补充。</value>
+  </data>
+  <data name="UserAssetSetup_Browse_install" xml:space="preserve">
+    <value>浏览游戏文件夹…</value>
+  </data>
+  <data name="UserAssetSetup_Skip" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="UserAssetSetup_Title" xml:space="preserve">
+    <value>可选素材设置</value>
+  </data>
     <data name="Warn_Duplicate_id_and_difficulty" xml:space="preserve">
     <value>相同 ID 和难度的多个谱面存在，将使用最后扫描到的文件。</value>
   </data>

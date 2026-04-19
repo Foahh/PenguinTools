@@ -19,11 +19,16 @@ public class AssetManager : INotifyPropertyChanged
 
         MergeAssets = new AssetDictionary();
         HardAssets = new AssetDictionary(hardAssets);
-        PlusAssets = new AssetDictionary(_plusAssetsPath);
+        var plusOk = AssetDictionary.TryLoadPlusAssetsFromFile(_plusAssetsPath, out var plus);
+        PlusAssets = plus;
+        ShouldPromptForOptionalAssetsImport = !plusOk;
         UserAssets = new AssetDictionary();
         Merge();
         NotifyAssetChanged();
     }
+
+    /// <summary>True when <see cref="PlusAssetsFileName"/> was missing or not valid JSON at startup.</summary>
+    public bool ShouldPromptForOptionalAssetsImport { get; }
 
     /// <summary>Absolute path to the merged plus-tier asset JSON on disk.</summary>
     public string PlusAssetsPath => _plusAssetsPath;

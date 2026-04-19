@@ -61,6 +61,54 @@ public class AssetDictionary
         MergeWith(dict);
     }
 
+    /// <summary>
+    /// Loads plus-tier JSON from disk when present and valid. Returns false if the file is missing,
+    /// empty, unreadable, or invalid JSON; <paramref name="dictionary"/> is empty in that case.
+    /// </summary>
+    public static bool TryLoadPlusAssetsFromFile(string path, out AssetDictionary dictionary)
+    {
+        dictionary = new AssetDictionary();
+        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+        {
+            return false;
+        }
+
+        string json;
+        try
+        {
+            json = File.ReadAllText(path);
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return false;
+        }
+
+        try
+        {
+            var dict = JsonSerializer.Deserialize(json, JsonContext.AssetDatabase);
+            if (dict is null)
+            {
+                return false;
+            }
+
+            dictionary.MergeWith(dict);
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+    }
+
     public void MergeWith(Dictionary<AssetType, SortedSet<Entry>> databases)
     {
         foreach (var (assetType, sourceSet) in databases)

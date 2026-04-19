@@ -1,11 +1,14 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.Controls;
 using PenguinTools.Core;
+using PenguinTools.Core.Asset;
 using PenguinTools.Infrastructure;
+using PenguinTools.Resources;
 using PenguinTools.Services;
 using PenguinTools.ViewModels;
 using PenguinTools.Views;
@@ -68,6 +71,18 @@ public partial class App : Application
         services.AddTransient(sp => new MiscTab(sp.GetRequiredService<MiscViewModel>()));
 
         ServiceProvider = services.BuildServiceProvider();
+
+        var assetManager = ServiceProvider.GetRequiredService<AssetManager>();
+        if (assetManager.ShouldPromptForOptionalAssetsImport)
+        {
+            var explanation = string.Format(
+                CultureInfo.CurrentCulture,
+                Strings.UserAssetSetup_Body,
+                assetManager.PlusAssetsPath);
+            var setupWindow = new UserAssetSetupWindow();
+            setupWindow.DataContext = new UserAssetSetupViewModel(assetManager, setupWindow, explanation);
+            setupWindow.ShowDialog();
+        }
 
         var window = ServiceProvider.GetRequiredService<MainWindow>();
         window.Show();
