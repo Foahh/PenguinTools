@@ -74,7 +74,7 @@ public abstract class Model : ObservableValidator
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            throw new InvalidOperationException($"Failed to load JSON from '{path}'.", ex);
         }
     }
 
