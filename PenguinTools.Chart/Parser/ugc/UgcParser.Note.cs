@@ -99,6 +99,32 @@ public partial class UgcParser
             return;
         }
 
+        if (typeChar is 'H' or 'S')
+        {
+            var heightChar = extras.Length >= 1 ? extras[0] : '0';
+            var heightRaw = UgcPayload.Base36(heightChar);
+            if (heightRaw < 0) heightRaw = 0;
+            var height = heightRaw * 2;
+
+            var airSlide = new mg.AirSlide { Height = height, Color = Color.DEF };
+            airSlide.Timeline = _currentTimeline;
+            Ugc.Notes.AppendChild(airSlide);
+
+            if (_lastNote is mg.Air oldAir && oldAir.Tick.Original == absTick)
+            {
+                airSlide.Color = oldAir.Color;
+                oldAir.Parent?.RemoveChild(oldAir);
+                _lastNote = oldAir.PairNote;
+            }
+
+            if (_lastNote is mg.PositiveNote pos)
+                pos.MakePair(airSlide);
+
+            _lastParentNote = airSlide;
+            _lastNote = airSlide;
+            return;
+        }
+
         mg.Note? note = typeChar switch
         {
             't' => new mg.Tap(),
@@ -184,6 +210,21 @@ public partial class UgcParser
                 child = new mg.SlideJoint { Joint = jointKind };
                 break;
             }
+            case 'H':
+            case 'S':
+                if (_lastParentNote is mg.AirSlide)
+                {
+                    var hChar = payload.Length >= 4 ? payload[3] : '0';
+                    var hRaw = UgcPayload.Base36(hChar);
+                    if (hRaw < 0) hRaw = 0;
+                    child = new mg.AirSlideJoint
+                    {
+                        Joint = typeChar == 'S' ? Joint.C : Joint.D,
+                        Height = hRaw * 2
+                    };
+                }
+
+                break;
         }
 
         if (child is null) return;

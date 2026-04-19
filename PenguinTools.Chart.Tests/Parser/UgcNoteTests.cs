@@ -91,4 +91,12 @@ public class UgcNoteTests
         Assert.Equal(AirDirection.IR, air.Direction);
         Assert.Equal(Color.DEF, air.Color);
     }
+
+    [Fact]
+    public async Task AirHold_ParentAndChild()
+    {
+        var chart = await Parse("#0'0:t14\n#0'0:H140\n#480>H143\n");
+        var sl = Assert.Single(chart.Notes.Children.OfType<Models.mgxc.AirSlide>());
+        Assert.Single(sl.Children.OfType<Models.mgxc.AirSlideJoint>());
+    }
 }
