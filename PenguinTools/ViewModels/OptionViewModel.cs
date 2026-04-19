@@ -15,7 +15,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 {
     private readonly IFileDialogService _fileDialogs;
     private readonly IChartScanService _chartScan;
-    private readonly IExportService _export;
+    private readonly IOptionService _export;
 
     public OptionViewModel(
         ActionService actionService,
@@ -26,7 +26,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         IExternalLauncher externalLauncher,
         IFileDialogService fileDialogs,
         IChartScanService chartScan,
-        IExportService export)
+        IOptionService export)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
         _fileDialogs = fileDialogs;

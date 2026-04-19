@@ -38,7 +38,7 @@ public partial class App : Application
         services.AddPenguinInfrastructure(typeof(EmbeddedResourceStore).Assembly);
 
         services.AddTransient<IChartScanService, ChartScanService>();
-        services.AddTransient<IExportService, ExportService>();
+        services.AddTransient<IOptionService, OptionService>();
         services.AddTransient<IWorkflowExportService, WorkflowExportService>();
 
         services.AddSingleton<IExternalLauncher, ShellExecuteLauncher>();

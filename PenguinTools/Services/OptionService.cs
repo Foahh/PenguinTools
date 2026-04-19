@@ -12,14 +12,14 @@ using PenguinTools.Models;
 
 namespace PenguinTools.Services;
 
-public sealed class ExportService : IExportService
+public sealed class OptionService : IOptionService
 {
     private readonly AssetManager _assetManager;
     private readonly IMediaTool _mediaTool;
     private readonly IEmbeddedResourceStore _resourceStore;
     private readonly IInfrastructureAssetProvider _assetProvider;
 
-    public ExportService(
+    public OptionService(
         AssetManager assetManager,
         IMediaTool mediaTool,
         IEmbeddedResourceStore resourceStore,

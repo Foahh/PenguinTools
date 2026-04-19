@@ -20,7 +20,7 @@ public sealed record ExportOutputPaths(
             Path.Combine(rootPath, "releaseTag"));
 }
 
-public interface IExportService
+public interface IOptionService
 {
     Task<OperationResult> ExportAsync(OptionModel settings, ExportOutputPaths outputPaths, CancellationToken ct);
 }
