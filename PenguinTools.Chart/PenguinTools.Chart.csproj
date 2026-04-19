@@ -12,6 +12,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0" NoWarn="NU1510" />
+    </ItemGroup>
+
+    <ItemGroup>
       <EmbeddedResource Update="Resources\Strings.resx">
         <Generator>ResXFileCodeGenerator</Generator>
       </EmbeddedResource>
