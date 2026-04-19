@@ -17,14 +17,14 @@ internal static class ChartCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source .mgxc chart."
+            Description = "Path to the source chart (.mgxc or .ugc)."
         };
         var outputArgument = new Argument<string>("output")
         {
             Description = "Path to the output .c2s file."
         };
 
-        var command = new Command("convert", "Convert an MGXC chart into a C2S chart file.");
+        var command = new Command("convert", "Convert an MGXC or UGC chart into a C2S chart file.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         command.SetAction(async (parseResult, cancellationToken) =>

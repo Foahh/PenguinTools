@@ -1,3 +1,4 @@
+using System.IO;
 using PenguinTools.Chart.Parser;
 using System.CommandLine;
 using PenguinTools.Core;
@@ -7,6 +8,7 @@ using PenguinTools.Core.Xml;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using PenguinTools.Workflow;
+using umgr = PenguinTools.Chart.Models.umgr;
 
 namespace PenguinTools.CLI;
 
@@ -56,17 +58,30 @@ internal static class CliOperations
             "Command-line parsing failed.");
     }
 
-    internal static async Task<OperationResult<PenguinTools.Chart.Models.umgr.Chart>> ParseChartAsync(
+    internal static async Task<OperationResult<umgr.Chart>> ParseChartAsync(
         CliRuntime runtime,
         string input,
         CancellationToken cancellationToken)
     {
         if (!File.Exists(input))
         {
-            return CliPaths.CreateFailureResultOf<PenguinTools.Chart.Models.umgr.Chart>($"Chart file not found: {input}", input);
+            return CliPaths.CreateFailureResultOf<umgr.Chart>($"Chart file not found: {input}", input);
         }
 
-        return await new MgxcParser(new MgxcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(cancellationToken);
+        var ext = Path.GetExtension(input);
+        if (string.Equals(ext, ".ugc", StringComparison.OrdinalIgnoreCase))
+        {
+            return await new UgcParser(new UgcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(cancellationToken);
+        }
+
+        if (string.Equals(ext, ".mgxc", StringComparison.OrdinalIgnoreCase))
+        {
+            return await new MgxcParser(new MgxcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(cancellationToken);
+        }
+
+        return CliPaths.CreateFailureResultOf<umgr.Chart>(
+            $"Expected a .mgxc or .ugc chart file. Got extension: \"{ext}\".",
+            input);
     }
 
     internal static Task<OperationResult<IReadOnlyList<OptionBookSnapshot>>> ScanOptionChartsAsync(
@@ -106,7 +121,7 @@ internal static class CliOperations
 
     internal static Task<OperationResult> ExportMusicAsync(
         CliRuntime runtime,
-        PenguinTools.Chart.Models.umgr.Chart chart,
+        umgr.Chart chart,
         string output,
         string? jacketInput,
         AudioRequestOverrides audioOverrides,

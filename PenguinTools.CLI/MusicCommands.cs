@@ -7,7 +7,7 @@ internal static class MusicCommands
 {
     internal static Command BuildMusicCommand()
     {
-        var command = new Command("music", "Export mgxc with jacket and audio.");
+        var command = new Command("music", "Export an MGXC or UGC chart with jacket and audio.");
         command.Subcommands.Add(BuildMusicExportCommand());
         return command;
     }
@@ -16,7 +16,7 @@ internal static class MusicCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source .mgxc chart."
+            Description = "Path to the source chart (.mgxc or .ugc)."
         };
         var outputArgument = new Argument<string>("output")
         {
@@ -29,7 +29,7 @@ internal static class MusicCommands
         var audioOptions = CommandLineOptions.CreateAudioCommandOptions();
         var stageOptions = CommandLineOptions.CreateStageCommandOptions();
 
-        var command = new Command("export", "Export chart, jacket, audio, and optional stage/event XML from one MGXC chart.");
+        var command = new Command("export", "Export chart, jacket, audio, and optional stage/event XML from one MGXC or UGC chart.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         command.Options.Add(jacketInputOption);
