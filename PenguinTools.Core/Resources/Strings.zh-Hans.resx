@@ -476,17 +476,32 @@
     <data name="Error_File_not_found" xml:space="preserve">
     <value>未找到指定的文件。</value>
   </data>
+    <data name="Status_Writing" xml:space="preserve">
+    <value>正在写入...</value>
+  </data>
     <data name="Error_Song_id_is_not_set" xml:space="preserve">
     <value>未设置歌曲 ID。</value>
   </data>
   <data name="Status_Reading" xml:space="preserve">
     <value>正在读取...</value>
   </data>
+    <data name="Status_Converting_chart" xml:space="preserve">
+    <value>正在转换谱面...</value>
+  </data>
     <data name="Error_Stage_id_is_not_set" xml:space="preserve">
     <value>未设置背景 ID。</value>
   </data>
     <data name="Error_Background_file_is_not_set" xml:space="preserve">
     <value>未设置背景文件。</value>
+  </data>
+    <data name="Status_Converting_jacket" xml:space="preserve">
+    <value>正在转换封面...</value>
+  </data>
+    <data name="Status_Converting_audio" xml:space="preserve">
+    <value>正在转换音频...</value>
+  </data>
+    <data name="Status_Validate" xml:space="preserve">
+    <value>正在验证...</value>
   </data>
     <data name="Error_Invalid_bg_image" xml:space="preserve">
     <value>无法读取背景图片，格式无效。</value>
@@ -500,8 +515,14 @@
     <data name="Error_Invalid_audio" xml:space="preserve">
     <value>音频格式无效。</value>
   </data>
+    <data name="Status_Convert_background" xml:space="preserve">
+    <value>正在转换背景...</value>
+  </data>
     <data name="Warn_Stage_already_exists" xml:space="preserve">
     <value>已经存在 ID 为 {1} 的背景类型 {0}。</value>
+  </data>
+    <data name="Status_Extracting" xml:space="preserve">
+    <value>正在提取...</value>
   </data>
     <data name="MgCrit_Invalid_AirSlide_parent" xml:space="preserve">
     <value>指定的 AirSlide 父级无效。</value>
@@ -586,6 +607,12 @@
   </data>
     <data name="Status_Error" xml:space="preserve">
     <value>发生错误</value>
+  </data>
+    <data name="Status_collecting" xml:space="preserve">
+    <value>正在读取...</value>
+  </data>
+    <data name="Status_Saving" xml:space="preserve">
+    <value>正在保存...</value>
   </data>
     <data name="Status_Idle" xml:space="preserve">
     <value>空闲中</value>
