@@ -1,5 +1,4 @@
 using PenguinTools.Core;
-using PenguinTools.Media;
 
 namespace PenguinTools.CLI;
 

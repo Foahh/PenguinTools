@@ -1,5 +1,3 @@
-using PenguinTools.Chart.Tests;
-
 namespace PenguinTools.Chart.Tests.Parser;
 
 /// <summary>

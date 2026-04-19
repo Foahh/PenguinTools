@@ -1,7 +1,7 @@
-using PenguinTools.Chart.Parser;
+using PenguinTools.Chart.Parser.mgxc;
+using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Chart.Writer;
 using Xunit;
-using umgr = PenguinTools.Chart.Models.umgr;
 
 namespace PenguinTools.Chart.Tests.Parser;
 

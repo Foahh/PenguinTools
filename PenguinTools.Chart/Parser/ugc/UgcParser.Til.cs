@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace PenguinTools.Chart.Parser;
+namespace PenguinTools.Chart.Parser.ugc;
 
 public partial class UgcParser
 {

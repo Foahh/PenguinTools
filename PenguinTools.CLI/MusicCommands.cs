@@ -1,5 +1,4 @@
 using System.CommandLine;
-using PenguinTools.Core;
 
 namespace PenguinTools.CLI;
 

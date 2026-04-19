@@ -1,6 +1,5 @@
 using PenguinTools.Chart.Models;
-using PenguinTools.Chart.Parser;
-using PenguinTools.Core;
+using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 
 namespace PenguinTools.Chart.Tests.Parser;

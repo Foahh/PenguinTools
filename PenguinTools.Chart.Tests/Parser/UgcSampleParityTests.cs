@@ -1,5 +1,6 @@
 using System.Globalization;
-using PenguinTools.Chart.Parser;
+using PenguinTools.Chart.Parser.mgxc;
+using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 using umgr = PenguinTools.Chart.Models.umgr;
 

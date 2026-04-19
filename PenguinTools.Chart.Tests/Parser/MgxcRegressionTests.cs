@@ -1,6 +1,5 @@
 using System.Diagnostics;
-using PenguinTools.Chart.Parser;
-using PenguinTools.Chart.Tests;
+using PenguinTools.Chart.Parser.mgxc;
 using Xunit;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;

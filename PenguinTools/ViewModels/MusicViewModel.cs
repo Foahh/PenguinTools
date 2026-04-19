@@ -1,13 +1,13 @@
 ﻿using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Chart.Parser;
-using PenguinTools.Chart.Models;
 using PenguinTools.Media;
 using PenguinTools.Resources;
 using PenguinTools.Infrastructure;
 using PenguinTools.Models;
 using PenguinTools.Services;
 using System.IO;
+using PenguinTools.Chart.Parser.mgxc;
+using PenguinTools.Chart.Parser.ugc;
 
 namespace PenguinTools.ViewModels;
 

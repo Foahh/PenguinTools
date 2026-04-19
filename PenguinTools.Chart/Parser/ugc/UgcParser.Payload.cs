@@ -1,6 +1,6 @@
 using PenguinTools.Chart.Models;
 
-namespace PenguinTools.Chart.Parser;
+namespace PenguinTools.Chart.Parser.ugc;
 
 // Internal helpers exposed via a static class so tests can reach them without
 // new'ing a whole UgcParser.

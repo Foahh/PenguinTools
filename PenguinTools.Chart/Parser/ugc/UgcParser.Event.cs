@@ -1,7 +1,7 @@
-using PenguinTools.Chart.Models;
 using System.Globalization;
+using PenguinTools.Chart.Models;
 
-namespace PenguinTools.Chart.Parser;
+namespace PenguinTools.Chart.Parser.ugc;
 
 using umgr = Models.umgr;
 

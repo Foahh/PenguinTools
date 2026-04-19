@@ -1,12 +1,13 @@
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
-using PenguinTools.Chart.Parser;
 using PenguinTools.Media;
 using PenguinTools.Resources;
 using PenguinTools.Models;
 using PenguinTools.Workflow;
 using System.IO;
+using PenguinTools.Chart.Parser.mgxc;
+using PenguinTools.Chart.Parser.ugc;
 
 namespace PenguinTools.Services;
 

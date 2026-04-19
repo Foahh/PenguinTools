@@ -1,4 +1,4 @@
-using PenguinTools.Chart.Parser;
+using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 
 namespace PenguinTools.Chart.Tests.Parser;

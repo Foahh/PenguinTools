@@ -1,10 +1,9 @@
-﻿using PenguinTools.Core;
+﻿using PenguinTools.Chart.Resources;
+using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Chart.Models;
-using PenguinTools.Chart.Resources;
 using PenguinTools.Media;
 
-namespace PenguinTools.Chart.Parser;
+namespace PenguinTools.Chart.Parser.mgxc;
 
 using umgr = Models.umgr;
 

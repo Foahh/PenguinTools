@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace PenguinTools.Workflow;
 
 public sealed record ExportOutputPaths(

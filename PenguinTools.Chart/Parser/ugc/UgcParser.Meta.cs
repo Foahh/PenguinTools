@@ -1,10 +1,10 @@
+using System.Globalization;
+using PenguinTools.Chart.Resources;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
-using PenguinTools.Chart.Resources;
-using System.Globalization;
 
-namespace PenguinTools.Chart.Parser;
+namespace PenguinTools.Chart.Parser.ugc;
 
 public partial class UgcParser
 {

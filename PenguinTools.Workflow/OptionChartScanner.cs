@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
-using System.IO;
-using PenguinTools.Chart.Parser;
+using PenguinTools.Chart.Parser.mgxc;
+using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;

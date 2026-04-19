@@ -2,7 +2,7 @@ using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Resources;
 using PenguinTools.Core;
 
-namespace PenguinTools.Chart.Parser;
+namespace PenguinTools.Chart.Parser.ugc;
 
 using umgr = Models.umgr;
 

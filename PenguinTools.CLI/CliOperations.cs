@@ -1,12 +1,10 @@
-using System.IO;
-using PenguinTools.Chart.Parser;
 using System.CommandLine;
+using PenguinTools.Chart.Parser.mgxc;
+using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Xml;
-using PenguinTools.Infrastructure;
-using PenguinTools.Media;
 using PenguinTools.Workflow;
 using umgr = PenguinTools.Chart.Models.umgr;
 

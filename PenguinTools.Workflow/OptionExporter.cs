@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.IO;
 using PenguinTools.Chart.Writer;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;

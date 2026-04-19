@@ -1,11 +1,11 @@
+using System.Text;
 using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Resources;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Media;
-using System.Text;
 
-namespace PenguinTools.Chart.Parser;
+namespace PenguinTools.Chart.Parser.ugc;
 
 using umgr = Models.umgr;
 
