@@ -7,6 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="PenguinTools.Chart.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj" />
         <ProjectReference Include="..\PenguinTools.Media\PenguinTools.Media.csproj" />
     </ItemGroup>
