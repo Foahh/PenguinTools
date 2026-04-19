@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Attributes;
 using PenguinTools.Resources;
+using PenguinTools.Workflow;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
@@ -13,11 +15,56 @@ public partial class OptionModel : Model, IPersistable
 {
     public string PersistenceFileName => "options.json";
 
-    public Task LoadAsync(string directory, CancellationToken cancellationToken = default) =>
-        JsonPersistence.LoadIntoAsync(this, directory, PersistenceFileName, cancellationToken);
+    public async Task LoadAsync(string directory, CancellationToken cancellationToken = default)
+    {
+        var path = Path.Combine(directory, PersistenceFileName);
+        if (!File.Exists(path)) return;
 
-    public Task SaveAsync(string directory, CancellationToken cancellationToken = default) =>
-        JsonPersistence.SaveFromAsync(this, directory, PersistenceFileName, cancellationToken);
+        await using var stream = File.OpenRead(path);
+        var document = await JsonSerializer.DeserializeAsync<OptionDocument>(stream, OptionDocumentJson.Default, cancellationToken);
+        if (document is null) return;
+
+        Apply(document);
+    }
+
+    public async Task SaveAsync(string directory, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(directory)) throw new ArgumentNullException(nameof(directory));
+        var path = Path.Combine(directory, PersistenceFileName);
+        await using var stream = File.Create(path);
+        await JsonSerializer.SerializeAsync(stream, ToDocument(), OptionDocumentJson.Default, cancellationToken);
+    }
+
+    public void Apply(OptionDocument document)
+    {
+        OptionName = document.OptionName;
+        ConvertChart = document.ConvertChart;
+        ConvertAudio = document.ConvertAudio;
+        ConvertJacket = document.ConvertJacket;
+        ConvertBackground = document.ConvertBackground;
+        GenerateEventXml = document.GenerateEventXml;
+        GenerateReleaseTagXml = document.GenerateReleaseTagXml;
+        UltimaEventId = document.UltimaEventId;
+        WeEventId = document.WeEventId;
+        BatchSize = document.BatchSize;
+        WorkingDirectory = document.WorkingDirectory;
+    }
+
+    public OptionDocument ToDocument() =>
+        new()
+        {
+            OptionName = OptionName,
+            ConvertChart = ConvertChart,
+            ConvertAudio = ConvertAudio,
+            ConvertJacket = ConvertJacket,
+            ConvertBackground = ConvertBackground,
+            GenerateEventXml = GenerateEventXml,
+            GenerateReleaseTagXml = GenerateReleaseTagXml,
+            UltimaEventId = UltimaEventId,
+            WeEventId = WeEventId,
+            BatchSize = BatchSize,
+            WorkingDirectory = WorkingDirectory
+        };
 
     [ObservableProperty]
     [MinLength(4)]

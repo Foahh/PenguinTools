@@ -2,32 +2,31 @@ using System.Collections.Concurrent;
 using System.IO;
 using PenguinTools.Core;
 
-namespace PenguinTools.Services;
+namespace PenguinTools.Workflow;
 
-internal sealed record OptionProcessContext(
+public sealed record OptionExportProcessContext(
     IDiagnosticSink Diagnostics,
     CancellationToken CancellationToken,
     int BatchSize,
     string WorkingDirectory);
 
-internal static class OptionParallelBatch
+public static class OptionExportBatch
 {
-    internal static Diagnoster CreateDiagnoster(IDiagnosticSink? parent = null) =>
+    public static Diagnoster CreateDiagnoster(IDiagnosticSink? parent = null) =>
         new()
         {
             TimeCalculator = parent?.TimeCalculator
         };
 
-    internal static async Task<DiagnosticSnapshot> ProcessItemsAsync<T>(
+    public static async Task<DiagnosticSnapshot> ProcessItemsAsync<T>(
         string prefix,
         IEnumerable<T> items,
         Func<T, IDiagnosticSink, Task> action,
         Func<T, string> getPath,
-        OptionProcessContext main,
+        OptionExportProcessContext main,
         bool parallel = false)
     {
         var itemList = items as IList<T> ?? [.. items];
-        var completedCount = 0;
         var diagnostics = new ConcurrentBag<DiagnosticSnapshot>();
 
         if (parallel)
@@ -59,13 +58,12 @@ internal static class OptionParallelBatch
             }
             finally
             {
-                Interlocked.Increment(ref completedCount);
                 diagnostics.Add(CreateItemDiagnostics(ld, getPath(item), main.WorkingDirectory));
             }
         }
     }
 
-    internal static DiagnosticSnapshot CreateItemDiagnostics(IDiagnosticSink sink, string path, string workingDirectory)
+    public static DiagnosticSnapshot CreateItemDiagnostics(IDiagnosticSink sink, string path, string workingDirectory)
     {
         var relativePath = Path.GetRelativePath(workingDirectory, path);
         var copied = sink.Diagnostics.Select(diag =>
@@ -77,12 +75,12 @@ internal static class OptionParallelBatch
         return DiagnosticSnapshot.Create(copied);
     }
 
-    internal static Task<DiagnosticSnapshot> BatchAsync<T>(
+    public static Task<DiagnosticSnapshot> BatchAsync<T>(
         string prefix,
         IEnumerable<T> items,
         Func<T, IDiagnosticSink, Task> action,
         Func<T, string> getPath,
-        OptionProcessContext context,
+        OptionExportProcessContext context,
         bool parallel = false) =>
         ProcessItemsAsync(prefix, items, action, getPath, context, parallel);
 }

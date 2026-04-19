@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using PenguinTools.Workflow;
 
 namespace PenguinTools.CLI;
 
@@ -13,4 +14,5 @@ namespace PenguinTools.CLI;
 [JsonSerializable(typeof(CliDiagnosticPayload))]
 [JsonSerializable(typeof(CliDiagnosticPayload[]))]
 [JsonSerializable(typeof(CliProcessPayload))]
+[JsonSerializable(typeof(OptionDocument))]
 internal sealed partial class CliJsonSerializerContext : JsonSerializerContext;

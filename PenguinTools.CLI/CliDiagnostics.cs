@@ -34,6 +34,13 @@ internal static class CliDiagnostics
         }
     }
 
+    internal static DiagnosticSnapshot SnapshotFromMessage(string message)
+    {
+        var sink = new Diagnoster();
+        sink.Report(Severity.Error, message);
+        return DiagnosticSnapshot.Create(sink);
+    }
+
     internal static DiagnosticSnapshot SnapshotFromException(Exception exception)
     {
         var sink = new Diagnoster();

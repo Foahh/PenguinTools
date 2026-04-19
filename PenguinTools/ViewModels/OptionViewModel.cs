@@ -7,6 +7,7 @@ using PenguinTools.Infrastructure;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Models;
 using PenguinTools.Services;
+using PenguinTools.Workflow;
 using System.IO;
 
 namespace PenguinTools.ViewModels;
@@ -75,7 +76,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
     protected override async Task<OperationResult<OptionModel>> ReadModel(string path, CancellationToken ct = default)
     {
-        var diagnostics = OptionParallelBatch.CreateDiagnoster();
+        var diagnostics = OptionExportBatch.CreateDiagnoster();
         await Dispatcher.InvokeAsync(() =>
         {
             ActionService.Status = Strings.Status_Searching;

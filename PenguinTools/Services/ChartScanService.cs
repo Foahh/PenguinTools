@@ -5,6 +5,7 @@ using PenguinTools.Chart.Parser;
 using PenguinTools.Media;
 using PenguinTools.Resources;
 using PenguinTools.Models;
+using PenguinTools.Workflow;
 using System.IO;
 
 namespace PenguinTools.Services;
@@ -24,16 +25,16 @@ public sealed class ChartScanService : IChartScanService
 
     public async Task<OperationResult> ScanAsync(string directory, BookDictionary books, ChartScanParameters parameters, CancellationToken ct)
     {
-        var processContext = new OptionProcessContext(parameters.Diagnostics, ct, parameters.BatchSize, parameters.WorkingDirectory);
+        var processContext = new OptionExportProcessContext(parameters.Diagnostics, ct, parameters.BatchSize, parameters.WorkingDirectory);
         var batchDiagnostics = await LoadBooksAsync(directory, parameters.FileGlob, books, processContext, ct);
         FinalizeBooks(books, parameters.Diagnostics, ct);
         return OperationResult.Success().WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(parameters.Diagnostics)));
     }
 
-    private async Task<DiagnosticSnapshot> LoadBooksAsync(string path, string fileGlob, BookDictionary books, OptionProcessContext context, CancellationToken ct)
+    private async Task<DiagnosticSnapshot> LoadBooksAsync(string path, string fileGlob, BookDictionary books, OptionExportProcessContext context, CancellationToken ct)
     {
         var chartPaths = Directory.EnumerateFiles(path, fileGlob, SearchOption.AllDirectories);
-        return await OptionParallelBatch.BatchAsync(
+        return await OptionExportBatch.BatchAsync(
             Strings.Status_Checked,
             chartPaths,
             (filePath, innerDiagnostics) => LoadBookAsync(filePath, books, innerDiagnostics, ct),

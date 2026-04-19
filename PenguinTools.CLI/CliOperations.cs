@@ -75,6 +75,41 @@ internal static class CliOperations
         return await new MgxcParser(new MgxcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(cancellationToken);
     }
 
+    internal static Task<OperationResult<IReadOnlyList<OptionBookSnapshot>>> ScanOptionChartsAsync(
+        CliRuntime runtime,
+        string directory,
+        string fileGlob,
+        int batchSize,
+        string workingDirectory,
+        CancellationToken cancellationToken)
+    {
+        var diagnostics = new Diagnoster();
+        return OptionChartScanner.ScanDirectoryAsync(
+            runtime.Assets,
+            runtime.MediaTool,
+            directory,
+            fileGlob,
+            batchSize,
+            workingDirectory,
+            diagnostics,
+            cancellationToken);
+    }
+
+    internal static Task<OperationResult> ExportOptionAsync(
+        CliRuntime runtime,
+        OptionExportSettings settings,
+        ExportOutputPaths outputPaths,
+        IReadOnlyList<OptionBookSnapshot> books,
+        string diagnosticsWorkingDirectory,
+        CancellationToken cancellationToken) =>
+        OptionExporter.ExportAsync(
+            new MusicExportContext(runtime.Assets, runtime.MediaTool, runtime.ResourceStore, runtime.AssetProvider),
+            settings,
+            outputPaths,
+            books,
+            diagnosticsWorkingDirectory,
+            cancellationToken);
+
     internal static Task<OperationResult> ExportMusicAsync(
         CliRuntime runtime,
         PenguinTools.Chart.Models.mgxc.Chart chart,

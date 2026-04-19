@@ -15,6 +15,7 @@ internal static class RootCommands
         rootCommand.Options.Add(OutputFormatOption);
         rootCommand.Subcommands.Add(ChartCommands.BuildChartCommand());
         rootCommand.Subcommands.Add(MusicCommands.BuildMusicCommand());
+        rootCommand.Subcommands.Add(OptionCommands.BuildOptionCommand());
         rootCommand.Subcommands.Add(MediaCommands.BuildMediaCommand());
         return rootCommand;
     }
