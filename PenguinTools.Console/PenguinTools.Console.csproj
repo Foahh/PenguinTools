@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Common.props"/>
+
+    <PropertyGroup>
+        <TargetFramework>$(DotNetVersion)</TargetFramework>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+</Project>

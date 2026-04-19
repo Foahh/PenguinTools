@@ -6,7 +6,7 @@ using Swordfish.NET.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-using mg = PenguinTools.Core.Chart.Models.mgxc;
+using mg = PenguinTools.Chart.Models.mgxc;
 
 namespace PenguinTools.Models;
 

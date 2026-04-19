@@ -1,9 +1,9 @@
 ﻿using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Core.Chart.Writer;
-using PenguinTools.Core.Chart.Parser;
-using PenguinTools.Core.Media;
+using PenguinTools.Chart.Writer;
+using PenguinTools.Chart.Parser;
+using PenguinTools.Media;
 using PenguinTools.Resources;
 using PenguinTools.Infrastructure;
 using PenguinTools.Models;

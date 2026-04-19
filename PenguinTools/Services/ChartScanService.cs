@@ -1,8 +1,8 @@
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
-using PenguinTools.Core.Chart.Parser;
-using PenguinTools.Core.Media;
+using PenguinTools.Chart.Parser;
+using PenguinTools.Media;
 using PenguinTools.Resources;
 using PenguinTools.Models;
 using System.IO;

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using mg = PenguinTools.Core.Chart.Models.mgxc;
+using mg = PenguinTools.Chart.Models.mgxc;
 
 namespace PenguinTools.Models;
 

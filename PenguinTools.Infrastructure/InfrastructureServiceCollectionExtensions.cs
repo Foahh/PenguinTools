@@ -2,7 +2,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Core.Media;
+using PenguinTools.Media;
 
 namespace PenguinTools.Infrastructure;
 

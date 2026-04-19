@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
-using PenguinTools.Core.Media;
+using PenguinTools.Media;
 using PenguinTools.Resources;
 using PenguinTools.Infrastructure;
 using PenguinTools.Services;

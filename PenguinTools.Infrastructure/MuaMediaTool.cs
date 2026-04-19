@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
-using PenguinTools.Core.Media;
+using PenguinTools.Media;
 
 namespace PenguinTools.Infrastructure;
 
