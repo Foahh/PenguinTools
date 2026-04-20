@@ -5,7 +5,6 @@
         <TargetFramework>$(DotNetVersion)</TargetFramework>
         <IsAotCompatible>true</IsAotCompatible>
         <PenguinToolsEmbedInfrastructureAssets Condition="'$(PenguinToolsEmbedInfrastructureAssets)' == ''">true</PenguinToolsEmbedInfrastructureAssets>
-        <PenguinToolsPublishInfrastructureAssets Condition="'$(PenguinToolsPublishInfrastructureAssets)' == ''">false</PenguinToolsPublishInfrastructureAssets>
         <PenguinToolsUseWindowsMua Condition="'$(PenguinToolsUseWindowsMua)' == '' and $([System.String]::Copy('$(TargetFramework)').Contains('-windows'))">true</PenguinToolsUseWindowsMua>
         <PenguinToolsUseWindowsMua Condition="'$(PenguinToolsUseWindowsMua)' == '' and '$(RuntimeIdentifier)' != '' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win'))">true</PenguinToolsUseWindowsMua>
         <PenguinToolsUseWindowsMua Condition="'$(PenguinToolsUseWindowsMua)' == '' and $([MSBuild]::IsOSPlatform('Windows'))">true</PenguinToolsUseWindowsMua>
@@ -62,7 +61,7 @@
         </EmbeddedResource>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(PenguinToolsPublishInfrastructureAssets)' == 'true'">
+    <ItemGroup Condition="'$(PenguinToolsEmbedInfrastructureAssets)' != 'true'">
         <Content Include="@(PenguinToolsInfrastructureAsset)">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

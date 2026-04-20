@@ -187,11 +187,7 @@ publish/
 # Note: Comment the next line if you want to checkin your web deploy settings,
 # but database connection strings (with potential passwords) will be unencrypted
 *.pubxml
-!PenguinTools/Properties/PublishProfiles/WinX64-Embedded-SelfContained.pubxml
-!PenguinTools/Properties/PublishProfiles/WinX64-Embedded-FrameworkDependent.pubxml
-!PenguinTools/Properties/PublishProfiles/WinX64-Zip-ExternalAssets.pubxml
-!PenguinTools.CLI/Properties/PublishProfiles/WinX64-Zip-SelfContained.pubxml
-!PenguinTools.CLI/Properties/PublishProfiles/LinuxX64-Zip-SelfContained.pubxml
+!**/PublishProfiles/*.pubxml
 *.publishproj
 
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
