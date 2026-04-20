@@ -7,6 +7,7 @@
         <OutputType>Exe</OutputType>
         <RootNamespace>PenguinTools.CLI</RootNamespace>
         <IsAotCompatible>true</IsAotCompatible>
+        <ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
