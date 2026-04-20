@@ -174,6 +174,48 @@
     <data name="Description_ChartFileDiscovery" xml:space="preserve">
     <value>按顺序扫描的谱面格式列表，例如 [mgxc, ugc] 或 [ugc]。当相同 Song ID 和难度出现重复谱面时，排在前面的格式优先。</value>
   </data>
+    <data name="Diagnostic_Button_CopySelected" xml:space="preserve">
+    <value>复制选中</value>
+  </data>
+    <data name="Diagnostic_Button_CopyShown" xml:space="preserve">
+    <value>复制全部</value>
+  </data>
+    <data name="Diagnostic_Column_Context" xml:space="preserve">
+    <value>上下文</value>
+  </data>
+    <data name="Diagnostic_Column_Severity" xml:space="preserve">
+    <value>严重性</value>
+  </data>
+    <data name="Diagnostic_Details_Empty" xml:space="preserve">
+    <value>选择一条诊断以查看其原始详细信息。</value>
+  </data>
+    <data name="Diagnostic_Filter_All" xml:space="preserve">
+    <value>全部</value>
+  </data>
+    <data name="Diagnostic_Filter_Errors" xml:space="preserve">
+    <value>错误</value>
+  </data>
+    <data name="Diagnostic_Filter_Information" xml:space="preserve">
+    <value>信息</value>
+  </data>
+    <data name="Diagnostic_Filter_Warnings" xml:space="preserve">
+    <value>警告</value>
+  </data>
+    <data name="Diagnostic_FilterSummary_All" xml:space="preserve">
+    <value>{0} 条诊断</value>
+  </data>
+    <data name="Diagnostic_FilterSummary_Filtered" xml:space="preserve">
+    <value>显示 {1} 条中的 {0} 条</value>
+  </data>
+    <data name="Diagnostic_Severity_Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+    <data name="Diagnostic_Severity_Information" xml:space="preserve">
+    <value>信息</value>
+  </data>
+    <data name="Diagnostic_Severity_Warning" xml:space="preserve">
+    <value>警告</value>
+  </data>
     <data name="Display_Artist" xml:space="preserve">
     <value>艺术家</value>
   </data>

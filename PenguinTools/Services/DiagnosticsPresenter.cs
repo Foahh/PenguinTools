@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using PenguinTools.Core.Diagnostic;
 using PenguinTools.Views;
@@ -20,7 +21,12 @@ public sealed class DiagnosticsPresenter : IDiagnosticsPresenter
         {
             var model = new DiagnosticsWindowViewModel
             {
-                Diagnostics = [.. snapshot.Diagnostics]
+                Diagnostics = new ObservableCollection<Diagnostic>(snapshot.Diagnostics
+                    .OrderByDescending(diagnostic => diagnostic.Severity)
+                    .ThenBy(diagnostic => diagnostic.Path, StringComparer.Ordinal)
+                    .ThenBy(diagnostic => diagnostic.Line)
+                    .ThenBy(diagnostic => diagnostic.Time)
+                    .ThenBy(diagnostic => diagnostic.Message, StringComparer.Ordinal))
             };
             var window = new DiagnosticsWindow
             {

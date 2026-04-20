@@ -108,6 +108,48 @@ public class Strings
     public static string Description_ChartFileDiscovery =>
         ResourceManager.GetString(nameof(Description_ChartFileDiscovery), Culture) ?? string.Empty;
 
+    public static string Diagnostic_Button_CopySelected =>
+        ResourceManager.GetString(nameof(Diagnostic_Button_CopySelected), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Button_CopyShown =>
+        ResourceManager.GetString(nameof(Diagnostic_Button_CopyShown), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Column_Context =>
+        ResourceManager.GetString(nameof(Diagnostic_Column_Context), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Column_Severity =>
+        ResourceManager.GetString(nameof(Diagnostic_Column_Severity), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Details_Empty =>
+        ResourceManager.GetString(nameof(Diagnostic_Details_Empty), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Filter_All =>
+        ResourceManager.GetString(nameof(Diagnostic_Filter_All), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Filter_Errors =>
+        ResourceManager.GetString(nameof(Diagnostic_Filter_Errors), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Filter_Information =>
+        ResourceManager.GetString(nameof(Diagnostic_Filter_Information), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Filter_Warnings =>
+        ResourceManager.GetString(nameof(Diagnostic_Filter_Warnings), Culture) ?? string.Empty;
+
+    public static string Diagnostic_FilterSummary_All =>
+        ResourceManager.GetString(nameof(Diagnostic_FilterSummary_All), Culture) ?? string.Empty;
+
+    public static string Diagnostic_FilterSummary_Filtered =>
+        ResourceManager.GetString(nameof(Diagnostic_FilterSummary_Filtered), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Severity_Error =>
+        ResourceManager.GetString(nameof(Diagnostic_Severity_Error), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Severity_Information =>
+        ResourceManager.GetString(nameof(Diagnostic_Severity_Information), Culture) ?? string.Empty;
+
+    public static string Diagnostic_Severity_Warning =>
+        ResourceManager.GetString(nameof(Diagnostic_Severity_Warning), Culture) ?? string.Empty;
+
     public static string Display_Artist => ResourceManager.GetString(nameof(Display_Artist), Culture) ?? string.Empty;
 
     public static string Display_BackgroundFile =>
