@@ -15,5 +15,6 @@ namespace PenguinTools.CLI;
 [JsonSerializable(typeof(CliDiagnosticPayload[]))]
 [JsonSerializable(typeof(CliProcessPayload))]
 [JsonSerializable(typeof(OptionDocument))]
-[JsonSerializable(typeof(ChartFileDiscoveryMode))]
+[JsonSerializable(typeof(ChartFileFormat))]
+[JsonSerializable(typeof(List<ChartFileFormat>))]
 internal sealed partial class CliJsonSerializerContext : JsonSerializerContext;

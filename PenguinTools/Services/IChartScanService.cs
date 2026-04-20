@@ -9,7 +9,7 @@ public sealed record ChartScanParameters(
     IDiagnosticSink Diagnostics,
     int BatchSize,
     string WorkingDirectory,
-    ChartFileDiscoveryMode ChartFileDiscovery = ChartFileDiscoveryMode.MgxcOnly);
+    IReadOnlyList<ChartFileFormat>? ChartFileDiscovery = null);
 
 public interface IChartScanService
 {

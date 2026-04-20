@@ -15,9 +15,6 @@ using umgr = Chart.Models.umgr;
 
 public sealed class ChartScanService : IChartScanService
 {
-    private const string MgxcExtension = ".mgxc";
-    private const string UgcExtension = ".ugc";
-
     private readonly AssetManager _assetManager;
     private readonly IMediaTool _mediaTool;
 
@@ -32,20 +29,20 @@ public sealed class ChartScanService : IChartScanService
     {
         var processContext = new OptionExportProcessContext(parameters.Diagnostics, ct, parameters.BatchSize,
             parameters.WorkingDirectory);
-        var batch = parameters.ChartFileDiscovery switch
+        var batch = DiagnosticSnapshot.Empty;
+        var orderedFormats = ChartFileDiscoveryFormats.Normalize(parameters.ChartFileDiscovery);
+
+        for (var i = 0; i < orderedFormats.Count; i++)
         {
-            ChartFileDiscoveryMode.MgxcOnly =>
-                await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, false, ct),
-            ChartFileDiscoveryMode.UgcOnly =>
-                await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, false, ct),
-            ChartFileDiscoveryMode.MgxcFirst =>
-                (await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, false, ct))
-                .Merge(await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, true, ct)),
-            ChartFileDiscoveryMode.UgcFirst =>
-                (await LoadBooksFromGlobAsync(directory, "*.ugc", books, processContext, false, ct))
-                .Merge(await LoadBooksFromGlobAsync(directory, "*.mgxc", books, processContext, true, ct)),
-            _ => DiagnosticSnapshot.Empty
-        };
+            batch = batch.Merge(
+                await LoadBooksFromGlobAsync(
+                    directory,
+                    ChartFileDiscoveryFormats.GetGlob(orderedFormats[i]),
+                    books,
+                    processContext,
+                    i > 0,
+                    ct));
+        }
 
         FinalizeBooks(books, parameters.Diagnostics, ct);
         return OperationResult.Success()
@@ -77,14 +74,16 @@ public sealed class ChartScanService : IChartScanService
         ct.ThrowIfCancellationRequested();
         var ext = Path.GetExtension(filePath);
         umgr.Chart? chart = null;
-        if (string.Equals(ext, UgcExtension, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(ext, ChartFileDiscoveryFormats.GetExtension(ChartFileFormat.Ugc),
+                StringComparison.OrdinalIgnoreCase))
         {
             var r = await new UgcParser(new UgcParseRequest(filePath, _assetManager), _mediaTool).ParseAsync(ct);
             diagnostics.Report(r.Diagnostics);
             if (!r.Succeeded || r.Value is not { } ugcChart) return;
             chart = ugcChart;
         }
-        else if (string.Equals(ext, MgxcExtension, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(ext, ChartFileDiscoveryFormats.GetExtension(ChartFileFormat.Mgxc),
+                     StringComparison.OrdinalIgnoreCase))
         {
             var r = await new MgxcParser(new MgxcParseRequest(filePath, _assetManager), _mediaTool).ParseAsync(ct);
             diagnostics.Report(r.Diagnostics);

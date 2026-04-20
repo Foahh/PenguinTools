@@ -172,7 +172,7 @@
     <value>The event that unlocks the "World's End" or "ULTIMA" charts in the game.</value>
   </data>
     <data name="Description_ChartFileDiscovery" xml:space="preserve">
-    <value>MGXC only / UGC only: scan one format. MGXC first / UGC first: scan both.</value>
+    <value>Ordered chart formats to scan. Examples: [mgxc, ugc] or [ugc]. Earlier entries win when duplicate charts share the same Song ID and difficulty.</value>
   </data>
     <data name="Display_Artist" xml:space="preserve">
     <value>Artist</value>
@@ -211,7 +211,7 @@
     <value>Convert Chart</value>
   </data>
     <data name="Display_ChartFileDiscovery" xml:space="preserve">
-    <value>Chart files</value>
+    <value>Chart file order</value>
   </data>
     <data name="Display_ConvertJacket" xml:space="preserve">
     <value>Convert Jacket</value>

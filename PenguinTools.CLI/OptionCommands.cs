@@ -148,9 +148,10 @@ internal static class OptionCommands
                 "Four-letter bundle name. Required when --load-json is false; otherwise overrides options.json optionName."
         };
 
-        internal Option<ChartFileDiscoveryMode?> ChartFileDiscovery { get; } = new("--chart-file-discovery")
+        internal Option<string?> ChartFileDiscovery { get; } = new("--chart-file-discovery")
         {
-            Description = "Override options.json chartFileDiscovery (mgxcOnly, ugcOnly, mgxcFirst, ugcFirst)."
+            Description =
+                "Override options.json chartFileDiscovery with an ordered list, for example [ugc, mgxc] or ugc,mgxc."
         };
 
         internal Option<int?> BatchSize { get; } = new("--batch-size")
@@ -223,8 +224,13 @@ internal static class OptionCommands
                 document.OptionName = optionName;
             }
 
-            if (parseResult.GetValue(ChartFileDiscovery) is { } discovery)
-                document.ChartFileDiscovery = discovery;
+            if (parseResult.GetValue(ChartFileDiscovery) is { Length: > 0 } discoveryText)
+            {
+                if (!ChartFileDiscoveryFormats.TryParse(discoveryText, out var discovery, out var error))
+                    return error;
+
+                document.ChartFileDiscovery = [.. discovery];
+            }
 
             if (parseResult.GetValue(BatchSize) is { } batchSize) document.BatchSize = batchSize;
 

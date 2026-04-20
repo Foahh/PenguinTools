@@ -12,14 +12,11 @@ using umgr = Chart.Models.umgr;
 
 public static class OptionChartScanner
 {
-    private const string MgxcExtension = ".mgxc";
-    private const string UgcExtension = ".ugc";
-
     public static async Task<OperationResult<IReadOnlyList<OptionBookSnapshot>>> ScanDirectoryAsync(
         AssetManager assets,
         IMediaTool mediaTool,
         string directory,
-        ChartFileDiscoveryMode discovery,
+        IReadOnlyList<ChartFileFormat> discovery,
         int batchSize,
         string workingDirectory,
         IDiagnosticSink diagnostics,
@@ -28,21 +25,23 @@ public static class OptionChartScanner
         var processContext = new OptionExportProcessContext(diagnostics, ct, batchSize, workingDirectory);
         var booksById = new ConcurrentDictionary<int, BookAccumulator>();
 
-        var batch = discovery switch
+        var batch = DiagnosticSnapshot.Empty;
+        var orderedFormats = ChartFileDiscoveryFormats.Normalize(discovery);
+
+        for (var i = 0; i < orderedFormats.Count; i++)
         {
-            ChartFileDiscoveryMode.MgxcOnly =>
-                await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, false, ct),
-            ChartFileDiscoveryMode.UgcOnly =>
-                await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, false, ct),
-            ChartFileDiscoveryMode.MgxcFirst =>
-                (await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, false, ct))
-                .Merge(await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, true, ct)),
-            ChartFileDiscoveryMode.UgcFirst =>
-                (await ScanGlobAsync(directory, "*.ugc", booksById, assets, mediaTool, processContext, false, ct))
-                .Merge(await ScanGlobAsync(directory, "*.mgxc", booksById, assets, mediaTool, processContext, true,
-                    ct)),
-            _ => DiagnosticSnapshot.Empty
-        };
+            var format = orderedFormats[i];
+            batch = batch.Merge(
+                await ScanGlobAsync(
+                    directory,
+                    ChartFileDiscoveryFormats.GetGlob(format),
+                    booksById,
+                    assets,
+                    mediaTool,
+                    processContext,
+                    i > 0,
+                    ct));
+        }
 
         var snapshots = FinalizeAndBuildSnapshots(booksById, diagnostics, ct);
         return OperationResult<IReadOnlyList<OptionBookSnapshot>>.Success(snapshots)
@@ -82,14 +81,16 @@ public static class OptionChartScanner
         ct.ThrowIfCancellationRequested();
         var ext = Path.GetExtension(filePath);
         umgr.Chart? chart = null;
-        if (string.Equals(ext, UgcExtension, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(ext, ChartFileDiscoveryFormats.GetExtension(ChartFileFormat.Ugc),
+                StringComparison.OrdinalIgnoreCase))
         {
             var r = await new UgcParser(new UgcParseRequest(filePath, assets), mediaTool).ParseAsync(ct);
             diagnostics.Report(r.Diagnostics);
             if (!r.Succeeded || r.Value is not { } ugcChart) return;
             chart = ugcChart;
         }
-        else if (string.Equals(ext, MgxcExtension, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(ext, ChartFileDiscoveryFormats.GetExtension(ChartFileFormat.Mgxc),
+                     StringComparison.OrdinalIgnoreCase))
         {
             var r = await new MgxcParser(new MgxcParseRequest(filePath, assets), mediaTool).ParseAsync(ct);
             diagnostics.Report(r.Diagnostics);

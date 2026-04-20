@@ -33,7 +33,8 @@ public partial class OptionModel : Model, IPersistable
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ChartFileDiscovery), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_ChartFileDiscovery), typeof(Strings))]
-    public partial ChartFileDiscoveryMode ChartFileDiscovery { get; set; } = ChartFileDiscoveryMode.MgxcOnly;
+    public partial string ChartFileDiscovery { get; set; } =
+        ChartFileDiscoveryFormats.Format(ChartFileDiscoveryFormats.Default);
 
     [ObservableProperty]
     [PropertyOrder(3)]
@@ -141,7 +142,7 @@ public partial class OptionModel : Model, IPersistable
     {
         OptionName = document.OptionName;
         ConvertChart = document.ConvertChart;
-        ChartFileDiscovery = document.ChartFileDiscovery;
+        ChartFileDiscovery = ChartFileDiscoveryFormats.Format(document.ChartFileDiscovery);
         ConvertAudio = document.ConvertAudio;
         ConvertJacket = document.ConvertJacket;
         ConvertBackground = document.ConvertBackground;
@@ -155,11 +156,14 @@ public partial class OptionModel : Model, IPersistable
 
     public OptionDocument ToDocument()
     {
+        if (!ChartFileDiscoveryFormats.TryParse(ChartFileDiscovery, out var chartFileDiscovery, out var error))
+            throw new ArgumentException(error, nameof(ChartFileDiscovery));
+
         return new OptionDocument
         {
             OptionName = OptionName,
             ConvertChart = ConvertChart,
-            ChartFileDiscovery = ChartFileDiscovery,
+            ChartFileDiscovery = [.. chartFileDiscovery],
             ConvertAudio = ConvertAudio,
             ConvertJacket = ConvertJacket,
             ConvertBackground = ConvertBackground,
@@ -170,5 +174,13 @@ public partial class OptionModel : Model, IPersistable
             BatchSize = BatchSize,
             WorkingDirectory = WorkingDirectory
         };
+    }
+
+    public IReadOnlyList<ChartFileFormat> GetChartFileDiscovery()
+    {
+        if (ChartFileDiscoveryFormats.TryParse(ChartFileDiscovery, out var chartFileDiscovery, out _))
+            return chartFileDiscovery;
+
+        return ChartFileDiscoveryFormats.Default;
     }
 }

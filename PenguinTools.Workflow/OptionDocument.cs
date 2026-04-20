@@ -9,7 +9,9 @@ public sealed class OptionDocument
 
     public bool ConvertChart { get; set; } = true;
 
-    public ChartFileDiscoveryMode ChartFileDiscovery { get; set; } = ChartFileDiscoveryMode.MgxcFirst;
+    [JsonConverter(typeof(ChartFileDiscoveryJsonConverter))]
+    public List<ChartFileFormat> ChartFileDiscovery { get; set; } =
+        [ChartFileFormat.Mgxc, ChartFileFormat.Ugc];
 
     public bool ConvertAudio { get; set; } = true;
 

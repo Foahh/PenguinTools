@@ -172,7 +172,7 @@
     <value>用于解锁这些谱面的事件 ID。</value>
   </data>
     <data name="Description_ChartFileDiscovery" xml:space="preserve">
-    <value>仅 MGXC / 仅 UGC：只扫描一种格式。MGXC 优先 / UGC 优先：两种都扫描；</value>
+    <value>按顺序扫描的谱面格式列表，例如 [mgxc, ugc] 或 [ugc]。当相同 Song ID 和难度出现重复谱面时，排在前面的格式优先。</value>
   </data>
     <data name="Display_Artist" xml:space="preserve">
     <value>艺术家</value>
@@ -211,7 +211,7 @@
     <value>转换谱面</value>
   </data>
     <data name="Display_ChartFileDiscovery" xml:space="preserve">
-    <value>谱面文件</value>
+    <value>谱面扫描顺序</value>
   </data>
     <data name="Display_ConvertJacket" xml:space="preserve">
     <value>转换封面</value>
