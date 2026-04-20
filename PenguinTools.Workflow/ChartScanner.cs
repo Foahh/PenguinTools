@@ -10,7 +10,7 @@ namespace PenguinTools.Workflow;
 
 using umgr = Chart.Models.umgr;
 
-public static class OptionChartScanner
+public static class ChartScanner
 {
     public static async Task<OperationResult<IReadOnlyList<OptionBookSnapshot>>> ScanDirectoryAsync(
         AssetManager assets,

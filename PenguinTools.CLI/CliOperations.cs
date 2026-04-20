@@ -84,7 +84,7 @@ internal static class CliOperations
         CancellationToken cancellationToken)
     {
         var diagnostics = new Diagnoster();
-        return OptionChartScanner.ScanDirectoryAsync(
+        return ChartScanner.ScanDirectoryAsync(
             runtime.Assets,
             runtime.MediaTool,
             directory,
