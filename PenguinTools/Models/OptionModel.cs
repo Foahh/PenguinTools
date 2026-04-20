@@ -94,8 +94,7 @@ public partial class OptionModel : Model, IPersistable
 
     [Browsable(false)] public string WorkingDirectory { get; set; } = string.Empty;
 
-    [LocalizableCategory(nameof(Strings.Category_Misc), typeof(Strings))]
-    [LocalizableDisplayName(nameof(Strings.Display_LastExport), typeof(Strings))]
+    [Browsable(false)]
     public string OptionDirectory
     {
         get
@@ -114,6 +113,7 @@ public partial class OptionModel : Model, IPersistable
     [JsonIgnore]
     public partial BookDictionary Books { get; set; } = new();
 
+    [Browsable(false)]
     public string PersistenceFileName => "options.json";
 
     public async Task LoadAsync(string directory, CancellationToken cancellationToken = default)
