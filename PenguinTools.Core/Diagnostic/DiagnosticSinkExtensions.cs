@@ -1,4 +1,4 @@
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public static class DiagnosticSinkExtensions
 {

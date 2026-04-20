@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 
 namespace PenguinTools.Converters;
 

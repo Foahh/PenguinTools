@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;

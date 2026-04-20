@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace PenguinTools.Controls;
+namespace PenguinTools.Views;
 
 public partial class ExceptionWindow : Window
 {

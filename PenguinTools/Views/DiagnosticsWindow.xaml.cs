@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Resources;
 using Swordfish.NET.Collections;
 
-namespace PenguinTools.Controls;
+namespace PenguinTools.Views;
 
 public partial class DiagnosticsWindow
 {

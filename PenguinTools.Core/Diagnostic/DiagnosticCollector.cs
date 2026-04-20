@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public class DiagnosticCollector : IDiagnosticSink
 {

@@ -1,4 +1,4 @@
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public sealed record TimedPathDiagnostic(Severity Severity, string Message, string PathValue, int Tick)
     : Diagnostic(Severity, Message)

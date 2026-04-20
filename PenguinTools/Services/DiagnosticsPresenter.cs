@@ -1,7 +1,7 @@
 using System.Windows;
-using PenguinTools.Controls;
-using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Views;
+using DiagnosticsWindowViewModel = PenguinTools.Views.DiagnosticsWindowViewModel;
 
 namespace PenguinTools.Services;
 

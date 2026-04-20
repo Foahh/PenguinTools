@@ -1,3 +1,5 @@
+using PenguinTools.Core.Diagnostic;
+
 namespace PenguinTools.Core;
 
 public readonly record struct OperationResult(bool Succeeded)

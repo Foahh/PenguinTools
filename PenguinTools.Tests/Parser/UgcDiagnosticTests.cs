@@ -1,5 +1,5 @@
 using PenguinTools.Chart.Parser.ugc;
-using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 using Xunit;
 
 namespace PenguinTools.Tests.Parser;

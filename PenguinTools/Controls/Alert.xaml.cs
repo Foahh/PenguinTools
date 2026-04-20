@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 
 namespace PenguinTools.Controls;
 

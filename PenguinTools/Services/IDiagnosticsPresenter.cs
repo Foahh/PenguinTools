@@ -1,4 +1,4 @@
-using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 
 namespace PenguinTools.Services;
 

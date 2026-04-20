@@ -1,4 +1,5 @@
 ﻿using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Media.Resources;
 
 namespace PenguinTools.Media;

@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Xml;
 using PenguinTools.Media.Resources;

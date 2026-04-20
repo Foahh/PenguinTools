@@ -1,4 +1,4 @@
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public sealed record LocationDiagnostic(Severity Severity, string Message, int LineValue, string? PathValue = null)
     : Diagnostic(Severity, Message)

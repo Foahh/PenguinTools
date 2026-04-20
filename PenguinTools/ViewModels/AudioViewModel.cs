@@ -2,6 +2,7 @@ using System.IO;
 using Microsoft.Win32;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using PenguinTools.Models;

@@ -1,4 +1,4 @@
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public sealed record PathDiagnostic(Severity Severity, string Message, string PathValue) : Diagnostic(Severity, Message)
 {

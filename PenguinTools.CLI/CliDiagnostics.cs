@@ -1,4 +1,4 @@
-using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Media;
 
 namespace PenguinTools.CLI;

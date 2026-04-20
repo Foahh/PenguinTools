@@ -1,6 +1,7 @@
 ﻿using PenguinTools.Chart.Resources;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Media;
 
 namespace PenguinTools.Chart.Parser.mgxc;

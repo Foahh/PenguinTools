@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 
 namespace PenguinTools.Workflow;
 

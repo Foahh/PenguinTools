@@ -1,4 +1,4 @@
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public class DiagnosticException(string message, object? target = null) : Exception(message)
 {

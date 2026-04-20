@@ -3,6 +3,7 @@ using PenguinTools.Chart.Parser.mgxc;
 using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using PenguinTools.Models;

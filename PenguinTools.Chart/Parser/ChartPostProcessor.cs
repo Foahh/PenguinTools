@@ -3,8 +3,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Resources;
-using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Core.Diagnostic;
 
 namespace PenguinTools.Chart.Parser;
 

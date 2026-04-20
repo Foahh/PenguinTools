@@ -1,4 +1,4 @@
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public class TimedDiagnosticException(string message, int tick, object? target = null)
     : DiagnosticException(message, target)

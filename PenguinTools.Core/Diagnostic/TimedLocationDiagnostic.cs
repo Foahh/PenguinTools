@@ -1,4 +1,4 @@
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public sealed record TimedLocationDiagnostic(
     Severity Severity,

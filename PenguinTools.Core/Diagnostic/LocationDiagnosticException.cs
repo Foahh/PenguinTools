@@ -1,4 +1,4 @@
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public class LocationDiagnosticException(string message, int line, string? path = null, object? target = null)
     : DiagnosticException(message, target)

@@ -1,6 +1,6 @@
 using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Resources;
-using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 
 namespace PenguinTools.Chart.Parser.ugc;
 

@@ -1,6 +1,6 @@
 using PenguinTools.Core.Resources;
 
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public record Diagnostic(Severity Severity, string Message) : IComparable<Diagnostic>, IComparable
 {

@@ -1,5 +1,6 @@
 using System.CommandLine;
 using PenguinTools.Core;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Workflow;
 
 namespace PenguinTools.CLI;

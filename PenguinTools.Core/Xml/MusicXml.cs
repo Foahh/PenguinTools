@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using PenguinTools.Core.Asset;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Resources;
 

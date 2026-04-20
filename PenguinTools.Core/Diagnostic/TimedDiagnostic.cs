@@ -1,4 +1,4 @@
-namespace PenguinTools.Core;
+namespace PenguinTools.Core.Diagnostic;
 
 public sealed record TimedDiagnostic(Severity Severity, string Message, int Tick) : Diagnostic(Severity, Message)
 {

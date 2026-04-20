@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using PenguinTools.Chart.Writer;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Xml;
 using PenguinTools.Infrastructure;
