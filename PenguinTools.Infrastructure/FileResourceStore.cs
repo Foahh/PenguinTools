@@ -5,7 +5,6 @@ namespace PenguinTools.Infrastructure;
 public sealed class FileResourceStore : IResourceStore
 {
     private readonly string _assetRootPath;
-    private readonly Lock _lock = new();
 
     public FileResourceStore(string assetRootPath, string tempWorkPath)
     {
@@ -35,19 +34,9 @@ public sealed class FileResourceStore : IResourceStore
     public string ExtractToTemp(string resourceName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
-
-        var sourcePath = GetResourcePath(resourceName);
-        var destinationPath = GetTempPath(Path.GetFileName(resourceName));
-
-        lock (_lock)
-        {
-            if (!Path.GetFullPath(sourcePath).Equals(Path.GetFullPath(destinationPath), StringComparison.Ordinal))
-                File.Copy(sourcePath, destinationPath, true);
-
-            ResourceStoreHelpers.EnsureExecutableIfNeeded(destinationPath, resourceName);
-        }
-
-        return destinationPath;
+        var path = GetResourcePath(resourceName);
+        ResourceStoreHelpers.EnsureExecutableIfNeeded(path, resourceName);
+        return path;
     }
 
     public async Task CopyToAsync(string resourceName, string destinationPath, CancellationToken ct = default)

@@ -18,7 +18,8 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<IResourceStore>(sp =>
         {
             var paths = sp.GetRequiredService<IApplicationPaths>();
-            return ResourceStoreFactory.Create(resourceAssembly, paths.TempWorkPath);
+            return ResourceStoreFactory.Create(resourceAssembly, paths.TempWorkPath,
+                sharedCachePath: paths.SharedAssetCachePath);
         });
         services.AddSingleton<IInfrastructureAssetProvider, InfrastructureAssetProvider>();
         services.AddSingleton<IMediaTool>(provider =>

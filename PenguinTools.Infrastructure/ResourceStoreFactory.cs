@@ -5,7 +5,8 @@ namespace PenguinTools.Infrastructure;
 
 public static class ResourceStoreFactory
 {
-    public static IResourceStore Create(Assembly assembly, string tempWorkPath, string? baseDirectory = null)
+    public static IResourceStore Create(Assembly assembly, string tempWorkPath, string? baseDirectory = null,
+        string? sharedCachePath = null)
     {
         ArgumentNullException.ThrowIfNull(assembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(tempWorkPath);
@@ -16,6 +17,6 @@ public static class ResourceStoreFactory
         if (File.Exists(Path.Combine(assetDirectory, "assets.json")))
             return new FileResourceStore(assetDirectory, tempWorkPath);
 
-        return new EmbeddedResourceStore(assembly, tempWorkPath);
+        return new EmbeddedResourceStore(assembly, tempWorkPath, sharedCachePath);
     }
 }
