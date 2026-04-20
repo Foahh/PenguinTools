@@ -5,6 +5,35 @@ namespace PenguinTools.CLI;
 
 internal static class CommandLineOptions
 {
+    internal static Option<string?> CreateChartFileDiscoveryOption(string description)
+    {
+        return new Option<string?>("--chart-file-discovery")
+        {
+            Description = description
+        };
+    }
+
+    internal static bool TryGetChartFileDiscovery(ParseResult parseResult, Option<string?> option,
+        out IReadOnlyList<ChartFileFormat>? discovery, out string? error)
+    {
+        if (parseResult.GetValue(option) is { Length: > 0 } discoveryText)
+        {
+            if (!ChartFileDiscoveryFormats.TryParse(discoveryText, out var parsed, out error))
+            {
+                discovery = null;
+                return false;
+            }
+
+            discovery = parsed;
+            error = null;
+            return true;
+        }
+
+        discovery = null;
+        error = null;
+        return true;
+    }
+
     internal static AudioCommandOptions CreateAudioCommandOptions()
     {
         return new AudioCommandOptions(

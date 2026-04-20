@@ -18,6 +18,13 @@ public readonly record struct OperationResult(bool Succeeded)
     {
         return this with { Diagnostics = diagnostics };
     }
+
+    public OperationResult WithDiagnostics(IDiagnosticSink sink)
+    {
+        ArgumentNullException.ThrowIfNull(sink);
+
+        return WithDiagnostics(DiagnosticSnapshot.Create(sink));
+    }
 }
 
 public readonly record struct OperationResult<T>(bool Succeeded, T? Value)
@@ -42,5 +49,12 @@ public readonly record struct OperationResult<T>(bool Succeeded, T? Value)
     public OperationResult<T> WithDiagnostics(DiagnosticSnapshot diagnostics)
     {
         return this with { Diagnostics = diagnostics };
+    }
+
+    public OperationResult<T> WithDiagnostics(IDiagnosticSink sink)
+    {
+        ArgumentNullException.ThrowIfNull(sink);
+
+        return WithDiagnostics(DiagnosticSnapshot.Create(sink));
     }
 }

@@ -15,7 +15,7 @@ internal static class CliPaths
     {
         var sink = new Diagnoster();
         sink.Report(Severity.Error, message, path);
-        return OperationResult<T>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(sink));
+        return OperationResult<T>.Failure().WithDiagnostics(sink);
     }
 
     internal static void EnsureParentDirectory(string path)

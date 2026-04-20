@@ -24,11 +24,11 @@ public class AfbExtractor
 
     public async Task<OperationResult> ExtractAsync(CancellationToken ct = default)
     {
-        if (!Validate()) return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        if (!Validate()) return OperationResult.Failure().WithDiagnostics(Diagnostic);
 
         await MediaTool.ExtractDdsAsync(InPath, OutFolder, ct);
         ct.ThrowIfCancellationRequested();
-        return OperationResult.Success().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        return OperationResult.Success().WithDiagnostics(Diagnostic);
     }
 
     private bool Validate()

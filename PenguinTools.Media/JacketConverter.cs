@@ -24,12 +24,12 @@ public class JacketConverter
 
     public async Task<OperationResult> ConvertAsync(CancellationToken ct = default)
     {
-        if (!Validate()) return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        if (!Validate()) return OperationResult.Failure().WithDiagnostics(Diagnostic);
 
         ct.ThrowIfCancellationRequested();
         await MediaTool.ConvertJacketAsync(InPath, OutPath, ct);
         ct.ThrowIfCancellationRequested();
-        return OperationResult.Success().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        return OperationResult.Success().WithDiagnostics(Diagnostic);
     }
 
     private bool Validate()

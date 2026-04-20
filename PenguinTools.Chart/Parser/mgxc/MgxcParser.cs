@@ -77,12 +77,12 @@ public partial class MgxcParser
             ProcessMeta();
 
             await Task.WhenAll(Tasks);
-            return OperationResult<umgr.Chart>.Success(Mgxc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            return OperationResult<umgr.Chart>.Success(Mgxc).WithDiagnostics(Diagnostic);
         }
         catch (DiagnosticException ex)
         {
             Diagnostic.Report(ex);
-            return OperationResult<umgr.Chart>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            return OperationResult<umgr.Chart>.Failure().WithDiagnostics(Diagnostic);
         }
     }
 

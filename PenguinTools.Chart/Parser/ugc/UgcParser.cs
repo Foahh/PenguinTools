@@ -75,12 +75,12 @@ public partial class UgcParser
             ProcessMeta();
 
             await Task.WhenAll(Tasks);
-            return OperationResult<umgr.Chart>.Success(Ugc).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            return OperationResult<umgr.Chart>.Success(Ugc).WithDiagnostics(Diagnostic);
         }
         catch (DiagnosticException ex)
         {
             Diagnostic.Report(ex);
-            return OperationResult<umgr.Chart>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            return OperationResult<umgr.Chart>.Failure().WithDiagnostics(Diagnostic);
         }
     }
 

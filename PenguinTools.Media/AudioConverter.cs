@@ -43,7 +43,7 @@ public class AudioConverter
 
     public async Task<OperationResult> ConvertAsync(CancellationToken ct = default)
     {
-        if (!Validate()) return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        if (!Validate()) return OperationResult.Failure().WithDiagnostics(Diagnostic);
 
         var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
@@ -178,7 +178,7 @@ public class AudioConverter
         cueSheetTable.WriterSettings = CriTableWriterSettings.Adx2Settings;
         await using var acbStream = File.Create(acbPath);
         cueSheetTable.Save(acbStream);
-        return OperationResult.Success().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        return OperationResult.Success().WithDiagnostics(Diagnostic);
     }
 
     private bool Validate()

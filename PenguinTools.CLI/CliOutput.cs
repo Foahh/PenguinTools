@@ -11,12 +11,46 @@ internal enum CliOutputFormat
 
 internal sealed record CliArtifact(string Kind, string Path);
 
+internal sealed record CliEntrySummary(
+    int Id,
+    string Name,
+    string? Data = null);
+
 internal sealed record CliChartSummary(
     string? MgxcId,
     int? SongId,
     string Title,
     string Difficulty,
     decimal Level);
+
+internal sealed record CliScanDifficultySummary(
+    string Difficulty,
+    string? MgxcId,
+    int? SongId,
+    string Title,
+    string Artist,
+    string Designer,
+    decimal Level,
+    bool IsMain,
+    string FilePath);
+
+internal sealed record CliScanBookSummary(
+    int? SongId,
+    string Title,
+    string Artist,
+    string? MainDifficulty,
+    bool IsCustomStage,
+    int? StageId,
+    CliEntrySummary NotesFieldLine,
+    CliEntrySummary Stage,
+    CliScanDifficultySummary[] Charts);
+
+internal sealed record CliScanSummary(
+    string DiscoveryOrder,
+    int BatchSize,
+    int BookCount,
+    int ChartCount,
+    CliScanBookSummary[] Books);
 
 internal sealed record CliCommandData(
     string? InputPath = null,
@@ -26,7 +60,8 @@ internal sealed record CliCommandData(
     int? StageId = null,
     string? StageName = null,
     CliChartSummary? Chart = null,
-    CliArtifact[]? Artifacts = null);
+    CliArtifact[]? Artifacts = null,
+    CliScanSummary? Scan = null);
 
 internal sealed record CliCommandOutcome(OperationResult Result, string? Message = null, CliCommandData? Data = null);
 

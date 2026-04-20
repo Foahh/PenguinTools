@@ -49,7 +49,7 @@ internal static class CliOperations
         foreach (var error in parseResult.Errors) sink.Report(Severity.Error, error.Message);
 
         return new CliCommandOutcome(
-            OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(sink)),
+            OperationResult.Failure().WithDiagnostics(sink),
             "Command-line parsing failed.");
     }
 
@@ -169,6 +169,59 @@ internal static class CliOperations
     internal static CliChartSummary CreateChartSummary(Meta meta)
     {
         return new CliChartSummary(meta.MgxcId, meta.Id, meta.Title, meta.Difficulty.ToString(), meta.Level);
+    }
+
+    internal static CliCommandData CreateScanData(
+        string input,
+        IReadOnlyList<OptionBookSnapshot> books,
+        IReadOnlyList<ChartFileFormat> chartFileDiscovery,
+        int batchSize)
+    {
+        var scanBooks = books
+            .OrderBy(book => book.BookMeta.Id)
+            .ThenBy(book => book.Title, StringComparer.Ordinal)
+            .Select(book =>
+            {
+                var charts = book.Difficulties.Values
+                    .OrderBy(item => item.Difficulty)
+                    .Select(item => new CliScanDifficultySummary(
+                        item.Difficulty.ToString(),
+                        item.Meta.MgxcId,
+                        item.Meta.Id,
+                        item.Meta.Title,
+                        item.Meta.Artist,
+                        item.Meta.Designer,
+                        item.Meta.Level,
+                        item.Meta.IsMain,
+                        item.Meta.FilePath))
+                    .ToArray();
+
+                var mainDifficulty = book.Difficulties.Values.FirstOrDefault(item => item.Meta.IsMain)?.Difficulty
+                                         .ToString() ??
+                                     book.Difficulties.Values.OrderByDescending(item => item.Difficulty)
+                                         .FirstOrDefault()?.Difficulty.ToString();
+
+                return new CliScanBookSummary(
+                    book.BookMeta.Id,
+                    book.Title,
+                    book.BookMeta.Artist,
+                    mainDifficulty,
+                    book.IsCustomStage,
+                    book.StageId,
+                    CreateEntrySummary(book.NotesFieldLine),
+                    CreateEntrySummary(book.Stage),
+                    charts);
+            })
+            .ToArray();
+
+        var scan = new CliScanSummary(
+            ChartFileDiscoveryFormats.Format(chartFileDiscovery),
+            batchSize,
+            scanBooks.Length,
+            scanBooks.Sum(book => book.Charts.Length),
+            scanBooks);
+
+        return new CliCommandData(input, Scan: scan);
     }
 
     internal static CliCommandData CreateChartConvertData(string input, string output, Meta meta)
@@ -326,5 +379,13 @@ internal static class CliOperations
         var sink = new Diagnoster();
         sink.Report(Severity.Error, message);
         return DiagnosticSnapshot.Create(sink);
+    }
+
+    private static CliEntrySummary CreateEntrySummary(Entry entry)
+    {
+        return new CliEntrySummary(
+            entry.Id,
+            entry.Str,
+            string.IsNullOrWhiteSpace(entry.Data) ? null : entry.Data);
     }
 }

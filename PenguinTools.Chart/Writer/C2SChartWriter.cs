@@ -92,10 +92,10 @@ public partial class C2SChartWriter
         AppendFormattedEvents(sb);
         sb.AppendLine();
         if (!AppendFormattedNotes(sb))
-            return OperationResult.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            return OperationResult.Failure().WithDiagnostics(Diagnostic);
 
         await File.WriteAllTextAsync(OutPath, sb.ToString(), ct);
-        return OperationResult.Success().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        return OperationResult.Success().WithDiagnostics(Diagnostic);
     }
 
     private void AppendFormattedEvents(StringBuilder sb)

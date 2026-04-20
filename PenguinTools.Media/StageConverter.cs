@@ -42,9 +42,9 @@ public class StageConverter
     public async Task<OperationResult<Entry>> BuildAsync(CancellationToken ct = default)
     {
         if (!await ValidateAsync(ct))
-            return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            return OperationResult<Entry>.Failure().WithDiagnostics(Diagnostic);
         if (StageId is not { } stageId)
-            return OperationResult<Entry>.Failure().WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+            return OperationResult<Entry>.Failure().WithDiagnostics(Diagnostic);
 
         var xml = new StageXml(stageId, NoteFieldLane);
         var outputDir = await xml.SaveDirectoryAsync(OutFolder);
@@ -54,7 +54,7 @@ public class StageConverter
         await MediaTool.ConvertStageAsync(BackgroundPath, StageTemplatePath, stPath, EffectPaths, ct);
         File.Copy(NotesFieldTemplatePath, nfPath, true);
 
-        return OperationResult<Entry>.Success(xml.Name).WithDiagnostics(DiagnosticSnapshot.Create(Diagnostic));
+        return OperationResult<Entry>.Success(xml.Name).WithDiagnostics(Diagnostic);
     }
 
     private async Task<bool> ValidateAsync(CancellationToken ct = default)
