@@ -2,9 +2,6 @@ $ErrorActionPreference = 'Stop'
 
 $publishTargets = @(
     # Desktop
-    @{ Project  = 'PenguinTools/PenguinTools.csproj'; 
-        Profile = 'WinX64-SelfContained-SingleFile-EmbeddedAssets' 
-    },
     @{ Project  = 'PenguinTools/PenguinTools.csproj';
         Profile = 'WinX64-FrameworkDependent-SingleFile-EmbeddedAssets' 
     },
@@ -17,20 +14,12 @@ $publishTargets = @(
         Profile   = 'WinX64-SelfContained-SingleFile-ExternalAssets';
         ZipSource = 'PenguinTools.CLI/bin/Release/net10.0/publish/WinX64-SelfContained-SingleFile-ExternalAssets';
         ZipDest   = 'PenguinTools.CLI/bin/Release/net10.0/publish/PenguinTools.CLI-win-x64.zip' 
-    },
-    @{ Project  = 'PenguinTools.CLI/PenguinTools.CLI.csproj';
-        Profile = 'WinX64-FrameworkDependent-SingleFile-EmbeddedAssets' 
-    },
-    @{ Project    = 'PenguinTools.CLI/PenguinTools.CLI.csproj';
-        Profile   = 'WinX64-FrameworkDependent-SingleFile-ExternalAssets';
-        ZipSource = 'PenguinTools.CLI/bin/Release/net10.0/publish/WinX64-FrameworkDependent-SingleFile-ExternalAssets'
-        ZipDest   = 'PenguinTools.CLI/bin/Release/net10.0/publish/PenguinTools.CLI-win-x64-fd-singlefile-external.zip' 
     }
 )
 
 foreach ($target in $publishTargets) {
     Write-Host "Publishing $($target.Project) [$($target.Profile)]..."
-    dotnet publish $target.Project -p:PublishProfile=$($target.Profile)
+    dotnet publish $target.Project -p:PublishProfile=$($target.Profile) /p:DebugType=None /p:DebugSymbols=false
 
     if ($LASTEXITCODE -ne 0) {
         throw "Publish failed for '$($target.Profile)'."
