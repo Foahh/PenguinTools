@@ -3,8 +3,8 @@ using PenguinTools.Core;
 namespace PenguinTools.Infrastructure;
 
 /// <summary>
-///     Resolves temp and user-data directories. Override with <c>PENGUIN_TOOLS_TEMP</c> and <c>PENGUIN_TOOLS_USER_DATA</c>
-///     .
+///     Resolves temp and user-data directories. 
+///     Override with <c>PENGUIN_TOOLS_TEMP</c> and <c>PENGUIN_TOOLS_USER_DATA</c>.
 /// </summary>
 public sealed class ApplicationPaths : IApplicationPaths
 {

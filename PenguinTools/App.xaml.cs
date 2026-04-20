@@ -46,7 +46,7 @@ public partial class App : Application
         if (basePath != null) Directory.SetCurrentDirectory(basePath);
 
         var services = new ServiceCollection();
-        services.AddPenguinInfrastructure(typeof(EmbeddedResourceStore).Assembly);
+        services.AddPenguinInfrastructure(Assembly.GetExecutingAssembly());
 
         services.AddTransient<IChartScanService, ChartScanService>();
         services.AddTransient<IOptionService, OptionService>();

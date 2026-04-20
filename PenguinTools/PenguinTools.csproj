@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\Common.props"/>
+    <Import Project="..\Assets.props"/>
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>

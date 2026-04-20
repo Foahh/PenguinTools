@@ -30,7 +30,7 @@ internal sealed class CliRuntime(
             var paths = ApplicationPaths.Create();
 #pragma warning disable CA2000
             resourceStore =
-                ResourceStoreFactory.Create(typeof(InfrastructureAssetProvider).Assembly, paths.TempWorkPath);
+                ResourceStoreFactory.Create(typeof(CliRuntime).Assembly, paths.TempWorkPath);
 #pragma warning restore CA2000
             var assetProvider = new InfrastructureAssetProvider(resourceStore);
             var assets = new AssetManager(resourceStore.OpenRead("assets.json"), paths.UserDataPath);
