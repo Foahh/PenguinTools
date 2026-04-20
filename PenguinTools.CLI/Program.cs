@@ -5,10 +5,11 @@ Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 var rootCommand = RootCommands.BuildRootCommand();
 var parseResult = rootCommand.Parse(args);
+var outputOptions = RootCommands.GetOutputOptions(parseResult);
 
-if (parseResult.Errors.Count > 0 && RootCommands.GetOutputFormat(parseResult) == CliOutputFormat.Json)
+if (parseResult.Errors.Count > 0 && outputOptions.Format == CliOutputFormat.Json)
 {
-    CliOutput.Write("parse", CliOutputFormat.Json, CliOperations.CreateParseErrorOutcome(parseResult));
+    CliOutput.Write("parse", outputOptions, CliOperations.CreateParseErrorOutcome(parseResult));
     return 1;
 }
 

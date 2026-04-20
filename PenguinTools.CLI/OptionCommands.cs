@@ -38,9 +38,9 @@ internal static class OptionCommands
         {
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
-            var outputFormat = RootCommands.GetOutputFormat(parseResult);
+            var outputOptions = RootCommands.GetOutputOptions(parseResult);
 
-            return await CliOperations.ExecuteAsync("option convert", outputFormat, async (runtime, ct) =>
+            return await CliOperations.ExecuteAsync("option convert", outputOptions, async (runtime, ct) =>
             {
                 var loadJson = parseResult.GetValue(cliOptions.LoadJson);
                 OptionDocument json;

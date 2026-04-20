@@ -9,6 +9,8 @@ internal enum CliOutputFormat
     Text
 }
 
+internal sealed record CliOutputOptions(CliOutputFormat Format, bool PrettyJson);
+
 internal sealed record CliArtifact(string Kind, string Path);
 
 internal sealed record CliEntrySummary(
@@ -32,7 +34,8 @@ internal sealed record CliScanDifficultySummary(
     string Designer,
     decimal Level,
     bool IsMain,
-    string FilePath);
+    string FilePath,
+    CliDiagnosticPayload[] Diagnostics);
 
 internal sealed record CliScanBookSummary(
     int? SongId,
@@ -50,7 +53,8 @@ internal sealed record CliScanSummary(
     int BatchSize,
     int BookCount,
     int ChartCount,
-    CliScanBookSummary[] Books);
+    CliScanBookSummary[] Books,
+    CliDiagnosticPayload[] Diagnostics);
 
 internal sealed record CliCommandData(
     string? InputPath = null,
@@ -67,17 +71,23 @@ internal sealed record CliCommandOutcome(OperationResult Result, string? Message
 
 internal static class CliOutput
 {
-    internal static void Write(string commandName, CliOutputFormat format, CliCommandOutcome outcome)
+    private static readonly CliJsonSerializerContext PrettyJsonContext = new(
+        new JsonSerializerOptions(CliJsonSerializerContext.Default.Options)
+        {
+            WriteIndented = true
+        });
+
+    internal static void Write(string commandName, CliOutputOptions outputOptions, CliCommandOutcome outcome)
     {
         var exitCode = outcome.Result.Succeeded ? 0 : 1;
-        switch (format)
+        switch (outputOptions.Format)
         {
             case CliOutputFormat.Text:
                 WriteText(outcome);
                 break;
             case CliOutputFormat.Json:
             default:
-                WriteJson(commandName, exitCode, outcome);
+                WriteJson(commandName, exitCode, outcome, outputOptions.PrettyJson);
                 break;
         }
     }
@@ -92,7 +102,7 @@ internal static class CliOutput
         writer.WriteLine(outcome.Message);
     }
 
-    private static void WriteJson(string commandName, int exitCode, CliCommandOutcome outcome)
+    internal static string SerializeJson(string commandName, int exitCode, CliCommandOutcome outcome, bool prettyJson)
     {
         var response = new CliResponse(
             1,
@@ -103,7 +113,13 @@ internal static class CliOutput
             outcome.Data,
             CliDiagnostics.ToPayload(outcome.Result.Diagnostics));
 
-        Console.Out.WriteLine(JsonSerializer.Serialize(response, CliJsonSerializerContext.Default.CliResponse));
+        var context = prettyJson ? PrettyJsonContext : CliJsonSerializerContext.Default;
+        return JsonSerializer.Serialize(response, context.CliResponse);
+    }
+
+    private static void WriteJson(string commandName, int exitCode, CliCommandOutcome outcome, bool prettyJson)
+    {
+        Console.Out.WriteLine(SerializeJson(commandName, exitCode, outcome, prettyJson));
     }
 }
 

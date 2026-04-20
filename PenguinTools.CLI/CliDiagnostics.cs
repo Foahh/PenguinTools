@@ -10,6 +10,20 @@ internal static class CliDiagnostics
         return [.. GetOrderedDiagnostics(snapshot).Select(ToPayload)];
     }
 
+    internal static CliDiagnosticPayload[] ToPayload(IEnumerable<Diagnostic> diagnostics)
+    {
+        return
+        [
+            .. diagnostics
+                .OrderByDescending(d => d.Severity)
+                .ThenBy(d => d.Path, StringComparer.Ordinal)
+                .ThenBy(d => d.Line)
+                .ThenBy(d => d.Time)
+                .ThenBy(d => d.Message, StringComparer.Ordinal)
+                .Select(ToPayload)
+        ];
+    }
+
     internal static void WriteDiagnostics(DiagnosticSnapshot snapshot)
     {
         foreach (var diagnostic in GetOrderedDiagnostics(snapshot))

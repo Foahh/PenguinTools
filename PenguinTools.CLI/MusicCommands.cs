@@ -42,9 +42,9 @@ internal static class MusicCommands
             var jacketInput = CliPaths.ResolveOptionalPath(parseResult.GetValue(jacketInputOption));
             var audioOverrides = CommandLineOptions.GetAudioRequestOverrides(parseResult, audioOptions);
             var stageOverrides = CommandLineOptions.GetStageRequestOverrides(parseResult, stageOptions);
-            var outputFormat = RootCommands.GetOutputFormat(parseResult);
+            var outputOptions = RootCommands.GetOutputOptions(parseResult);
 
-            return await CliOperations.ExecuteAsync("music export", outputFormat, async (runtime, ct) =>
+            return await CliOperations.ExecuteAsync("music export", outputOptions, async (runtime, ct) =>
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)

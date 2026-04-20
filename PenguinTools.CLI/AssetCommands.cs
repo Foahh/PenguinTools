@@ -29,9 +29,9 @@ internal static class AssetCommands
         command.SetAction(async (parseResult, cancellationToken) =>
         {
             var gameRoot = CliPaths.ResolvePath(parseResult.GetRequiredValue(gameRootArgument));
-            var outputFormat = RootCommands.GetOutputFormat(parseResult);
+            var outputOptions = RootCommands.GetOutputOptions(parseResult);
 
-            return await CliOperations.ExecuteAsync("assets collect", outputFormat, async (runtime, ct) =>
+            return await CliOperations.ExecuteAsync("assets collect", outputOptions, async (runtime, ct) =>
             {
                 if (!Directory.Exists(gameRoot))
                     return new CliCommandOutcome(

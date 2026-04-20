@@ -21,7 +21,7 @@ internal static class ScanCommands
         };
 
         var command = new Command("scan",
-            "Scan chart files in a folder and emit JSON metadata plus diagnostics.");
+            "Scan chart files in a folder.");
         command.Arguments.Add(inputArgument);
         command.Options.Add(chartFileDiscoveryOption);
         command.Options.Add(batchSizeOption);
@@ -29,8 +29,9 @@ internal static class ScanCommands
         {
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var batchSize = parseResult.GetValue(batchSizeOption);
+            var outputOptions = RootCommands.GetOutputOptions(parseResult);
 
-            return await CliOperations.ExecuteAsync("scan", CliOutputFormat.Json, async (runtime, ct) =>
+            return await CliOperations.ExecuteAsync("scan", outputOptions, async (runtime, ct) =>
             {
                 if (!Directory.Exists(input))
                     return new CliCommandOutcome(
@@ -59,11 +60,18 @@ internal static class ScanCommands
                     input,
                     ct);
 
+                if (scanned.Value is null)
+                    return new CliCommandOutcome(scanned.ToResult(), Data: new CliCommandData(input));
+
                 return new CliCommandOutcome(
-                    scanned.ToResult(),
-                    Data: scanned.Value is null
-                        ? new CliCommandData(input)
-                        : CliOperations.CreateScanData(input, scanned.Value, resolvedDiscovery, batchSize));
+                    (scanned.Succeeded ? OperationResult.Success() : OperationResult.Failure())
+                    .WithDiagnostics(DiagnosticSnapshot.Empty),
+                    Data: CliOperations.CreateScanData(
+                        input,
+                        scanned.Value,
+                        resolvedDiscovery,
+                        batchSize,
+                        scanned.Diagnostics));
             }, cancellationToken);
         });
 

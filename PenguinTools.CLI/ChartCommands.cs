@@ -30,9 +30,9 @@ internal static class ChartCommands
         {
             var input = CliPaths.ResolvePath(parseResult.GetRequiredValue(inputArgument));
             var output = CliPaths.ResolvePath(parseResult.GetRequiredValue(outputArgument));
-            var outputFormat = RootCommands.GetOutputFormat(parseResult);
+            var outputOptions = RootCommands.GetOutputOptions(parseResult);
 
-            return await CliOperations.ExecuteAsync("chart convert", outputFormat, async (runtime, ct) =>
+            return await CliOperations.ExecuteAsync("chart convert", outputOptions, async (runtime, ct) =>
             {
                 var parsed = await CliOperations.ParseChartAsync(runtime, input, ct);
                 if (!parsed.Succeeded || parsed.Value is null)

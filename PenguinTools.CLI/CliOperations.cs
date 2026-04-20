@@ -14,7 +14,7 @@ internal static class CliOperations
 {
     internal static async Task<int> ExecuteAsync(
         string commandName,
-        CliOutputFormat outputFormat,
+        CliOutputOptions outputOptions,
         Func<CliRuntime, CancellationToken, Task<CliCommandOutcome>> action,
         CancellationToken cancellationToken)
     {
@@ -38,7 +38,7 @@ internal static class CliOperations
                 ex.Message);
         }
 
-        CliOutput.Write(commandName, outputFormat, outcome);
+        CliOutput.Write(commandName, outputOptions, outcome);
         return outcome.Result.Succeeded ? 0 : 1;
     }
 
@@ -175,8 +175,22 @@ internal static class CliOperations
         string input,
         IReadOnlyList<OptionBookSnapshot> books,
         IReadOnlyList<ChartFileFormat> chartFileDiscovery,
-        int batchSize)
+        int batchSize,
+        DiagnosticSnapshot diagnostics)
     {
+        var orderedDiagnostics = diagnostics.Diagnostics
+            .OrderByDescending(d => d.Severity)
+            .ThenBy(d => d.Path, StringComparer.Ordinal)
+            .ThenBy(d => d.Line)
+            .ThenBy(d => d.Time)
+            .ThenBy(d => d.Message, StringComparer.Ordinal)
+            .ToArray();
+        var diagnosticBuckets = orderedDiagnostics
+            .Select((diagnostic, index) => new IndexedDiagnostic(index, diagnostic))
+            .GroupBy(item => NormalizePath(input, item.Diagnostic.Path), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.ToArray(), StringComparer.OrdinalIgnoreCase);
+        HashSet<int> matchedDiagnosticIndexes = [];
+
         var scanBooks = books
             .OrderBy(book => book.BookMeta.Id)
             .ThenBy(book => book.Title, StringComparer.Ordinal)
@@ -193,7 +207,8 @@ internal static class CliOperations
                         item.Meta.Designer,
                         item.Meta.Level,
                         item.Meta.IsMain,
-                        item.Meta.FilePath))
+                        item.Meta.FilePath,
+                        GetChartDiagnostics(input, item.Meta.FilePath, diagnosticBuckets, matchedDiagnosticIndexes)))
                     .ToArray();
 
                 var mainDifficulty = book.Difficulties.Values.FirstOrDefault(item => item.Meta.IsMain)?.Difficulty
@@ -219,7 +234,9 @@ internal static class CliOperations
             batchSize,
             scanBooks.Length,
             scanBooks.Sum(book => book.Charts.Length),
-            scanBooks);
+            scanBooks,
+            CliDiagnostics.ToPayload(orderedDiagnostics.Where((_, index) =>
+                !matchedDiagnosticIndexes.Contains(index))));
 
         return new CliCommandData(input, Scan: scan);
     }
@@ -388,4 +405,40 @@ internal static class CliOperations
             entry.Str,
             string.IsNullOrWhiteSpace(entry.Data) ? null : entry.Data);
     }
+
+    private static CliDiagnosticPayload[] GetChartDiagnostics(
+        string inputRoot,
+        string filePath,
+        IReadOnlyDictionary<string, IndexedDiagnostic[]> diagnosticBuckets,
+        ISet<int> matchedDiagnosticIndexes)
+    {
+        var keys = new[]
+        {
+            NormalizePath(inputRoot, filePath),
+            NormalizePath(inputRoot, Path.GetFullPath(filePath))
+        }.Where(path => !string.IsNullOrWhiteSpace(path)).Distinct(StringComparer.OrdinalIgnoreCase);
+
+        List<Diagnostic> matched = [];
+        foreach (var key in keys)
+        {
+            if (!diagnosticBuckets.TryGetValue(key, out var bucket)) continue;
+
+            foreach (var item in bucket)
+                if (matchedDiagnosticIndexes.Add(item.Index))
+                    matched.Add(item.Diagnostic);
+        }
+
+        return CliDiagnostics.ToPayload(matched);
+    }
+
+    private static string NormalizePath(string inputRoot, string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return string.Empty;
+        var trimmed = path.Trim();
+        return Path.IsPathRooted(trimmed)
+            ? Path.GetFullPath(trimmed)
+            : Path.GetFullPath(Path.Combine(inputRoot, trimmed));
+    }
+
+    private sealed record IndexedDiagnostic(int Index, Diagnostic Diagnostic);
 }
