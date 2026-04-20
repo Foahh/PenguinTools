@@ -18,7 +18,7 @@ public class AfbExtractor
     }
 
     private IMediaTool MediaTool { get; }
-    private IDiagnosticSink Diagnostic { get; } = new Diagnoster();
+    private IDiagnosticSink Diagnostic { get; } = new DiagnosticCollector();
     private string InPath { get; }
     private string OutFolder { get; }
 
@@ -35,7 +35,7 @@ public class AfbExtractor
     {
         if (File.Exists(InPath)) return true;
 
-        Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, InPath);
+        Diagnostic.Report(new PathDiagnostic(Severity.Error, Strings.Error_File_not_found, InPath));
         return false;
     }
 }

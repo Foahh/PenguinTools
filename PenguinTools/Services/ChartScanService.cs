@@ -114,7 +114,7 @@ public sealed class ChartScanService : IChartScanService
             if (skipIfDifficultyFilled && book.Items.ContainsKey(meta.Difficulty)) return;
 
             if (book.Items.ContainsKey(meta.Difficulty))
-                diagnostics.Report(Severity.Warning, Strings.Warn_Duplicate_id_and_difficulty);
+                diagnostics.Report(new Diagnostic(Severity.Warning, Strings.Warn_Duplicate_id_and_difficulty));
 
             book.Items[meta.Difficulty] = item;
         }
@@ -133,13 +133,22 @@ public sealed class ChartScanService : IChartScanService
             }
 
             if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1)
-                diagnostics.Report(Severity.Warning, Strings.Warn_We_chart_must_be_unique_id, target: items);
+                diagnostics.Report(new Diagnostic(Severity.Warning, Strings.Warn_We_chart_must_be_unique_id)
+                {
+                    Target = items
+                });
 
             var mainItems = items.Where(item => item.Mgxc.Meta.IsMain).ToArray();
             if (mainItems.Length > 1)
-                diagnostics.Report(Severity.Warning, Strings.Warn_More_than_one_chart_marked_main, target: mainItems);
+                diagnostics.Report(new Diagnostic(Severity.Warning, Strings.Warn_More_than_one_chart_marked_main)
+                {
+                    Target = mainItems
+                });
             else if (mainItems.Length == 0 && items.Length > 1)
-                diagnostics.Report(Severity.Warning, Strings.Warn_No_chart_marked_main, target: items);
+                diagnostics.Report(new Diagnostic(Severity.Warning, Strings.Warn_No_chart_marked_main)
+                {
+                    Target = items
+                });
 
             var mainItem = mainItems.FirstOrDefault() ??
                            items.OrderByDescending(item => item.Difficulty).FirstOrDefault();

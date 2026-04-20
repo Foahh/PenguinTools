@@ -35,7 +35,7 @@ public partial class UgcParser
     }
 
     private IMediaTool MediaTool { get; }
-    private IDiagnosticSink Diagnostic { get; } = new Diagnoster();
+    private IDiagnosticSink Diagnostic { get; } = new DiagnosticCollector();
     private string Path { get; }
     private AssetManager Assets { get; }
     private List<Task> Tasks { get; } = [];
@@ -121,17 +121,48 @@ public partial class UgcParser
 
     private void ReportAtCurrentLine(Severity severity, string message, object? target = null)
     {
-        Diagnostic.Report(new Diagnostic(severity, message, Path, target: target, line: _currentLineNumber));
+        if (_currentLineNumber is not { } line)
+        {
+            Diagnostic.Report(new Diagnostic(severity, message)
+            {
+                Target = target
+            });
+            return;
+        }
+
+        Diagnostic.Report(new LocationDiagnostic(severity, message, line, Path)
+        {
+            Target = target
+        });
     }
 
     private void ReportAtCurrentLine(Severity severity, string message, int tick, object? target = null)
     {
-        Diagnostic.Report(new Diagnostic(severity, message, Path, tick, target, _currentLineNumber));
+        if (_currentLineNumber is not { } line)
+        {
+            Diagnostic.Report(new TimedDiagnostic(severity, message, tick)
+            {
+                Target = target
+            });
+            return;
+        }
+
+        Diagnostic.Report(new TimedLocationDiagnostic(severity, message, line, tick, Path)
+        {
+            Target = target
+        });
     }
 
     private void ThrowAtCurrentLine(string message, object? target = null, int? tick = null)
     {
-        throw new DiagnosticException(message, target, tick, Path, _currentLineNumber);
+        if (_currentLineNumber is not { } line)
+        {
+            if (tick is { } resolvedTick) throw new TimedDiagnosticException(message, resolvedTick, target);
+            throw new DiagnosticException(message, target);
+        }
+
+        if (tick is { } timedTick) throw new TimedLocationDiagnosticException(message, line, timedTick, Path, target);
+        throw new LocationDiagnosticException(message, line, Path, target);
     }
 
     private void BuildBarAxis()
@@ -179,7 +210,7 @@ public partial class UgcParser
         if (string.IsNullOrWhiteSpace(Ugc.Meta.SortName))
         {
             Ugc.Meta.SortName = ChartPostProcessor.GetSortName(Ugc.Meta.Title);
-            Diagnostic.Report(Severity.Information, Strings.Mg_No_sortname_provided);
+            Diagnostic.Report(new Diagnostic(Severity.Information, Strings.Mg_No_sortname_provided));
         }
 
         if (Ugc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(Ugc.Meta.FullBgiFilePath))
@@ -209,12 +240,18 @@ public partial class UgcParser
             if (result.IsSuccess) return;
 
             onFailure();
-            Diagnostic.Report(Severity.Warning, message, path, result);
+            Diagnostic.Report(new PathDiagnostic(Severity.Warning, message, path)
+            {
+                Target = result
+            });
         }
         catch (Exception ex)
         {
             onFailure();
-            Diagnostic.Report(Severity.Warning, message, path, ex);
+            Diagnostic.Report(new PathDiagnostic(Severity.Warning, message, path)
+            {
+                Target = ex
+            });
         }
     }
 

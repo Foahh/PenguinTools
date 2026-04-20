@@ -112,7 +112,7 @@ public static class ChartScanner
             if (skipIfDifficultyFilled && book.Items.ContainsKey(meta.Difficulty)) return;
 
             if (book.Items.ContainsKey(meta.Difficulty))
-                diagnostics.Report(Severity.Warning, "Duplicate song id and difficulty.", target: filePath);
+                diagnostics.Report(new PathDiagnostic(Severity.Warning, "Duplicate song id and difficulty.", filePath));
 
             book.Items[meta.Difficulty] = item;
         }
@@ -143,15 +143,24 @@ public static class ChartScanner
             lock (book.Gate)
             {
                 if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1)
-                    diagnostics.Report(Severity.Warning,
-                        "World's End chart must be the only difficulty for its song id.", target: items);
+                    diagnostics.Report(new Diagnostic(Severity.Warning,
+                        "World's End chart must be the only difficulty for its song id.")
+                    {
+                        Target = items
+                    });
             }
 
             var mainItems = items.Where(i => i.Meta.IsMain).ToArray();
             if (mainItems.Length > 1)
-                diagnostics.Report(Severity.Warning, "More than one chart is marked as main.", target: mainItems);
+                diagnostics.Report(new Diagnostic(Severity.Warning, "More than one chart is marked as main.")
+                {
+                    Target = mainItems
+                });
             else if (mainItems.Length == 0 && items.Length > 1)
-                diagnostics.Report(Severity.Warning, "No chart is marked as main.", target: items);
+                diagnostics.Report(new Diagnostic(Severity.Warning, "No chart is marked as main.")
+                {
+                    Target = items
+                });
 
             var mainItem = mainItems.FirstOrDefault() ?? items.OrderByDescending(i => i.Difficulty).FirstOrDefault();
             if (mainItem is null)

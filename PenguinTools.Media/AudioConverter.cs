@@ -35,7 +35,7 @@ public class AudioConverter
 
     private IMediaTool MediaTool { get; }
     private ulong HcaEncryptionKey { get; }
-    private IDiagnosticSink Diagnostic { get; } = new Diagnoster();
+    private IDiagnosticSink Diagnostic { get; } = new DiagnosticCollector();
     private Meta Meta { get; }
     private string OutFolder { get; }
     private string DummyAcbPath { get; }
@@ -47,7 +47,8 @@ public class AudioConverter
 
         var songId = Meta.Id ?? throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
-        if (Meta.BgmPreviewStart > 120) Diagnostic.Report(Severity.Warning, Strings.Warn_Preview_later_than_120);
+        if (Meta.BgmPreviewStart > 120)
+            Diagnostic.Report(new Diagnostic(Severity.Warning, Strings.Warn_Preview_later_than_120));
 
         var srcPath = Meta.FullBgmFilePath;
         var wavPath = WorkingAudioPath;
@@ -78,14 +79,14 @@ public class AudioConverter
         {
             var msg = string.Format(Strings.Hint_Preview_value_clamped, nameof(Meta.BgmPreviewStart), originalPvStart,
                 maxSeconds);
-            Diagnostic.Report(Severity.Information, msg);
+            Diagnostic.Report(new Diagnostic(Severity.Information, msg));
         }
 
         if (originalPvStop > maxSeconds)
         {
             var msg = string.Format(Strings.Hint_Preview_value_clamped, nameof(Meta.BgmPreviewStop), originalPvStop,
                 maxSeconds);
-            Diagnostic.Report(Severity.Information, msg);
+            Diagnostic.Report(new Diagnostic(Severity.Information, msg));
         }
 
         var acbPath = Path.Combine(outputDir, xml.AcbFile);
@@ -186,26 +187,26 @@ public class AudioConverter
         var hasError = false;
         if (Meta.Id is null)
         {
-            Diagnostic.Report(Severity.Error, Strings.Error_Song_id_is_not_set);
+            Diagnostic.Report(new Diagnostic(Severity.Error, Strings.Error_Song_id_is_not_set));
             hasError = true;
         }
 
         if (Meta.BgmPreviewStop < Meta.BgmPreviewStart)
         {
-            Diagnostic.Report(Severity.Error, Strings.Error_Preview_stop_greater_than_start);
+            Diagnostic.Report(new Diagnostic(Severity.Error, Strings.Error_Preview_stop_greater_than_start));
             hasError = true;
         }
 
         var path = Meta.FullBgmFilePath;
         if (!File.Exists(path))
         {
-            Diagnostic.Report(Severity.Error, Strings.Error_Audio_file_not_found, path);
+            Diagnostic.Report(new PathDiagnostic(Severity.Error, Strings.Error_Audio_file_not_found, path));
             hasError = true;
         }
 
         if (!File.Exists(DummyAcbPath))
         {
-            Diagnostic.Report(Severity.Error, Strings.Error_File_not_found, DummyAcbPath);
+            Diagnostic.Report(new PathDiagnostic(Severity.Error, Strings.Error_File_not_found, DummyAcbPath));
             hasError = true;
         }
 

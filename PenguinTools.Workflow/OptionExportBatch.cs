@@ -11,9 +11,9 @@ public sealed record OptionExportProcessContext(
 
 public static class OptionExportBatch
 {
-    public static Diagnoster CreateDiagnoster(IDiagnosticSink? parent = null)
+    public static DiagnosticCollector CreateCollector(IDiagnosticSink? parent = null)
     {
-        return new Diagnoster
+        return new DiagnosticCollector
         {
             TimeCalculator = parent?.TimeCalculator
         };
@@ -44,7 +44,7 @@ public static class OptionExportBatch
 
         async ValueTask ProcessItemAsync(T item, CancellationToken ct)
         {
-            var ld = CreateDiagnoster(main.Diagnostics);
+            var ld = CreateCollector(main.Diagnostics);
             try
             {
                 await action(item, ld);
@@ -64,12 +64,7 @@ public static class OptionExportBatch
     public static DiagnosticSnapshot CreateItemDiagnostics(IDiagnosticSink sink, string path, string workingDirectory)
     {
         var relativePath = Path.GetRelativePath(workingDirectory, path);
-        var copied = sink.Diagnostics.Select(diag =>
-        {
-            var copy = diag.Copy();
-            copy.Path ??= relativePath;
-            return copy;
-        });
+        var copied = sink.Diagnostics.Select(diag => diag.WithPathFallback(relativePath));
         return DiagnosticSnapshot.Create(copied);
     }
 

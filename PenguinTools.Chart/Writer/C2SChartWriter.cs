@@ -20,7 +20,7 @@ public partial class C2SChartWriter
         Mgxc = request.Mgxc;
     }
 
-    private IDiagnosticSink Diagnostic { get; } = new Diagnoster();
+    private IDiagnosticSink Diagnostic { get; } = new DiagnosticCollector();
     private string OutPath { get; }
     private umgr.Chart Mgxc { get; }
     private List<c2s.Note> Notes { get; } = [];
@@ -46,7 +46,8 @@ public partial class C2SChartWriter
         {
             var slidesCount = slidesLookup.GetValueOrDefault(pos, 0);
             if (airsCount >= slidesCount) continue;
-            Diagnostic.Report(Severity.Warning, Strings.Mg_Overlapping_air_parent_slide, pos.Tick.Original);
+            Diagnostic.Report(new TimedDiagnostic(Severity.Warning, Strings.Mg_Overlapping_air_parent_slide,
+                pos.Tick.Original));
         }
 
         foreach (var longNote in Notes.OfType<c2s.LongNote>())
@@ -57,7 +58,10 @@ public partial class C2SChartWriter
             var tick = longNote.Tick.Original;
             var msg = string.Format(Strings.Mg_Length_smaller_than_unit, length,
                 ChartResolution.UmiguriTick / ChartResolution.SingleTick);
-            Diagnostic.Report(Severity.Warning, msg, tick, longNote);
+            Diagnostic.Report(new TimedDiagnostic(Severity.Warning, msg, tick)
+            {
+                Target = longNote
+            });
         }
 
         if (Mgxc.Meta.BgmEnableBarOffset)
@@ -114,7 +118,10 @@ public partial class C2SChartWriter
                 continue;
             }
 
-            Diagnostic.Report(Severity.Error, error, n.Tick.Original, n);
+            Diagnostic.Report(new TimedDiagnostic(Severity.Error, error, n.Tick.Original)
+            {
+                Target = n
+            });
             hasError = true;
         }
 

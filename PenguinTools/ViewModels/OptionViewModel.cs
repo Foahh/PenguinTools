@@ -76,7 +76,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
     protected override async Task<OperationResult<OptionModel>> ReadModel(string path, CancellationToken ct = default)
     {
-        var diagnostics = OptionExportBatch.CreateDiagnoster();
+        var diagnostics = OptionExportBatch.CreateCollector();
         await Dispatcher.InvokeAsync(() =>
         {
             ActionService.Status = Strings.Status_Searching;

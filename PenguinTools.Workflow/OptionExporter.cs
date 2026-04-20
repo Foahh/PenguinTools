@@ -20,7 +20,7 @@ public static class OptionExporter
         string diagnosticsWorkingDirectory,
         CancellationToken ct)
     {
-        var diagnostics = OptionExportBatch.CreateDiagnoster();
+        var diagnostics = OptionExportBatch.CreateCollector();
         var processContext =
             new OptionExportProcessContext(diagnostics, ct, settings.BatchSize, diagnosticsWorkingDirectory);
         var weEntries = new ConcurrentBag<Entry>();
@@ -158,7 +158,7 @@ public static class OptionExporter
         var jacketPath = book.BookMeta.FullJacketFilePath;
         if (!File.Exists(jacketPath))
         {
-            diagnostics.Report(Severity.Warning, MStrings.Error_Jacket_file_not_found, target: jacketPath);
+            diagnostics.Report(new PathDiagnostic(Severity.Warning, MStrings.Error_Jacket_file_not_found, jacketPath));
             return;
         }
 

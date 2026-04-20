@@ -44,9 +44,9 @@ internal static class CliOperations
 
     internal static CliCommandOutcome CreateParseErrorOutcome(ParseResult parseResult)
     {
-        var sink = new Diagnoster();
+        var sink = new DiagnosticCollector();
 
-        foreach (var error in parseResult.Errors) sink.Report(Severity.Error, error.Message);
+        foreach (var error in parseResult.Errors) sink.Report(new Diagnostic(Severity.Error, error.Message));
 
         return new CliCommandOutcome(
             OperationResult.Failure().WithDiagnostics(sink),
@@ -83,7 +83,7 @@ internal static class CliOperations
         string workingDirectory,
         CancellationToken cancellationToken)
     {
-        var diagnostics = new Diagnoster();
+        var diagnostics = new DiagnosticCollector();
         return ChartScanner.ScanDirectoryAsync(
             runtime.Assets,
             runtime.MediaTool,
@@ -393,8 +393,8 @@ internal static class CliOperations
 
     private static DiagnosticSnapshot CreateErrorSnapshot(string message)
     {
-        var sink = new Diagnoster();
-        sink.Report(Severity.Error, message);
+        var sink = new DiagnosticCollector();
+        sink.Report(new Diagnostic(Severity.Error, message));
         return DiagnosticSnapshot.Create(sink);
     }
 

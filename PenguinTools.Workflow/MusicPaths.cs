@@ -7,8 +7,10 @@ internal static class MusicPaths
 {
     internal static OperationResult<T> CreateFailureResultOf<T>(string message, string? path = null)
     {
-        var sink = new Diagnoster();
-        sink.Report(Severity.Error, message, path);
+        var sink = new DiagnosticCollector();
+        sink.Report(string.IsNullOrWhiteSpace(path)
+            ? new Diagnostic(Severity.Error, message)
+            : new PathDiagnostic(Severity.Error, message, path));
         return OperationResult<T>.Failure().WithDiagnostics(sink);
     }
 

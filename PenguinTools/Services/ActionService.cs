@@ -41,7 +41,7 @@ public partial class ActionService : ObservableObject
         CancellationToken ct)
     {
         if (!CanRun()) return OperationResult.Failure();
-        var diagnostics = new Diagnoster();
+        var diagnostics = new DiagnosticCollector();
         var result = OperationResult.Failure();
         var wasCancelled = false;
         IsBusy = true;

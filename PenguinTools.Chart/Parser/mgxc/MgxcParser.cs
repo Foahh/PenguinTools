@@ -27,7 +27,7 @@ public partial class MgxcParser
     }
 
     private IMediaTool MediaTool { get; }
-    private IDiagnosticSink Diagnostic { get; } = new Diagnoster();
+    private IDiagnosticSink Diagnostic { get; } = new DiagnosticCollector();
     private string Path { get; }
     private AssetManager Assets { get; }
     private List<Task> Tasks { get; } = [];
@@ -35,17 +35,26 @@ public partial class MgxcParser
 
     private void ReportAtPosition(Severity severity, string message, long position, object? target = null)
     {
-        Diagnostic.Report(new Diagnostic(severity, message, Path, target: target, line: checked((int)position)));
+        Diagnostic.Report(new LocationDiagnostic(severity, message, checked((int)position), Path)
+        {
+            Target = target
+        });
     }
 
     private void ReportAtPosition(Severity severity, string message, int tick, long position, object? target = null)
     {
-        Diagnostic.Report(new Diagnostic(severity, message, Path, tick, target, checked((int)position)));
+        Diagnostic.Report(new TimedLocationDiagnostic(severity, message, checked((int)position), tick, Path)
+        {
+            Target = target
+        });
     }
 
     private void ThrowAtPosition(string message, long position, object? target = null, int? tick = null)
     {
-        throw new DiagnosticException(message, target, tick, Path, checked((int)position));
+        if (tick is { } resolvedTick)
+            throw new TimedLocationDiagnosticException(message, checked((int)position), resolvedTick, Path, target);
+
+        throw new LocationDiagnosticException(message, checked((int)position), Path, target);
     }
 
     public async Task<OperationResult<umgr.Chart>> ParseAsync(CancellationToken ct = default)
@@ -91,7 +100,7 @@ public partial class MgxcParser
         if (string.IsNullOrWhiteSpace(Mgxc.Meta.SortName))
         {
             Mgxc.Meta.SortName = ChartPostProcessor.GetSortName(Mgxc.Meta.Title);
-            Diagnostic.Report(Severity.Information, Strings.Mg_No_sortname_provided);
+            Diagnostic.Report(new Diagnostic(Severity.Information, Strings.Mg_No_sortname_provided));
         }
 
         if (Mgxc.Meta.IsCustomStage && !string.IsNullOrWhiteSpace(Mgxc.Meta.FullBgiFilePath))
@@ -121,12 +130,18 @@ public partial class MgxcParser
             if (result.IsSuccess) return;
 
             onFailure();
-            Diagnostic.Report(Severity.Warning, message, path, result);
+            Diagnostic.Report(new PathDiagnostic(Severity.Warning, message, path)
+            {
+                Target = result
+            });
         }
         catch (Exception ex)
         {
             onFailure();
-            Diagnostic.Report(Severity.Warning, message, path, ex);
+            Diagnostic.Report(new PathDiagnostic(Severity.Warning, message, path)
+            {
+                Target = ex
+            });
         }
     }
 }

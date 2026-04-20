@@ -119,7 +119,8 @@ public partial class C2SChartWriter
     private void ProcessAirSlide(umgr.AirSlide airSlide)
     {
         if (airSlide.PairNote?.PairNote != airSlide)
-            throw new DiagnosticException(Strings.MgCrit_Invalid_AirSlide_parent, airSlide, airSlide.Tick.Original);
+            throw new TimedDiagnosticException(Strings.MgCrit_Invalid_AirSlide_parent, airSlide.Tick.Original,
+                airSlide);
 
         var joints = airSlide.Children.OfType<umgr.AirSlideJoint>().Prepend(airSlide.AsChild()).ToArray();
         c2s.AirSlide? firstSegment = null;
@@ -150,7 +151,7 @@ public partial class C2SChartWriter
     private void ProcessAir(umgr.Air airNote)
     {
         if (airNote.PairNote?.PairNote != airNote)
-            throw new DiagnosticException(Strings.MgCrit_Invalid_Air_parent, airNote, airNote.Tick.Original);
+            throw new TimedDiagnosticException(Strings.MgCrit_Invalid_Air_parent, airNote.Tick.Original, airNote);
 
         var note = CreateNote<umgr.Air, c2s.Air>(airNote, x =>
         {
@@ -184,7 +185,7 @@ public partial class C2SChartWriter
     private void ProcessSoflanArea(umgr.SoflanArea sla)
     {
         if (sla.LastChild is not umgr.SoflanAreaJoint tail)
-            throw new DiagnosticException(Strings.MgCrit_SoflanArea_has_no_tail, sla, sla.Tick.Original);
+            throw new TimedDiagnosticException(Strings.MgCrit_SoflanArea_has_no_tail, sla.Tick.Original, sla);
 
         CreateNote<umgr.SoflanArea, c2s.Sla>(sla, x => { x.Length = tail.Tick.Round - sla.Tick.Round; });
     }
@@ -192,7 +193,7 @@ public partial class C2SChartWriter
     private void ProcessHold(umgr.Hold hold)
     {
         if (hold.LastChild is not umgr.HoldJoint tail)
-            throw new DiagnosticException(Strings.MgCrit_Hold_has_no_tail, hold, hold.Tick.Original);
+            throw new TimedDiagnosticException(Strings.MgCrit_Hold_has_no_tail, hold.Tick.Original, hold);
 
         var note = CreateNote<umgr.Hold, c2s.Hold>(hold, x =>
         {

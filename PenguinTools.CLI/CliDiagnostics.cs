@@ -46,29 +46,15 @@ internal static class CliDiagnostics
 
     internal static DiagnosticSnapshot SnapshotFromMessage(string message)
     {
-        var sink = new Diagnoster();
-        sink.Report(Severity.Error, message);
+        var sink = new DiagnosticCollector();
+        sink.Report(new Diagnostic(Severity.Error, message));
         return DiagnosticSnapshot.Create(sink);
     }
 
     internal static DiagnosticSnapshot SnapshotFromException(Exception exception)
     {
-        var sink = new Diagnoster();
-
-        if (exception is DiagnosticException diagnosticException)
-        {
-            sink.Report(new Diagnostic(
-                Severity.Error,
-                diagnosticException.Message,
-                diagnosticException.Path,
-                diagnosticException.Tick,
-                diagnosticException.Target,
-                diagnosticException.Line));
-
-            return DiagnosticSnapshot.Create(sink);
-        }
-
-        sink.Report(Severity.Error, exception.Message);
+        var sink = new DiagnosticCollector();
+        sink.Report(exception);
         return DiagnosticSnapshot.Create(sink);
     }
 

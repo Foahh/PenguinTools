@@ -56,7 +56,7 @@ internal sealed partial class ChartPostProcessor
             var newEvent = new umgr.BeatEvent { Bar = 0, Numerator = 4, Denominator = 4 };
             _chart.Events.InsertBefore(newEvent, firstBeatEvent);
             beatEvents.Insert(0, newEvent);
-            _diag.Report(Severity.Information, Strings.Mg_Head_Time_Signature_event_not_found);
+            _diag.Report(new Diagnostic(Severity.Information, Strings.Mg_Head_Time_Signature_event_not_found));
         }
 
         var initBeat = beatEvents[0];
@@ -125,7 +125,7 @@ internal sealed partial class ChartPostProcessor
             if (effects.Count <= 1) continue;
             var str = string.Join(", ", effects.Select(e => e.ToString()));
             var msg = string.Format(Strings.Mg_Concurrent_ex_effects, str);
-            _diag.Report(Severity.Information, msg, tick.Original);
+            _diag.Report(new TimedDiagnostic(Severity.Information, msg, tick.Original));
         }
     }
 
@@ -235,7 +235,7 @@ internal sealed partial class ChartPostProcessor
         if (!_tilGroups.ContainsKey(mainTil))
         {
             var msg = string.Format(Strings.Mg_Main_timeline_not_found, _chart.Meta.MainTil);
-            _diag.Report(Severity.Information, msg);
+            _diag.Report(new Diagnostic(Severity.Information, msg));
             return;
         }
 
@@ -308,7 +308,11 @@ internal sealed partial class ChartPostProcessor
         }
 
         foreach (var note in violations)
-            _diag.Report(Severity.Warning, Strings.Mg_Note_overlapped_in_different_TIL, note.Tick.Original, note);
+            _diag.Report(new TimedDiagnostic(Severity.Warning, Strings.Mg_Note_overlapped_in_different_TIL,
+                note.Tick.Original)
+            {
+                Target = note
+            });
     }
 
     private void MetaEntryHandler(string name, string[] args, Action<Entry> setter, AssetType type)
@@ -316,7 +320,10 @@ internal sealed partial class ChartPostProcessor
         if (args.Length is < 1 or > 2)
         {
             var msg = string.Format(Strings.Mg_Meta_Argument_count_min_one, name);
-            _diag.Report(Severity.Warning, msg, target: args);
+            _diag.Report(new Diagnostic(Severity.Warning, msg)
+            {
+                Target = args
+            });
             return;
         }
 
@@ -339,7 +346,10 @@ internal sealed partial class ChartPostProcessor
         if (entry == null)
         {
             var msg = string.Format(Strings.Mg_String_id_not_found, value, type.ToString());
-            _diag.Report(Severity.Information, msg, target: args);
+            _diag.Report(new Diagnostic(Severity.Information, msg)
+            {
+                Target = args
+            });
         }
         else
         {
@@ -383,13 +393,19 @@ internal sealed partial class ChartPostProcessor
         if (args.Length < 1)
         {
             var msg = string.Format(Strings.Mg_Meta_Argument_count_min_one, "date");
-            _diag.Report(Severity.Warning, msg, target: args);
+            _diag.Report(new Diagnostic(Severity.Warning, msg)
+            {
+                Target = args
+            });
             return;
         }
 
         if (!DateTime.TryParseExact(args[0], "yyyyMMdd", null, DateTimeStyles.None, out var date))
         {
-            _diag.Report(Severity.Warning, Strings.Mg_Meta_Invalid_date, target: args);
+            _diag.Report(new Diagnostic(Severity.Warning, Strings.Mg_Meta_Invalid_date)
+            {
+                Target = args
+            });
             return;
         }
 
@@ -421,7 +437,10 @@ internal sealed partial class ChartPostProcessor
                 MetaDateHandler(value);
                 break;
             default:
-                _diag.Report(Severity.Warning, string.Format(Strings.Mg_Meta_Unknown_tag, name), target: args);
+                _diag.Report(new Diagnostic(Severity.Warning, string.Format(Strings.Mg_Meta_Unknown_tag, name))
+                {
+                    Target = args
+                });
                 break;
         }
     }
@@ -458,11 +477,10 @@ internal sealed partial class ChartPostProcessor
                     _diag.Report(ex);
                 }
             else
-                _diag.Report(
-                    Severity.Warning,
-                    string.Format(Strings.Mg_Meta_Unknown_tag, tagName),
-                    target: parts
-                );
+                _diag.Report(new Diagnostic(Severity.Warning, string.Format(Strings.Mg_Meta_Unknown_tag, tagName))
+                {
+                    Target = parts
+                });
         }
     }
 

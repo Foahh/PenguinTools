@@ -26,14 +26,16 @@ public class ExceptionJsonConverter : JsonConverter<Exception>
 
         if (value is DiagnosticException dEx)
         {
+            var diagnostic = dEx.ToDiagnostic();
+
             writer.WritePropertyName(nameof(DiagnosticException.Target));
             JsonSerializer.Serialize(writer, dEx.Target, options);
 
-            writer.WriteString(nameof(DiagnosticException.Path), dEx.Path);
+            writer.WriteString("Path", diagnostic.Path);
 
-            writer.WriteString(nameof(DiagnosticException.Tick), dEx.Tick?.ToString());
+            writer.WriteString("Tick", diagnostic.Time?.ToString());
 
-            writer.WriteString(nameof(DiagnosticException.Line), dEx.Line?.ToString());
+            writer.WriteString("Line", diagnostic.Line?.ToString());
 
             writer.WritePropertyName(nameof(DiagnosticException.TimeCalculator));
             JsonSerializer.Serialize(writer, (object?)dEx.TimeCalculator, options);

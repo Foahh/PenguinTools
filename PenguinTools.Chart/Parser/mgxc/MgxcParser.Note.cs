@@ -130,7 +130,10 @@ public partial class MgxcParser
             else
             {
                 var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(umgr.HoldJoint));
-                Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
+                Diagnostic.Report(new TimedDiagnostic(Severity.Warning, msg, tick)
+                {
+                    Target = longAttr
+                });
             }
         }
         else if (type == NoteType.Slide)
@@ -153,7 +156,10 @@ public partial class MgxcParser
                 else
                 {
                     var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(umgr.SlideJoint));
-                    Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
+                    Diagnostic.Report(new TimedDiagnostic(Severity.Warning, msg, tick)
+                    {
+                        Target = longAttr
+                    });
                 }
 
                 note = exNote;
@@ -208,7 +214,10 @@ public partial class MgxcParser
                 else
                 {
                     var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(umgr.AirSlideJoint));
-                    Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
+                    Diagnostic.Report(new TimedDiagnostic(Severity.Warning, msg, tick)
+                    {
+                        Target = longAttr
+                    });
                 }
 
                 exNote.Height = height;
@@ -256,7 +265,10 @@ public partial class MgxcParser
                 if (longAttr is LongAttr.Step)
                 {
                     var msg = string.Format(Strings.Mg_Invalid_joint_type_note, typeof(umgr.AirCrashJoint));
-                    Diagnostic.Report(Severity.Warning, msg, tick, longAttr);
+                    Diagnostic.Report(new TimedDiagnostic(Severity.Warning, msg, tick)
+                    {
+                        Target = longAttr
+                    });
                 }
 
                 exNote.Height = height;
@@ -298,11 +310,12 @@ public partial class MgxcParser
                     lastN.MakePair(newP);
                     break;
                 default:
-                    throw new DiagnosticException(Strings.MgCrit_Pairing_notes_incompatible, new[]
-                    {
-                        note,
-                        _lastNote
-                    }, note.Tick.Original);
+                    throw new TimedDiagnosticException(Strings.MgCrit_Pairing_notes_incompatible, note.Tick.Original,
+                        new[]
+                        {
+                            note,
+                            _lastNote
+                        });
             }
 
         if (!isChildNote) _lastParentNote = note;
