@@ -3,14 +3,14 @@ using PenguinTools.Chart.Models.umgr;
 using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 public class UgcNoteTests
 {
     private const string Header =
         "@VER\t8\n@TICKS\t480\n@BPM\t0'0\t120.0\n@BEAT\t0\t4\t4\n";
 
-    private static async Task<Models.umgr.Chart> Parse(string body)
+    private static async Task<Chart.Models.umgr.Chart> Parse(string body)
     {
         var tmp = Path.GetTempFileName() + ".ugc";
         await File.WriteAllTextAsync(tmp, Header + body);

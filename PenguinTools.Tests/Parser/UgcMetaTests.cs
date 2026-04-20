@@ -3,11 +3,11 @@ using PenguinTools.Core;
 using PenguinTools.Core.Metadata;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 public class UgcMetaTests
 {
-    private static async Task<OperationResult<Models.umgr.Chart>> Parse(string ugc)
+    private static async Task<OperationResult<Chart.Models.umgr.Chart>> Parse(string ugc)
     {
         var tmp = Path.GetTempFileName() + ".ugc";
         await File.WriteAllTextAsync(tmp, ugc);

@@ -1,3 +1,3 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("PenguinTools.Chart.Tests")]
+[assembly: InternalsVisibleTo("PenguinTools.Tests")]

@@ -2,7 +2,7 @@ using PenguinTools.Chart.Parser.mgxc;
 using PenguinTools.Core;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 public class MgxcDiagnosticTests
 {

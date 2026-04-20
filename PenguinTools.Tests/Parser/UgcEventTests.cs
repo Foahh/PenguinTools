@@ -2,11 +2,11 @@ using PenguinTools.Chart.Models.umgr;
 using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 public class UgcEventTests
 {
-    private static async Task<Models.umgr.Chart> Parse(string ugc)
+    private static async Task<Chart.Models.umgr.Chart> Parse(string ugc)
     {
         var tmp = Path.GetTempFileName() + ".ugc";
         await File.WriteAllTextAsync(tmp, ugc);

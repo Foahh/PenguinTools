@@ -5,7 +5,7 @@ using PenguinTools.Core.Asset;
 using PenguinTools.Media;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 public class MgxcRegressionTests
 {

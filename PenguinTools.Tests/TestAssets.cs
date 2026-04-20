@@ -1,6 +1,6 @@
 using PenguinTools.Core.Asset;
 
-namespace PenguinTools.Chart.Tests;
+namespace PenguinTools.Tests;
 
 internal static class TestAssets
 {

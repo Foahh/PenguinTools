@@ -2,7 +2,7 @@ using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Core;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 public class UgcDiagnosticTests
 {

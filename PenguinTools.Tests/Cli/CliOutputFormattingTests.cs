@@ -2,7 +2,7 @@ using PenguinTools.CLI;
 using PenguinTools.Core;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Cli;
+namespace PenguinTools.Tests.Cli;
 
 public class CliOutputFormattingTests
 {

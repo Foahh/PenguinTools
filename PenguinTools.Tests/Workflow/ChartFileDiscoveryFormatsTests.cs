@@ -2,7 +2,7 @@ using System.Text.Json;
 using PenguinTools.Workflow;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Workflow;
+namespace PenguinTools.Tests.Workflow;
 
 public class ChartFileDiscoveryFormatsTests
 {

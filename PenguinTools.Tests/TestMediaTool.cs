@@ -2,7 +2,7 @@ using System.Diagnostics;
 using PenguinTools.Core;
 using PenguinTools.Media;
 
-namespace PenguinTools.Chart.Tests;
+namespace PenguinTools.Tests;
 
 internal sealed class TestMediaTool : IMediaTool
 {

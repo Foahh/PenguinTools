@@ -4,7 +4,7 @@ using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 using umgr = PenguinTools.Chart.Models.umgr;
 
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 public class UgcSampleParityTests
 {

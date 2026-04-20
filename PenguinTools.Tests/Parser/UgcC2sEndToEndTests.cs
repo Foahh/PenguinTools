@@ -3,7 +3,7 @@ using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Chart.Writer;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 public class UgcC2sEndToEndTests
 {

@@ -1,4 +1,4 @@
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 /// <summary>
 ///     Paired chart samples: for each <c>*.ugc</c> in <see cref="ChartTestPaths.AssetsDirectory" />, the matching

@@ -2,7 +2,7 @@ using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Parser.ugc;
 using Xunit;
 
-namespace PenguinTools.Chart.Tests.Parser;
+namespace PenguinTools.Tests.Parser;
 
 public class PayloadTests
 {
