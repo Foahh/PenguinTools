@@ -1,21 +1,15 @@
 $ErrorActionPreference = 'Stop'
 
 $publishTargets = @(
-    # Desktop (WPF)
+    # Desktop
     @{ Project = 'PenguinTools/PenguinTools.csproj'; Profile = 'WinX64-SelfContained-SingleFile-EmbeddedAssets' },
-    @{ Project = 'PenguinTools/PenguinTools.csproj'; Profile = 'WinX64-SelfContained-SingleFile-ExternalAssets' },
-    @{ Project = 'PenguinTools/PenguinTools.csproj'; Profile = 'WinX64-SelfContained-MultiFile-ExternalAssets' },
     @{ Project = 'PenguinTools/PenguinTools.csproj'; Profile = 'WinX64-FrameworkDependent-SingleFile-EmbeddedAssets' },
-    @{ Project = 'PenguinTools/PenguinTools.csproj'; Profile = 'WinX64-FrameworkDependent-SingleFile-ExternalAssets' },
-    @{ Project = 'PenguinTools/PenguinTools.csproj'; Profile = 'WinX64-FrameworkDependent-MultiFile-ExternalAssets' },
 
     # CLI
     @{ Project = 'PenguinTools.CLI/PenguinTools.CLI.csproj'; Profile = 'WinX64-SelfContained-SingleFile-EmbeddedAssets' },
     @{ Project = 'PenguinTools.CLI/PenguinTools.CLI.csproj'; Profile = 'WinX64-SelfContained-SingleFile-ExternalAssets' },
-    @{ Project = 'PenguinTools.CLI/PenguinTools.CLI.csproj'; Profile = 'WinX64-SelfContained-MultiFile-ExternalAssets' },
     @{ Project = 'PenguinTools.CLI/PenguinTools.CLI.csproj'; Profile = 'WinX64-FrameworkDependent-SingleFile-EmbeddedAssets' },
-    @{ Project = 'PenguinTools.CLI/PenguinTools.CLI.csproj'; Profile = 'WinX64-FrameworkDependent-SingleFile-ExternalAssets' },
-    @{ Project = 'PenguinTools.CLI/PenguinTools.CLI.csproj'; Profile = 'WinX64-FrameworkDependent-MultiFile-ExternalAssets' }
+    @{ Project = 'PenguinTools.CLI/PenguinTools.CLI.csproj'; Profile = 'WinX64-FrameworkDependent-SingleFile-ExternalAssets' }
 )
 
 foreach ($target in $publishTargets) {
@@ -27,4 +21,4 @@ foreach ($target in $publishTargets) {
     }
 }
 
-pause
+if (-not $env:CI) { pause }
