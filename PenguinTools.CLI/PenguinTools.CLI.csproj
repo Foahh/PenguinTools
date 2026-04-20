@@ -35,8 +35,4 @@
         </Compile>
     </ItemGroup>
 
-    <Target Name="PenguinToolsCreatePublishZip" AfterTargets="Publish" Condition="'$(PenguinToolsCreateZipPackage)' == 'true'">
-        <Delete Files="$(PenguinToolsPublishZipPath)" Condition="Exists('$(PenguinToolsPublishZipPath)')"/>
-        <ZipDirectory SourceDirectory="$(PublishDir)" DestinationFile="$(PenguinToolsPublishZipPath)"/>
-    </Target>
 </Project>
