@@ -208,12 +208,15 @@ public class AssetDictionary
         CancellationToken ct = default)
     {
         var result = new SortedSet<Entry>();
-        var walker = Directory.EnumerateFiles(root, fileName, SearchOption.AllDirectories);
-        foreach (var xmlFile in walker)
+        foreach (var scanRoot in EnumerateCollectionRoots(root))
         {
-            ct.ThrowIfCancellationRequested();
-            var entries = await ReadEntriesAsync(xmlFile, entryName, ct);
-            foreach (var entry in entries) result.Add(entry);
+            var walker = Directory.EnumerateFiles(scanRoot, fileName, SearchOption.AllDirectories);
+            foreach (var xmlFile in walker)
+            {
+                ct.ThrowIfCancellationRequested();
+                var entries = await ReadEntriesAsync(xmlFile, entryName, ct);
+                foreach (var entry in entries) result.Add(entry);
+            }
         }
 
         return result;
@@ -252,6 +255,26 @@ public class AssetDictionary
             AssetType.WeTagNames => "worldsEndTagName",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unsupported asset type.")
         };
+    }
+
+    private static IEnumerable<string> EnumerateCollectionRoots(string root)
+    {
+        if (IsAllowedAssetFolder(root))
+        {
+            yield return root;
+            yield break;
+        }
+
+        foreach (var directory in Directory.EnumerateDirectories(root, "*", SearchOption.TopDirectoryOnly))
+            if (IsAllowedAssetFolder(directory))
+                yield return directory;
+    }
+
+    private static bool IsAllowedAssetFolder(string path)
+    {
+        var folderName = Path.GetFileName(Path.TrimEndingDirectorySeparator(path));
+        if (folderName.Length != 4 || folderName[0] != 'A') return false;
+        return int.TryParse(folderName.AsSpan(1), out var value) && value is >= 0 and <= 300;
     }
 
     #endregion

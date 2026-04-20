@@ -117,7 +117,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         await _uiSettingsService.SaveAsync(ct);
 
         var outputPaths =
-            ExportOutputPaths.FromOptionDirectory(ExportOutputPaths.ResolveBundleRootPath(workingDirectory, settings.OptionId));
+            ExportOutputPaths.FromOptionDirectory(ExportOutputPaths.ResolveBundleRootPath(workingDirectory, settings.OptionName));
 
         await settings.SaveAsync(ModelPath, ct);
 
