@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
@@ -18,6 +18,7 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
     private readonly IChartScanService _chartScan;
     private readonly IOptionService _export;
     private readonly IFileDialogService _fileDialogs;
+    private readonly IUiSettingsService _uiSettingsService;
 
     public OptionViewModel(
         ActionService actionService,
@@ -28,12 +29,14 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         IExternalLauncher externalLauncher,
         IFileDialogService fileDialogs,
         IChartScanService chartScan,
-        IOptionService export)
+        IOptionService export,
+        IUiSettingsService uiSettingsService)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
         _fileDialogs = fileDialogs;
         _chartScan = chartScan;
         _export = export;
+        _uiSettingsService = uiSettingsService;
     }
 
     [ObservableProperty] public partial Book? SelectedBook { get; set; }
@@ -110,7 +113,11 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         if (workingDirectory == null) return OperationResult.Success();
 
         settings.WorkingDirectory = workingDirectory;
-        var outputPaths = ExportOutputPaths.FromOptionDirectory(settings.OptionDirectory);
+        _uiSettingsService.SetOptionDirectory(settings.OptionId, workingDirectory);
+        await _uiSettingsService.SaveAsync(ct);
+
+        var outputPaths =
+            ExportOutputPaths.FromOptionDirectory(ExportOutputPaths.ResolveBundleRootPath(workingDirectory, settings.OptionId));
 
         await settings.SaveAsync(ModelPath, ct);
 
@@ -122,8 +129,10 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
         var model = new OptionModel();
         await model.LoadAsync(path, ct);
 
-        if (string.IsNullOrWhiteSpace(model.WorkingDirectory) || !Directory.Exists(model.WorkingDirectory))
-            model.WorkingDirectory = path;
+        var configuredDirectory = _uiSettingsService.GetOptionDirectory(model.OptionId);
+        model.WorkingDirectory = !string.IsNullOrWhiteSpace(configuredDirectory) && Directory.Exists(configuredDirectory)
+            ? configuredDirectory
+            : path;
 
         return model;
     }
@@ -138,8 +147,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
     private string GetInitialOutputDirectory(OptionModel settings)
     {
-        if (!string.IsNullOrWhiteSpace(settings.WorkingDirectory) && Directory.Exists(settings.WorkingDirectory))
-            return settings.WorkingDirectory;
+        var configuredDirectory = _uiSettingsService.GetOptionDirectory(settings.OptionId);
+        if (!string.IsNullOrWhiteSpace(configuredDirectory) && Directory.Exists(configuredDirectory))
+            return configuredDirectory;
 
         var modelDirectory = Path.GetDirectoryName(ModelPath);
         return !string.IsNullOrWhiteSpace(modelDirectory) && Directory.Exists(modelDirectory)

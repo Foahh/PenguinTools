@@ -7,6 +7,12 @@ public sealed class OptionDocument
 {
     public string OptionName { get; set; } = "AXXX";
 
+    public string OptionId
+    {
+        get => string.IsNullOrWhiteSpace(field) ? field = CreateOptionId() : field;
+        set => field = string.IsNullOrWhiteSpace(value) ? CreateOptionId() : value.Trim();
+    } = CreateOptionId();
+
     public bool ConvertChart { get; set; } = true;
 
     [JsonConverter(typeof(ChartFileDiscoveryJsonConverter))]
@@ -29,8 +35,6 @@ public sealed class OptionDocument
 
     public int BatchSize { get; set; } = 8;
 
-    public string WorkingDirectory { get; set; } = string.Empty;
-
     public bool HasExportableWork()
     {
         return ConvertChart || ConvertAudio || ConvertJacket || ConvertBackground || GenerateEventXml;
@@ -48,6 +52,11 @@ public sealed class OptionDocument
             UltimaEventId,
             WeEventId,
             BatchSize);
+    }
+
+    private static string CreateOptionId()
+    {
+        return Guid.NewGuid().ToString("N");
     }
 }
 

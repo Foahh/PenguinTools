@@ -1,20 +1,19 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
-using PenguinTools.Core.Asset;
 using PenguinTools.Resources;
+using PenguinTools.Services;
 
 namespace PenguinTools.ViewModels;
 
 public partial class UserAssetSetupViewModel : ObservableObject
 {
-    private readonly AssetManager _assetManager;
+    private readonly IGameAssetService _gameAssetService;
     private readonly Window _window;
 
-    public UserAssetSetupViewModel(AssetManager assetManager, Window window, string explanationText)
+    public UserAssetSetupViewModel(IGameAssetService gameAssetService, Window window, string explanationText)
     {
-        _assetManager = assetManager;
+        _gameAssetService = gameAssetService;
         _window = window;
         ExplanationText = explanationText;
     }
@@ -31,19 +30,13 @@ public partial class UserAssetSetupViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanBrowseGameFolder))]
     private async Task BrowseGameFolderAsync()
     {
-        var dlg = new OpenFolderDialog
-        {
-            Title = Strings.Title_Select_the_game_folder,
-            Multiselect = false,
-            ValidateNames = true
-        };
-
-        if (dlg.ShowDialog(_window) != true || string.IsNullOrWhiteSpace(dlg.FolderName)) return;
+        var gameDirectory = await _gameAssetService.BrowseGameDirectoryAsync(_window);
+        if (string.IsNullOrWhiteSpace(gameDirectory)) return;
 
         try
         {
             IsProcessing = true;
-            await _assetManager.CollectAssetsAsync(dlg.FolderName, CancellationToken.None).ConfigureAwait(true);
+            await _gameAssetService.CollectAssetsAsync(gameDirectory, CancellationToken.None).ConfigureAwait(true);
         }
         catch (Exception ex)
         {

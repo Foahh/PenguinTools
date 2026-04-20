@@ -41,6 +41,29 @@ public class ChartFileDiscoveryFormatsTests
     }
 
     [Fact]
+    public void OptionDocument_GeneratesOptionIdByDefault()
+    {
+        var document = new OptionDocument();
+
+        Assert.False(string.IsNullOrWhiteSpace(document.OptionId));
+    }
+
+    [Fact]
+    public void OptionDocumentJson_GeneratesOptionIdWhenMissing()
+    {
+        const string json = """
+                            {
+                              "optionName": "TEST"
+                            }
+                            """;
+
+        var document = JsonSerializer.Deserialize<OptionDocument>(json, OptionDocumentJson.Default);
+
+        Assert.NotNull(document);
+        Assert.False(string.IsNullOrWhiteSpace(document.OptionId));
+    }
+
+    [Fact]
     public void OptionDocumentJson_RejectsLegacyNumericMode()
     {
         const string json = """
@@ -80,5 +103,19 @@ public class ChartFileDiscoveryFormatsTests
         Assert.Contains("\"chartFileDiscovery\": [", json);
         Assert.Contains("\"ugc\"", json);
         Assert.Contains("\"mgxc\"", json);
+    }
+
+    [Fact]
+    public void OptionDocumentJson_WritesOptionId()
+    {
+        var document = new OptionDocument
+        {
+            OptionName = "TEST",
+            OptionId = "T001"
+        };
+
+        var json = JsonSerializer.Serialize(document, OptionDocumentJson.Default);
+
+        Assert.Contains("\"optionId\": \"T001\"", json);
     }
 }

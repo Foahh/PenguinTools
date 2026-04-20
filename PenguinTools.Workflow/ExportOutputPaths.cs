@@ -7,12 +7,12 @@ public sealed record ExportOutputPaths(
     string EventFolder,
     string ReleaseTagPath)
 {
-    /// <summary>Resolves the on-disk bundle root from a working directory and four-letter option name.</summary>
-    public static string ResolveBundleRootPath(string workingDirectory, string optionName)
+    /// <summary>Resolves the on-disk bundle root from a working directory and stable option identifier.</summary>
+    public static string ResolveBundleRootPath(string workingDirectory, string optionId)
     {
         var normalized = Path.TrimEndingDirectorySeparator(workingDirectory);
         var folder = Path.GetFileName(normalized);
-        return folder == optionName ? workingDirectory : Path.Combine(workingDirectory, optionName);
+        return folder == optionId ? workingDirectory : Path.Combine(workingDirectory, optionId);
     }
 
     public static ExportOutputPaths FromOptionDirectory(string rootPath)

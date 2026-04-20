@@ -109,7 +109,7 @@ internal static class OptionCommands
                         new CliCommandData(input, OutputDirectory: output));
 
                 var exportSettings = json.ToExportSettings();
-                var bundleRoot = ExportOutputPaths.ResolveBundleRootPath(output, json.OptionName);
+                var bundleRoot = ExportOutputPaths.ResolveBundleRootPath(output, json.OptionId);
                 var outputPaths = ExportOutputPaths.FromOptionDirectory(bundleRoot);
 
                 var exported = await CliOperations.ExportOptionAsync(

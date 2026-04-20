@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -27,7 +28,7 @@ public partial class App : Application
 
     internal static IServiceProvider ServiceProvider { get; private set; } = null!;
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -52,6 +53,8 @@ public partial class App : Application
         services.AddTransient<IMusicExportService, MusicExportService>();
 
         services.AddSingleton<IExternalLauncher, ShellExecuteLauncher>();
+        services.AddSingleton<IUiSettingsService, UiSettingsService>();
+        services.AddSingleton<IGameAssetService, GameAssetService>();
         services.AddSingleton<IFileDialogService>(sp =>
             new FileDialogService(new Lazy<MainWindow>(sp.GetRequiredService<MainWindow>)));
         services.AddSingleton<IDiagnosticsPresenter>(sp =>
@@ -79,15 +82,31 @@ public partial class App : Application
 
         ServiceProvider = services.BuildServiceProvider();
 
+        var uiSettings = ServiceProvider.GetRequiredService<IUiSettingsService>();
+        try
+        {
+            await uiSettings.LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
+
         var assetManager = ServiceProvider.GetRequiredService<AssetManager>();
-        if (assetManager.ShouldPromptForOptionalAssetsImport)
+        var gameAssetService = ServiceProvider.GetRequiredService<IGameAssetService>();
+        var hasConfiguredGameDirectory =
+            !string.IsNullOrWhiteSpace(uiSettings.Settings.GameDirectory) &&
+            Directory.Exists(uiSettings.Settings.GameDirectory);
+        var shouldAutoCollectOnStartup = hasConfiguredGameDirectory;
+
+        if (assetManager.ShouldPromptForOptionalAssetsImport && !hasConfiguredGameDirectory)
         {
             var explanation = string.Format(
                 CultureInfo.CurrentCulture,
                 Strings.UserAssetSetup_Body,
                 assetManager.PlusAssetsPath);
             var setupWindow = new UserAssetSetupWindow();
-            setupWindow.DataContext = new UserAssetSetupViewModel(assetManager, setupWindow, explanation);
+            setupWindow.DataContext = new UserAssetSetupViewModel(gameAssetService, setupWindow, explanation);
             setupWindow.ShowDialog();
         }
 
@@ -95,6 +114,8 @@ public partial class App : Application
         MainWindow = window;
         ShutdownMode = ShutdownMode.OnMainWindowClose;
         window.Show();
+
+        if (shouldAutoCollectOnStartup) _ = gameAssetService.AutoCollectAsync();
     }
 
     protected override void OnExit(ExitEventArgs e)

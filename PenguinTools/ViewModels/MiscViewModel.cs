@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
@@ -14,15 +14,19 @@ namespace PenguinTools.ViewModels;
 
 public partial class MiscViewModel : ViewModel
 {
+    private readonly IGameAssetService _gameAssetService;
+
     public MiscViewModel(
         ActionService actionService,
         AssetManager assetManager,
         IMediaTool mediaTool,
         IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider,
-        IExternalLauncher externalLauncher)
+        IExternalLauncher externalLauncher,
+        IGameAssetService gameAssetService)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
+        _gameAssetService = gameAssetService;
     }
 
     [RelayCommand]
@@ -73,15 +77,9 @@ public partial class MiscViewModel : ViewModel
     [RelayCommand]
     private async Task CollectAsset()
     {
-        var openDlg = new OpenFolderDialog
-        {
-            Title = Strings.Title_Select_the_game_folder,
-            Multiselect = false,
-            ValidateNames = true
-        };
-        var result = openDlg.ShowDialog(Application.Current.MainWindow);
-        if (result is not true || string.IsNullOrWhiteSpace(openDlg.FolderName)) return;
+        var gameDirectory = await _gameAssetService.BrowseGameDirectoryAsync(Application.Current.MainWindow);
+        if (string.IsNullOrWhiteSpace(gameDirectory)) return;
 
-        await ActionService.RunAsync(ct => AssetManager.CollectAssetsAsync(openDlg.FolderName, ct));
+        await ActionService.RunAsync(ct => _gameAssetService.CollectAssetsAsync(gameDirectory, ct));
     }
 }

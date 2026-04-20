@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text.Json;
@@ -13,6 +13,8 @@ namespace PenguinTools.Models;
 
 public partial class OptionModel : Model, IPersistable
 {
+    [Browsable(false)] public string OptionId { get; set; } = CreateOptionId();
+
     [ObservableProperty]
     [MinLength(4)]
     [MaxLength(4)]
@@ -95,16 +97,6 @@ public partial class OptionModel : Model, IPersistable
     [Browsable(false)] public string WorkingDirectory { get; set; } = string.Empty;
 
     [Browsable(false)]
-    public string OptionDirectory
-    {
-        get
-        {
-            var folder = Path.GetFileName(WorkingDirectory);
-            return folder == OptionName ? WorkingDirectory : Path.Combine(WorkingDirectory, OptionName);
-        }
-    }
-
-    [Browsable(false)]
     [JsonIgnore]
     public bool CanExecute => ConvertChart || ConvertAudio || ConvertJacket || ConvertBackground || GenerateEventXml;
 
@@ -140,6 +132,7 @@ public partial class OptionModel : Model, IPersistable
 
     public void Apply(OptionDocument document)
     {
+        OptionId = string.IsNullOrWhiteSpace(document.OptionId) ? CreateOptionId() : document.OptionId;
         OptionName = document.OptionName;
         ConvertChart = document.ConvertChart;
         ChartFileDiscovery = ChartFileDiscoveryFormats.Format(document.ChartFileDiscovery);
@@ -151,7 +144,6 @@ public partial class OptionModel : Model, IPersistable
         UltimaEventId = document.UltimaEventId;
         WeEventId = document.WeEventId;
         BatchSize = document.BatchSize;
-        WorkingDirectory = document.WorkingDirectory;
     }
 
     public OptionDocument ToDocument()
@@ -159,8 +151,11 @@ public partial class OptionModel : Model, IPersistable
         if (!ChartFileDiscoveryFormats.TryParse(ChartFileDiscovery, out var chartFileDiscovery, out var error))
             throw new ArgumentException(error, nameof(ChartFileDiscovery));
 
+        if (string.IsNullOrWhiteSpace(OptionId)) OptionId = CreateOptionId();
+
         return new OptionDocument
         {
+            OptionId = OptionId,
             OptionName = OptionName,
             ConvertChart = ConvertChart,
             ChartFileDiscovery = [.. chartFileDiscovery],
@@ -171,8 +166,7 @@ public partial class OptionModel : Model, IPersistable
             GenerateReleaseTagXml = GenerateReleaseTagXml,
             UltimaEventId = UltimaEventId,
             WeEventId = WeEventId,
-            BatchSize = BatchSize,
-            WorkingDirectory = WorkingDirectory
+            BatchSize = BatchSize
         };
     }
 
@@ -182,5 +176,10 @@ public partial class OptionModel : Model, IPersistable
             return chartFileDiscovery;
 
         return ChartFileDiscoveryFormats.Default;
+    }
+
+    private static string CreateOptionId()
+    {
+        return Guid.NewGuid().ToString("N");
     }
 }

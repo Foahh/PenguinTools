@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using PenguinTools.Resources;
 using PenguinTools.ViewModels;
