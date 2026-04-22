@@ -150,7 +150,7 @@ internal static class OptionCommands
 
         internal Option<string?> ChartFileDiscovery { get; } =
             CommandLineOptions.CreateChartFileDiscoveryOption(
-                "Override options.json chartFileDiscovery with an ordered list, for example [ugc, mgxc] or ugc,mgxc.");
+                "Override options.json chartFileDiscovery with an ordered list, for example [mgxc, ugc, sus] or ugc,sus.");
 
         internal Option<int?> BatchSize { get; } = new("--batch-size")
         {

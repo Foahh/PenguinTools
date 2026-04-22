@@ -14,7 +14,7 @@ internal static class ScanCommands
             Description = "Directory containing chart files to scan recursively."
         };
         var chartFileDiscoveryOption = CommandLineOptions.CreateChartFileDiscoveryOption(
-            "Ordered chart formats to scan, for example [mgxc, ugc] or [ugc, mgxc].");
+            "Ordered chart formats to scan, for example [mgxc, ugc, sus] or [ugc, sus].");
         var batchSizeOption = new Option<int>("--batch-size")
         {
             Description = "Maximum scan concurrency.",

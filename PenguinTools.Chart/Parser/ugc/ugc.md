@@ -1,3 +1,5 @@
+File translated from https://gist.github.com/inonote/5c01e73781cab17765a1d93641d52298
+
 # Umiguri Chart v8 Specification
 
 - Basics

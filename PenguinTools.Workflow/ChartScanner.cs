@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using PenguinTools.Chart.Parser.mgxc;
+using PenguinTools.Chart.Parser.sus;
 using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
@@ -97,6 +98,14 @@ public static class ChartScanner
             diagnostics.Report(r.Diagnostics);
             if (!r.Succeeded || r.Value is not { } mgxcChart) return;
             chart = mgxcChart;
+        }
+        else if (string.Equals(ext, ChartFileDiscoveryFormats.GetExtension(ChartFileFormat.Sus),
+                     StringComparison.OrdinalIgnoreCase))
+        {
+            var r = await new SusParser(new SusParseRequest(filePath, assets), mediaTool).ParseAsync(ct);
+            diagnostics.Report(r.Diagnostics);
+            if (!r.Succeeded || r.Value is not { } susChart) return;
+            chart = susChart;
         }
         else
         {

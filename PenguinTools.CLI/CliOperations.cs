@@ -1,5 +1,6 @@
 using System.CommandLine;
 using PenguinTools.Chart.Parser.mgxc;
+using PenguinTools.Chart.Parser.sus;
 using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
@@ -71,8 +72,12 @@ internal static class CliOperations
             return await new MgxcParser(new MgxcParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(
                 cancellationToken);
 
+        if (string.Equals(ext, ".sus", StringComparison.OrdinalIgnoreCase))
+            return await new SusParser(new SusParseRequest(input, runtime.Assets), runtime.MediaTool).ParseAsync(
+                cancellationToken);
+
         return CliPaths.CreateFailureResultOf<umgr.Chart>(
-            $"Expected a .mgxc or .ugc chart file. Got extension: \"{ext}\".",
+            $"Expected a .mgxc, .ugc, or .sus chart file. Got extension: \"{ext}\".",
             input);
     }
 

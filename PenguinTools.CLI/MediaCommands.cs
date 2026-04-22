@@ -19,7 +19,7 @@ internal static class MediaCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source .mgxc chart."
+            Description = "Path to the source chart (.mgxc, .ugc, or .sus)."
         };
         var outputArgument = new Argument<string>("output")
         {
@@ -27,10 +27,10 @@ internal static class MediaCommands
         };
         var jacketInputOption = new Option<string?>("--jacket-input")
         {
-            Description = "Override the jacket source path instead of using the path from the MGXC metadata."
+            Description = "Override the jacket source path instead of using the path from the chart metadata."
         };
 
-        var command = new Command("jacket", "Convert the jacket referenced by an MGXC chart.");
+        var command = new Command("jacket", "Convert the jacket referenced by a chart.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         command.Options.Add(jacketInputOption);
@@ -66,7 +66,7 @@ internal static class MediaCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source .mgxc chart."
+            Description = "Path to the source chart (.mgxc, .ugc, or .sus)."
         };
         var outputArgument = new Argument<string>("output")
         {
@@ -74,7 +74,7 @@ internal static class MediaCommands
         };
         var audioOptions = CommandLineOptions.CreateAudioCommandOptions();
 
-        var command = new Command("audio", "Convert the audio referenced by an MGXC chart into ACB/AWB assets.");
+        var command = new Command("audio", "Convert the audio referenced by a chart into ACB/AWB assets.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         CommandLineOptions.AddAudioCommandOptions(command, audioOptions);
@@ -108,7 +108,7 @@ internal static class MediaCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source .mgxc chart."
+            Description = "Path to the source chart (.mgxc, .ugc, or .sus)."
         };
         var outputArgument = new Argument<string>("output")
         {
@@ -116,7 +116,7 @@ internal static class MediaCommands
         };
         var stageOptions = CommandLineOptions.CreateStageCommandOptions();
 
-        var command = new Command("stage", "Build the custom stage referenced by an MGXC chart.");
+        var command = new Command("stage", "Build the custom stage referenced by a chart.");
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         CommandLineOptions.AddStageCommandOptions(command, stageOptions);
