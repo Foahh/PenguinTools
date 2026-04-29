@@ -45,11 +45,11 @@ git submodule update --init --recursive
 
 ### Build
 
-#### 1. `mua` ([muautils](External/muautils))
+#### 1. `mua`
 
-[`PenguinTools.Infrastructure`](PenguinTools.Infrastructure/PenguinTools.Infrastructure.csproj) embeds the muautils CLI (`mua`) for audio/image work. It's not checked in — build it from the `External/muautils` submodule and install it into the directory the project expects.
+Check [muautils](External/muautils) for build instruction.
 
-#### 2. PenguinTools (.NET)
+#### 2. PenguinTools
 
 ```bash
 dotnet restore PenguinTools.slnx
@@ -57,6 +57,26 @@ dotnet build PenguinTools.slnx -c Release
 ```
 
 Output lands in `PenguinTools.CLI/bin/<Configuration>/net10.0/` for the CLI and `PenguinTools/bin/<Configuration>/net10.0-windows/` for the GUI.
+
+### Release
+
+Install and authenticate the GitHub CLI, then run:
+
+```powershell
+.\release.ps1
+```
+
+By default this builds the publish profiles, stages release assets under `artifacts/release/<tag>/`, and creates a GitHub Release for the version in [`Common.props`](Common.props), for example `v1.8.0`.
+
+Embedded-assets builds are uploaded directly as versioned executables, for example `PenguinTools.v1.8.0.exe` and `PenguinTools.CLI.v1.8.0.exe`. The CLI external-assets build is uploaded as a ZIP.
+
+Useful options:
+
+```powershell
+.\release.ps1 -Draft
+.\release.ps1 -Tag v1.8.1 -Title "v1.8.1" -NotesFile .\release-notes.md
+.\release.ps1 -SkipBuild -Clobber
+```
 
 ### Before opening a PR
 
