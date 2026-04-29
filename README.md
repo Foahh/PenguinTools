@@ -58,26 +58,6 @@ dotnet build PenguinTools.slnx -c Release
 
 Output lands in `PenguinTools.CLI/bin/<Configuration>/net10.0/` for the CLI and `PenguinTools/bin/<Configuration>/net10.0-windows/` for the GUI.
 
-### Release
-
-Install and authenticate the GitHub CLI, then run:
-
-```powershell
-.\release.ps1
-```
-
-By default this builds the publish profiles, stages release assets under `artifacts/release/<tag>/`, and creates a GitHub Release for the version in [`Common.props`](Common.props), for example `v1.8.0`.
-
-Embedded-assets builds are uploaded directly as versioned executables, for example `PenguinTools.v1.8.0.exe` and `PenguinTools.CLI.v1.8.0.exe`. The CLI external-assets build is uploaded as a ZIP.
-
-Useful options:
-
-```powershell
-.\release.ps1 -Draft
-.\release.ps1 -Tag v1.8.1 -Title "v1.8.1" -NotesFile .\release-notes.md
-.\release.ps1 -SkipBuild -Clobber
-```
-
 ### Before opening a PR
 
 Keep changes small and focused. Match the existing style — there's an [`.editorconfig`](.editorconfig) for formatting and naming. If you're fixing a bug, mention how to reproduce it. For anything larger, open an issue first so we can agree on scope before you put in the work.

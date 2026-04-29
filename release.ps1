@@ -56,6 +56,31 @@ function Copy-ReleaseAsset {
     Copy-Item -Path $Source -Destination $Destination -Force
 }
 
+function Test-GitHubRelease {
+    param(
+        [Parameter(Mandatory = $true)][string]$Tag,
+        [Parameter(Mandatory = $true)][string]$Repository
+    )
+
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        gh release view $Tag --repo $Repository *> $null
+        if ($LASTEXITCODE -eq 0) {
+            return $true
+        }
+
+        if ($LASTEXITCODE -eq 1) {
+            return $false
+        }
+
+        throw "Failed to check GitHub release '$Tag'. gh exited with code $LASTEXITCODE."
+    }
+    finally {
+        $script:ErrorActionPreference = $previousErrorActionPreference
+    }
+}
+
 Assert-Command 'git'
 Assert-Command 'gh'
 if (-not $SkipBuild) {
@@ -134,11 +159,7 @@ try {
         $destination
     }
 
-    $releaseExists = $false
-    gh release view $Tag --repo $Repository *> $null
-    if ($LASTEXITCODE -eq 0) {
-        $releaseExists = $true
-    }
+    $releaseExists = Test-GitHubRelease -Tag $Tag -Repository $Repository
 
     if ($releaseExists) {
         if (-not $Clobber) {
