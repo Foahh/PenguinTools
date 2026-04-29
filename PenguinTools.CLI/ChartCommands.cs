@@ -1,5 +1,5 @@
 using System.CommandLine;
-using PenguinTools.Chart.Writer;
+using PenguinTools.Chart.Writer.c2s;
 
 namespace PenguinTools.CLI;
 

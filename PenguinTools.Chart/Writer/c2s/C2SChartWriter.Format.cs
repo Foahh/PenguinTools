@@ -1,7 +1,7 @@
 using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Resources;
 
-namespace PenguinTools.Chart.Writer;
+namespace PenguinTools.Chart.Writer.c2s;
 
 using c2s = Models.c2s;
 

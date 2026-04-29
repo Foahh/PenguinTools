@@ -4,7 +4,7 @@ using PenguinTools.Chart.Resources;
 using PenguinTools.Core;
 using PenguinTools.Core.Diagnostic;
 
-namespace PenguinTools.Chart.Writer;
+namespace PenguinTools.Chart.Writer.c2s;
 
 using umgr = Models.umgr;
 using c2s = Models.c2s;

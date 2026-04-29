@@ -1,4 +1,3 @@
-using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Models.umgr;
 using PenguinTools.Chart.Parser.sus;
 using PenguinTools.Core;

@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using PenguinTools.Chart.Writer;
+using PenguinTools.Chart.Writer.c2s;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Diagnostic;

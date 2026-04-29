@@ -2,7 +2,7 @@
 using Microsoft.Win32;
 using PenguinTools.Chart.Parser.mgxc;
 using PenguinTools.Chart.Parser.ugc;
-using PenguinTools.Chart.Writer;
+using PenguinTools.Chart.Writer.c2s;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Infrastructure;
