@@ -1,11 +1,11 @@
 using PenguinTools.Chart.Models;
 
-namespace PenguinTools.Chart.Writer.c2s;
+namespace PenguinTools.Chart.Converter.c2s;
 
 using umgr = Models.umgr;
 using c2s = Models.c2s;
 
-public partial class C2SChartWriter
+public partial class C2SChartConverter
 {
     private void ConvertEvent(umgr.Chart mgxc)
     {

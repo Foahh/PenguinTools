@@ -1,3 +1,4 @@
+using PenguinTools.Chart.Converter.c2s;
 using PenguinTools.Chart.Parser.mgxc;
 using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Chart.Writer.c2s;
@@ -8,8 +9,8 @@ namespace PenguinTools.Tests.Parser;
 public class UgcC2sEndToEndTests
 {
     /// <summary>
-    ///     Writes both charts with <see cref="C2SChartWriter" /> and compares output from the start through the line before
-    ///     the first <c>SLP</c> (scroll) row.
+    ///     Converts and writes both charts, then compares output from the start through the line before the first
+    ///     <c>SLP</c> (scroll) row.
     ///     Full first-100-line identity is still sensitive to TIL-derived <c>SLP</c> ordering on some charts.
     /// </summary>
     [Theory]
@@ -30,8 +31,14 @@ public class UgcC2sEndToEndTests
         var mgxcOut = Path.GetTempFileName() + ".c2s";
         try
         {
-            var ugcWrite = await new C2SChartWriter(new C2SWriteRequest(ugcOut, ugcParse.Value!)).WriteAsync();
-            var mgxcWrite = await new C2SChartWriter(new C2SWriteRequest(mgxcOut, mgxcParse.Value!)).WriteAsync();
+            var ugcConvert = new C2SChartConverter(new C2SConvertRequest(ugcParse.Value!)).Convert();
+            var mgxcConvert = new C2SChartConverter(new C2SConvertRequest(mgxcParse.Value!)).Convert();
+
+            Assert.True(ugcConvert.Succeeded, $"UGC c2s convert failed for {name}: {ugcConvert}");
+            Assert.True(mgxcConvert.Succeeded, $"MGXC c2s convert failed for {name}: {mgxcConvert}");
+
+            var ugcWrite = await new C2SChartWriter(new C2SWriteRequest(ugcOut, ugcConvert.Value!)).WriteAsync();
+            var mgxcWrite = await new C2SChartWriter(new C2SWriteRequest(mgxcOut, mgxcConvert.Value!)).WriteAsync();
 
             Assert.True(ugcWrite.Succeeded, $"UGC c2s write failed for {name}: {ugcWrite}");
             Assert.True(mgxcWrite.Succeeded, $"MGXC c2s write failed for {name}: {mgxcWrite}");

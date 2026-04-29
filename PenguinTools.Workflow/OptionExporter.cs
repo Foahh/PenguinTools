@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using PenguinTools.Chart.Converter.c2s;
 using PenguinTools.Chart.Writer.c2s;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
@@ -139,7 +140,11 @@ public static class OptionExporter
             TrackEventEntry(book, difficulty, songId, weEntries, ultEntries);
 
             var chartPath = Path.Combine(chartFolder, xml[difficulty].File);
-            var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, item.Chart));
+            var convertedChart = new C2SChartConverter(new C2SConvertRequest(item.Chart)).Convert();
+            diagnostics.Report(convertedChart.Diagnostics);
+            if (!convertedChart.Succeeded || convertedChart.Value is null) return;
+
+            var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, convertedChart.Value));
             var writtenChart = await chartWriter.WriteAsync(ct);
             diagnostics.Report(writtenChart.Diagnostics);
             if (!writtenChart.Succeeded) return;

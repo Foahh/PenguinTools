@@ -1,5 +1,5 @@
-using umgr = PenguinTools.Chart.Models.umgr;
-
 namespace PenguinTools.Chart.Writer.c2s;
 
-public sealed record C2SWriteRequest(string OutPath, umgr.Chart Mgxc);
+using c2s = Models.c2s;
+
+public sealed record C2SWriteRequest(string OutPath, c2s.Chart Chart);

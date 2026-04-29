@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Microsoft.Win32;
+using PenguinTools.Chart.Converter.c2s;
 using PenguinTools.Chart.Parser.mgxc;
 using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Chart.Writer.c2s;
@@ -44,9 +45,13 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         };
         if (dlg.ShowDialog() != true) return OperationResult.Success();
 
+        var converted = new C2SChartConverter(new C2SConvertRequest(chart)).Convert();
+        if (!converted.Succeeded || converted.Value is null) return converted.ToResult();
 
-        var writer = new C2SChartWriter(new C2SWriteRequest(dlg.FileName, chart));
-        return await writer.WriteAsync(ct);
+        var writer = new C2SChartWriter(new C2SWriteRequest(dlg.FileName, converted.Value));
+        var written = await writer.WriteAsync(ct);
+        return (written.Succeeded ? OperationResult.Success() : OperationResult.Failure())
+            .WithDiagnostics(converted.Diagnostics.Merge(written.Diagnostics));
     }
 
     protected override async Task<OperationResult<ChartModel>> ReadModel(string path, CancellationToken ct = default)

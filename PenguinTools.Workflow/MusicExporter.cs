@@ -1,3 +1,4 @@
+using PenguinTools.Chart.Converter.c2s;
 using PenguinTools.Chart.Writer.c2s;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
@@ -116,8 +117,14 @@ public static class MusicExporter
         var chartPath = Path.Combine(chartBundleFolder, musicXml[meta.Difficulty].File);
         MusicPaths.EnsureParentDirectory(chartPath);
 
+        var convertedChart = new C2SChartConverter(new C2SConvertRequest(chart)).Convert();
+        diagnostics = diagnostics.Merge(convertedChart.Diagnostics);
+        if (!convertedChart.Succeeded || convertedChart.Value is null)
+            return OperationResult.Failure().WithDiagnostics(diagnostics);
+
         var writtenChart =
-            await new C2SChartWriter(new C2SWriteRequest(chartPath, chart)).WriteAsync(cancellationToken);
+            await new C2SChartWriter(new C2SWriteRequest(chartPath, convertedChart.Value))
+                .WriteAsync(cancellationToken);
         diagnostics = diagnostics.Merge(writtenChart.Diagnostics);
         if (!writtenChart.Succeeded) return OperationResult.Failure().WithDiagnostics(diagnostics);
 

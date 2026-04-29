@@ -1,12 +1,12 @@
-﻿using PenguinTools.Chart.Resources;
+using PenguinTools.Chart.Resources;
 using PenguinTools.Core.Diagnostic;
 
-namespace PenguinTools.Chart.Writer.c2s;
+namespace PenguinTools.Chart.Converter.c2s;
 
 using umgr = Models.umgr;
 using c2s = Models.c2s;
 
-public partial class C2SChartWriter
+public partial class C2SChartConverter
 {
     private readonly Dictionary<umgr.NegativeNote, c2s.IPairable> _negativePairRoots = [];
     private readonly Dictionary<umgr.PositiveNote, c2s.Note> _positivePairTargets = [];
