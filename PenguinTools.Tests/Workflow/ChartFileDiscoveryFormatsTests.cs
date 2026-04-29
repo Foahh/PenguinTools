@@ -9,19 +9,19 @@ public class ChartFileDiscoveryFormatsTests
     [Fact]
     public void TryParse_AcceptsBracketedOrderedList()
     {
-        var ok = ChartFileDiscoveryFormats.TryParse("[ugc, mgxc]", out var formats, out var error);
+        var ok = ChartFileDiscoveryFormats.TryParse("[ugc, sus, mgxc]", out var formats, out var error);
 
         Assert.True(ok, error);
-        Assert.Equal([ChartFileFormat.Ugc, ChartFileFormat.Mgxc], formats);
+        Assert.Equal([ChartFileFormat.Ugc, ChartFileFormat.Sus, ChartFileFormat.Mgxc], formats);
     }
 
     [Fact]
     public void TryParse_RemovesDuplicates_PreservingFirstOccurrence()
     {
-        var ok = ChartFileDiscoveryFormats.TryParse("ugc, ugc, mgxc", out var formats, out var error);
+        var ok = ChartFileDiscoveryFormats.TryParse("ugc, sus, ugc, mgxc, sus", out var formats, out var error);
 
         Assert.True(ok, error);
-        Assert.Equal([ChartFileFormat.Ugc, ChartFileFormat.Mgxc], formats);
+        Assert.Equal([ChartFileFormat.Ugc, ChartFileFormat.Sus, ChartFileFormat.Mgxc], formats);
     }
 
     [Fact]
@@ -30,14 +30,14 @@ public class ChartFileDiscoveryFormatsTests
         const string json = """
                             {
                               "optionName": "TEST",
-                              "chartFileDiscovery": ["ugc", "mgxc"]
+                              "chartFileDiscovery": ["ugc", "sus", "mgxc"]
                             }
                             """;
 
         var document = JsonSerializer.Deserialize<OptionDocument>(json, OptionDocumentJson.Default);
 
         Assert.NotNull(document);
-        Assert.Equal([ChartFileFormat.Ugc, ChartFileFormat.Mgxc], document.ChartFileDiscovery);
+        Assert.Equal([ChartFileFormat.Ugc, ChartFileFormat.Sus, ChartFileFormat.Mgxc], document.ChartFileDiscovery);
     }
 
     [Fact]
@@ -95,13 +95,14 @@ public class ChartFileDiscoveryFormatsTests
         var document = new OptionDocument
         {
             OptionName = "TEST",
-            ChartFileDiscovery = [ChartFileFormat.Ugc, ChartFileFormat.Mgxc]
+            ChartFileDiscovery = [ChartFileFormat.Ugc, ChartFileFormat.Sus, ChartFileFormat.Mgxc]
         };
 
         var json = JsonSerializer.Serialize(document, OptionDocumentJson.Default);
 
         Assert.Contains("\"chartFileDiscovery\": [", json);
         Assert.Contains("\"ugc\"", json);
+        Assert.Contains("\"sus\"", json);
         Assert.Contains("\"mgxc\"", json);
     }
 

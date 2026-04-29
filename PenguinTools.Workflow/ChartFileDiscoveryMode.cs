@@ -8,12 +8,15 @@ public enum ChartFileFormat
 {
     [Description("mgxc")] Mgxc = 0,
 
-    [Description("ugc")] Ugc = 1
+    [Description("ugc")] Ugc = 1,
+
+    [Description("sus")] Sus = 2
 }
 
 public static class ChartFileDiscoveryFormats
 {
-    public static IReadOnlyList<ChartFileFormat> Default { get; } = [ChartFileFormat.Mgxc, ChartFileFormat.Ugc];
+    public static IReadOnlyList<ChartFileFormat> Default { get; } =
+        [ChartFileFormat.Mgxc, ChartFileFormat.Ugc, ChartFileFormat.Sus];
 
     public static IReadOnlyList<ChartFileFormat> Normalize(IEnumerable<ChartFileFormat>? formats)
     {
@@ -39,6 +42,7 @@ public static class ChartFileDiscoveryFormats
         {
             ChartFileFormat.Mgxc => "mgxc",
             ChartFileFormat.Ugc => "ugc",
+            ChartFileFormat.Sus => "sus",
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
     }
@@ -54,6 +58,7 @@ public static class ChartFileDiscoveryFormats
         {
             ChartFileFormat.Mgxc => ".mgxc",
             ChartFileFormat.Ugc => ".ugc",
+            ChartFileFormat.Sus => ".sus",
             _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
         };
     }
@@ -69,7 +74,7 @@ public static class ChartFileDiscoveryFormats
 
         if (string.IsNullOrWhiteSpace(text))
         {
-            error = "Specify at least one chart format, for example [mgxc, ugc] or [ugc].";
+            error = "Specify at least one chart format, for example [mgxc, ugc, sus] or [ugc, sus].";
             return false;
         }
 
@@ -89,7 +94,7 @@ public static class ChartFileDiscoveryFormats
         var tokens = trimmed.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (tokens.Length == 0)
         {
-            error = "Specify at least one chart format, for example [mgxc, ugc] or [ugc].";
+            error = "Specify at least one chart format, for example [mgxc, ugc, sus] or [ugc, sus].";
             return false;
         }
 
@@ -98,7 +103,7 @@ public static class ChartFileDiscoveryFormats
         {
             if (!TryParseToken(token, out var format))
             {
-                error = $"Unsupported chart format '{token}'. Supported values are mgxc and ugc.";
+                error = $"Unsupported chart format '{token}'. Supported values are mgxc, ugc, and sus.";
                 return false;
             }
 
@@ -124,6 +129,13 @@ public static class ChartFileDiscoveryFormats
             string.Equals(normalized, ".ugc", StringComparison.OrdinalIgnoreCase))
         {
             format = ChartFileFormat.Ugc;
+            return true;
+        }
+
+        if (string.Equals(normalized, "sus", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(normalized, ".sus", StringComparison.OrdinalIgnoreCase))
+        {
+            format = ChartFileFormat.Sus;
             return true;
         }
 
@@ -154,7 +166,7 @@ public sealed class ChartFileDiscoveryJsonConverter : JsonConverter<List<ChartFi
                     var token = reader.GetString();
                     if (!ChartFileDiscoveryFormats.TryParseToken(token, out var format))
                         throw new JsonException(
-                            $"Unsupported chart format '{token}'. Supported values are mgxc and ugc.");
+                            $"Unsupported chart format '{token}'. Supported values are mgxc, ugc, and sus.");
 
                     formats.Add(format);
                     continue;

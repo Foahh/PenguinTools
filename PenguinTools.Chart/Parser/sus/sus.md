@@ -1,3 +1,5 @@
+File translated from https://gist.github.com/kb10uy/c171c175ba913dc40a73c6ce69da9859
+
 # SUS Format Specification v2.7 (rev2)
 
 Note: **SUS** now stands for *Sliding Universal Score*, not *SeaUrchin Score*.
