@@ -8,15 +8,16 @@ namespace PenguinTools.Tests.Parser;
 
 public class UgcSampleParityTests
 {
-    [Theory]
+    [Theory(SkipTestWithoutData = true)]
     [MemberData(nameof(FinishedChartSampleCases.MasterPairs), MemberType = typeof(FinishedChartSampleCases))]
     public async Task UgcAndMgxc_HaveMatchingNoteSets(string name, string ugcPath, string mgxcPath)
     {
         var assets = TestAssets.Load();
         var media = TestMediaTool.Instance;
+        var ct = TestContext.Current.CancellationToken;
 
-        var ugcResult = await new UgcParser(new UgcParseRequest(ugcPath, assets), media).ParseAsync();
-        var mgxcResult = await new MgxcParser(new MgxcParseRequest(mgxcPath, assets), media).ParseAsync();
+        var ugcResult = await new UgcParser(new UgcParseRequest(ugcPath, assets), media).ParseAsync(ct);
+        var mgxcResult = await new MgxcParser(new MgxcParseRequest(mgxcPath, assets), media).ParseAsync(ct);
 
         Assert.True(ugcResult.Succeeded, $"UGC parse failed for {name}: {ugcResult}");
         Assert.True(mgxcResult.Succeeded, $"MGXC parse failed for {name}: {mgxcResult}");

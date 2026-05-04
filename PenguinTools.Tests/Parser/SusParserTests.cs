@@ -11,14 +11,15 @@ public class SusParserTests
 {
     private static async Task<OperationResult<Chart.Models.umgr.Chart>> Parse(string sus)
     {
+        var ct = TestContext.Current.CancellationToken;
         var tmp = Path.GetTempFileName() + ".sus";
-        await File.WriteAllTextAsync(tmp, sus);
+        await File.WriteAllTextAsync(tmp, sus, ct);
         try
         {
             var parser = new SusParser(
                 new SusParseRequest(tmp, TestAssets.Load()),
                 TestMediaTool.Instance);
-            return await parser.ParseAsync();
+            return await parser.ParseAsync(ct);
         }
         finally
         {
@@ -28,22 +29,19 @@ public class SusParserTests
 
     private static async Task<OperationResult<Chart.Models.umgr.Chart>> ParseFile(string path)
     {
+        var ct = TestContext.Current.CancellationToken;
         var parser = new SusParser(
             new SusParseRequest(path, TestAssets.Load()),
             TestMediaTool.Instance);
-        return await parser.ParseAsync();
+        return await parser.ParseAsync(ct);
     }
 
     public static IEnumerable<object[]> SampleSusFiles()
     {
-        var dir = Path.GetDirectoryName(typeof(TestAssets).Assembly.Location)!;
-        var cursor = dir;
-        while (cursor is not null && !File.Exists(Path.Combine(cursor, "assets.json")))
-            cursor = Directory.GetParent(cursor)?.FullName;
-        if (cursor is null)
-            throw new FileNotFoundException("assets.json not found above " + dir);
+        var samplesDir = ChartTestPaths.AssetsDirectory;
+        if (!Directory.Exists(samplesDir))
+            return [];
 
-        var samplesDir = Path.Combine(cursor, "PenguinTools.Tests", "Assets");
         return Directory.EnumerateFiles(samplesDir, "*.sus")
             .OrderBy(Path.GetFileName)
             .Select(path => new object[] { Path.GetFileName(path)!, path });
@@ -128,7 +126,7 @@ public class SusParserTests
         Assert.Single(chart.Notes.Children.OfType<Damage>());
     }
 
-    [Theory]
+    [Theory(SkipTestWithoutData = true)]
     [MemberData(nameof(SampleSusFiles))]
     public async Task SampleCharts_ParseSuccessfully(string _, string path)
     {

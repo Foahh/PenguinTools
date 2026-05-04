@@ -9,14 +9,15 @@ public class MgxcDiagnosticTests
     [Fact]
     public async Task InvalidHeader_DiagnosticIncludesFileAndOffset()
     {
+        var ct = TestContext.Current.CancellationToken;
         var tmp = Path.GetTempFileName() + ".mgxc";
         try
         {
-            await File.WriteAllBytesAsync(tmp, "NOPE"u8.ToArray());
+            await File.WriteAllBytesAsync(tmp, "NOPE"u8.ToArray(), ct);
 
             var result = await new MgxcParser(
                 new MgxcParseRequest(tmp, TestAssets.Load()),
-                TestMediaTool.Instance).ParseAsync();
+                TestMediaTool.Instance).ParseAsync(ct);
 
             Assert.False(result.Succeeded);
             var diagnostic = Assert.Single(result.Diagnostics.Diagnostics);

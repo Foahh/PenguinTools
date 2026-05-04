@@ -13,16 +13,17 @@ public class UgcC2sEndToEndTests
     ///     <c>SLP</c> (scroll) row.
     ///     Full first-100-line identity is still sensitive to TIL-derived <c>SLP</c> ordering on some charts.
     /// </summary>
-    [Theory]
+    [Theory(SkipTestWithoutData = true)]
     [MemberData(nameof(FinishedChartSampleCases.MasterPairs), MemberType = typeof(FinishedChartSampleCases))]
     public async Task UgcProducedC2s_MatchesMgxcProducedC2s_FirstHundredLines(string name, string ugcPath,
         string mgxcPath)
     {
         var assets = TestAssets.Load();
         var media = TestMediaTool.Instance;
+        var ct = TestContext.Current.CancellationToken;
 
-        var ugcParse = await new UgcParser(new UgcParseRequest(ugcPath, assets), media).ParseAsync();
-        var mgxcParse = await new MgxcParser(new MgxcParseRequest(mgxcPath, assets), media).ParseAsync();
+        var ugcParse = await new UgcParser(new UgcParseRequest(ugcPath, assets), media).ParseAsync(ct);
+        var mgxcParse = await new MgxcParser(new MgxcParseRequest(mgxcPath, assets), media).ParseAsync(ct);
 
         Assert.True(ugcParse.Succeeded, $"UGC parse failed for {name}: {ugcParse}");
         Assert.True(mgxcParse.Succeeded, $"MGXC parse failed for {name}: {mgxcParse}");
@@ -37,8 +38,8 @@ public class UgcC2sEndToEndTests
             Assert.True(ugcConvert.Succeeded, $"UGC c2s convert failed for {name}: {ugcConvert}");
             Assert.True(mgxcConvert.Succeeded, $"MGXC c2s convert failed for {name}: {mgxcConvert}");
 
-            var ugcWrite = await new C2SChartWriter(new C2SWriteRequest(ugcOut, ugcConvert.Value!)).WriteAsync();
-            var mgxcWrite = await new C2SChartWriter(new C2SWriteRequest(mgxcOut, mgxcConvert.Value!)).WriteAsync();
+            var ugcWrite = await new C2SChartWriter(new C2SWriteRequest(ugcOut, ugcConvert.Value!)).WriteAsync(ct);
+            var mgxcWrite = await new C2SChartWriter(new C2SWriteRequest(mgxcOut, mgxcConvert.Value!)).WriteAsync(ct);
 
             Assert.True(ugcWrite.Succeeded, $"UGC c2s write failed for {name}: {ugcWrite}");
             Assert.True(mgxcWrite.Succeeded, $"MGXC c2s write failed for {name}: {mgxcWrite}");

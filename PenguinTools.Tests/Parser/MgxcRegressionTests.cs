@@ -27,7 +27,7 @@ public class MgxcRegressionTests
         var assets = new AssetManager(assetsStream, userDir);
         var parser = new MgxcParser(new MgxcParseRequest(masterMgxcPath, assets), new NullMediaTool());
 
-        var result = await parser.ParseAsync();
+        var result = await parser.ParseAsync(TestContext.Current.CancellationToken);
 
         Assert.True(result.Succeeded);
         Assert.NotNull(result.Value);

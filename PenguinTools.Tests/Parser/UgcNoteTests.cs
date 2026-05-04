@@ -12,12 +12,13 @@ public class UgcNoteTests
 
     private static async Task<Chart.Models.umgr.Chart> Parse(string body)
     {
+        var ct = TestContext.Current.CancellationToken;
         var tmp = Path.GetTempFileName() + ".ugc";
-        await File.WriteAllTextAsync(tmp, Header + body);
+        await File.WriteAllTextAsync(tmp, Header + body, ct);
         try
         {
             var r =
-                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
+                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync(ct);
             Assert.True(r.Succeeded, r.ToString());
             return r.Value!;
         }

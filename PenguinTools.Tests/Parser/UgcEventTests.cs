@@ -8,12 +8,13 @@ public class UgcEventTests
 {
     private static async Task<Chart.Models.umgr.Chart> Parse(string ugc)
     {
+        var ct = TestContext.Current.CancellationToken;
         var tmp = Path.GetTempFileName() + ".ugc";
-        await File.WriteAllTextAsync(tmp, ugc);
+        await File.WriteAllTextAsync(tmp, ugc, ct);
         try
         {
             var r =
-                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
+                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync(ct);
             Assert.True(r.Succeeded, r.ToString());
             return r.Value!;
         }

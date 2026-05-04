@@ -14,12 +14,13 @@ public class UgcTilTests
             "@VER\t8\n@TICKS\t480\n" +
             "@BPM\t0'0\t120.0\n@BEAT\t0\t4\t4\n" +
             "@TIL\t3\t0'240\t10000.0\n";
+        var ct = TestContext.Current.CancellationToken;
         var tmp = Path.GetTempFileName() + ".ugc";
-        await File.WriteAllTextAsync(tmp, ugc);
+        await File.WriteAllTextAsync(tmp, ugc, ct);
         try
         {
             var r =
-                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
+                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync(ct);
             Assert.True(r.Succeeded);
             var sse = r.Value!.Events.Children
                 .OfType<ScrollSpeedEvent>()
@@ -40,12 +41,13 @@ public class UgcTilTests
             "@VER\t8\n@TICKS\t480\n" +
             "@BPM\t0'0\t120.0\n@BEAT\t0\t4\t4\n" +
             "@MAINTIL\t2\n";
+        var ct = TestContext.Current.CancellationToken;
         var tmp = Path.GetTempFileName() + ".ugc";
-        await File.WriteAllTextAsync(tmp, ugc);
+        await File.WriteAllTextAsync(tmp, ugc, ct);
         try
         {
             var r =
-                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync();
+                await new UgcParser(new UgcParseRequest(tmp, TestAssets.Load()), TestMediaTool.Instance).ParseAsync(ct);
             Assert.True(r.Succeeded);
             var errors = r.Diagnostics.Diagnostics.Where(d => d.Severity >= Severity.Warning).ToList();
             Assert.DoesNotContain(errors, d => d.Message.Contains("MAINTIL"));

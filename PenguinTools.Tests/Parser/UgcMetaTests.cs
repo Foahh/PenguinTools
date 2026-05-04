@@ -9,14 +9,15 @@ public class UgcMetaTests
 {
     private static async Task<OperationResult<Chart.Models.umgr.Chart>> Parse(string ugc)
     {
+        var ct = TestContext.Current.CancellationToken;
         var tmp = Path.GetTempFileName() + ".ugc";
-        await File.WriteAllTextAsync(tmp, ugc);
+        await File.WriteAllTextAsync(tmp, ugc, ct);
         try
         {
             var parser = new UgcParser(
                 new UgcParseRequest(tmp, TestAssets.Load()),
                 TestMediaTool.Instance);
-            return await parser.ParseAsync();
+            return await parser.ParseAsync(ct);
         }
         finally
         {
