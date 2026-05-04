@@ -19,7 +19,7 @@ public abstract class XmlElement<T>
         var document = XmlDocumentFactory.Create(this);
 
         await using var stream = File.Create(path);
-        await document.SaveAsync(stream, SaveOptions.DisableFormatting, CancellationToken.None);
+        await document.SaveAsync(stream, SaveOptions.None, CancellationToken.None);
         return folder;
     }
 }
