@@ -58,7 +58,7 @@ public static class OptionExporter
         MusicXml? xml = null;
 
         if (settings.ConvertChart || settings.ConvertJacket)
-            (xml, chartFolder) = await CreateMusicXmlAsync(book, stage, outputPaths.AudioFolder);
+            (xml, chartFolder) = await CreateMusicXmlAsync(book, stage, outputPaths.MusicFolder);
 
         if (settings.ConvertChart && xml is not null && chartFolder is not null)
             await ConvertChartsAsync(book, xml, chartFolder, diagnostics, weEntries, ultEntries, ct);
@@ -104,7 +104,7 @@ public static class OptionExporter
     private static async Task<(MusicXml Xml, string ChartFolder)> CreateMusicXmlAsync(
         OptionBookSnapshot book,
         Entry stage,
-        string audioFolder)
+        string musicFolder)
     {
         var metaMap = book.Difficulties.ToDictionary(kv => kv.Key, kv => kv.Value.Meta);
         var xml = new MusicXml(metaMap, book.BookMeta.Difficulty)
@@ -112,7 +112,7 @@ public static class OptionExporter
             StageName = stage
         };
 
-        var chartFolder = await xml.SaveDirectoryAsync(audioFolder);
+        var chartFolder = await xml.SaveDirectoryAsync(musicFolder);
         return (xml, chartFolder);
     }
 

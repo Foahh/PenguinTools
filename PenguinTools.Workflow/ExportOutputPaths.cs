@@ -1,7 +1,7 @@
 namespace PenguinTools.Workflow;
 
 public sealed record ExportOutputPaths(
-    string AudioFolder,
+    string MusicFolder,
     string StageFolder,
     string CueFileFolder,
     string EventFolder,
@@ -18,7 +18,7 @@ public sealed record ExportOutputPaths(
     public static ExportOutputPaths FromOptionDirectory(string rootPath)
     {
         return new ExportOutputPaths(
-            Path.Combine(rootPath, "audio"),
+            Path.Combine(rootPath, "music"),
             Path.Combine(rootPath, "stage"),
             Path.Combine(rootPath, "cueFile"),
             Path.Combine(rootPath, "event"),
