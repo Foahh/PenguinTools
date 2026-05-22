@@ -175,7 +175,7 @@
     <value>Ordered chart formats to scan. Examples: [mgxc, ugc] or [ugc]. Earlier entries win when duplicate charts share the same Song ID and difficulty.</value>
   </data>
     <data name="Description_ReleaseTag" xml:space="preserve">
-    <value>The category written to ReleaseTag.xml.</value>
+    <value>The song category.</value>
   </data>
     <data name="Diagnostic_Button_CopySelected" xml:space="preserve">
     <value>Copy Selected</value>
@@ -322,13 +322,13 @@
     <value>Release Date</value>
   </data>
     <data name="Display_ReleaseTagXml" xml:space="preserve">
-    <value>Generate Category</value>
+    <value>Generate ReleaseTag.xml</value>
   </data>
     <data name="Display_ReleaseTagId" xml:space="preserve">
-    <value>Category ID</value>
+    <value>ReleaseTag ID</value>
   </data>
     <data name="Display_ReleaseTagTitleName" xml:space="preserve">
-    <value>Category Name</value>
+    <value>ReleaseTag Name</value>
   </data>
     <data name="Display_SongId" xml:space="preserve">
     <value>Song ID</value>

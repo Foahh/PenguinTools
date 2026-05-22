@@ -175,7 +175,7 @@
     <value>按顺序扫描的谱面格式列表，例如 [mgxc, ugc] 或 [ugc]。当相同 Song ID 和难度出现重复谱面时，排在前面的格式优先。</value>
   </data>
     <data name="Description_ReleaseTag" xml:space="preserve">
-    <value>写入 ReleaseTag.xml 的分类标签。</value>
+    <value>曲目分类</value>
   </data>
     <data name="Diagnostic_Button_CopySelected" xml:space="preserve">
     <value>复制选中</value>
@@ -322,13 +322,13 @@
     <value>发布时间</value>
   </data>
     <data name="Display_ReleaseTagXml" xml:space="preserve">
-    <value>生成分类</value>
+    <value>生成 ReleaseTag</value>
   </data>
     <data name="Display_ReleaseTagId" xml:space="preserve">
-    <value>分类 ID</value>
+    <value>ReleaseTag ID</value>
   </data>
     <data name="Display_ReleaseTagTitleName" xml:space="preserve">
-    <value>分类名称</value>
+    <value>ReleaseTag 名称</value>
   </data>
     <data name="Display_SongId" xml:space="preserve">
     <value>歌曲 ID</value>
