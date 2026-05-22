@@ -1,12 +1,12 @@
 <Project>
     <PropertyGroup>
-        <Copyright>Copyright (C) 2025 Foahh</Copyright>
+        <Copyright>Copyright (C) 2026 Foahh</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
         <ImplicitUsings>enable</ImplicitUsings>
         <PlatformTarget>x64</PlatformTarget>
-        <Version>1.9.0</Version>
+        <Version>1.10.0</Version>
         <FileVersion>$(Version)</FileVersion>
         <AssemblyVersion>$(Version)</AssemblyVersion>
         <DotNetVersion>net10.0</DotNetVersion>
