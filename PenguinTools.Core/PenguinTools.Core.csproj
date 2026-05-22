@@ -8,8 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Update="Resources\Strings.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-        </EmbeddedResource>
+        <ProjectReference Include="..\PenguinTools.i18n\PenguinTools.i18n.csproj"/>
     </ItemGroup>
 </Project>

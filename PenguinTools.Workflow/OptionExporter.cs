@@ -6,9 +6,9 @@ using PenguinTools.Core.Asset;
 using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Xml;
+using PenguinTools.i18n;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
-using MStrings = PenguinTools.Media.Resources.Strings;
 
 namespace PenguinTools.Workflow;
 
@@ -82,8 +82,8 @@ public static class OptionExporter
     {
         if (!book.IsCustomStage || !settings.ConvertBackground) return null;
         if (string.IsNullOrWhiteSpace(book.BookMeta.FullBgiFilePath))
-            throw new DiagnosticException("Background file path is not set.");
-        if (book.StageId is null) throw new DiagnosticException(MStrings.Error_Stage_id_is_not_set);
+            throw new DiagnosticException(Strings.Error_Background_file_is_not_set);
+        if (book.StageId is null) throw new DiagnosticException(Strings.Error_Stage_id_is_not_set);
 
         var stageConverter = new StageConverter(
             new StageBuildRequest(
@@ -140,7 +140,7 @@ public static class OptionExporter
     {
         foreach (var (difficulty, item) in book.Difficulties)
         {
-            if (item.SongId is not { } songId) throw new DiagnosticException(MStrings.Error_Song_id_is_not_set);
+            if (item.SongId is not { } songId) throw new DiagnosticException(Strings.Error_Song_id_is_not_set);
 
             TrackEventEntry(book, difficulty, songId, weEntries, ultEntries);
 
@@ -169,7 +169,7 @@ public static class OptionExporter
         var jacketPath = book.BookMeta.FullJacketFilePath;
         if (!File.Exists(jacketPath))
         {
-            diagnostics.Report(new PathDiagnostic(Severity.Warning, MStrings.Error_Jacket_file_not_found, jacketPath));
+            diagnostics.Report(new PathDiagnostic(Severity.Warning, Strings.Error_Jacket_file_not_found, jacketPath));
             return;
         }
 

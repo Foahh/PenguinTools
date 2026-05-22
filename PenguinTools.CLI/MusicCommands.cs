@@ -1,4 +1,5 @@
 using System.CommandLine;
+using PenguinTools.i18n;
 
 namespace PenguinTools.CLI;
 
@@ -6,7 +7,7 @@ internal static class MusicCommands
 {
     internal static Command BuildMusicCommand()
     {
-        var command = new Command("music", "Export an MGXC, UGC, or SUS chart with jacket and audio.");
+        var command = new Command("music", Strings.Cli_Cmd_music);
         command.Subcommands.Add(BuildMusicExportCommand());
         return command;
     }
@@ -15,21 +16,20 @@ internal static class MusicCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source chart (.mgxc, .ugc, or .sus)."
+            Description = Strings.Cli_Arg_chart_input
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Base folder for the exported music bundle files."
+            Description = Strings.Cli_Arg_music_output
         };
         var jacketInputOption = new Option<string?>("--jacket-input")
         {
-            Description = "Override the jacket source path used for export."
+            Description = Strings.Cli_Arg_jacket_override
         };
         var audioOptions = CommandLineOptions.CreateAudioCommandOptions();
         var stageOptions = CommandLineOptions.CreateStageCommandOptions();
 
-        var command = new Command("export",
-            "Export chart, jacket, audio, and optional stage/event XML from one MGXC, UGC, or SUS chart.");
+        var command = new Command("export", Strings.Cli_Cmd_music_export);
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         command.Options.Add(jacketInputOption);
@@ -55,7 +55,7 @@ internal static class MusicCommands
                     audioOverrides, stageOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, exported);
                 var data = CliOperations.CreateMusicData(input, output, parsed.Value.Meta, jacketInput, stageOverrides);
-                var message = result.Succeeded ? $"Exported music: {output}" : null;
+                var message = result.Succeeded ? string.Format(Strings.Cli_Msg_exported_music, output) : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
         });

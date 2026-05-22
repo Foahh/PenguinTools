@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\PenguinTools.i18n\PenguinTools.i18n.csproj"/>
         <ProjectReference Include="..\PenguinTools.Chart\PenguinTools.Chart.csproj"/>
         <ProjectReference Include="..\PenguinTools.Infrastructure\PenguinTools.Infrastructure.csproj"/>
     </ItemGroup>

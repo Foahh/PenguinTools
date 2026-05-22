@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Workflow;
 
@@ -74,7 +75,7 @@ public static class ChartFileDiscoveryFormats
 
         if (string.IsNullOrWhiteSpace(text))
         {
-            error = "Specify at least one chart format, for example [mgxc, ugc, sus] or [ugc, sus].";
+            error = Strings.Error_Chart_format_specify_at_least_one;
             return false;
         }
 
@@ -84,7 +85,7 @@ public static class ChartFileDiscoveryFormats
         {
             if (!trimmed.EndsWith(']'))
             {
-                error = "Chart format lists must use matching [ and ] brackets.";
+                error = Strings.Error_Chart_format_brackets_mismatch;
                 return false;
             }
 
@@ -94,7 +95,7 @@ public static class ChartFileDiscoveryFormats
         var tokens = trimmed.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (tokens.Length == 0)
         {
-            error = "Specify at least one chart format, for example [mgxc, ugc, sus] or [ugc, sus].";
+            error = Strings.Error_Chart_format_specify_at_least_one;
             return false;
         }
 
@@ -103,7 +104,7 @@ public static class ChartFileDiscoveryFormats
         {
             if (!TryParseToken(token, out var format))
             {
-                error = $"Unsupported chart format '{token}'. Supported values are mgxc, ugc, and sus.";
+                error = string.Format(Strings.Error_Chart_format_unsupported, token);
                 return false;
             }
 
@@ -165,17 +166,16 @@ public sealed class ChartFileDiscoveryJsonConverter : JsonConverter<List<ChartFi
                 {
                     var token = reader.GetString();
                     if (!ChartFileDiscoveryFormats.TryParseToken(token, out var format))
-                        throw new JsonException(
-                            $"Unsupported chart format '{token}'. Supported values are mgxc, ugc, and sus.");
+                        throw new JsonException(string.Format(Strings.Error_Chart_format_unsupported, token));
 
                     formats.Add(format);
                     continue;
                 }
 
-                throw new JsonException("Chart file discovery must be an array of chart formats.");
+                throw new JsonException(Strings.Error_Chart_discovery_must_be_array);
             }
 
-            throw new JsonException("Chart file discovery array is incomplete.");
+            throw new JsonException(Strings.Error_Chart_discovery_array_incomplete);
         }
 
         if (reader.TokenType == JsonTokenType.String)
@@ -187,7 +187,7 @@ public sealed class ChartFileDiscoveryJsonConverter : JsonConverter<List<ChartFi
             throw new JsonException(error);
         }
 
-        throw new JsonException("chartFileDiscovery must be a chart format list string or array.");
+        throw new JsonException(Strings.Error_Chart_discovery_must_be_string_or_array);
     }
 
     public override void Write(Utf8JsonWriter writer, List<ChartFileFormat> value, JsonSerializerOptions options)

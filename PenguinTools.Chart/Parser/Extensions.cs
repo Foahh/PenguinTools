@@ -1,6 +1,6 @@
-﻿using System.Text;
-using PenguinTools.Chart.Resources;
+using System.Text;
 using PenguinTools.Core.Diagnostic;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Chart.Parser;
 

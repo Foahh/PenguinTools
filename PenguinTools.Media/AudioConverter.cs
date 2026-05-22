@@ -6,7 +6,7 @@ using PenguinTools.Core;
 using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Xml;
-using PenguinTools.Media.Resources;
+using PenguinTools.i18n;
 using SonicAudioLib.Archives;
 using SonicAudioLib.CriMw;
 using VGAudio.Codecs.CriHca;

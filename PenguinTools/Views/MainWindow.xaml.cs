@@ -1,6 +1,6 @@
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using PenguinTools.Resources;
+using PenguinTools.i18n;
 using PenguinTools.ViewModels;
 
 namespace PenguinTools.Views;

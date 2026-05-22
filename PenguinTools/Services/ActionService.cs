@@ -1,8 +1,8 @@
-﻿using System.Media;
+using System.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Core;
 using PenguinTools.Core.Diagnostic;
-using PenguinTools.Resources;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Services;
 

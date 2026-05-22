@@ -1,6 +1,7 @@
 using System.CommandLine;
 using PenguinTools.Core;
 using PenguinTools.Core.Diagnostic;
+using PenguinTools.i18n;
 using PenguinTools.Workflow;
 
 namespace PenguinTools.CLI;
@@ -11,18 +12,17 @@ internal static class ScanCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Directory containing chart files to scan recursively."
+            Description = Strings.Cli_Arg_scan_directory
         };
         var chartFileDiscoveryOption = CommandLineOptions.CreateChartFileDiscoveryOption(
-            "Ordered chart formats to scan, for example [mgxc, ugc, sus] or [ugc, sus].");
+            Strings.Cli_Arg_chart_file_discovery);
         var batchSizeOption = new Option<int>("--batch-size")
         {
-            Description = "Maximum scan concurrency.",
+            Description = Strings.Cli_Opt_batch_size,
             DefaultValueFactory = _ => 8
         };
 
-        var command = new Command("scan",
-            "Scan chart files in a folder.");
+        var command = new Command("scan", Strings.Cli_Cmd_scan);
         command.Arguments.Add(inputArgument);
         command.Options.Add(chartFileDiscoveryOption);
         command.Options.Add(batchSizeOption);
@@ -37,7 +37,8 @@ internal static class ScanCommands
                 if (!Directory.Exists(input))
                     return new CliCommandOutcome(
                         OperationResult.Failure().WithDiagnostics(
-                            CliDiagnostics.SnapshotFromMessage($"Directory not found: {input}")),
+                            CliDiagnostics.SnapshotFromMessage(
+                                string.Format(Strings.Cli_Msg_directory_not_found, input))),
                         Data: new CliCommandData(input));
 
                 if (!CommandLineOptions.TryGetChartFileDiscovery(parseResult, chartFileDiscoveryOption,
@@ -49,7 +50,7 @@ internal static class ScanCommands
                 if (batchSize == 0 || batchSize < -1)
                     return new CliCommandOutcome(
                         OperationResult.Failure().WithDiagnostics(CliDiagnostics.SnapshotFromMessage(
-                            "--batch-size must be -1 or a positive integer.")),
+                            Strings.Cli_Msg_batch_size_invalid)),
                         Data: new CliCommandData(input));
 
                 var resolvedDiscovery = chartFileDiscovery ?? ChartFileDiscoveryFormats.Default;

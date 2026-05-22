@@ -6,6 +6,7 @@ using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
+using PenguinTools.i18n;
 using PenguinTools.Media;
 
 namespace PenguinTools.Workflow;
@@ -225,10 +226,10 @@ public sealed record ChartScannerMessages(
     string NoMainChart)
 {
     public static ChartScannerMessages Default { get; } = new(
-        "scan",
-        "File ignored because song id is missing.",
-        "Duplicate song id and difficulty.",
-        "World's End chart must be the only difficulty for its song id.",
-        "More than one chart is marked as main.",
-        "No chart is marked as main.");
+        Strings.Status_Scan,
+        Strings.Error_File_ignored_due_to_id_missing,
+        Strings.Warn_Duplicate_id_and_difficulty,
+        Strings.Warn_We_chart_must_be_unique_id,
+        Strings.Warn_More_than_one_chart_marked_main,
+        Strings.Warn_No_chart_marked_main);
 }

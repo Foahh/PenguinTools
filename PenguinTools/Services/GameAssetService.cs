@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using Microsoft.Win32;
 using PenguinTools.Core.Asset;
-using PenguinTools.Resources;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Services;
 

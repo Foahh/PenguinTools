@@ -1,5 +1,5 @@
 using PenguinTools.Chart.Models;
-using PenguinTools.Chart.Resources;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Chart.Writer.c2s;
 

@@ -1,6 +1,7 @@
 using System.CommandLine;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.i18n;
 using PenguinTools.Infrastructure;
 
 namespace PenguinTools.CLI;
@@ -9,7 +10,7 @@ internal static class AssetCommands
 {
     internal static Command BuildAssetCommand()
     {
-        var command = new Command("assets", "Asset dictionary utilities.");
+        var command = new Command("assets", Strings.Cli_Cmd_assets);
         command.Subcommands.Add(BuildCollectCommand());
         return command;
     }
@@ -18,13 +19,13 @@ internal static class AssetCommands
     {
         var gameRootArgument = new Argument<string>("game-root")
         {
-            Description =
-                "Directory to scan recursively for Music.xml and Stage.xml (typically the game or data install root)."
+            Description = Strings.Cli_Arg_game_root
         };
 
         var command = new Command(
             "collect",
-            $"Scan game XML and merge entries into {AssetManager.PlusAssetsFileName} under the per-user data directory (see {ApplicationPaths.UserDataEnvironmentVariable}).");
+            string.Format(Strings.Cli_Cmd_assets_collect, AssetManager.PlusAssetsFileName,
+                ApplicationPaths.UserDataEnvironmentVariable));
         command.Arguments.Add(gameRootArgument);
         command.SetAction(async (parseResult, cancellationToken) =>
         {
@@ -36,14 +37,15 @@ internal static class AssetCommands
                 if (!Directory.Exists(gameRoot))
                     return new CliCommandOutcome(
                         OperationResult.Failure().WithDiagnostics(
-                            CliDiagnostics.SnapshotFromMessage($"Directory not found: {gameRoot}")),
-                        $"Directory not found: {gameRoot}");
+                            CliDiagnostics.SnapshotFromMessage(
+                                string.Format(Strings.Cli_Msg_directory_not_found, gameRoot))),
+                        string.Format(Strings.Cli_Msg_directory_not_found, gameRoot));
 
                 await runtime.Assets.CollectAssetsAsync(gameRoot, ct);
                 var writtenPath = runtime.Assets.PlusAssetsPath;
                 return new CliCommandOutcome(
                     OperationResult.Success(),
-                    $"Collected assets and wrote {writtenPath}.",
+                    string.Format(Strings.Cli_Msg_assets_collected, writtenPath),
                     new CliCommandData(gameRoot, writtenPath));
             }, cancellationToken);
         });

@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.Text.Json;
 using PenguinTools.Core;
+using PenguinTools.i18n;
 using PenguinTools.Workflow;
 
 namespace PenguinTools.CLI;
@@ -11,8 +12,7 @@ internal static class OptionCommands
 
     internal static Command BuildOptionCommand()
     {
-        var command = new Command("option",
-            "Export an option bundle from scanned charts, using options.json by default.");
+        var command = new Command("option", Strings.Cli_Cmd_option);
         command.Subcommands.Add(BuildOptionConvertCommand());
         return command;
     }
@@ -21,15 +21,14 @@ internal static class OptionCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Directory containing chart files; includes options.json when --load-json is true (default)."
+            Description = Strings.Cli_Arg_input_directory
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Working directory for export."
+            Description = Strings.Cli_Arg_output_directory
         };
 
-        var command = new Command("convert",
-            "Scan charts and export the option bundle, using options.json by default or CLI configuration when --load-json is false.");
+        var command = new Command("convert", Strings.Cli_Cmd_option_convert);
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         var cliOptions = new OptionConvertCliOptions();
@@ -52,8 +51,9 @@ internal static class OptionCommands
                         return new CliCommandOutcome(
                             OperationResult.Failure()
                                 .WithDiagnostics(
-                                    CliDiagnostics.SnapshotFromMessage($"Missing {OptionsFileName} under: {input}")),
-                            $"Expected {OptionsFileName} in the input directory.");
+                                    CliDiagnostics.SnapshotFromMessage(
+                                        string.Format(Strings.Cli_Msg_missing_options_json, OptionsFileName, input))),
+                            string.Format(Strings.Cli_Msg_expected_options_json, OptionsFileName));
 
                     await using var optionsStream = File.OpenRead(optionsPath);
                     var fromFile = await JsonSerializer.DeserializeAsync<OptionDocument>(optionsStream,
@@ -61,8 +61,9 @@ internal static class OptionCommands
                     if (fromFile is null)
                         return new CliCommandOutcome(
                             OperationResult.Failure()
-                                .WithDiagnostics(CliDiagnostics.SnapshotFromMessage("Failed to read options.json.")),
-                            "Failed to read options.json.");
+                                .WithDiagnostics(
+                                    CliDiagnostics.SnapshotFromMessage(Strings.Cli_Msg_failed_read_options_json)),
+                            Strings.Cli_Msg_failed_read_options_json);
 
                     json = fromFile;
                 }
@@ -72,8 +73,8 @@ internal static class OptionCommands
                     if (string.IsNullOrWhiteSpace(cliOptionName) || cliOptionName.Length != 4)
                         return new CliCommandOutcome(
                             OperationResult.Failure().WithDiagnostics(CliDiagnostics.SnapshotFromMessage(
-                                "With --load-json false, --option-name (exactly four characters) is required.")),
-                            "Provide --option-name with exactly four characters when --load-json is false.");
+                                Strings.Cli_Msg_option_name_required_flag)),
+                            Strings.Cli_Msg_option_name_required);
 
                     json = new OptionDocument();
                 }
@@ -86,8 +87,8 @@ internal static class OptionCommands
                 if (!json.HasExportableWork())
                     return new CliCommandOutcome(
                         OperationResult.Failure().WithDiagnostics(CliDiagnostics.SnapshotFromMessage(
-                            "No export actions are enabled after applying options.json and command-line overrides.")),
-                        "Enable at least one of convert chart, jacket, audio, background, or event XML (in options.json or via CLI overrides).");
+                            Strings.Cli_Msg_no_export_actions_enabled)),
+                        Strings.Cli_Msg_enable_export_action);
 
                 var scanned = await CliOperations.ScanOptionChartsAsync(
                     runtime,
@@ -105,7 +106,7 @@ internal static class OptionCommands
                 if (scanned.Value.Count == 0)
                     return new CliCommandOutcome(
                         OperationResult.Failure().WithDiagnostics(scanned.Diagnostics),
-                        "No charts were found to export.",
+                        Strings.Cli_Msg_no_charts_to_export,
                         new CliCommandData(input, OutputDirectory: output));
 
                 var exportSettings = json.ToExportSettings();
@@ -122,7 +123,9 @@ internal static class OptionCommands
 
                 var result = CliPaths.Merge(scanned.Diagnostics, exported);
 
-                var message = result.Succeeded ? $"Exported option bundle: {bundleRoot}" : null;
+                var message = result.Succeeded
+                    ? string.Format(Strings.Cli_Msg_exported_option_bundle, bundleRoot)
+                    : null;
                 return new CliCommandOutcome(
                     result,
                     message,
@@ -137,74 +140,71 @@ internal static class OptionCommands
     {
         internal Option<bool> LoadJson { get; } = new("--load-json")
         {
-            Description =
-                "When true (default), read options.json from the input directory. When false, skip the file and use defaults plus CLI flags; --option-name is then required.",
+            Description = Strings.Cli_Opt_load_json,
             DefaultValueFactory = _ => true
         };
 
         internal Option<string?> OptionName { get; } = new("--option-name")
         {
-            Description =
-                "Four-letter bundle name. Required when --load-json is false; otherwise overrides options.json optionName."
+            Description = Strings.Cli_Opt_option_name
         };
 
         internal Option<string?> ChartFileDiscovery { get; } =
-            CommandLineOptions.CreateChartFileDiscoveryOption(
-                "Override options.json chartFileDiscovery with an ordered list, for example [mgxc, ugc, sus] or ugc,sus.");
+            CommandLineOptions.CreateChartFileDiscoveryOption(Strings.Cli_Opt_chart_file_discovery);
 
         internal Option<int?> BatchSize { get; } = new("--batch-size")
         {
-            Description = "Override options.json batchSize."
+            Description = Strings.Cli_Opt_json_batch_size
         };
 
         internal Option<bool?> ConvertChart { get; } = new("--convert-chart")
         {
-            Description = "Override options.json convertChart (true or false)."
+            Description = Strings.Cli_Opt_convert_chart
         };
 
         internal Option<bool?> ConvertAudio { get; } = new("--convert-audio")
         {
-            Description = "Override options.json convertAudio (true or false)."
+            Description = Strings.Cli_Opt_convert_audio
         };
 
         internal Option<bool?> ConvertJacket { get; } = new("--convert-jacket")
         {
-            Description = "Override options.json convertJacket (true or false)."
+            Description = Strings.Cli_Opt_convert_jacket
         };
 
         internal Option<bool?> ConvertBackground { get; } = new("--convert-background")
         {
-            Description = "Override options.json convertBackground (true or false)."
+            Description = Strings.Cli_Opt_convert_background
         };
 
         internal Option<bool?> GenerateEventXml { get; } = new("--generate-event-xml")
         {
-            Description = "Override options.json generateEventXml (true or false)."
+            Description = Strings.Cli_Opt_generate_event_xml
         };
 
         internal Option<bool?> GenerateReleaseTagXml { get; } = new("--generate-release-tag-xml")
         {
-            Description = "Override options.json generateReleaseTagXml (true or false)."
+            Description = Strings.Cli_Opt_generate_release_tag_xml
         };
 
         internal Option<int?> ReleaseTagId { get; } = new("--release-tag-id")
         {
-            Description = "Override options.json releaseTagId."
+            Description = Strings.Cli_Opt_release_tag_id
         };
 
         internal Option<string?> ReleaseTagTitleName { get; } = new("--release-tag-title-name")
         {
-            Description = "Override options.json releaseTagTitleName."
+            Description = Strings.Cli_Opt_release_tag_title_name
         };
 
         internal Option<int?> UltimaEventId { get; } = new("--ultima-event-id")
         {
-            Description = "Override options.json ultimaEventId."
+            Description = Strings.Cli_Opt_ultima_event_id
         };
 
         internal Option<int?> WeEventId { get; } = new("--we-event-id")
         {
-            Description = "Override options.json weEventId."
+            Description = Strings.Cli_Opt_we_event_id
         };
 
         internal void AddTo(Command command)
@@ -229,7 +229,7 @@ internal static class OptionCommands
         {
             if (parseResult.GetValue(OptionName) is { Length: > 0 } optionName)
             {
-                if (optionName.Length != 4) return "--option-name must be exactly four characters.";
+                if (optionName.Length != 4) return Strings.Error_Option_name_four_characters;
 
                 document.OptionName = optionName;
             }

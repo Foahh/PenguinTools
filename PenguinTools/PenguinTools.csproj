@@ -33,6 +33,7 @@
         <ProjectReference Include="..\PenguinTools.Chart\PenguinTools.Chart.csproj"/>
         <ProjectReference Include="..\PenguinTools.Media\PenguinTools.Media.csproj"/>
         <ProjectReference Include="..\PenguinTools.Workflow\PenguinTools.Workflow.csproj"/>
+        <ProjectReference Include="..\PenguinTools.i18n\PenguinTools.i18n.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -57,12 +58,6 @@
             <XamlRuntime>Wpf</XamlRuntime>
             <SubType>Designer</SubType>
         </Page>
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Update="Resources\Strings.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-        </EmbeddedResource>
     </ItemGroup>
 
     <PropertyGroup>

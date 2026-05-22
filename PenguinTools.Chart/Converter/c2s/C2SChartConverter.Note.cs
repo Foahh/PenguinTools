@@ -1,5 +1,5 @@
-using PenguinTools.Chart.Resources;
 using PenguinTools.Core.Diagnostic;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Chart.Converter.c2s;
 

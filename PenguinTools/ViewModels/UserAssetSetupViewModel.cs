@@ -1,7 +1,7 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PenguinTools.Resources;
+using PenguinTools.i18n;
 using PenguinTools.Services;
 
 namespace PenguinTools.ViewModels;

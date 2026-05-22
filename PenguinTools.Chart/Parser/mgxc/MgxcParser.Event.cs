@@ -1,4 +1,4 @@
-﻿using PenguinTools.Chart.Resources;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Chart.Parser.mgxc;
 

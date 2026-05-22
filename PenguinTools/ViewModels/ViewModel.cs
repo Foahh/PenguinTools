@@ -6,10 +6,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.i18n;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using PenguinTools.Models;
-using PenguinTools.Resources;
 using PenguinTools.Services;
 
 namespace PenguinTools.ViewModels;

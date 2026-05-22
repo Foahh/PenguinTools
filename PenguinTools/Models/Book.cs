@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using PenguinTools.Attributes;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
-using PenguinTools.Resources;
+using PenguinTools.i18n;
 using Swordfish.NET.Collections;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using umgr = PenguinTools.Chart.Models.umgr;

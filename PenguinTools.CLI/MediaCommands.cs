@@ -1,4 +1,5 @@
 using System.CommandLine;
+using PenguinTools.i18n;
 using PenguinTools.Media;
 
 namespace PenguinTools.CLI;
@@ -7,7 +8,7 @@ internal static class MediaCommands
 {
     internal static Command BuildMediaCommand()
     {
-        var command = new Command("media", "Media conversion utilities.");
+        var command = new Command("media", Strings.Cli_Cmd_media);
         command.Subcommands.Add(BuildJacketCommand());
         command.Subcommands.Add(BuildAudioCommand());
         command.Subcommands.Add(BuildStageCommand());
@@ -19,18 +20,18 @@ internal static class MediaCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source chart (.mgxc, .ugc, or .sus)."
+            Description = Strings.Cli_Arg_chart_input
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Path to the output jacket file."
+            Description = Strings.Cli_Arg_jacket_output
         };
         var jacketInputOption = new Option<string?>("--jacket-input")
         {
-            Description = "Override the jacket source path instead of using the path from the chart metadata."
+            Description = Strings.Cli_Arg_jacket_override_chart
         };
 
-        var command = new Command("jacket", "Convert the jacket referenced by a chart.");
+        var command = new Command("jacket", Strings.Cli_Cmd_media_jacket);
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         command.Options.Add(jacketInputOption);
@@ -54,7 +55,7 @@ internal static class MediaCommands
                     runtime.MediaTool).ConvertAsync(ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, converted);
                 var data = CliOperations.CreateJacketData(input, output, sourcePath, parsed.Value.Meta);
-                var message = result.Succeeded ? $"Wrote jacket: {output}" : null;
+                var message = result.Succeeded ? string.Format(Strings.Cli_Msg_jacket_written, output) : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
         });
@@ -66,15 +67,15 @@ internal static class MediaCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source chart (.mgxc, .ugc, or .sus)."
+            Description = Strings.Cli_Arg_chart_input
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Base folder for cue file export."
+            Description = Strings.Cli_Arg_stage_audio_output
         };
         var audioOptions = CommandLineOptions.CreateAudioCommandOptions();
 
-        var command = new Command("audio", "Convert the audio referenced by a chart into ACB/AWB assets.");
+        var command = new Command("audio", Strings.Cli_Cmd_media_audio);
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         CommandLineOptions.AddAudioCommandOptions(command, audioOptions);
@@ -96,7 +97,7 @@ internal static class MediaCommands
                     await CliOperations.ConvertAudioAsync(runtime, parsed.Value.Meta, output, audioOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, converted);
                 var data = CliOperations.CreateAudioData(input, output, parsed.Value.Meta);
-                var message = result.Succeeded ? $"Exported audio assets: {output}" : null;
+                var message = result.Succeeded ? string.Format(Strings.Cli_Msg_audio_exported, output) : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
         });
@@ -108,15 +109,15 @@ internal static class MediaCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source chart (.mgxc, .ugc, or .sus)."
+            Description = Strings.Cli_Arg_chart_input
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Base folder for stage export."
+            Description = Strings.Cli_Arg_stage_output
         };
         var stageOptions = CommandLineOptions.CreateStageCommandOptions();
 
-        var command = new Command("stage", "Build the custom stage referenced by a chart.");
+        var command = new Command("stage", Strings.Cli_Cmd_media_stage);
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         CommandLineOptions.AddStageCommandOptions(command, stageOptions);
@@ -137,7 +138,9 @@ internal static class MediaCommands
                 var built = await CliOperations.BuildStageAsync(runtime, parsed.Value.Meta, output, stageOverrides, ct);
                 var result = CliPaths.Merge(parsed.Diagnostics, built.ToResult());
                 var data = CliOperations.CreateStageData(input, output, parsed.Value.Meta, stageOverrides);
-                var message = result.Succeeded && built.Value is not null ? $"Built stage: {built.Value}" : null;
+                var message = result.Succeeded && built.Value is not null
+                    ? string.Format(Strings.Cli_Msg_built_stage, built.Value)
+                    : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
         });
@@ -149,14 +152,14 @@ internal static class MediaCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source .afb file."
+            Description = Strings.Cli_Arg_source_afb
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Folder to extract DDS files into."
+            Description = Strings.Cli_Arg_texture_output
         };
 
-        var command = new Command("extract-afb", "Extract DDS textures from an AFB archive.");
+        var command = new Command("extract-afb", Strings.Cli_Cmd_media_extract_afb);
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         command.SetAction(async (parseResult, cancellationToken) =>
@@ -172,7 +175,7 @@ internal static class MediaCommands
                 var data = extracted.Succeeded
                     ? CliOperations.CreateExtractAfbData(input, output)
                     : new CliCommandData(input, OutputDirectory: output, SourcePath: input);
-                var message = extracted.Succeeded ? $"Extracted DDS files: {output}" : null;
+                var message = extracted.Succeeded ? string.Format(Strings.Cli_Msg_extracted_dds, output) : null;
                 return new CliCommandOutcome(extracted, message, data);
             }, cancellationToken);
         });

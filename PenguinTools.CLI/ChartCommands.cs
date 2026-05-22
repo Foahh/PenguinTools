@@ -2,6 +2,7 @@ using System.CommandLine;
 using PenguinTools.Chart.Converter.c2s;
 using PenguinTools.Chart.Writer.c2s;
 using PenguinTools.Core;
+using PenguinTools.i18n;
 
 namespace PenguinTools.CLI;
 
@@ -9,7 +10,7 @@ internal static class ChartCommands
 {
     internal static Command BuildChartCommand()
     {
-        var command = new Command("chart", "Chart parsing and conversion commands.");
+        var command = new Command("chart", Strings.Cli_Cmd_chart);
         command.Subcommands.Add(BuildChartConvertCommand());
         return command;
     }
@@ -18,14 +19,14 @@ internal static class ChartCommands
     {
         var inputArgument = new Argument<string>("input")
         {
-            Description = "Path to the source chart (.mgxc, .ugc, or .sus)."
+            Description = Strings.Cli_Arg_chart_input
         };
         var outputArgument = new Argument<string>("output")
         {
-            Description = "Path to the output .c2s file."
+            Description = Strings.Cli_Arg_chart_output_c2s
         };
 
-        var command = new Command("convert", "Convert an MGXC, UGC, or SUS chart into a C2S chart file.");
+        var command = new Command("convert", Strings.Cli_Cmd_chart_convert);
         command.Arguments.Add(inputArgument);
         command.Arguments.Add(outputArgument);
         command.SetAction(async (parseResult, cancellationToken) =>
@@ -52,7 +53,7 @@ internal static class ChartCommands
                 var written = await new C2SChartWriter(new C2SWriteRequest(output, converted.Value)).WriteAsync(ct);
                 var result = CliPaths.Merge(parsed.Diagnostics.Merge(converted.Diagnostics), written);
                 var data = CliOperations.CreateChartConvertData(input, output, parsed.Value.Meta);
-                var message = result.Succeeded ? $"Wrote chart: {output}" : null;
+                var message = result.Succeeded ? string.Format(Strings.Cli_Msg_chart_written, output) : null;
                 return new CliCommandOutcome(result, message, data);
             }, cancellationToken);
         });

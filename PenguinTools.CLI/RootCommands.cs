@@ -1,4 +1,5 @@
 using System.CommandLine;
+using PenguinTools.i18n;
 
 namespace PenguinTools.CLI;
 
@@ -6,17 +7,17 @@ internal static class RootCommands
 {
     private static readonly Option<CliOutputFormat> OutputFormatOption = new("--format", "--output-format")
     {
-        Description = "Set the CLI output format. Defaults to json."
+        Description = Strings.Cli_Opt_output_format
     };
 
     private static readonly Option<bool> NoPrettyOption = new("--no-pretty")
     {
-        Description = "Emit compact JSON instead of pretty-printed JSON."
+        Description = Strings.Cli_Opt_compact_json
     };
 
     internal static RootCommand BuildRootCommand()
     {
-        var rootCommand = new RootCommand("Command-line tools for chart conversion and asset export.");
+        var rootCommand = new RootCommand(Strings.Cli_Root_description);
         rootCommand.Options.Add(OutputFormatOption);
         rootCommand.Options.Add(NoPrettyOption);
         rootCommand.Subcommands.Add(ScanCommands.BuildScanCommand());

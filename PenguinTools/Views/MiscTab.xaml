@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     MaxWidth="600"
     d:DataContext="{d:DesignInstance Type=viewModels:MiscViewModel}"
     mc:Ignorable="d"
@@ -8,7 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:PenguinTools"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:res="clr-namespace:PenguinTools.Resources"
+    xmlns:res="clr-namespace:PenguinTools.i18n;assembly=PenguinTools.i18n"
     xmlns:shell="clr-namespace:PenguinTools.Controls"
     xmlns:viewModels="clr-namespace:PenguinTools.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">

@@ -1,5 +1,5 @@
 using System.Windows;
-using PenguinTools.Resources;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Views;
 

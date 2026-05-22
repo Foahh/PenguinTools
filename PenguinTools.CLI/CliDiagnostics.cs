@@ -1,4 +1,5 @@
 using PenguinTools.Core.Diagnostic;
+using PenguinTools.i18n;
 using PenguinTools.Media;
 
 namespace PenguinTools.CLI;
@@ -62,10 +63,10 @@ internal static class CliDiagnostics
     {
         var severity = diagnostic.Severity switch
         {
-            Severity.Information => "info",
-            Severity.Warning => "warning",
-            Severity.Error => "error",
-            _ => "diagnostic"
+            Severity.Information => Strings.Cli_Diag_info,
+            Severity.Warning => Strings.Cli_Diag_warning,
+            Severity.Error => Strings.Cli_Diag_error,
+            _ => Strings.Cli_Diag_diagnostic
         };
 
         var details = new List<string>();
@@ -118,10 +119,10 @@ internal static class CliDiagnostics
     {
         return severity switch
         {
-            Severity.Information => "info",
-            Severity.Warning => "warning",
-            Severity.Error => "error",
-            _ => "diagnostic"
+            Severity.Information => Strings.Cli_Diag_info,
+            Severity.Warning => Strings.Cli_Diag_warning,
+            Severity.Error => Strings.Cli_Diag_error,
+            _ => Strings.Cli_Diag_diagnostic
         };
     }
 }

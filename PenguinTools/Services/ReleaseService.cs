@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Services;
 
@@ -23,7 +24,7 @@ public class GitHubReleaseService : IReleaseService
     {
         var response = await _httpClient.GetAsync("https://api.github.com/repos/Foahh/PenguinTools/releases/latest");
         if (!response.IsSuccessStatusCode)
-            throw new OperationCanceledException("Could not retrieve release information from GitHub.");
+            throw new OperationCanceledException(Strings.Error_Release_github_failed);
 
         var jsonContent = await response.Content.ReadAsStringAsync();
 
@@ -35,9 +36,9 @@ public class GitHubReleaseService : IReleaseService
         if (!string.IsNullOrWhiteSpace(tagName) && tagName.StartsWith("v", StringComparison.OrdinalIgnoreCase))
             tagName = tagName[1..];
         if (!Version.TryParse(tagName, out var version))
-            throw new OperationCanceledException("The release version string is not in a valid format.");
+            throw new OperationCanceledException(Strings.Error_Release_version_invalid);
         if (string.IsNullOrWhiteSpace(htmlUrl))
-            throw new OperationCanceledException("The release URL is not in a valid format.");
+            throw new OperationCanceledException(Strings.Error_Release_url_invalid);
 
         return (version, htmlUrl);
     }

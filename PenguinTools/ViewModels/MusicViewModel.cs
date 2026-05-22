@@ -4,10 +4,10 @@ using PenguinTools.Chart.Parser.ugc;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Diagnostic;
+using PenguinTools.i18n;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using PenguinTools.Models;
-using PenguinTools.Resources;
 using PenguinTools.Services;
 
 namespace PenguinTools.ViewModels;

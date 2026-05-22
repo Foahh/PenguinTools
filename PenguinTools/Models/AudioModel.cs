@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using PenguinTools.Attributes;
 using PenguinTools.Core.Metadata;
-using PenguinTools.Resources;
+using PenguinTools.i18n;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace PenguinTools.Models;

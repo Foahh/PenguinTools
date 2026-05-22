@@ -6,7 +6,7 @@ using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PenguinTools.Core.Diagnostic;
-using PenguinTools.Resources;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Views;
 

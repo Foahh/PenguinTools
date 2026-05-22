@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Attributes;
 using PenguinTools.Core.Xml;
-using PenguinTools.Resources;
+using PenguinTools.i18n;
 using PenguinTools.Workflow;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 

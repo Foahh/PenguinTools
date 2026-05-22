@@ -5,6 +5,7 @@ using PenguinTools.Core.Asset;
 using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Xml;
+using PenguinTools.i18n;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 using umgr = PenguinTools.Chart.Models.umgr;
@@ -32,7 +33,7 @@ public static class MusicExporter
     {
         var backgroundPath = overrides.BackgroundPath ?? meta.FullBgiFilePath;
         if (string.IsNullOrWhiteSpace(backgroundPath))
-            return MusicPaths.CreateFailureResultOf<Entry>("A background path is required to build a stage.");
+            return MusicPaths.CreateFailureResultOf<Entry>(Strings.Error_Stage_background_required);
 
         var noteFieldLane = MusicPaths.CreateEntry(
             meta.NotesFieldLine,

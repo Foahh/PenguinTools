@@ -16,7 +16,7 @@
     xmlns:diagnostic="clr-namespace:PenguinTools.Core.Diagnostic;assembly=PenguinTools.Core"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:res="clr-namespace:PenguinTools.Resources"
+    xmlns:res="clr-namespace:PenguinTools.i18n;assembly=PenguinTools.i18n"
     xmlns:views="clr-namespace:PenguinTools.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 

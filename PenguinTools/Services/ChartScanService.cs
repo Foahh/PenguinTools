@@ -1,8 +1,8 @@
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
+using PenguinTools.i18n;
 using PenguinTools.Media;
 using PenguinTools.Models;
-using PenguinTools.Resources;
 using PenguinTools.Workflow;
 
 namespace PenguinTools.Services;

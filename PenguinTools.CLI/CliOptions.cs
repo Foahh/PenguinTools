@@ -1,4 +1,5 @@
 using System.CommandLine;
+using PenguinTools.i18n;
 using PenguinTools.Workflow;
 
 namespace PenguinTools.CLI;
@@ -39,15 +40,15 @@ internal static class CommandLineOptions
         return new AudioCommandOptions(
             new Option<string?>("--dummy-acb")
             {
-                Description = "Override the dummy ACB template path."
+                Description = Strings.Cli_Opt_dummy_acb
             },
             new Option<string?>("--working-audio")
             {
-                Description = "Override the intermediate WAV path used during audio conversion."
+                Description = Strings.Cli_Opt_working_audio
             },
             new Option<ulong?>("--hca-key")
             {
-                Description = "Override the HCA encryption key."
+                Description = Strings.Cli_Opt_hca_key
             });
     }
 
@@ -71,47 +72,47 @@ internal static class CommandLineOptions
         return new StageCommandOptions(
             new Option<string?>("--background")
             {
-                Description = "Override the stage background image path."
+                Description = Strings.Cli_Opt_stage_background
             },
             new Option<string?>("--effect-1")
             {
-                Description = "Optional first stage effect image path."
+                Description = Strings.Cli_Opt_effect_1
             },
             new Option<string?>("--effect-2")
             {
-                Description = "Optional second stage effect image path."
+                Description = Strings.Cli_Opt_effect_2
             },
             new Option<string?>("--effect-3")
             {
-                Description = "Optional third stage effect image path."
+                Description = Strings.Cli_Opt_effect_3
             },
             new Option<string?>("--effect-4")
             {
-                Description = "Optional fourth stage effect image path."
+                Description = Strings.Cli_Opt_effect_4
             },
             new Option<int?>("--stage-id")
             {
-                Description = "Override the custom stage ID."
+                Description = Strings.Cli_Opt_stage_id
             },
             new Option<int?>("--notes-field-line-id")
             {
-                Description = "Override the notes field line entry ID."
+                Description = Strings.Cli_Opt_notes_field_line_id
             },
             new Option<string?>("--notes-field-line-name")
             {
-                Description = "Override the notes field line entry name."
+                Description = Strings.Cli_Opt_notes_field_line_name
             },
             new Option<string?>("--notes-field-line-data")
             {
-                Description = "Override the notes field line entry data value."
+                Description = Strings.Cli_Opt_notes_field_line_data
             },
             new Option<string?>("--stage-template")
             {
-                Description = "Override the stage template AFB path."
+                Description = Strings.Cli_Opt_stage_template
             },
             new Option<string?>("--notes-field-template")
             {
-                Description = "Override the notes field template AFB path."
+                Description = Strings.Cli_Opt_notes_field_template
             });
     }
 

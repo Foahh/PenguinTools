@@ -1,8 +1,8 @@
-﻿using PenguinTools.Core;
+using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Xml;
-using PenguinTools.Media.Resources;
+using PenguinTools.i18n;
 
 namespace PenguinTools.Media;
 

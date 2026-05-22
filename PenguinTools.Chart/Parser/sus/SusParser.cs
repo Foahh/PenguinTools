@@ -1,10 +1,10 @@
 using System.Globalization;
 using PenguinTools.Chart.Models;
-using PenguinTools.Chart.Resources;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
+using PenguinTools.i18n;
 using PenguinTools.Media;
 
 namespace PenguinTools.Chart.Parser.sus;
@@ -517,7 +517,8 @@ public sealed class SusParser
         {
             if (!_bpmDefinitions.TryGetValue(change.Token, out var bpm))
             {
-                ReportAtLine(Severity.Warning, $"SUS BPM definition '{change.Token}' was not found.", change.Line);
+                ReportAtLine(Severity.Warning, string.Format(Strings.Sus_Bpm_definition_not_found, change.Token),
+                    change.Line);
                 continue;
             }
 
@@ -556,7 +557,8 @@ public sealed class SusParser
 
             if (note == null)
             {
-                ReportAtLine(Severity.Information, $"Unsupported SUS TAP point type '{point.Kind}'.", point.Line,
+                ReportAtLine(Severity.Information, string.Format(Strings.Sus_Unsupported_tap_point_type, point.Kind),
+                    point.Line,
                     timing.ToTick(point.Measure, point.Index, point.Count));
                 continue;
             }
@@ -592,7 +594,7 @@ public sealed class SusParser
                     case 3:
                         if (active == null)
                         {
-                            ReportAtLine(Severity.Warning, "SUS HOLD joint was ignored because no HOLD start was active.",
+                            ReportAtLine(Severity.Warning, Strings.Sus_Hold_joint_ignored,
                                 point.Line, point.Tick);
                             break;
                         }
@@ -606,7 +608,8 @@ public sealed class SusParser
                         if (point.Kind == 2) active = null;
                         break;
                     default:
-                        ReportAtLine(Severity.Information, $"Unsupported SUS HOLD point type '{point.Kind}'.", point.Line,
+                        ReportAtLine(Severity.Information,
+                            string.Format(Strings.Sus_Unsupported_hold_point_type, point.Kind), point.Line,
                             point.Tick);
                         break;
                 }
@@ -640,7 +643,7 @@ public sealed class SusParser
                         if (active == null)
                         {
                             ReportAtLine(Severity.Warning,
-                                "SUS SLIDE joint was ignored because no SLIDE start was active.", point.Line,
+                                Strings.Sus_Slide_joint_ignored, point.Line,
                                 point.Tick);
                             break;
                         }
@@ -657,7 +660,8 @@ public sealed class SusParser
                         if (point.Kind == 2) active = null;
                         break;
                     default:
-                        ReportAtLine(Severity.Information, $"Unsupported SUS SLIDE point type '{point.Kind}'.",
+                        ReportAtLine(Severity.Information,
+                            string.Format(Strings.Sus_Unsupported_slide_point_type, point.Kind),
                             point.Line, point.Tick);
                         break;
                 }
@@ -674,7 +678,7 @@ public sealed class SusParser
             var pairPositive = FindPairPositive(tick, point.Lane, point.Width);
             if (pairPositive == null)
             {
-                ReportAtLine(Severity.Warning, "SUS AIR note was ignored because no compatible parent note exists.",
+                ReportAtLine(Severity.Warning, Strings.Sus_Air_note_ignored,
                     point.Line, tick);
                 continue;
             }
@@ -717,7 +721,7 @@ public sealed class SusParser
                         if (pairPositive == null)
                         {
                             ReportAtLine(Severity.Warning,
-                                "SUS AIR-HOLD was ignored because no compatible parent note exists.", point.Line,
+                                Strings.Sus_Air_hold_ignored, point.Line,
                                 point.Tick);
                             active = null;
                             break;
@@ -745,7 +749,7 @@ public sealed class SusParser
                         if (active == null)
                         {
                             ReportAtLine(Severity.Warning,
-                                "SUS AIR-HOLD joint was ignored because no AIR-HOLD start was active.", point.Line,
+                                Strings.Sus_Air_hold_joint_ignored, point.Line,
                                 point.Tick);
                             break;
                         }
@@ -763,7 +767,8 @@ public sealed class SusParser
                         if (point.Kind == 2) active = null;
                         break;
                     default:
-                        ReportAtLine(Severity.Information, $"Unsupported SUS AIR-HOLD point type '{point.Kind}'.",
+                        ReportAtLine(Severity.Information,
+                            string.Format(Strings.Sus_Unsupported_air_hold_point_type, point.Kind),
                             point.Line, point.Tick);
                         break;
                 }
@@ -879,7 +884,7 @@ public sealed class SusParser
 
     private void WarnMalformedLine(int lineNumber, string value)
     {
-        ReportAtLine(Severity.Warning, $"Malformed SUS line or payload: {value}", lineNumber);
+        ReportAtLine(Severity.Warning, string.Format(Strings.Sus_Malformed_line, value), lineNumber);
     }
 
     private void ReportAtLine(Severity severity, string message, int lineNumber, object? target = null)

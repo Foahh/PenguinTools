@@ -7,6 +7,7 @@ using PenguinTools.Core.Asset;
 using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Xml;
+using PenguinTools.i18n;
 using PenguinTools.Workflow;
 using umgr = PenguinTools.Chart.Models.umgr;
 
@@ -30,8 +31,8 @@ internal static class CliOperations
         catch (OperationCanceledException)
         {
             outcome = new CliCommandOutcome(
-                OperationResult.Failure().WithDiagnostics(CreateErrorSnapshot("operation cancelled")),
-                "Operation cancelled.");
+                OperationResult.Failure().WithDiagnostics(CreateErrorSnapshot(Strings.Cli_Msg_operation_cancelled)),
+                Strings.Cli_Msg_operation_cancelled);
         }
         catch (Exception ex)
         {
@@ -52,7 +53,7 @@ internal static class CliOperations
 
         return new CliCommandOutcome(
             OperationResult.Failure().WithDiagnostics(sink),
-            "Command-line parsing failed.");
+            Strings.Cli_Msg_command_line_parsing_failed);
     }
 
     internal static async Task<OperationResult<umgr.Chart>> ParseChartAsync(
@@ -61,7 +62,8 @@ internal static class CliOperations
         CancellationToken cancellationToken)
     {
         if (!File.Exists(input))
-            return CliPaths.CreateFailureResultOf<umgr.Chart>($"Chart file not found: {input}", input);
+            return CliPaths.CreateFailureResultOf<umgr.Chart>(
+                string.Format(Strings.Cli_Msg_chart_file_not_found, input), input);
 
         var ext = Path.GetExtension(input);
         if (string.Equals(ext, ".ugc", StringComparison.OrdinalIgnoreCase))
@@ -77,7 +79,7 @@ internal static class CliOperations
                 cancellationToken);
 
         return CliPaths.CreateFailureResultOf<umgr.Chart>(
-            $"Expected a .mgxc, .ugc, or .sus chart file. Got extension: \"{ext}\".",
+            string.Format(Strings.Cli_Msg_chart_extension_invalid, ext),
             input);
     }
 
