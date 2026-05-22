@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Attributes;
+using PenguinTools.Core.Xml;
 using PenguinTools.Resources;
 using PenguinTools.Workflow;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
@@ -76,19 +77,34 @@ public partial class OptionModel : Model, IPersistable
     [ObservableProperty]
     [PropertyOrder(8)]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableDisplayName(nameof(Strings.Display_ReleaseTagId), typeof(Strings))]
+    [LocalizableDescription(nameof(Strings.Description_ReleaseTag), typeof(Strings))]
+    [Range(0, int.MaxValue)]
+    public partial int ReleaseTagId { get; set; } = ReleaseTag.DefaultId;
+
+    [ObservableProperty]
+    [PropertyOrder(9)]
+    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableDisplayName(nameof(Strings.Display_ReleaseTagTitleName), typeof(Strings))]
+    [LocalizableDescription(nameof(Strings.Description_ReleaseTag), typeof(Strings))]
+    public partial string ReleaseTagTitleName { get; set; } = ReleaseTag.DefaultTitleName;
+
+    [ObservableProperty]
+    [PropertyOrder(10)]
+    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_UltimaEventId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_UnlockEventIDOption), typeof(Strings))]
     public partial int UltimaEventId { get; set; } = 1000001;
 
     [ObservableProperty]
-    [PropertyOrder(9)]
+    [PropertyOrder(11)]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_WeEventId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_UnlockEventIDOption), typeof(Strings))]
     public partial int WeEventId { get; set; } = 1000002;
 
     [ObservableProperty]
-    [PropertyOrder(10)]
+    [PropertyOrder(12)]
     [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_BatchSize), typeof(Strings))]
     [Range(-1, int.MaxValue)]
@@ -141,6 +157,8 @@ public partial class OptionModel : Model, IPersistable
         ConvertBackground = document.ConvertBackground;
         GenerateEventXml = document.GenerateEventXml;
         GenerateReleaseTagXml = document.GenerateReleaseTagXml;
+        ReleaseTagId = document.ReleaseTagId;
+        ReleaseTagTitleName = document.ReleaseTagTitleName;
         UltimaEventId = document.UltimaEventId;
         WeEventId = document.WeEventId;
         BatchSize = document.BatchSize;
@@ -164,6 +182,8 @@ public partial class OptionModel : Model, IPersistable
             ConvertBackground = ConvertBackground,
             GenerateEventXml = GenerateEventXml,
             GenerateReleaseTagXml = GenerateReleaseTagXml,
+            ReleaseTagId = ReleaseTagId,
+            ReleaseTagTitleName = ReleaseTagTitleName,
             UltimaEventId = UltimaEventId,
             WeEventId = WeEventId,
             BatchSize = BatchSize

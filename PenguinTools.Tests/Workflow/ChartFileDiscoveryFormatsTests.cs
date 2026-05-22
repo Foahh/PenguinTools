@@ -1,4 +1,5 @@
 using System.Text.Json;
+using PenguinTools.Core.Xml;
 using PenguinTools.Workflow;
 using Xunit;
 
@@ -46,6 +47,15 @@ public class ChartFileDiscoveryFormatsTests
         var document = new OptionDocument();
 
         Assert.False(string.IsNullOrWhiteSpace(document.OptionId));
+    }
+
+    [Fact]
+    public void OptionDocument_DefaultsReleaseTagSettings()
+    {
+        var document = new OptionDocument();
+
+        Assert.Equal(ReleaseTag.DefaultId, document.ReleaseTagId);
+        Assert.Equal(ReleaseTag.DefaultTitleName, document.ReleaseTagTitleName);
     }
 
     [Fact]
@@ -118,5 +128,21 @@ public class ChartFileDiscoveryFormatsTests
         var json = JsonSerializer.Serialize(document, OptionDocumentJson.Default);
 
         Assert.Contains("\"optionId\": \"T001\"", json);
+    }
+
+    [Fact]
+    public void OptionDocumentJson_WritesReleaseTagSettings()
+    {
+        var document = new OptionDocument
+        {
+            OptionName = "TEST",
+            ReleaseTagId = 123,
+            ReleaseTagTitleName = "My Pack"
+        };
+
+        var json = JsonSerializer.Serialize(document, OptionDocumentJson.Default);
+
+        Assert.Contains("\"releaseTagId\": 123", json);
+        Assert.Contains("\"releaseTagTitleName\": \"My Pack\"", json);
     }
 }

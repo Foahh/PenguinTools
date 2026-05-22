@@ -108,6 +108,9 @@ public class Strings
     public static string Description_ChartFileDiscovery =>
         ResourceManager.GetString(nameof(Description_ChartFileDiscovery), Culture) ?? string.Empty;
 
+    public static string Description_ReleaseTag =>
+        ResourceManager.GetString(nameof(Description_ReleaseTag), Culture) ?? string.Empty;
+
     public static string Diagnostic_Button_CopySelected =>
         ResourceManager.GetString(nameof(Diagnostic_Button_CopySelected), Culture) ?? string.Empty;
 
@@ -249,6 +252,12 @@ public class Strings
 
     public static string Display_ReleaseTagXml =>
         ResourceManager.GetString(nameof(Display_ReleaseTagXml), Culture) ?? string.Empty;
+
+    public static string Display_ReleaseTagId =>
+        ResourceManager.GetString(nameof(Display_ReleaseTagId), Culture) ?? string.Empty;
+
+    public static string Display_ReleaseTagTitleName =>
+        ResourceManager.GetString(nameof(Display_ReleaseTagTitleName), Culture) ?? string.Empty;
 
     public static string Display_SongId => ResourceManager.GetString(nameof(Display_SongId), Culture) ?? string.Empty;
 

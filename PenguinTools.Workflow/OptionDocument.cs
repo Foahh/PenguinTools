@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using PenguinTools.Core.Xml;
 
 namespace PenguinTools.Workflow;
 
@@ -29,6 +30,14 @@ public sealed class OptionDocument
 
     public bool GenerateReleaseTagXml { get; set; } = true;
 
+    public int ReleaseTagId { get; set; } = ReleaseTag.DefaultId;
+
+    public string ReleaseTagTitleName
+    {
+        get => string.IsNullOrWhiteSpace(field) ? ReleaseTag.DefaultTitleName : field;
+        set => field = string.IsNullOrWhiteSpace(value) ? ReleaseTag.DefaultTitleName : value.Trim();
+    } = ReleaseTag.DefaultTitleName;
+
     public int UltimaEventId { get; set; } = 1000001;
 
     public int WeEventId { get; set; } = 1000002;
@@ -48,6 +57,8 @@ public sealed class OptionDocument
             ConvertAudio,
             ConvertBackground,
             GenerateReleaseTagXml,
+            ReleaseTagId,
+            ReleaseTagTitleName,
             GenerateEventXml,
             UltimaEventId,
             WeEventId,

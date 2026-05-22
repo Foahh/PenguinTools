@@ -207,7 +207,9 @@ public static class OptionExporter
         ConcurrentBag<Entry> ultEntries,
         CancellationToken ct)
     {
-        if (settings.GenerateReleaseTagXml) await ReleaseTag.Default.SaveDirectoryAsync(outputPaths.ReleaseTagPath);
+        if (settings.GenerateReleaseTagXml)
+            await new ReleaseTag(settings.ReleaseTagId, settings.ReleaseTagTitleName)
+                .SaveDirectoryAsync(outputPaths.ReleaseTagPath);
 
         if (settings.GenerateEventXml && !ultEntries.IsEmpty)
         {

@@ -187,6 +187,16 @@ internal static class OptionCommands
             Description = "Override options.json generateReleaseTagXml (true or false)."
         };
 
+        internal Option<int?> ReleaseTagId { get; } = new("--release-tag-id")
+        {
+            Description = "Override options.json releaseTagId."
+        };
+
+        internal Option<string?> ReleaseTagTitleName { get; } = new("--release-tag-title-name")
+        {
+            Description = "Override options.json releaseTagTitleName."
+        };
+
         internal Option<int?> UltimaEventId { get; } = new("--ultima-event-id")
         {
             Description = "Override options.json ultimaEventId."
@@ -209,6 +219,8 @@ internal static class OptionCommands
             command.Options.Add(ConvertBackground);
             command.Options.Add(GenerateEventXml);
             command.Options.Add(GenerateReleaseTagXml);
+            command.Options.Add(ReleaseTagId);
+            command.Options.Add(ReleaseTagTitleName);
             command.Options.Add(UltimaEventId);
             command.Options.Add(WeEventId);
         }
@@ -245,6 +257,11 @@ internal static class OptionCommands
 
             if (parseResult.GetValue(GenerateReleaseTagXml) is { } generateReleaseTagXml)
                 document.GenerateReleaseTagXml = generateReleaseTagXml;
+
+            if (parseResult.GetValue(ReleaseTagId) is { } releaseTagId) document.ReleaseTagId = releaseTagId;
+
+            if (parseResult.GetValue(ReleaseTagTitleName) is { Length: > 0 } releaseTagTitleName)
+                document.ReleaseTagTitleName = releaseTagTitleName;
 
             if (parseResult.GetValue(UltimaEventId) is { } ultimaEventId) document.UltimaEventId = ultimaEventId;
 

@@ -6,6 +6,8 @@ public sealed record OptionExportSettings(
     bool ConvertAudio,
     bool ConvertBackground,
     bool GenerateReleaseTagXml,
+    int ReleaseTagId,
+    string ReleaseTagTitleName,
     bool GenerateEventXml,
     int UltimaEventId,
     int WeEventId,

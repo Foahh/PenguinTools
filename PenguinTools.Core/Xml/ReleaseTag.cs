@@ -6,19 +6,22 @@ namespace PenguinTools.Core.Xml;
 [XmlRoot("ReleaseTagData")]
 public class ReleaseTag : XmlElement<ReleaseTag>
 {
-    public static readonly ReleaseTag Default = new(20)
+    public const int DefaultId = 000099;
+    public const string DefaultTitleName = "自制譜";
+
+    public static readonly ReleaseTag Default = new(DefaultId)
     {
-        Name = Entry.Default,
-        TitleName = "CHUNITHM 自制譜"
+        Name = Entry.Default
     };
 
     internal ReleaseTag()
     {
     }
 
-    public ReleaseTag(int id)
+    public ReleaseTag(int id, string titleName = DefaultTitleName)
     {
         DataName = $"releaseTag{id:000000}";
+        TitleName = string.IsNullOrWhiteSpace(titleName) ? DefaultTitleName : titleName.Trim();
     }
 
     protected override string FileName => "ReleaseTag.xml";
