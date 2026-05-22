@@ -156,7 +156,7 @@ public static class ChartScanner
                     diagnostics.Report(new Diagnostic(Severity.Warning,
                         "World's End chart must be the only difficulty for its song id.")
                     {
-                        Target = items
+                        Target = CreateDiagnosticTargets(items)
                     });
             }
 
@@ -164,12 +164,12 @@ public static class ChartScanner
             if (mainItems.Length > 1)
                 diagnostics.Report(new Diagnostic(Severity.Warning, "More than one chart is marked as main.")
                 {
-                    Target = mainItems
+                    Target = CreateDiagnosticTargets(mainItems)
                 });
             else if (mainItems.Length == 0 && items.Length > 1)
                 diagnostics.Report(new Diagnostic(Severity.Warning, "No chart is marked as main.")
                 {
-                    Target = items
+                    Target = CreateDiagnosticTargets(items)
                 });
 
             var mainItem = mainItems.FirstOrDefault() ?? items.OrderByDescending(i => i.Difficulty).FirstOrDefault();
@@ -202,5 +202,10 @@ public static class ChartScanner
     {
         public readonly object Gate = new();
         public readonly Dictionary<Difficulty, OptionDifficultySnapshot> Items = new();
+    }
+
+    private static ChartDiagnosticTarget[] CreateDiagnosticTargets(IEnumerable<OptionDifficultySnapshot> items)
+    {
+        return items.Select(item => ChartDiagnosticTarget.FromMeta(item.Meta)).ToArray();
     }
 }

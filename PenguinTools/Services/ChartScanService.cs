@@ -136,19 +136,19 @@ public sealed class ChartScanService : IChartScanService
             if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1)
                 diagnostics.Report(new Diagnostic(Severity.Warning, Strings.Warn_We_chart_must_be_unique_id)
                 {
-                    Target = items
+                    Target = CreateDiagnosticTargets(items)
                 });
 
             var mainItems = items.Where(item => item.Mgxc.Meta.IsMain).ToArray();
             if (mainItems.Length > 1)
                 diagnostics.Report(new Diagnostic(Severity.Warning, Strings.Warn_More_than_one_chart_marked_main)
                 {
-                    Target = mainItems
+                    Target = CreateDiagnosticTargets(mainItems)
                 });
             else if (mainItems.Length == 0 && items.Length > 1)
                 diagnostics.Report(new Diagnostic(Severity.Warning, Strings.Warn_No_chart_marked_main)
                 {
-                    Target = items
+                    Target = CreateDiagnosticTargets(items)
                 });
 
             var mainItem = mainItems.FirstOrDefault() ??
@@ -161,5 +161,10 @@ public sealed class ChartScanService : IChartScanService
 
             book.MainDifficulty = mainItem.Difficulty;
         }
+    }
+
+    private static ChartDiagnosticTarget[] CreateDiagnosticTargets(IEnumerable<BookItem> items)
+    {
+        return items.Select(item => ChartDiagnosticTarget.FromMeta(item.Meta)).ToArray();
     }
 }
