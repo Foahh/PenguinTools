@@ -111,11 +111,23 @@
     <data name="Category_Chart" xml:space="preserve">
     <value>Chart</value>
   </data>
+    <data name="Category_Conversion" xml:space="preserve">
+    <value>Conversion</value>
+  </data>
     <data name="Category_Display" xml:space="preserve">
     <value>Display</value>
   </data>
+    <data name="Category_EventXml" xml:space="preserve">
+    <value>Event XML</value>
+  </data>
     <data name="Category_Misc" xml:space="preserve">
     <value>Misc</value>
+  </data>
+    <data name="Category_Option" xml:space="preserve">
+    <value>Option</value>
+  </data>
+    <data name="Category_ReleaseTagXml" xml:space="preserve">
+    <value>Release Tag XML</value>
   </data>
     <data name="Category_Settings" xml:space="preserve">
     <value>Settings</value>

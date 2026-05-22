@@ -12,6 +12,10 @@ using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace PenguinTools.Models;
 
+[LocalizableCategoryOrder(nameof(Strings.Category_Option), 0, typeof(Strings))]
+[LocalizableCategoryOrder(nameof(Strings.Category_Conversion), 1, typeof(Strings))]
+[LocalizableCategoryOrder(nameof(Strings.Category_EventXml), 2, typeof(Strings))]
+[LocalizableCategoryOrder(nameof(Strings.Category_ReleaseTagXml), 3, typeof(Strings))]
 public partial class OptionModel : Model, IPersistable
 {
     [Browsable(false)] public string OptionId { get; set; } = CreateOptionId();
@@ -20,20 +24,20 @@ public partial class OptionModel : Model, IPersistable
     [MinLength(4)]
     [MaxLength(4)]
     [PropertyOrder(0)]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_Option), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_OptionName), typeof(Strings))]
     public partial string OptionName { get; set; } = "AXXX";
 
     [ObservableProperty]
     [PropertyOrder(1)]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_Conversion), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ConvertChart), typeof(Strings))]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
     public partial bool ConvertChart { get; set; } = true;
 
     [ObservableProperty]
     [PropertyOrder(2)]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_Conversion), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ChartFileDiscovery), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_ChartFileDiscovery), typeof(Strings))]
     public partial string ChartFileDiscovery { get; set; } =
@@ -42,41 +46,41 @@ public partial class OptionModel : Model, IPersistable
     [ObservableProperty]
     [PropertyOrder(3)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_Conversion), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ConvertAudio), typeof(Strings))]
     public partial bool ConvertAudio { get; set; } = true;
 
     [ObservableProperty]
     [PropertyOrder(4)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_Conversion), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ConvertJacket), typeof(Strings))]
     public partial bool ConvertJacket { get; set; } = true;
 
     [ObservableProperty]
     [PropertyOrder(5)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_Conversion), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ConvertBackground), typeof(Strings))]
     public partial bool ConvertBackground { get; set; } = true;
 
     [ObservableProperty]
     [PropertyOrder(6)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_EventXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_GenerateEventXml), typeof(Strings))]
     public partial bool GenerateEventXml { get; set; } = true;
 
     [ObservableProperty]
     [PropertyOrder(7)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_ReleaseTagXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ReleaseTagXml), typeof(Strings))]
     public partial bool GenerateReleaseTagXml { get; set; } = true;
 
     [ObservableProperty]
     [PropertyOrder(8)]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_ReleaseTagXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ReleaseTagId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_ReleaseTag), typeof(Strings))]
     [Range(0, int.MaxValue)]
@@ -84,28 +88,28 @@ public partial class OptionModel : Model, IPersistable
 
     [ObservableProperty]
     [PropertyOrder(9)]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_ReleaseTagXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ReleaseTagTitleName), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_ReleaseTag), typeof(Strings))]
     public partial string ReleaseTagTitleName { get; set; } = ReleaseTag.DefaultTitleName;
 
     [ObservableProperty]
     [PropertyOrder(10)]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_EventXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_UltimaEventId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_UnlockEventIDOption), typeof(Strings))]
     public partial int UltimaEventId { get; set; } = 1000001;
 
     [ObservableProperty]
     [PropertyOrder(11)]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_EventXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_WeEventId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_UnlockEventIDOption), typeof(Strings))]
     public partial int WeEventId { get; set; } = 1000002;
 
     [ObservableProperty]
     [PropertyOrder(12)]
-    [LocalizableCategory(nameof(Strings.Category_Settings), typeof(Strings))]
+    [LocalizableCategory(nameof(Strings.Category_Option), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_BatchSize), typeof(Strings))]
     [Range(-1, int.MaxValue)]
     public partial int BatchSize { get; set; } = 8;

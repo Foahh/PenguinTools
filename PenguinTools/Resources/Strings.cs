@@ -49,10 +49,24 @@ public class Strings
     public static string Category_BGM => ResourceManager.GetString(nameof(Category_BGM), Culture) ?? string.Empty;
     public static string Category_Chart => ResourceManager.GetString(nameof(Category_Chart), Culture) ?? string.Empty;
 
+    public static string Category_Conversion =>
+        ResourceManager.GetString(nameof(Category_Conversion), Culture) ?? string.Empty;
+
     public static string Category_Display =>
         ResourceManager.GetString(nameof(Category_Display), Culture) ?? string.Empty;
 
+    public static string Category_EventXml =>
+        ResourceManager.GetString(nameof(Category_EventXml), Culture) ?? string.Empty;
+
+    public static string Category_Execution =>
+        ResourceManager.GetString(nameof(Category_Execution), Culture) ?? string.Empty;
+
     public static string Category_Misc => ResourceManager.GetString(nameof(Category_Misc), Culture) ?? string.Empty;
+
+    public static string Category_Option => ResourceManager.GetString(nameof(Category_Option), Culture) ?? string.Empty;
+
+    public static string Category_ReleaseTagXml =>
+        ResourceManager.GetString(nameof(Category_ReleaseTagXml), Culture) ?? string.Empty;
 
     public static string Category_Settings =>
         ResourceManager.GetString(nameof(Category_Settings), Culture) ?? string.Empty;

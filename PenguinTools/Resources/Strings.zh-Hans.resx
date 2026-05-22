@@ -111,11 +111,23 @@
     <data name="Category_Chart" xml:space="preserve">
     <value>谱面</value>
   </data>
+    <data name="Category_Conversion" xml:space="preserve">
+    <value>转换</value>
+  </data>
     <data name="Category_Display" xml:space="preserve">
     <value>素材</value>
   </data>
+    <data name="Category_EventXml" xml:space="preserve">
+    <value>Event XML</value>
+  </data>
     <data name="Category_Misc" xml:space="preserve">
     <value>其他</value>
+  </data>
+    <data name="Category_Option" xml:space="preserve">
+    <value>选项</value>
+  </data>
+    <data name="Category_ReleaseTagXml" xml:space="preserve">
+    <value>Release Tag XML</value>
   </data>
     <data name="Category_Settings" xml:space="preserve">
     <value>设置</value>
@@ -322,7 +334,7 @@
     <value>发布时间</value>
   </data>
     <data name="Display_ReleaseTagXml" xml:space="preserve">
-    <value>生成 ReleaseTag</value>
+    <value>生成 ReleaseTag.xml</value>
   </data>
     <data name="Display_ReleaseTagId" xml:space="preserve">
     <value>ReleaseTag ID</value>
