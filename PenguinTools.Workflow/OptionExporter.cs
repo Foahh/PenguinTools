@@ -27,17 +27,19 @@ public static class OptionExporter
             new OptionExportProcessContext(diagnostics, ct, settings.BatchSize, diagnosticsWorkingDirectory);
         var weEntries = new ConcurrentBag<Entry>();
         var ultEntries = new ConcurrentBag<Entry>();
+        var releaseTag = new ReleaseTag(settings.ReleaseTagId, settings.ReleaseTagTitleName);
 
         var batchDiagnostics = await OptionExportBatch.BatchAsync(
             "convert",
             books,
-            (book, innerDiagnostics) => ConvertBookAsync(ctx, book, settings, outputPaths, innerDiagnostics, weEntries,
+            (book, innerDiagnostics) => ConvertBookAsync(ctx, book, settings, outputPaths, releaseTag, innerDiagnostics,
+                weEntries,
                 ultEntries, ct),
             book => book.BookMeta.FilePath,
             processContext,
             true);
 
-        await GenerateAuxiliaryFilesAsync(settings, outputPaths, weEntries, ultEntries, ct);
+        await GenerateAuxiliaryFilesAsync(settings, outputPaths, weEntries, ultEntries, releaseTag, ct);
 
         return OperationResult.Success()
             .WithDiagnostics(batchDiagnostics.Merge(DiagnosticSnapshot.Create(diagnostics)));
@@ -48,6 +50,7 @@ public static class OptionExporter
         OptionBookSnapshot book,
         OptionExportSettings settings,
         ExportOutputPaths outputPaths,
+        ReleaseTag releaseTag,
         IDiagnosticSink diagnostics,
         ConcurrentBag<Entry> weEntries,
         ConcurrentBag<Entry> ultEntries,
@@ -58,7 +61,7 @@ public static class OptionExporter
         MusicXml? xml = null;
 
         if (settings.ConvertChart || settings.ConvertJacket)
-            (xml, chartFolder) = await CreateMusicXmlAsync(book, stage, outputPaths.MusicFolder);
+            (xml, chartFolder) = await CreateMusicXmlAsync(book, stage, releaseTag, outputPaths.MusicFolder);
 
         if (settings.ConvertChart && xml is not null && chartFolder is not null)
             await ConvertChartsAsync(book, xml, chartFolder, diagnostics, weEntries, ultEntries, ct);
@@ -104,11 +107,13 @@ public static class OptionExporter
     private static async Task<(MusicXml Xml, string ChartFolder)> CreateMusicXmlAsync(
         OptionBookSnapshot book,
         Entry stage,
+        ReleaseTag releaseTag,
         string musicFolder)
     {
         var metaMap = book.Difficulties.ToDictionary(kv => kv.Key, kv => kv.Value.Meta);
         var xml = new MusicXml(metaMap, book.BookMeta.Difficulty)
         {
+            ReleaseTagName = releaseTag.Name,
             StageName = stage
         };
 
@@ -205,11 +210,10 @@ public static class OptionExporter
         ExportOutputPaths outputPaths,
         ConcurrentBag<Entry> weEntries,
         ConcurrentBag<Entry> ultEntries,
+        ReleaseTag releaseTag,
         CancellationToken ct)
     {
-        if (settings.GenerateReleaseTagXml)
-            await new ReleaseTag(settings.ReleaseTagId, settings.ReleaseTagTitleName)
-                .SaveDirectoryAsync(outputPaths.ReleaseTagPath);
+        if (settings.GenerateReleaseTagXml) await releaseTag.SaveDirectoryAsync(outputPaths.ReleaseTagPath);
 
         if (settings.GenerateEventXml && !ultEntries.IsEmpty)
         {
