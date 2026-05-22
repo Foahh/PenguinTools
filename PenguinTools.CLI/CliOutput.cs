@@ -65,7 +65,8 @@ internal sealed record CliCommandData(
     string? StageName = null,
     CliChartSummary? Chart = null,
     CliArtifact[]? Artifacts = null,
-    CliScanSummary? Scan = null);
+    CliScanSummary? Scan = null,
+    ExecutionInfo? ExecInfo = null);
 
 internal sealed record CliCommandOutcome(OperationResult Result, string? Message = null, CliCommandData? Data = null);
 

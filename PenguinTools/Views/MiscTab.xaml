@@ -47,6 +47,8 @@
         </shell:TabShell.MainContent>
         <shell:TabShell.FooterContent>
             <StackPanel>
+                <Button Command="{Binding OpenUserDataDirectoryCommand}" Content="{x:Static res:Strings.Button_Open_user_data_directory}" />
+                <Button Command="{Binding OpenAssetsDirectoryCommand}" Content="{x:Static res:Strings.Button_Open_assets_directory}" />
                 <Button Command="{Binding OpenTempDirectoryCommand}" Content="{x:Static res:Strings.Button_Open_temp_directory}" />
                 <Button Command="{Binding ExtractAfbFileCommand}" Content="{x:Static res:Strings.Button_Extract_dds_from_afb}" />
                 <Button Command="{Binding CollectAssetCommand}" Content="{x:Static res:Strings.Button_Recollect_A000}" />

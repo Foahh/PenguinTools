@@ -26,6 +26,7 @@ internal static class RootCommands
         rootCommand.Subcommands.Add(OptionCommands.BuildOptionCommand());
         rootCommand.Subcommands.Add(MediaCommands.BuildMediaCommand());
         rootCommand.Subcommands.Add(AssetCommands.BuildAssetCommand());
+        rootCommand.Subcommands.Add(InfoCommands.BuildInfoCommand());
         return rootCommand;
     }
 

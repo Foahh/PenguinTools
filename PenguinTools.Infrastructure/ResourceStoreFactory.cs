@@ -26,6 +26,19 @@ public static class ResourceStoreFactory
         };
     }
 
+    public static string ResolveInfrastructureAssetsPath(ResourceStoreOptions options, IApplicationPaths paths)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(paths);
+
+        return options.Mode switch
+        {
+            ResourceStoreMode.External => ResolveExternalAssetsDirectory(options),
+            ResourceStoreMode.Embedded => paths.SharedAssetCachePath,
+            _ => throw new ArgumentOutOfRangeException(nameof(options), options.Mode, null)
+        };
+    }
+
     private static string ResolveExternalAssetsDirectory(ResourceStoreOptions options)
     {
         if (!string.IsNullOrWhiteSpace(options.ExternalAssetsDirectory))

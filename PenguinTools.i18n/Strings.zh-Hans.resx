@@ -95,8 +95,14 @@
     <data name="Button_Help" xml:space="preserve">
         <value>帮助</value>
     </data>
+    <data name="Button_Open_assets_directory" xml:space="preserve">
+        <value>打开资源目录</value>
+    </data>
     <data name="Button_Open_temp_directory" xml:space="preserve">
         <value>打开临时目录</value>
+    </data>
+    <data name="Button_Open_user_data_directory" xml:space="preserve">
+        <value>打开用户数据目录</value>
     </data>
     <data name="Button_Recollect_A000" xml:space="preserve">
         <value>读取游戏素材</value>
@@ -811,8 +817,44 @@
     <data name="Cli_Cmd_option_convert" xml:space="preserve">
         <value>扫描谱面并导出 Option；默认使用 options.json，当 --load-json 为 false 时使用 CLI 配置。</value>
     </data>
+    <data name="Cli_Cmd_info" xml:space="preserve">
+        <value>显示运行时信息。</value>
+    </data>
     <data name="Cli_Cmd_scan" xml:space="preserve">
         <value>扫描文件夹中的谱面文件。</value>
+    </data>
+    <data name="Cli_Info_application" xml:space="preserve">
+        <value>应用程序</value>
+    </data>
+    <data name="Cli_Info_assets_mode" xml:space="preserve">
+        <value>资源模式</value>
+    </data>
+    <data name="Cli_Info_base_directory" xml:space="preserve">
+        <value>基目录</value>
+    </data>
+    <data name="Cli_Info_build_date" xml:space="preserve">
+        <value>构建时间 (UTC)</value>
+    </data>
+    <data name="Cli_Info_infrastructure_assets_path" xml:space="preserve">
+        <value>基础设施资源路径</value>
+    </data>
+    <data name="Cli_Info_plus_assets_path" xml:space="preserve">
+        <value>Plus 资源路径</value>
+    </data>
+    <data name="Cli_Info_shared_asset_cache_path" xml:space="preserve">
+        <value>共享资源缓存路径</value>
+    </data>
+    <data name="Cli_Info_temp_path" xml:space="preserve">
+        <value>临时目录</value>
+    </data>
+    <data name="Cli_Info_unknown" xml:space="preserve">
+        <value>未知</value>
+    </data>
+    <data name="Cli_Info_user_data_path" xml:space="preserve">
+        <value>用户数据路径</value>
+    </data>
+    <data name="Cli_Info_version" xml:space="preserve">
+        <value>版本</value>
     </data>
     <data name="Cli_Diag_info" xml:space="preserve">
         <value>info</value>

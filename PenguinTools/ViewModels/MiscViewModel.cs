@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
@@ -14,6 +13,8 @@ namespace PenguinTools.ViewModels;
 
 public partial class MiscViewModel : ViewModel
 {
+    private readonly IApplicationPaths _paths;
+    private readonly ResourceStoreOptions _storeOptions;
     private readonly IGameAssetService _gameAssetService;
 
     public MiscViewModel(
@@ -23,23 +24,33 @@ public partial class MiscViewModel : ViewModel
         IResourceStore resourceStore,
         IInfrastructureAssetProvider assetProvider,
         IExternalLauncher externalLauncher,
+        IApplicationPaths paths,
+        ResourceStoreOptions storeOptions,
         IGameAssetService gameAssetService)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
+        _paths = paths;
+        _storeOptions = storeOptions;
         _gameAssetService = gameAssetService;
     }
 
     [RelayCommand]
     private void OpenTempDirectory()
     {
-        var path = ResourceStore.TempWorkPath;
+        ShellExplorer.OpenDirectory(ResourceStore.TempWorkPath);
+    }
 
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "explorer.exe",
-            Arguments = path,
-            UseShellExecute = true
-        });
+    [RelayCommand]
+    private void OpenUserDataDirectory()
+    {
+        ShellExplorer.OpenDirectory(_paths.UserDataPath);
+    }
+
+    [RelayCommand]
+    private void OpenAssetsDirectory()
+    {
+        ShellExplorer.OpenDirectory(
+            ResourceStoreFactory.ResolveInfrastructureAssetsPath(_storeOptions, _paths));
     }
 
     [RelayCommand]

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using PenguinTools.Core;
 using PenguinTools.Workflow;
 
 namespace PenguinTools.CLI;
@@ -23,4 +24,5 @@ namespace PenguinTools.CLI;
 [JsonSerializable(typeof(OptionDocument))]
 [JsonSerializable(typeof(ChartFileFormat))]
 [JsonSerializable(typeof(List<ChartFileFormat>))]
+[JsonSerializable(typeof(ExecutionInfo), TypeInfoPropertyName = "RuntimeExecutionInfo")]
 internal sealed partial class CliJsonSerializerContext : JsonSerializerContext;

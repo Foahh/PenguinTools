@@ -10,6 +10,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <AssemblyAttribute Include="PenguinTools.Core.BuildDateAttribute">
+            <_Parameter1>$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="System.CommandLine" Version="2.0.8"/>
     </ItemGroup>
 

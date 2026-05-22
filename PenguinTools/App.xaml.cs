@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Diagnostic;
 using PenguinTools.i18n;
@@ -24,7 +25,7 @@ public partial class App : Application
                                              throw new InvalidOperationException(
                                                  "Failed to retrieve application version");
 
-    public static readonly DateTime BuildDate = BuildDateAttribute.GetAssemblyBuildDate();
+    public static readonly DateTime BuildDate = BuildDateAttribute.GetAssemblyBuildDate() ?? default;
 
     internal static IServiceProvider ServiceProvider { get; private set; } = null!;
 

@@ -95,8 +95,14 @@
     <data name="Button_Help" xml:space="preserve">
     <value>Help</value>
   </data>
+    <data name="Button_Open_assets_directory" xml:space="preserve">
+    <value>Open Assets Directory</value>
+  </data>
     <data name="Button_Open_temp_directory" xml:space="preserve">
     <value>Open Temp Directory</value>
+  </data>
+    <data name="Button_Open_user_data_directory" xml:space="preserve">
+    <value>Open User Data Directory</value>
   </data>
     <data name="Button_Recollect_A000" xml:space="preserve">
     <value>Recollect Game Assets</value>
@@ -812,8 +818,44 @@ You can still re-import game assets later from the Misc tab.</value>
     <data name="Cli_Cmd_option_convert" xml:space="preserve">
     <value>Scan charts and export the option bundle, using options.json by default or CLI configuration when --load-json is false.</value>
   </data>
+    <data name="Cli_Cmd_info" xml:space="preserve">
+    <value>Show runtime information.</value>
+  </data>
     <data name="Cli_Cmd_scan" xml:space="preserve">
     <value>Scan chart files in a folder.</value>
+  </data>
+    <data name="Cli_Info_application" xml:space="preserve">
+    <value>Application</value>
+  </data>
+    <data name="Cli_Info_assets_mode" xml:space="preserve">
+    <value>Assets mode</value>
+  </data>
+    <data name="Cli_Info_base_directory" xml:space="preserve">
+    <value>Base directory</value>
+  </data>
+    <data name="Cli_Info_build_date" xml:space="preserve">
+    <value>Build date (UTC)</value>
+  </data>
+    <data name="Cli_Info_infrastructure_assets_path" xml:space="preserve">
+    <value>Infrastructure assets path</value>
+  </data>
+    <data name="Cli_Info_plus_assets_path" xml:space="preserve">
+    <value>Plus assets path</value>
+  </data>
+    <data name="Cli_Info_shared_asset_cache_path" xml:space="preserve">
+    <value>Shared asset cache path</value>
+  </data>
+    <data name="Cli_Info_temp_path" xml:space="preserve">
+    <value>Temp path</value>
+  </data>
+    <data name="Cli_Info_unknown" xml:space="preserve">
+    <value>unknown</value>
+  </data>
+    <data name="Cli_Info_user_data_path" xml:space="preserve">
+    <value>User data path</value>
+  </data>
+    <data name="Cli_Info_version" xml:space="preserve">
+    <value>Version</value>
   </data>
     <data name="Cli_Diag_info" xml:space="preserve">
     <value>info</value>

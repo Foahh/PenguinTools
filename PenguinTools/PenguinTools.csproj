@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <AssemblyAttribute Include="BuildDateAttribute">
+        <AssemblyAttribute Include="PenguinTools.Core.BuildDateAttribute">
             <_Parameter1>$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
