@@ -18,12 +18,14 @@ public static class ChartScanner
         AssetManager assets,
         IMediaTool mediaTool,
         string directory,
-        IReadOnlyList<ChartFileFormat> discovery,
+        IReadOnlyList<ChartFileFormat>? discovery,
         int batchSize,
         string workingDirectory,
         IDiagnosticSink diagnostics,
-        CancellationToken ct)
+        CancellationToken ct,
+        ChartScannerMessages? messages = null)
     {
+        messages ??= ChartScannerMessages.Default;
         var processContext = new OptionExportProcessContext(diagnostics, ct, batchSize, workingDirectory);
         var booksById = new ConcurrentDictionary<int, BookAccumulator>();
 
@@ -41,11 +43,12 @@ public static class ChartScanner
                     assets,
                     mediaTool,
                     processContext,
+                    messages,
                     i > 0,
                     ct));
         }
 
-        var snapshots = FinalizeAndBuildSnapshots(booksById, diagnostics, ct);
+        var snapshots = FinalizeAndBuildSnapshots(booksById, diagnostics, messages, ct);
         return OperationResult<IReadOnlyList<OptionBookSnapshot>>.Success(snapshots)
             .WithDiagnostics(batch.Merge(DiagnosticSnapshot.Create(diagnostics)));
     }
@@ -57,15 +60,16 @@ public static class ChartScanner
         AssetManager assets,
         IMediaTool mediaTool,
         OptionExportProcessContext processContext,
+        ChartScannerMessages messages,
         bool skipIfDifficultyFilled,
         CancellationToken ct)
     {
         var chartPaths = Directory.EnumerateFiles(directory, fileGlob, SearchOption.AllDirectories);
         return await OptionExportBatch.BatchAsync(
-            "scan",
+            messages.ScanBatchName,
             chartPaths,
             (filePath, innerDiagnostics) => LoadChartAsync(filePath, assets, mediaTool, booksById, innerDiagnostics,
-                skipIfDifficultyFilled, ct),
+                messages, skipIfDifficultyFilled, ct),
             filePath => filePath,
             processContext,
             true);
@@ -77,6 +81,7 @@ public static class ChartScanner
         IMediaTool mediaTool,
         ConcurrentDictionary<int, BookAccumulator> booksById,
         IDiagnosticSink diagnostics,
+        ChartScannerMessages messages,
         bool skipIfDifficultyFilled,
         CancellationToken ct)
     {
@@ -113,7 +118,7 @@ public static class ChartScanner
         }
 
         var meta = chart.Meta;
-        var id = meta.Id ?? throw new DiagnosticException("File ignored because song id is missing.");
+        var id = meta.Id ?? throw new DiagnosticException(messages.MissingSongId);
         var item = new OptionDifficultySnapshot(meta.Difficulty, meta.Id, chart, meta);
         var book = booksById.GetOrAdd(id, _ => new BookAccumulator());
 
@@ -122,7 +127,8 @@ public static class ChartScanner
             if (skipIfDifficultyFilled && book.Items.ContainsKey(meta.Difficulty)) return;
 
             if (book.Items.ContainsKey(meta.Difficulty))
-                diagnostics.Report(new PathDiagnostic(Severity.Warning, "Duplicate song id and difficulty.", filePath));
+                diagnostics.Report(new PathDiagnostic(Severity.Warning, messages.DuplicateSongIdAndDifficulty,
+                    filePath));
 
             book.Items[meta.Difficulty] = item;
         }
@@ -131,6 +137,7 @@ public static class ChartScanner
     private static IReadOnlyList<OptionBookSnapshot> FinalizeAndBuildSnapshots(
         ConcurrentDictionary<int, BookAccumulator> booksById,
         IDiagnosticSink diagnostics,
+        ChartScannerMessages messages,
         CancellationToken ct)
     {
         var list = new List<OptionBookSnapshot>();
@@ -153,8 +160,7 @@ public static class ChartScanner
             lock (book.Gate)
             {
                 if (book.Items.ContainsKey(Difficulty.WorldsEnd) && book.Items.Count != 1)
-                    diagnostics.Report(new Diagnostic(Severity.Warning,
-                        "World's End chart must be the only difficulty for its song id.")
+                    diagnostics.Report(new Diagnostic(Severity.Warning, messages.WorldsEndMustBeUnique)
                     {
                         Target = CreateDiagnosticTargets(items)
                     });
@@ -162,12 +168,12 @@ public static class ChartScanner
 
             var mainItems = items.Where(i => i.Meta.IsMain).ToArray();
             if (mainItems.Length > 1)
-                diagnostics.Report(new Diagnostic(Severity.Warning, "More than one chart is marked as main.")
+                diagnostics.Report(new Diagnostic(Severity.Warning, messages.MoreThanOneMainChart)
                 {
                     Target = CreateDiagnosticTargets(mainItems)
                 });
             else if (mainItems.Length == 0 && items.Length > 1)
-                diagnostics.Report(new Diagnostic(Severity.Warning, "No chart is marked as main.")
+                diagnostics.Report(new Diagnostic(Severity.Warning, messages.NoMainChart)
                 {
                     Target = CreateDiagnosticTargets(items)
                 });
@@ -208,4 +214,21 @@ public static class ChartScanner
     {
         return items.Select(item => ChartDiagnosticTarget.FromMeta(item.Meta)).ToArray();
     }
+}
+
+public sealed record ChartScannerMessages(
+    string ScanBatchName,
+    string MissingSongId,
+    string DuplicateSongIdAndDifficulty,
+    string WorldsEndMustBeUnique,
+    string MoreThanOneMainChart,
+    string NoMainChart)
+{
+    public static ChartScannerMessages Default { get; } = new(
+        "scan",
+        "File ignored because song id is missing.",
+        "Duplicate song id and difficulty.",
+        "World's End chart must be the only difficulty for its song id.",
+        "More than one chart is marked as main.",
+        "No chart is marked as main.");
 }
