@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
+using PenguinTools.Assets;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.i18n;

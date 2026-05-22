@@ -1,4 +1,5 @@
 using System.Xml.Linq;
+using PenguinTools.Assets;
 using PenguinTools.Core;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Infrastructure;

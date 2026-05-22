@@ -1,22 +1,36 @@
-using System.Reflection;
 using PenguinTools.Core;
 
 namespace PenguinTools.Infrastructure;
 
 public static class ResourceStoreFactory
 {
-    public static IResourceStore Create(Assembly assembly, string tempWorkPath, string? baseDirectory = null,
-        string? sharedCachePath = null)
+    public static IResourceStore Create(
+        ResourceStoreOptions options,
+        string tempWorkPath,
+        string sharedCachePath)
     {
-        ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentNullException.ThrowIfNull(options);
         ArgumentException.ThrowIfNullOrWhiteSpace(tempWorkPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sharedCachePath);
 
-        var appBaseDirectory = string.IsNullOrWhiteSpace(baseDirectory) ? AppContext.BaseDirectory : baseDirectory;
-        var assetDirectory = Path.Combine(appBaseDirectory, "assets");
+        return options.Mode switch
+        {
+            ResourceStoreMode.Embedded => new EmbeddedResourceStore(
+                options.EmbeddedAssembly,
+                tempWorkPath,
+                sharedCachePath),
+            ResourceStoreMode.External => new FileResourceStore(
+                ResolveExternalAssetsDirectory(options),
+                tempWorkPath),
+            _ => throw new ArgumentOutOfRangeException(nameof(options), options.Mode, null)
+        };
+    }
 
-        if (File.Exists(Path.Combine(assetDirectory, "assets.json")))
-            return new FileResourceStore(assetDirectory, tempWorkPath);
+    private static string ResolveExternalAssetsDirectory(ResourceStoreOptions options)
+    {
+        if (!string.IsNullOrWhiteSpace(options.ExternalAssetsDirectory))
+            return options.ExternalAssetsDirectory;
 
-        return new EmbeddedResourceStore(assembly, tempWorkPath, sharedCachePath);
+        return Path.Combine(AppContext.BaseDirectory, ResourceStoreOptions.DefaultExternalAssetsSubdirectory);
     }
 }

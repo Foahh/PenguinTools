@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Common.props"/>
+    <Import Project="Assets.props"/>
+    <Import Project="GenerateInfrastructureResourceManifest.targets"/>
+
+    <PropertyGroup>
+        <TargetFramework>$(DotNetVersion)</TargetFramework>
+        <RootNamespace>PenguinTools.Assets</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
+        <GeneratedInfrastructureResourceManifest>$(IntermediateOutputPath)InfrastructureResourceManifest.g.cs</GeneratedInfrastructureResourceManifest>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Remove="InfrastructureResourceManifest.g.cs"/>
+    </ItemGroup>
+
+</Project>

@@ -46,7 +46,11 @@ public partial class App : Application
         if (basePath != null) Directory.SetCurrentDirectory(basePath);
 
         var services = new ServiceCollection();
-        services.AddPenguinInfrastructure(Assembly.GetExecutingAssembly());
+#if PENGUINTOOLS_EXTERNAL_ASSETS
+        services.AddPenguinInfrastructure(ResourceStoreOptions.External());
+#else
+        services.AddPenguinInfrastructure();
+#endif
 
         services.AddTransient<IChartScanService, ChartScanService>();
         services.AddTransient<IOptionService, OptionService>();

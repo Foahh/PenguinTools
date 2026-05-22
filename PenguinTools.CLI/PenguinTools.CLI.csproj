@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\Common.props"/>
-    <Import Project="..\Assets.props"/>
 
     <PropertyGroup>
         <TargetFramework>$(DotNetVersion)</TargetFramework>
@@ -18,6 +17,7 @@
         <ProjectReference Include="..\PenguinTools.i18n\PenguinTools.i18n.csproj"/>
         <ProjectReference Include="..\PenguinTools.Chart\PenguinTools.Chart.csproj"/>
         <ProjectReference Include="..\PenguinTools.Core\PenguinTools.Core.csproj"/>
+        <ProjectReference Include="..\PenguinTools.Assets\PenguinTools.Assets.csproj"/>
         <ProjectReference Include="..\PenguinTools.Infrastructure\PenguinTools.Infrastructure.csproj"/>
         <ProjectReference Include="..\PenguinTools.Media\PenguinTools.Media.csproj"/>
         <ProjectReference Include="..\PenguinTools.Workflow\PenguinTools.Workflow.csproj"/>

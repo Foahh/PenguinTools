@@ -1,15 +1,8 @@
 using System.Collections.Concurrent;
+using PenguinTools.Assets;
 using PenguinTools.Core;
 
 namespace PenguinTools.Infrastructure;
-
-public enum InfrastructureAsset
-{
-    MuaExecutable,
-    StageTemplate,
-    NotesFieldTemplate,
-    DummyAcb
-}
 
 public interface IInfrastructureAssetProvider
 {
@@ -29,26 +22,28 @@ public sealed class InfrastructureAssetProvider(IResourceStore resources) : IInf
 
     private string ResolvePath(InfrastructureAsset asset)
     {
-        return asset switch
-        {
-            InfrastructureAsset.MuaExecutable => ResolveMuaExecutablePath(),
-            InfrastructureAsset.StageTemplate => Resources.ExtractToTemp("st_dummy.afb"),
-            InfrastructureAsset.NotesFieldTemplate => Resources.ExtractToTemp("nf_dummy.afb"),
-            InfrastructureAsset.DummyAcb => Resources.ExtractToTemp("dummy.acb"),
-            _ => throw new ArgumentOutOfRangeException(nameof(asset), asset, null)
-        };
+        if (asset == InfrastructureAsset.MuaExecutable) return ResolveMuaExecutablePath();
+
+        var resourceName = InfrastructureResourceNames.GetResourceName(asset);
+        return Resources.ExtractToTemp(resourceName);
     }
 
     private string ResolveMuaExecutablePath()
     {
-        if (OperatingSystem.IsWindows() && Resources.HasResource("mua.exe")) return Resources.ExtractToTemp("mua.exe");
+        if (OperatingSystem.IsWindows() && Resources.HasResource(InfrastructureResourceNames.MuaExecutableWindows))
+            return Resources.ExtractToTemp(InfrastructureResourceNames.MuaExecutableWindows);
 
-        if (OperatingSystem.IsLinux() && Resources.HasResource("mua")) return Resources.ExtractToTemp("mua");
+        if (OperatingSystem.IsLinux() && Resources.HasResource(InfrastructureResourceNames.MuaExecutableUnix))
+            return Resources.ExtractToTemp(InfrastructureResourceNames.MuaExecutableUnix);
 
-        if (Resources.HasResource("mua.exe")) return Resources.ExtractToTemp("mua.exe");
+        if (Resources.HasResource(InfrastructureResourceNames.MuaExecutableWindows))
+            return Resources.ExtractToTemp(InfrastructureResourceNames.MuaExecutableWindows);
 
-        if (Resources.HasResource("mua")) return Resources.ExtractToTemp("mua");
+        if (Resources.HasResource(InfrastructureResourceNames.MuaExecutableUnix))
+            return Resources.ExtractToTemp(InfrastructureResourceNames.MuaExecutableUnix);
 
-        return OperatingSystem.IsWindows() ? "mua.exe" : "mua";
+        return OperatingSystem.IsWindows()
+            ? InfrastructureResourceNames.MuaExecutableWindows
+            : InfrastructureResourceNames.MuaExecutableUnix;
     }
 }

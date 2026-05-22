@@ -6,18 +6,19 @@ namespace PenguinTools.Infrastructure;
 public sealed class EmbeddedResourceStore : IResourceStore
 {
     private readonly Assembly _assembly;
-    private readonly string? _sharedCachePath;
-    private readonly Lock _lock = new();
+    private readonly string _sharedCachePath;
 
-    public EmbeddedResourceStore(Assembly assembly, string tempWorkPath, string? sharedCachePath = null)
+    public EmbeddedResourceStore(Assembly assembly, string tempWorkPath, string sharedCachePath)
     {
         ArgumentNullException.ThrowIfNull(assembly);
         ArgumentException.ThrowIfNullOrWhiteSpace(tempWorkPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sharedCachePath);
 
         _assembly = assembly;
-        _sharedCachePath = sharedCachePath;
         TempWorkPath = tempWorkPath;
+        _sharedCachePath = sharedCachePath;
         Directory.CreateDirectory(TempWorkPath);
+        Directory.CreateDirectory(_sharedCachePath);
     }
 
     public string TempWorkPath { get; }
@@ -39,43 +40,27 @@ public sealed class EmbeddedResourceStore : IResourceStore
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
 
         var fileName = Path.GetFileName(resourceName);
+        var cachedPath = Path.Combine(_sharedCachePath, fileName);
+        var mutexName = $"Global\\PenguinTools_Asset_{SanitizeMutexName(fileName)}";
 
-        if (_sharedCachePath != null)
+        using var mutex = new Mutex(false, mutexName);
+        mutex.WaitOne();
+        try
         {
-            var cachedPath = Path.Combine(_sharedCachePath, fileName);
-            var mutexName = $"Global\\PenguinTools_Asset_{fileName}";
-
-            using var mutex = new Mutex(false, mutexName);
-            mutex.WaitOne();
-            try
+            if (!File.Exists(cachedPath))
             {
-                if (!File.Exists(cachedPath))
-                {
-                    Directory.CreateDirectory(_sharedCachePath);
-                    using var stream = OpenRead(resourceName);
-                    using var fileStream = File.Create(cachedPath);
-                    stream.CopyTo(fileStream);
-                    ResourceStoreHelpers.EnsureExecutableIfNeeded(cachedPath, resourceName);
-                }
+                using var stream = OpenRead(resourceName);
+                using var fileStream = File.Create(cachedPath);
+                stream.CopyTo(fileStream);
+                ResourceStoreHelpers.EnsureExecutableIfNeeded(cachedPath, resourceName);
             }
-            finally
-            {
-                mutex.ReleaseMutex();
-            }
-
-            return cachedPath;
+        }
+        finally
+        {
+            mutex.ReleaseMutex();
         }
 
-        var path = GetTempPath(fileName);
-        lock (_lock)
-        {
-            using var stream = OpenRead(resourceName);
-            using var fileStream = File.Create(path);
-            stream.CopyTo(fileStream);
-        }
-
-        ResourceStoreHelpers.EnsureExecutableIfNeeded(path, resourceName);
-        return path;
+        return cachedPath;
     }
 
     public async Task CopyToAsync(string resourceName, string destinationPath, CancellationToken ct = default)
@@ -101,5 +86,10 @@ public sealed class EmbeddedResourceStore : IResourceStore
     public void Dispose()
     {
         ResourceStoreHelpers.ClearDirectory(TempWorkPath, true);
+    }
+
+    private static string SanitizeMutexName(string fileName)
+    {
+        return fileName.Replace('\\', '_').Replace('/', '_');
     }
 }

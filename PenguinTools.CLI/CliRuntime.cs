@@ -1,3 +1,4 @@
+using PenguinTools.Assets;
 using PenguinTools.Core;
 using PenguinTools.Core.Asset;
 using PenguinTools.Infrastructure;
@@ -28,13 +29,18 @@ internal sealed class CliRuntime(
         try
         {
             var paths = ApplicationPaths.Create();
+            var storeOptions =
+#if PENGUINTOOLS_EXTERNAL_ASSETS
+                ResourceStoreOptions.External();
+#else
+                ResourceStoreOptions.Resolve();
+#endif
 #pragma warning disable CA2000
-            resourceStore =
-                ResourceStoreFactory.Create(typeof(CliRuntime).Assembly, paths.TempWorkPath,
-                    sharedCachePath: paths.SharedAssetCachePath);
+            resourceStore = ResourceStoreFactory.Create(storeOptions, paths.TempWorkPath, paths.SharedAssetCachePath);
 #pragma warning restore CA2000
             var assetProvider = new InfrastructureAssetProvider(resourceStore);
-            var assets = new AssetManager(resourceStore.OpenRead("assets.json"), paths.UserDataPath);
+            using var assetsStream = resourceStore.OpenRead(InfrastructureResourceNames.AssetsJson);
+            var assets = new AssetManager(assetsStream, paths.UserDataPath);
             var mediaTool = new MuaMediaTool(assetProvider.GetPath(InfrastructureAsset.MuaExecutable));
             return new CliRuntime(resourceStore, assets, mediaTool, assetProvider);
         }

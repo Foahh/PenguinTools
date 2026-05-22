@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using PenguinTools.Assets;
 using PenguinTools.Chart.Converter.c2s;
 using PenguinTools.Chart.Writer.c2s;
 using PenguinTools.Core;
@@ -7,7 +8,6 @@ using PenguinTools.Core.Diagnostic;
 using PenguinTools.Core.Metadata;
 using PenguinTools.Core.Xml;
 using PenguinTools.i18n;
-using PenguinTools.Infrastructure;
 using PenguinTools.Media;
 
 namespace PenguinTools.Workflow;
