@@ -64,7 +64,8 @@ public static class OptionExportBatch
     public static DiagnosticSnapshot CreateItemDiagnostics(IDiagnosticSink sink, string path, string workingDirectory)
     {
         var relativePath = Path.GetRelativePath(workingDirectory, path);
-        var copied = sink.Diagnostics.Select(diag => diag.WithPathFallback(relativePath));
+        var copied = sink.Diagnostics.Select(diag =>
+            string.IsNullOrWhiteSpace(diag.Path) ? diag.WithPathFallback(relativePath) : diag);
         return DiagnosticSnapshot.Create(copied);
     }
 

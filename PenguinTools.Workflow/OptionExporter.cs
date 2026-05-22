@@ -32,9 +32,8 @@ public static class OptionExporter
         var batchDiagnostics = await OptionExportBatch.BatchAsync(
             "convert",
             books,
-            (book, innerDiagnostics) => ConvertBookAsync(ctx, book, settings, outputPaths, releaseTag, innerDiagnostics,
-                weEntries,
-                ultEntries, ct),
+            (book, innerDiagnostics) => ConvertBookAsync(ctx, book, settings, outputPaths, releaseTag,
+                processContext.WorkingDirectory, innerDiagnostics, weEntries, ultEntries, ct),
             book => book.BookMeta.FilePath,
             processContext,
             true);
@@ -51,6 +50,7 @@ public static class OptionExporter
         OptionExportSettings settings,
         ExportOutputPaths outputPaths,
         ReleaseTag releaseTag,
+        string workingDirectory,
         IDiagnosticSink diagnostics,
         ConcurrentBag<Entry> weEntries,
         ConcurrentBag<Entry> ultEntries,
@@ -64,7 +64,7 @@ public static class OptionExporter
             (xml, chartFolder) = await CreateMusicXmlAsync(book, stage, releaseTag, outputPaths.MusicFolder);
 
         if (settings.ConvertChart && xml is not null && chartFolder is not null)
-            await ConvertChartsAsync(book, xml, chartFolder, diagnostics, weEntries, ultEntries, ct);
+            await ConvertChartsAsync(book, xml, chartFolder, workingDirectory, diagnostics, weEntries, ultEntries, ct);
 
         if (settings.ConvertJacket && xml is not null && chartFolder is not null)
             await ConvertJacketAsync(book, xml, chartFolder, ctx, diagnostics, ct);
@@ -133,6 +133,7 @@ public static class OptionExporter
         OptionBookSnapshot book,
         MusicXml xml,
         string chartFolder,
+        string workingDirectory,
         IDiagnosticSink diagnostics,
         ConcurrentBag<Entry> weEntries,
         ConcurrentBag<Entry> ultEntries,
@@ -145,13 +146,26 @@ public static class OptionExporter
             TrackEventEntry(book, difficulty, songId, weEntries, ultEntries);
 
             var chartPath = Path.Combine(chartFolder, xml[difficulty].File);
+            var chartDiagnostics = OptionExportBatch.CreateCollector();
+
+            void FlushChartDiagnostics()
+            {
+                diagnostics.Report(
+                    OptionExportBatch.CreateItemDiagnostics(chartDiagnostics, item.Meta.FilePath, workingDirectory));
+            }
+
             var convertedChart = new C2SChartConverter(new C2SConvertRequest(item.Chart)).Convert();
-            diagnostics.Report(convertedChart.Diagnostics);
-            if (!convertedChart.Succeeded || convertedChart.Value is null) return;
+            chartDiagnostics.Report(convertedChart.Diagnostics);
+            if (!convertedChart.Succeeded || convertedChart.Value is null)
+            {
+                FlushChartDiagnostics();
+                return;
+            }
 
             var chartWriter = new C2SChartWriter(new C2SWriteRequest(chartPath, convertedChart.Value));
             var writtenChart = await chartWriter.WriteAsync(ct);
-            diagnostics.Report(writtenChart.Diagnostics);
+            chartDiagnostics.Report(writtenChart.Diagnostics);
+            FlushChartDiagnostics();
             if (!writtenChart.Succeeded) return;
 
             ct.ThrowIfCancellationRequested();
