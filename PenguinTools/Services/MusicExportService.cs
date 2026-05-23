@@ -34,7 +34,7 @@ public sealed class MusicExportService : IMusicExportService
             model.Mgxc,
             outputPath,
             null,
-            AudioRequestOverrides.Default,
+            AudioRequestOverrides.Default with { HcaEncryptionKey = model.HcaEncryptionKey },
             StageRequestOverrides.None,
             ct);
     }

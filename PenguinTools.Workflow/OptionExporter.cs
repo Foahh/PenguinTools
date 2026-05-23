@@ -260,6 +260,7 @@ public static class OptionExporter
                 book.BookMeta,
                 cueFileFolder,
                 dummyAcbPath,
+                settings.HcaEncryptionKey,
                 ct);
         if (songId is not null &&
             cachedConversion is not null &&
@@ -277,7 +278,8 @@ public static class OptionExporter
                 cueFileFolder,
                 dummyAcbPath,
                 ctx.ResourceStore.GetTempPath(
-                    $"c_{Path.GetFileNameWithoutExtension(book.BookMeta.FullBgmFilePath)}.wav")),
+                    $"c_{Path.GetFileNameWithoutExtension(book.BookMeta.FullBgmFilePath)}.wav"),
+                settings.HcaEncryptionKey),
             ctx.MediaTool);
         var convertedAudio = await audioConverter.ConvertAsync(ct);
         diagnostics.Report(convertedAudio.Diagnostics);

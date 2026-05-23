@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using PenguinTools.Core.Xml;
+using PenguinTools.Media;
 
 namespace PenguinTools.Workflow;
 
@@ -25,6 +26,8 @@ public sealed class OptionDocument
     public bool ConvertJacket { get; set; } = true;
 
     public bool ConvertBackground { get; set; } = true;
+
+    public ulong HcaEncryptionKey { get; set; } = AudioConvertRequest.DefaultHcaEncryptionKey;
 
     public bool GenerateEventXml { get; set; } = true;
 
@@ -67,7 +70,8 @@ public sealed class OptionDocument
             UltimaEventId,
             WeEventId,
             BatchSize,
-            ConversionCache);
+            ConversionCache,
+            HcaEncryptionKey);
     }
 
     private static string CreateOptionId()

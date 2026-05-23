@@ -263,6 +263,9 @@
     <data name="Display_BgmPreviewStop" xml:space="preserve">
         <value>预览结束时间（秒）</value>
     </data>
+    <data name="Display_HcaEncryptionKey" xml:space="preserve">
+        <value>HCA 密钥</value>
+    </data>
     <data name="Display_ChartFileDiscovery" xml:space="preserve">
         <value>谱面扫描顺序</value>
     </data>
@@ -977,7 +980,7 @@
         <value>覆盖 options.json 的 generateReleaseTagXml（true 或 false）。</value>
     </data>
     <data name="Cli_Opt_hca_key" xml:space="preserve">
-        <value>覆盖 HCA 加密密钥。</value>
+        <value>覆盖 HCA 密钥。</value>
     </data>
     <data name="Cli_Opt_json_batch_size" xml:space="preserve">
         <value>覆盖 options.json 的 batchSize。</value>

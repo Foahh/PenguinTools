@@ -263,6 +263,9 @@
     <data name="Display_BgmPreviewStop" xml:space="preserve">
     <value>Preview Stop Time (s)</value>
   </data>
+    <data name="Display_HcaEncryptionKey" xml:space="preserve">
+    <value>HCA Encryption Key</value>
+  </data>
     <data name="Display_ChartFileDiscovery" xml:space="preserve">
     <value>Chart file order</value>
   </data>

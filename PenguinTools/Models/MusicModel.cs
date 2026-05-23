@@ -4,6 +4,7 @@ using PenguinTools.Attributes;
 using PenguinTools.Core.Asset;
 using PenguinTools.Core.Metadata;
 using PenguinTools.i18n;
+using PenguinTools.Media;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using umgr = PenguinTools.Chart.Models.umgr;
 
@@ -14,6 +15,7 @@ namespace PenguinTools.Models;
 [LocalizableCategoryOrder(nameof(Strings.Category_Display), 2, typeof(Strings))]
 [LocalizableCategoryOrder(nameof(Strings.Category_BGM), 3, typeof(Strings))]
 [LocalizableCategoryOrder(nameof(Strings.Category_Sync), 4, typeof(Strings))]
+[LocalizableCategoryOrder(nameof(Strings.Category_Misc), 5, typeof(Strings))]
 public class MusicModel : MetaModel
 {
     public MusicModel(umgr.Chart mgxc)
@@ -245,6 +247,15 @@ public class MusicModel : MetaModel
         get => Meta.BgmPreviewStop;
         set => SetProperty(Meta.BgmPreviewStop, value, newValue => Meta.BgmPreviewStop = newValue, true);
     }
+
+    [LocalizableCategory(nameof(Strings.Category_Misc), typeof(Strings))]
+    [LocalizableDisplayName(nameof(Strings.Display_HcaEncryptionKey), typeof(Strings))]
+    [PropertyOrder(0)]
+    public ulong HcaEncryptionKey
+    {
+        get;
+        set => SetProperty(field, value, newValue => field = newValue);
+    } = AudioConvertRequest.DefaultHcaEncryptionKey;
 
     // Sync
     [LocalizableCategory(nameof(Strings.Category_Sync), typeof(Strings))]

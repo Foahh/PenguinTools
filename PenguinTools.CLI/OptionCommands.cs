@@ -192,6 +192,11 @@ internal static class OptionCommands
             Description = Strings.Cli_Opt_convert_background
         };
 
+        internal Option<ulong?> HcaEncryptionKey { get; } = new("--hca-key")
+        {
+            Description = Strings.Cli_Opt_hca_key
+        };
+
         internal Option<bool?> GenerateEventXml { get; } = new("--generate-event-xml")
         {
             Description = Strings.Cli_Opt_generate_event_xml
@@ -232,6 +237,7 @@ internal static class OptionCommands
             command.Options.Add(ConvertAudio);
             command.Options.Add(ConvertJacket);
             command.Options.Add(ConvertBackground);
+            command.Options.Add(HcaEncryptionKey);
             command.Options.Add(GenerateEventXml);
             command.Options.Add(GenerateReleaseTagXml);
             command.Options.Add(ReleaseTagId);
@@ -266,6 +272,9 @@ internal static class OptionCommands
 
             if (parseResult.GetValue(ConvertBackground) is { } convertBackground)
                 document.ConvertBackground = convertBackground;
+
+            if (parseResult.GetValue(HcaEncryptionKey) is { } hcaEncryptionKey)
+                document.HcaEncryptionKey = hcaEncryptionKey;
 
             if (parseResult.GetValue(GenerateEventXml) is { } generateEventXml)
                 document.GenerateEventXml = generateEventXml;

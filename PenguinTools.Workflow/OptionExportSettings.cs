@@ -1,3 +1,5 @@
+using PenguinTools.Media;
+
 namespace PenguinTools.Workflow;
 
 public sealed record OptionExportSettings(
@@ -12,4 +14,5 @@ public sealed record OptionExportSettings(
     int UltimaEventId,
     int WeEventId,
     int BatchSize,
-    OptionConversionCache? ConversionCache = null);
+    OptionConversionCache? ConversionCache = null,
+    ulong HcaEncryptionKey = AudioConvertRequest.DefaultHcaEncryptionKey);

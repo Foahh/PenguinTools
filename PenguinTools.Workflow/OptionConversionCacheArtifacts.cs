@@ -70,6 +70,21 @@ internal static class OptionConversionCacheArtifacts
         string dummyAcbPath,
         CancellationToken ct)
     {
+        return CreateAudioAsync(
+            meta,
+            cueFileFolder,
+            dummyAcbPath,
+            AudioConvertRequest.DefaultHcaEncryptionKey,
+            ct);
+    }
+
+    public static Task<OptionCachedConversion> CreateAudioAsync(
+        Meta meta,
+        string cueFileFolder,
+        string dummyAcbPath,
+        ulong hcaEncryptionKey,
+        CancellationToken ct)
+    {
         if (meta.Id is not { } songId)
             throw new ArgumentException("Song id is required for audio cache artifacts.", nameof(meta));
 
@@ -84,7 +99,7 @@ internal static class OptionConversionCacheArtifacts
 
         return CreateAsync(
             $"audio:{songId}",
-            CreateAudioRecipe(meta),
+            CreateAudioRecipe(meta, hcaEncryptionKey),
             new Dictionary<string, string>
             {
                 ["bgm"] = meta.FullBgmFilePath,
@@ -119,7 +134,7 @@ internal static class OptionConversionCacheArtifacts
         };
     }
 
-    private static Dictionary<string, string?> CreateAudioRecipe(Meta meta)
+    private static Dictionary<string, string?> CreateAudioRecipe(Meta meta, ulong hcaEncryptionKey)
     {
         return new Dictionary<string, string?>
         {
@@ -131,7 +146,7 @@ internal static class OptionConversionCacheArtifacts
             ["bgmPreviewStop"] = OptionConversionCacheValidator.FormatInvariant(meta.BgmPreviewStop),
             ["bgmEnableBarOffset"] = meta.BgmEnableBarOffset.ToString(),
             ["bgmBarOffset"] = OptionConversionCacheValidator.FormatInvariant(meta.BgmBarOffset),
-            ["hcaEncryptionKey"] = AudioConvertRequest.DefaultHcaEncryptionKey.ToString()
+            ["hcaEncryptionKey"] = hcaEncryptionKey.ToString()
         };
     }
 }

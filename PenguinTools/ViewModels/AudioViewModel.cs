@@ -61,7 +61,8 @@ public class AudioViewModel : WatchViewModel<AudioModel>
                 Model.Meta,
                 path,
                 AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
-                ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(Model.Meta.FullBgmFilePath)}.wav")),
+                ResourceStore.GetTempPath($"c_{Path.GetFileNameWithoutExtension(Model.Meta.FullBgmFilePath)}.wav"),
+                Model.HcaEncryptionKey),
             MediaTool);
         return await converter.ConvertAsync(ct);
     }

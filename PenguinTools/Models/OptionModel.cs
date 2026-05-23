@@ -8,6 +8,7 @@ using PenguinTools.Attributes;
 using PenguinTools.Core.IO;
 using PenguinTools.Core.Xml;
 using PenguinTools.i18n;
+using PenguinTools.Media;
 using PenguinTools.Workflow;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
@@ -17,6 +18,7 @@ namespace PenguinTools.Models;
 [LocalizableCategoryOrder(nameof(Strings.Category_Conversion), 1, typeof(Strings))]
 [LocalizableCategoryOrder(nameof(Strings.Category_EventXml), 2, typeof(Strings))]
 [LocalizableCategoryOrder(nameof(Strings.Category_ReleaseTagXml), 3, typeof(Strings))]
+[LocalizableCategoryOrder(nameof(Strings.Category_Misc), 4, typeof(Strings))]
 public partial class OptionModel : Model, IPersistable
 {
     [Browsable(false)] public string OptionId { get; set; } = CreateOptionId();
@@ -66,21 +68,27 @@ public partial class OptionModel : Model, IPersistable
     public partial bool ConvertBackground { get; set; } = true;
 
     [ObservableProperty]
-    [PropertyOrder(6)]
+    [PropertyOrder(0)]
+    [LocalizableCategory(nameof(Strings.Category_Misc), typeof(Strings))]
+    [LocalizableDisplayName(nameof(Strings.Display_HcaEncryptionKey), typeof(Strings))]
+    public partial ulong HcaEncryptionKey { get; set; } = AudioConvertRequest.DefaultHcaEncryptionKey;
+
+    [ObservableProperty]
+    [PropertyOrder(7)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
     [LocalizableCategory(nameof(Strings.Category_EventXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_GenerateEventXml), typeof(Strings))]
     public partial bool GenerateEventXml { get; set; } = true;
 
     [ObservableProperty]
-    [PropertyOrder(7)]
+    [PropertyOrder(8)]
     [NotifyPropertyChangedFor(nameof(CanExecute))]
     [LocalizableCategory(nameof(Strings.Category_ReleaseTagXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ReleaseTagXml), typeof(Strings))]
     public partial bool GenerateReleaseTagXml { get; set; } = true;
 
     [ObservableProperty]
-    [PropertyOrder(8)]
+    [PropertyOrder(9)]
     [LocalizableCategory(nameof(Strings.Category_ReleaseTagXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ReleaseTagId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_ReleaseTag), typeof(Strings))]
@@ -88,28 +96,28 @@ public partial class OptionModel : Model, IPersistable
     public partial int ReleaseTagId { get; set; } = ReleaseTag.DefaultId;
 
     [ObservableProperty]
-    [PropertyOrder(9)]
+    [PropertyOrder(10)]
     [LocalizableCategory(nameof(Strings.Category_ReleaseTagXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_ReleaseTagTitleName), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_ReleaseTag), typeof(Strings))]
     public partial string ReleaseTagTitleName { get; set; } = ReleaseTag.DefaultTitleName;
 
     [ObservableProperty]
-    [PropertyOrder(10)]
+    [PropertyOrder(11)]
     [LocalizableCategory(nameof(Strings.Category_EventXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_UltimaEventId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_UnlockEventIDOption), typeof(Strings))]
     public partial int UltimaEventId { get; set; } = 1000001;
 
     [ObservableProperty]
-    [PropertyOrder(11)]
+    [PropertyOrder(12)]
     [LocalizableCategory(nameof(Strings.Category_EventXml), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_WeEventId), typeof(Strings))]
     [LocalizableDescription(nameof(Strings.Description_UnlockEventIDOption), typeof(Strings))]
     public partial int WeEventId { get; set; } = 1000002;
 
     [ObservableProperty]
-    [PropertyOrder(12)]
+    [PropertyOrder(13)]
     [LocalizableCategory(nameof(Strings.Category_Option), typeof(Strings))]
     [LocalizableDisplayName(nameof(Strings.Display_BatchSize), typeof(Strings))]
     [Range(-1, int.MaxValue)]
@@ -164,6 +172,7 @@ public partial class OptionModel : Model, IPersistable
         ConvertAudio = document.ConvertAudio;
         ConvertJacket = document.ConvertJacket;
         ConvertBackground = document.ConvertBackground;
+        HcaEncryptionKey = document.HcaEncryptionKey;
         GenerateEventXml = document.GenerateEventXml;
         GenerateReleaseTagXml = document.GenerateReleaseTagXml;
         ReleaseTagId = document.ReleaseTagId;
@@ -190,6 +199,7 @@ public partial class OptionModel : Model, IPersistable
             ConvertAudio = ConvertAudio,
             ConvertJacket = ConvertJacket,
             ConvertBackground = ConvertBackground,
+            HcaEncryptionKey = HcaEncryptionKey,
             GenerateEventXml = GenerateEventXml,
             GenerateReleaseTagXml = GenerateReleaseTagXml,
             ReleaseTagId = ReleaseTagId,

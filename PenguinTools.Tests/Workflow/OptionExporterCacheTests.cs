@@ -250,10 +250,67 @@ public sealed class OptionExporterCacheTests
     }
 
     [Fact]
+    public async Task AudioCache_MissesWhenHcaEncryptionKeyChanges()
+    {
+        var workPath = Path.Combine(Path.GetTempPath(), "PenguinToolsTests", Guid.NewGuid().ToString("N"));
+        var chartPath = Path.Combine(workPath, "chart.ugc");
+        var audioPath = Path.Combine(workPath, "audio.wav");
+        var dummyAcbPath = Path.Combine(workPath, "dummy.acb");
+        var cueFileFolder = Path.Combine(workPath, "cueFile");
+        var ct = TestContext.Current.CancellationToken;
+        Directory.CreateDirectory(workPath);
+        await File.WriteAllTextAsync(chartPath, "chart", ct);
+        await File.WriteAllTextAsync(audioPath, "audio", ct);
+        await File.WriteAllTextAsync(dummyAcbPath, "dummy", ct);
+
+        var meta = CreateMeta(workPath, chartPath) with
+        {
+            BgmFilePath = audioPath
+        };
+
+        try
+        {
+            var cache = new OptionConversionCache();
+            var cachedConversion = await OptionConversionCacheArtifacts.CreateAudioAsync(
+                meta,
+                cueFileFolder,
+                dummyAcbPath,
+                1,
+                ct);
+            await WriteOutputsAsync(cachedConversion.Outputs, "output", ct);
+            await OptionConversionCacheValidator.StoreAsync(
+                cache,
+                cachedConversion.Key,
+                cachedConversion.State,
+                cachedConversion.Outputs,
+                ct);
+
+            var changedRecipe = await OptionConversionCacheArtifacts.CreateAudioAsync(
+                meta,
+                cueFileFolder,
+                dummyAcbPath,
+                2,
+                ct);
+
+            Assert.False(await OptionConversionCacheValidator.IsHitAsync(
+                cache,
+                changedRecipe.Key,
+                changedRecipe.State,
+                changedRecipe.Outputs,
+                ct));
+        }
+        finally
+        {
+            if (Directory.Exists(workPath)) Directory.Delete(workPath, true);
+        }
+    }
+
+    [Fact]
     public void OptionDocumentJson_RoundTripsConversionCache()
     {
         var document = new OptionDocument
         {
+            HcaEncryptionKey = 123456789,
             ConversionCache = new OptionConversionCache()
         };
         document.ConversionCache.SetEntry("audio:4321", new OptionConversionCacheEntry
@@ -273,6 +330,7 @@ public sealed class OptionExporterCacheTests
         var roundTripped = JsonSerializer.Deserialize<OptionDocument>(json, OptionDocumentJson.Default);
 
         Assert.NotNull(roundTripped);
+        Assert.Equal(123456789UL, roundTripped.HcaEncryptionKey);
         var entry = roundTripped.ConversionCache.GetEntry("audio:4321");
         Assert.NotNull(entry);
         Assert.Equal("ABC", entry.RecipeHash);
@@ -285,6 +343,7 @@ public sealed class OptionExporterCacheTests
     {
         var document = new OptionDocument
         {
+            HcaEncryptionKey = 987654321,
             ConversionCache = new OptionConversionCache()
         };
         document.ConversionCache.SetEntry("jacket:music4321", new OptionConversionCacheEntry
@@ -304,6 +363,7 @@ public sealed class OptionExporterCacheTests
         var roundTripped = JsonSerializer.Deserialize(json, CliJsonSerializerContext.Default.OptionDocument);
 
         Assert.NotNull(roundTripped);
+        Assert.Equal(987654321UL, roundTripped.HcaEncryptionKey);
         var entry = roundTripped.ConversionCache.GetEntry("jacket:music4321");
         Assert.NotNull(entry);
         Assert.Equal("ABC", entry.RecipeHash);

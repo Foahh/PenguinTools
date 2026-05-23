@@ -3,12 +3,14 @@ using System.ComponentModel.DataAnnotations;
 using PenguinTools.Attributes;
 using PenguinTools.Core.Metadata;
 using PenguinTools.i18n;
+using PenguinTools.Media;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace PenguinTools.Models;
 
 [LocalizableCategoryOrder(nameof(Strings.Category_BGM), 0, typeof(Strings))]
 [LocalizableCategoryOrder(nameof(Strings.Category_Sync), 1, typeof(Strings))]
+[LocalizableCategoryOrder(nameof(Strings.Category_Misc), 2, typeof(Strings))]
 public class AudioModel : Model
 {
     public AudioModel()
@@ -59,6 +61,15 @@ public class AudioModel : Model
         get => Meta.BgmPreviewStop;
         set => SetProperty(Meta.BgmPreviewStop, value, newValue => Meta.BgmPreviewStop = newValue, true);
     }
+
+    [LocalizableCategory(nameof(Strings.Category_Misc), typeof(Strings))]
+    [LocalizableDisplayName(nameof(Strings.Display_HcaEncryptionKey), typeof(Strings))]
+    [PropertyOrder(0)]
+    public ulong HcaEncryptionKey
+    {
+        get;
+        set => SetProperty(field, value, newValue => field = newValue);
+    } = AudioConvertRequest.DefaultHcaEncryptionKey;
 
     // Sync
     [LocalizableCategory(nameof(Strings.Category_Sync), typeof(Strings))]
