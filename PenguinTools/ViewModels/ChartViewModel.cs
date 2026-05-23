@@ -45,11 +45,14 @@ public class ChartViewModel : WatchViewModel<ChartModel>
         };
         if (dlg.ShowDialog() != true) return OperationResult.Success();
 
+        ActionService.Report(Strings.Status_Converting, Strings.Tab_Chart, 0, 2);
         var converted = new C2SChartConverter(new C2SConvertRequest(chart)).Convert();
         if (!converted.Succeeded || converted.Value is null) return converted.ToResult();
 
+        ActionService.Report(Strings.Status_Writing, Path.GetFileName(dlg.FileName), 1, 2);
         var writer = new C2SChartWriter(new C2SWriteRequest(dlg.FileName, converted.Value));
         var written = await writer.WriteAsync(ct);
+        ActionService.Report(Strings.Status_Writing, Path.GetFileName(dlg.FileName), 2, 2);
         return (written.Succeeded ? OperationResult.Success() : OperationResult.Failure())
             .WithDiagnostics(converted.Diagnostics.Merge(written.Diagnostics));
     }

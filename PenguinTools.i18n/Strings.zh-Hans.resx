@@ -596,6 +596,12 @@
     <data name="Status_Checked" xml:space="preserve">
         <value>已检查</value>
     </data>
+    <data name="Status_Collecting" xml:space="preserve">
+        <value>正在收集...</value>
+    </data>
+    <data name="Status_Converting" xml:space="preserve">
+        <value>正在转换...</value>
+    </data>
     <data name="Status_Converted" xml:space="preserve">
         <value>已转换</value>
     </data>
@@ -604,6 +610,12 @@
     </data>
     <data name="Status_Error" xml:space="preserve">
         <value>发生错误</value>
+    </data>
+    <data name="Status_Extracting" xml:space="preserve">
+        <value>正在解包...</value>
+    </data>
+    <data name="Status_Finalizing" xml:space="preserve">
+        <value>正在完成...</value>
     </data>
     <data name="Status_Idle" xml:space="preserve">
         <value>空闲中</value>
@@ -616,6 +628,9 @@
     </data>
     <data name="Status_Starting" xml:space="preserve">
         <value>正在启动...</value>
+    </data>
+    <data name="Status_Writing" xml:space="preserve">
+        <value>正在写入...</value>
     </data>
     <data name="Tab_Audio" xml:space="preserve">
         <value>音源</value>

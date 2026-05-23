@@ -10,6 +10,7 @@ namespace PenguinTools.Services;
 public sealed class OptionService : IOptionService
 {
     private readonly AssetManager _assetManager;
+    private readonly ActionService _actionService;
     private readonly IInfrastructureAssetProvider _assetProvider;
     private readonly IMediaTool _mediaTool;
     private readonly IResourceStore _resourceStore;
@@ -18,12 +19,14 @@ public sealed class OptionService : IOptionService
         AssetManager assetManager,
         IMediaTool mediaTool,
         IResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        ActionService actionService)
     {
         _assetManager = assetManager;
         _mediaTool = mediaTool;
         _resourceStore = resourceStore;
         _assetProvider = assetProvider;
+        _actionService = actionService;
     }
 
     public Task<OperationResult> ExportAsync(OptionModel settings, ExportOutputPaths outputPaths, CancellationToken ct)
@@ -33,7 +36,8 @@ public sealed class OptionService : IOptionService
         var snapshots = settings.Books.Values.Select(ToSnapshot).ToArray();
         var ctx = new MusicExportContext(_assetManager, _mediaTool, _resourceStore, _assetProvider);
 
-        return OptionExporter.ExportAsync(ctx, exportSettings, outputPaths, snapshots, settings.WorkingDirectory, ct);
+        return OptionExporter.ExportAsync(ctx, exportSettings, outputPaths, snapshots, settings.WorkingDirectory, ct,
+            _actionService);
     }
 
     private static OptionBookSnapshot ToSnapshot(Book book)

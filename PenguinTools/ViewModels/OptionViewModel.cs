@@ -81,22 +81,14 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
     protected override async Task<OperationResult<OptionModel>> ReadModel(string path, CancellationToken ct = default)
     {
         var diagnostics = OptionExportBatch.CreateCollector();
-        await Dispatcher.InvokeAsync(() =>
-        {
-            ActionService.Status = Strings.Status_Searching;
-            ActionService.StatusTime = DateTime.Now;
-        });
+        ActionService.Report(Strings.Status_Searching, Path.GetFileName(path));
         var model = await LoadModelAsync(path, ct);
         var scanParams = new ChartScanParameters(FileGlob, diagnostics, model.BatchSize, model.WorkingDirectory,
             model.GetChartFileDiscovery());
         var scanResult = await _chartScan.ScanAsync(path, model.Books, scanParams, ct);
 
         if (model.Books.Count == 0) throw new DiagnosticException(Strings.Error_No_charts_are_found_directory);
-        await Dispatcher.InvokeAsync(() =>
-        {
-            ActionService.Status = Strings.Status_Done;
-            ActionService.StatusTime = DateTime.Now;
-        });
+        ActionService.Report(Strings.Status_Done, completed: 1, total: 1);
 
         return OperationResult<OptionModel>.Success(model).WithDiagnostics(scanResult.Diagnostics);
     }

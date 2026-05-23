@@ -10,6 +10,7 @@ namespace PenguinTools.Services;
 public sealed class MusicExportService : IMusicExportService
 {
     private readonly AssetManager _assetManager;
+    private readonly ActionService _actionService;
     private readonly IInfrastructureAssetProvider _assetProvider;
     private readonly IMediaTool _mediaTool;
     private readonly IResourceStore _resourceStore;
@@ -18,12 +19,14 @@ public sealed class MusicExportService : IMusicExportService
         AssetManager assetManager,
         IMediaTool mediaTool,
         IResourceStore resourceStore,
-        IInfrastructureAssetProvider assetProvider)
+        IInfrastructureAssetProvider assetProvider,
+        ActionService actionService)
     {
         _assetManager = assetManager;
         _mediaTool = mediaTool;
         _resourceStore = resourceStore;
         _assetProvider = assetProvider;
+        _actionService = actionService;
     }
 
     public Task<OperationResult> ExportAsync(MusicModel model, string outputPath, CancellationToken ct)
@@ -36,6 +39,7 @@ public sealed class MusicExportService : IMusicExportService
             null,
             AudioRequestOverrides.Default with { HcaEncryptionKey = model.HcaEncryptionKey },
             StageRequestOverrides.None,
-            ct);
+            ct,
+            _actionService);
     }
 }

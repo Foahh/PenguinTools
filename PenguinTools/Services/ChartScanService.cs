@@ -10,12 +10,14 @@ namespace PenguinTools.Services;
 public sealed class ChartScanService : IChartScanService
 {
     private readonly AssetManager _assetManager;
+    private readonly ActionService _actionService;
     private readonly IMediaTool _mediaTool;
 
-    public ChartScanService(AssetManager assetManager, IMediaTool mediaTool)
+    public ChartScanService(AssetManager assetManager, IMediaTool mediaTool, ActionService actionService)
     {
         _assetManager = assetManager;
         _mediaTool = mediaTool;
+        _actionService = actionService;
     }
 
     public async Task<OperationResult> ScanAsync(string directory, BookDictionary books, ChartScanParameters parameters,
@@ -30,7 +32,8 @@ public sealed class ChartScanService : IChartScanService
             parameters.WorkingDirectory,
             parameters.Diagnostics,
             ct,
-            CreateMessages());
+            CreateMessages(),
+            _actionService);
 
         if (!scanResult.Succeeded || scanResult.Value is not { } snapshots)
             return scanResult.ToResult();

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using PenguinTools.Core;
 using PenguinTools.Core.Diagnostic;
 
 namespace PenguinTools.Workflow;
@@ -7,7 +8,8 @@ public sealed record OptionExportProcessContext(
     IDiagnosticSink Diagnostics,
     CancellationToken CancellationToken,
     int BatchSize,
-    string WorkingDirectory);
+    string WorkingDirectory,
+    IProgress<ProgressReport>? Progress = null);
 
 public static class OptionExportBatch
 {
@@ -29,6 +31,8 @@ public static class OptionExportBatch
     {
         var itemList = items as IList<T> ?? [.. items];
         var diagnostics = new ConcurrentBag<DiagnosticSnapshot>();
+        var completed = 0;
+        main.Progress?.Report(new ProgressReport(prefix, Completed: 0, Total: itemList.Count));
 
         if (parallel)
             await Parallel.ForEachAsync(itemList, new ParallelOptions
@@ -57,6 +61,9 @@ public static class OptionExportBatch
             finally
             {
                 diagnostics.Add(CreateItemDiagnostics(ld, getPath(item), main.WorkingDirectory));
+                var done = Interlocked.Increment(ref completed);
+                main.Progress?.Report(new ProgressReport(prefix, Path.GetFileName(getPath(item)), done,
+                    itemList.Count));
             }
         }
     }

@@ -78,7 +78,8 @@ public static class MusicExporter
         string? jacketInput,
         AudioRequestOverrides audioOverrides,
         StageRequestOverrides stageOverrides,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        IProgress<ProgressReport>? progress = null)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -88,6 +89,7 @@ public static class MusicExporter
 
         if (ShouldBuildStage(meta, stageOverrides))
         {
+            progress?.Report(new ProgressReport(Strings.Status_Converting, Strings.Tab_Stage, 0, 4));
             var builtStage = await BuildStageAsync(ctx, meta, output, stageOverrides, cancellationToken);
             diagnostics = diagnostics.Merge(builtStage.Diagnostics);
             if (!builtStage.Succeeded || builtStage.Value is null)
@@ -118,6 +120,7 @@ public static class MusicExporter
         var chartPath = Path.Combine(chartBundleFolder, musicXml[meta.Difficulty].File);
         MusicPaths.EnsureParentDirectory(chartPath);
 
+        progress?.Report(new ProgressReport(Strings.Status_Converting, Strings.Tab_Chart, 1, 4));
         var convertedChart = new C2SChartConverter(new C2SConvertRequest(chart)).Convert();
         diagnostics = diagnostics.Merge(convertedChart.Diagnostics);
         if (!convertedChart.Succeeded || convertedChart.Value is null)
@@ -131,6 +134,7 @@ public static class MusicExporter
 
         cancellationToken.ThrowIfCancellationRequested();
 
+        progress?.Report(new ProgressReport(Strings.Status_Converting, Strings.Tab_Jacket, 2, 4));
         var jacketPath = Path.Combine(chartBundleFolder, musicXml.JaketFile);
         var convertedJacket = await new JacketConverter(
             new JacketConvertRequest(jacketInput ?? meta.FullJacketFilePath, jacketPath),
@@ -140,8 +144,10 @@ public static class MusicExporter
 
         cancellationToken.ThrowIfCancellationRequested();
 
+        progress?.Report(new ProgressReport(Strings.Status_Converting, Strings.Tab_Audio, 3, 4));
         var convertedAudio = await ConvertAudioAsync(ctx, meta, output, audioOverrides, cancellationToken);
         diagnostics = diagnostics.Merge(convertedAudio.Diagnostics);
+        progress?.Report(new ProgressReport(Strings.Status_Converting, meta.Title, 4, 4));
         return (convertedAudio.Succeeded ? OperationResult.Success() : OperationResult.Failure())
             .WithDiagnostics(diagnostics);
     }

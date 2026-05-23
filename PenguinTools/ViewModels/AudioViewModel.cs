@@ -56,6 +56,7 @@ public class AudioViewModel : WatchViewModel<AudioModel>
         if (dlg.ShowDialog() != true) return OperationResult.Success();
         var path = dlg.FolderName;
 
+        ActionService.Report(Strings.Status_Converting, Path.GetFileName(Model.Meta.FullBgmFilePath));
         var converter = new AudioConverter(
             new AudioConvertRequest(
                 Model.Meta,

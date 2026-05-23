@@ -20,17 +20,18 @@ public static class OptionExporter
         ExportOutputPaths outputPaths,
         IEnumerable<OptionBookSnapshot> books,
         string diagnosticsWorkingDirectory,
-        CancellationToken ct)
+        CancellationToken ct,
+        IProgress<ProgressReport>? progress = null)
     {
         var diagnostics = OptionExportBatch.CreateCollector();
         var processContext =
-            new OptionExportProcessContext(diagnostics, ct, settings.BatchSize, diagnosticsWorkingDirectory);
+            new OptionExportProcessContext(diagnostics, ct, settings.BatchSize, diagnosticsWorkingDirectory, progress);
         var weEntries = new ConcurrentBag<Entry>();
         var ultEntries = new ConcurrentBag<Entry>();
         var releaseTag = new ReleaseTag(settings.ReleaseTagId, settings.ReleaseTagTitleName);
 
         var batchDiagnostics = await OptionExportBatch.BatchAsync(
-            "convert",
+            Strings.Status_Converting,
             books,
             (book, innerDiagnostics) => ConvertBookAsync(ctx, book, settings, outputPaths, releaseTag,
                 processContext.WorkingDirectory, innerDiagnostics, weEntries, ultEntries, ct),
@@ -38,6 +39,7 @@ public static class OptionExporter
             processContext,
             true);
 
+        progress?.Report(new ProgressReport(Strings.Status_Writing, "XML"));
         await GenerateAuxiliaryFilesAsync(settings, outputPaths, weEntries, ultEntries, releaseTag, ct);
 
         return OperationResult.Success()

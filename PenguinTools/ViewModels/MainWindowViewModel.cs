@@ -40,6 +40,10 @@ public partial class MainWindowViewModel : ViewModel
 
     public string Status => ActionService.Status;
     public DateTime StatusTime => ActionService.StatusTime;
+    public bool IsBusy => ActionService.IsBusy;
+    public string ProgressText => ActionService.ProgressText;
+    public double ProgressValue => ActionService.ProgressValue;
+    public bool IsProgressIndeterminate => ActionService.IsProgressIndeterminate;
 
     [RelayCommand]
     public async Task UpdateCheck()

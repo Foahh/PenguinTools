@@ -58,6 +58,7 @@ public partial class StageViewModel : ActionViewModel
         };
         if (dlg.ShowDialog() != true) return OperationResult.Success();
 
+        ActionService.Report(Strings.Status_Converting, Path.GetFileName(BackgroundPath));
         var converter = new StageConverter(
             new StageBuildRequest(
                 AssetManager,

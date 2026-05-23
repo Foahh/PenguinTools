@@ -60,6 +60,7 @@ public partial class JacketViewModel : ActionViewModel
         };
         if (dlg.ShowDialog() != true) return OperationResult.Success();
 
+        ActionService.Report(Strings.Status_Converting, Path.GetFileName(JacketPath));
         var converter = new JacketConverter(new JacketConvertRequest(JacketPath, dlg.FileName), MediaTool);
         return await converter.ConvertAsync(ct);
     }

@@ -80,6 +80,7 @@ public partial class MiscViewModel : ViewModel
 
         await ActionService.RunAsync(async ct =>
         {
+            ActionService.Report(Strings.Status_Extracting, Path.GetFileName(openDlg.FileName));
             var extractor = new AfbExtractor(new AfbExtractRequest(openDlg.FileName, saveDlg.FolderName), MediaTool);
             return await extractor.ExtractAsync(ct);
         });
@@ -91,6 +92,10 @@ public partial class MiscViewModel : ViewModel
         var gameDirectory = await _gameAssetService.BrowseGameDirectoryAsync(Application.Current.MainWindow);
         if (string.IsNullOrWhiteSpace(gameDirectory)) return;
 
-        await ActionService.RunAsync(ct => _gameAssetService.CollectAssetsAsync(gameDirectory, ct));
+        await ActionService.RunAsync(ct =>
+        {
+            ActionService.Report(Strings.Status_Collecting, gameDirectory);
+            return _gameAssetService.CollectAssetsAsync(gameDirectory, ct);
+        });
     }
 }

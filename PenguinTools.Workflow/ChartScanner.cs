@@ -24,10 +24,11 @@ public static class ChartScanner
         string workingDirectory,
         IDiagnosticSink diagnostics,
         CancellationToken ct,
-        ChartScannerMessages? messages = null)
+        ChartScannerMessages? messages = null,
+        IProgress<ProgressReport>? progress = null)
     {
         messages ??= ChartScannerMessages.Default;
-        var processContext = new OptionExportProcessContext(diagnostics, ct, batchSize, workingDirectory);
+        var processContext = new OptionExportProcessContext(diagnostics, ct, batchSize, workingDirectory, progress);
         var booksById = new ConcurrentDictionary<int, BookAccumulator>();
 
         var batch = DiagnosticSnapshot.Empty;
@@ -49,6 +50,7 @@ public static class ChartScanner
                     ct));
         }
 
+        progress?.Report(new ProgressReport(Strings.Status_Finalizing, Strings.Status_Checked));
         var snapshots = FinalizeAndBuildSnapshots(booksById, diagnostics, messages, ct);
         return OperationResult<IReadOnlyList<OptionBookSnapshot>>.Success(snapshots)
             .WithDiagnostics(batch.Merge(DiagnosticSnapshot.Create(diagnostics)));

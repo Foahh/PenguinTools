@@ -1,4 +1,5 @@
 using System.Media;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Core;
 using PenguinTools.Core.Diagnostic;
@@ -6,7 +7,7 @@ using PenguinTools.i18n;
 
 namespace PenguinTools.Services;
 
-public partial class ActionService : ObservableObject
+public partial class ActionService : ObservableObject, IProgress<ProgressReport>
 {
     private readonly IDiagnosticsPresenter _diagnosticsPresenter;
 
@@ -18,6 +19,9 @@ public partial class ActionService : ObservableObject
     [ObservableProperty] public partial bool IsBusy { get; set; }
     [ObservableProperty] public partial string Status { get; set; } = Strings.Status_Idle;
     [ObservableProperty] public partial DateTime StatusTime { get; set; } = DateTime.Now;
+    [ObservableProperty] public partial string ProgressText { get; set; } = string.Empty;
+    [ObservableProperty] public partial double ProgressValue { get; set; }
+    [ObservableProperty] public partial bool IsProgressIndeterminate { get; set; }
 
     public bool CanRun()
     {
@@ -51,8 +55,7 @@ public partial class ActionService : ObservableObject
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
-            Status = Strings.Status_Starting;
-            StatusTime = DateTime.Now;
+            Report(new ProgressReport(Strings.Status_Starting));
             result = await Task.Run(() => action(cts.Token), cts.Token);
 
             SystemSounds.Exclamation.Play();
@@ -75,13 +78,11 @@ public partial class ActionService : ObservableObject
 
         if (result.Diagnostics.HasError)
         {
-            Status = Strings.Status_Error;
-            StatusTime = DateTime.Now;
+            Report(new ProgressReport(Strings.Status_Error));
         }
         else
         {
-            Status = Strings.Status_Done;
-            StatusTime = DateTime.Now;
+            Report(new ProgressReport(Strings.Status_Done, Completed: 1, Total: 1));
         }
 
         if (!result.Diagnostics.HasProblem) return result;
@@ -100,5 +101,49 @@ public partial class ActionService : ObservableObject
             return result.ToResult();
         }, ct);
         return result.WithDiagnostics(wrapper.Diagnostics);
+    }
+
+    public void Report(ProgressReport value)
+    {
+        if (Application.Current?.Dispatcher is { } dispatcher && !dispatcher.CheckAccess())
+        {
+            dispatcher.Invoke(() => ApplyProgress(value));
+            return;
+        }
+
+        ApplyProgress(value);
+    }
+
+    public void Report(string status, string? detail = null, int? completed = null, int? total = null)
+    {
+        Report(new ProgressReport(status, detail, completed, total));
+    }
+
+    private void ApplyProgress(ProgressReport value)
+    {
+        Status = value.Status;
+        StatusTime = DateTime.Now;
+        ProgressText = FormatProgressText(value);
+        if (value.Percent is { } percent)
+        {
+            ProgressValue = percent;
+            IsProgressIndeterminate = false;
+        }
+        else
+        {
+            ProgressValue = 0;
+            IsProgressIndeterminate = IsBusy;
+        }
+    }
+
+    private static string FormatProgressText(ProgressReport value)
+    {
+        var count = value is { Completed: { } completed, Total: { } total } ? $"{completed}/{total}" : null;
+
+        if (!string.IsNullOrWhiteSpace(value.Detail) && count is not null)
+            return $"{value.Detail} - {count}";
+
+        if (!string.IsNullOrWhiteSpace(value.Detail)) return value.Detail;
+        return count ?? string.Empty;
     }
 }
