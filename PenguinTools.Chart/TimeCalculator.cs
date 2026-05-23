@@ -4,6 +4,7 @@
 */
 
 using PenguinTools.Chart.Models.umgr;
+using PenguinTools.Chart.Parser;
 using PenguinTools.Core.Diagnostic;
 
 namespace PenguinTools.Chart;
@@ -11,34 +12,39 @@ namespace PenguinTools.Chart;
 public class TimeCalculator : ITickFormatter
 {
     private readonly int _barTick;
-    private readonly int[] _cumulativeBars;
-    private readonly int[] _measureLengths;
-    private readonly BeatEvent[] _timeSignatures;
+    private readonly TimeSignature[] _timeSignatures;
 
     public TimeCalculator(int resolution, IEnumerable<BeatEvent> beatEvents)
     {
         _barTick = resolution;
 
-        _timeSignatures = beatEvents.Where(e => e.Bar >= 0).OrderBy(x => x.Tick).ToArray();
-        _measureLengths = new int[_timeSignatures.Length];
-        _cumulativeBars = new int[_timeSignatures.Length];
+        _timeSignatures = BuildTimeSignatures(beatEvents);
+    }
 
-        var barCount = 0;
-        for (var i = 0; i < _timeSignatures.Length; i++)
+    private TimeSignature[] BuildTimeSignatures(IEnumerable<BeatEvent> beatEvents)
+    {
+        var beatEventArray = beatEvents.Where(e => e.Bar >= 0).OrderBy(e => e.Bar).ToArray();
+        var timeSignatures = new List<TimeSignature>(beatEventArray.Length + 1);
+        var firstEventIndex = 0;
+        if (beatEventArray.FirstOrDefault() is { Bar: 0 } firstBeatEvent)
         {
-            var ts = _timeSignatures[i];
-            _measureLengths[i] = GetMeasureLength(ts);
-
-            if (i > 0)
-            {
-                var prev = _timeSignatures[i - 1];
-                var ticksUnderCurrent = ts.Tick.Original - prev.Tick.Original;
-                var prevMeasureLength = _measureLengths[i - 1];
-                barCount += ticksUnderCurrent / prevMeasureLength;
-            }
-
-            _cumulativeBars[i] = barCount;
+            timeSignatures.Add(new TimeSignature(0, 0, firstBeatEvent.Numerator, firstBeatEvent.Denominator));
+            firstEventIndex = 1;
         }
+        else
+        {
+            timeSignatures.Add(new TimeSignature(0, 0, UmiguriParserCommon.DefaultBeatNumerator,
+                UmiguriParserCommon.DefaultBeatDenominator));
+        }
+
+        foreach (var beatEvent in beatEventArray[firstEventIndex..])
+        {
+            var prev = timeSignatures[^1];
+            var tick = prev.Tick + GetMeasureLength(prev) * (beatEvent.Bar - prev.Bar);
+            timeSignatures.Add(new TimeSignature(beatEvent.Bar, tick, beatEvent.Numerator, beatEvent.Denominator));
+        }
+
+        return [.. timeSignatures];
     }
 
     public string FormatTick(int tick)
@@ -50,18 +56,17 @@ public class TimeCalculator : ITickFormatter
     {
         var idx = FindTimeSignatureIndex(tick);
         var ts = _timeSignatures[idx];
-        var measureLength = _measureLengths[idx];
+        var measureLength = GetMeasureLength(ts);
 
-        var delta = tick - ts.Tick.Original;
+        var delta = tick - ts.Tick;
         var barsSince = delta / measureLength;
         var remainder = delta % measureLength;
 
-        var totalBarsBefore = _cumulativeBars[idx];
         var beatTick = (double)_barTick / ts.Denominator;
         var beatIndex = (int)(remainder / beatTick);
         var tickOffset = (int)(remainder % beatTick);
 
-        return new Position(totalBarsBefore + barsSince + 1, beatIndex + 1, tickOffset);
+        return new Position(ts.Bar + barsSince + 1, beatIndex + 1, tickOffset);
     }
 
     private int FindTimeSignatureIndex(int tick)
@@ -70,9 +75,9 @@ public class TimeCalculator : ITickFormatter
         while (low <= high)
         {
             var mid = (low + high) / 2;
-            if (_timeSignatures[mid].Tick.Original <= tick)
+            if (_timeSignatures[mid].Tick <= tick)
             {
-                if (mid == _timeSignatures.Length - 1 || _timeSignatures[mid + 1].Tick.Original > tick)
+                if (mid == _timeSignatures.Length - 1 || _timeSignatures[mid + 1].Tick > tick)
                     return mid;
                 low = mid + 1;
             }
@@ -85,10 +90,12 @@ public class TimeCalculator : ITickFormatter
         throw new InvalidOperationException($"Tick {tick} is before all time signatures.");
     }
 
-    private int GetMeasureLength(BeatEvent ts)
+    private int GetMeasureLength(TimeSignature ts)
     {
         return (int)(_barTick / (double)ts.Denominator * ts.Numerator);
     }
+
+    private readonly record struct TimeSignature(int Bar, int Tick, int Numerator, int Denominator);
 
     public readonly record struct Position(int BarIndex, int BeatIndex, int TickOffset)
     {

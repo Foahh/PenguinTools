@@ -7,8 +7,25 @@ using Xunit;
 
 namespace PenguinTools.Tests.Parser;
 
+using umgr = Chart.Models.umgr;
+
 public class MgxcRegressionTests
 {
+    [Fact]
+    public void GetCalculator_WithOnlyBarBasedBeatEvents_FormatsAfterTimeSignatureChanges()
+    {
+        var chart = new umgr.Chart();
+        chart.Events.AppendChild(new umgr.BeatEvent { Bar = 38, Numerator = 6, Denominator = 4 });
+        chart.Events.AppendChild(new umgr.BeatEvent { Bar = 64, Numerator = 4, Denominator = 4 });
+        chart.Events.AppendChild(new umgr.BeatEvent { Bar = 80, Numerator = 6, Denominator = 4 });
+
+        var calculator = chart.GetCalculator();
+
+        Assert.Equal("72:1.0", calculator.FormatTick(161280));
+        Assert.Equal([0, 0, 0],
+            chart.Events.Children.OfType<umgr.BeatEvent>().Select(e => e.Tick.Original).ToArray());
+    }
+
     [Fact]
     public async Task ParseKnownSample_StillProducesChart()
     {

@@ -1,4 +1,3 @@
-using PenguinTools.Chart.Parser;
 using PenguinTools.Core.Metadata;
 
 namespace PenguinTools.Chart.Models.umgr;
@@ -18,19 +17,21 @@ public class Chart
     public TimeCalculator GetCalculator()
     {
         var beatEvents = Events.Children.OfType<BeatEvent>().OrderBy(e => e.Bar).ToList();
-        var firstEvent = beatEvents.FirstOrDefault();
-        if (firstEvent is not { Bar: 0 })
-        {
-            var newEvent = new BeatEvent
-            {
-                Bar = 0,
-                Numerator = UmiguriParserCommon.DefaultBeatNumerator,
-                Denominator = UmiguriParserCommon.DefaultBeatDenominator
-            };
-            Events.InsertBefore(newEvent, firstEvent);
-            beatEvents.Insert(0, newEvent);
-        }
-
         return new TimeCalculator(ChartResolution.UmiguriTick, beatEvents);
+    }
+
+    public static void CalculateBeatEventTicks(IReadOnlyList<BeatEvent> beatEvents)
+    {
+        if (beatEvents.Count <= 0) return;
+
+        var ticks = 0;
+        beatEvents[0].Tick = ticks;
+        for (var i = 0; i < beatEvents.Count - 1; i++)
+        {
+            var curr = beatEvents[i];
+            var next = beatEvents[i + 1];
+            ticks += ChartResolution.UmiguriTick * curr.Numerator / curr.Denominator * (next.Bar - curr.Bar);
+            next.Tick = ticks;
+        }
     }
 }

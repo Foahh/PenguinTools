@@ -64,18 +64,7 @@ internal sealed partial class ChartPostProcessor
         _chart.Meta.BgmInitialNumerator = initBeat.Numerator;
         _chart.Meta.BgmInitialDenominator = initBeat.Denominator;
 
-        // calculate tick for each beat event
-        if (beatEvents.Count > 1)
-        {
-            var ticks = 0;
-            for (var i = 0; i < beatEvents.Count - 1; i++)
-            {
-                var curr = beatEvents[i];
-                var next = beatEvents[i + 1];
-                ticks += ChartResolution.UmiguriTick * curr.Numerator / curr.Denominator * (next.Bar - curr.Bar);
-                next.Tick = ticks;
-            }
-        }
+        umgr.Chart.CalculateBeatEventTicks(beatEvents);
 
         _chart.Events.Sort();
     }
