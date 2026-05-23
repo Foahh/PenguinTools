@@ -26,6 +26,10 @@ function Get-ProjectVersion {
     return $commonProps.Project.PropertyGroup.Version
 }
 
+function Get-DefaultReleaseNotes {
+    return '**Full Changelog**: https://github.com/Foahh/PenguinTools/compare/v1.10.4...v1.11.0'
+}
+
 function Compress-PublishOutput {
     param(
         [Parameter(Mandatory = $true)][string]$Source,
@@ -81,14 +85,44 @@ function Test-GitHubRelease {
     }
 }
 
+function Test-GitHubTag {
+    param(
+        [Parameter(Mandatory = $true)][string]$Tag,
+        [Parameter(Mandatory = $true)][string]$Repository
+    )
+
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        gh api "repos/$Repository/git/ref/tags/$Tag" *> $null
+        if ($LASTEXITCODE -eq 0) {
+            return $true
+        }
+
+        if ($LASTEXITCODE -eq 1) {
+            return $false
+        }
+
+        throw "Failed to check GitHub tag '$Tag'. gh exited with code $LASTEXITCODE."
+    }
+    finally {
+        $script:ErrorActionPreference = $previousErrorActionPreference
+    }
+}
+
 Assert-Command 'git'
 Assert-Command 'gh'
 if (-not $SkipBuild) {
     Assert-Command 'dotnet'
 }
 
+$currentVersionTag = "v$(Get-ProjectVersion)"
+
 if (-not $Tag) {
-    $Tag = "v$(Get-ProjectVersion)"
+    $Tag = $currentVersionTag
+}
+elseif ($Tag -ne $currentVersionTag) {
+    throw "Release tag '$Tag' does not match current project version tag '$currentVersionTag'."
 }
 
 if (-not $Title) {
@@ -100,7 +134,7 @@ if ($NotesFile -and $Notes) {
 }
 
 if (-not $NotesFile -and -not $Notes) {
-    $Notes = "Release $Tag"
+    $Notes = Get-DefaultReleaseNotes
 }
 
 $repoRoot = (Resolve-Path $PSScriptRoot).Path
@@ -111,6 +145,10 @@ try {
         if ($status) {
             throw 'Working tree is dirty. Commit or stash changes, or pass -AllowDirty.'
         }
+    }
+
+    if (-not (Test-GitHubTag -Tag $Tag -Repository $Repository)) {
+        throw "GitHub tag '$Tag' does not exist in '$Repository'. Create and push the current version tag before running this script."
     }
 
     if (-not $SkipBuild) {
@@ -162,12 +200,29 @@ try {
     $releaseExists = Test-GitHubRelease -Tag $Tag -Repository $Repository
 
     if ($releaseExists) {
-        if (-not $Clobber) {
-            throw "GitHub release '$Tag' already exists. Pass -Clobber to replace its assets."
+        $editArgs = @('release', 'edit', $Tag, '--repo', $Repository, '--title', $Title)
+        if ($NotesFile) {
+            $editArgs += @('--notes-file', $NotesFile)
+        }
+        else {
+            $editArgs += @('--notes', $Notes)
+        }
+
+        Write-Host "Updating GitHub release $Tag..."
+        gh @editArgs
+        if ($LASTEXITCODE -ne 0) {
+            throw "Release update failed for '$Tag'."
+        }
+
+        $uploadArgs = @('release', 'upload', $Tag)
+        $uploadArgs += $assetPaths
+        $uploadArgs += @('--repo', $Repository)
+        if ($Clobber) {
+            $uploadArgs += '--clobber'
         }
 
         Write-Host "Uploading assets to existing release $Tag..."
-        gh release upload $Tag @assetPaths --repo $Repository --clobber
+        gh @uploadArgs
         if ($LASTEXITCODE -ne 0) {
             throw "Asset upload failed for release '$Tag'."
         }
@@ -175,7 +230,7 @@ try {
     else {
         $releaseArgs = @('release', 'create', $Tag)
         $releaseArgs += $assetPaths
-        $releaseArgs += @('--repo', $Repository, '--title', $Title)
+        $releaseArgs += @('--repo', $Repository, '--title', $Title, '--verify-tag')
 
         if ($NotesFile) {
             $releaseArgs += @('--notes-file', $NotesFile)
