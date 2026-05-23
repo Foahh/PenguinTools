@@ -44,6 +44,8 @@ public sealed class OptionDocument
 
     public int BatchSize { get; set; } = 8;
 
+    public OptionConversionCache ConversionCache { get; set; } = new();
+
     public bool HasExportableWork()
     {
         return ConvertChart || ConvertAudio || ConvertJacket || ConvertBackground || GenerateEventXml;
@@ -51,6 +53,8 @@ public sealed class OptionDocument
 
     public OptionExportSettings ToExportSettings()
     {
+        ConversionCache ??= new OptionConversionCache();
+
         return new OptionExportSettings(
             ConvertChart,
             ConvertJacket,
@@ -62,7 +66,8 @@ public sealed class OptionDocument
             GenerateEventXml,
             UltimaEventId,
             WeEventId,
-            BatchSize);
+            BatchSize,
+            ConversionCache);
     }
 
     private static string CreateOptionId()

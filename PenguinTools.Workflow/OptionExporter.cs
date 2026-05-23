@@ -67,9 +67,10 @@ public static class OptionExporter
             await ConvertChartsAsync(book, xml, chartFolder, workingDirectory, diagnostics, weEntries, ultEntries, ct);
 
         if (settings.ConvertJacket && xml is not null && chartFolder is not null)
-            await ConvertJacketAsync(book, xml, chartFolder, ctx, diagnostics, ct);
+            await ConvertJacketAsync(book, xml, chartFolder, settings, ctx, diagnostics, ct);
 
-        if (settings.ConvertAudio) await ConvertAudioAsync(book, outputPaths.CueFileFolder, ctx, diagnostics, ct);
+        if (settings.ConvertAudio)
+            await ConvertAudioAsync(book, outputPaths.CueFileFolder, settings, ctx, diagnostics, ct);
     }
 
     private static async Task<Entry?> BuildStageAsync(
@@ -85,6 +86,23 @@ public static class OptionExporter
             throw new DiagnosticException(Strings.Error_Background_file_is_not_set);
         if (book.StageId is null) throw new DiagnosticException(Strings.Error_Stage_id_is_not_set);
 
+        var stageTemplatePath = ctx.AssetProvider.GetPath(InfrastructureAsset.StageTemplate);
+        var notesFieldTemplatePath = ctx.AssetProvider.GetPath(InfrastructureAsset.NotesFieldTemplate);
+        var stageXml = new StageXml(book.StageId.Value, book.NotesFieldLine);
+        var cachedConversion = await OptionConversionCacheArtifacts.CreateStageAsync(
+            book,
+            outputPaths.StageFolder,
+            stageTemplatePath,
+            notesFieldTemplatePath,
+            ct);
+        if (await OptionConversionCacheValidator.IsHitAsync(
+                settings.ConversionCache,
+                cachedConversion.Key,
+                cachedConversion.State,
+                cachedConversion.Outputs,
+                ct))
+            return stageXml.Name;
+
         var stageConverter = new StageConverter(
             new StageBuildRequest(
                 ctx.Assets,
@@ -93,12 +111,19 @@ public static class OptionExporter
                 book.StageId,
                 outputPaths.StageFolder,
                 book.NotesFieldLine,
-                ctx.AssetProvider.GetPath(InfrastructureAsset.StageTemplate),
-                ctx.AssetProvider.GetPath(InfrastructureAsset.NotesFieldTemplate)),
+                stageTemplatePath,
+                notesFieldTemplatePath),
             ctx.MediaTool);
         var builtStage = await stageConverter.BuildAsync(ct);
         diagnostics.Report(builtStage.Diagnostics);
         if (!builtStage.Succeeded || builtStage.Value is not { } stageEntry) return null;
+
+        await OptionConversionCacheValidator.StoreAsync(
+            settings.ConversionCache,
+            cachedConversion.Key,
+            cachedConversion.State,
+            cachedConversion.Outputs,
+            ct);
 
         ct.ThrowIfCancellationRequested();
         return stageEntry;
@@ -176,6 +201,7 @@ public static class OptionExporter
         OptionBookSnapshot book,
         MusicXml xml,
         string chartFolder,
+        OptionExportSettings settings,
         MusicExportContext ctx,
         IDiagnosticSink diagnostics,
         CancellationToken ct)
@@ -187,12 +213,33 @@ public static class OptionExporter
             return;
         }
 
+        var outputPath = Path.Combine(chartFolder, xml.JaketFile);
+        var cachedConversion = await OptionConversionCacheArtifacts.CreateJacketAsync(
+            xml.DataName,
+            jacketPath,
+            outputPath,
+            ct);
+        if (await OptionConversionCacheValidator.IsHitAsync(
+                settings.ConversionCache,
+                cachedConversion.Key,
+                cachedConversion.State,
+                cachedConversion.Outputs,
+                ct))
+            return;
+
         var jacketConverter = new JacketConverter(
-            new JacketConvertRequest(jacketPath, Path.Combine(chartFolder, xml.JaketFile)),
+            new JacketConvertRequest(jacketPath, outputPath),
             ctx.MediaTool);
         var convertedJacket = await jacketConverter.ConvertAsync(ct);
         diagnostics.Report(convertedJacket.Diagnostics);
         if (!convertedJacket.Succeeded) return;
+
+        await OptionConversionCacheValidator.StoreAsync(
+            settings.ConversionCache,
+            cachedConversion.Key,
+            cachedConversion.State,
+            cachedConversion.Outputs,
+            ct);
 
         ct.ThrowIfCancellationRequested();
     }
@@ -200,21 +247,49 @@ public static class OptionExporter
     private static async Task ConvertAudioAsync(
         OptionBookSnapshot book,
         string cueFileFolder,
+        OptionExportSettings settings,
         MusicExportContext ctx,
         IDiagnosticSink diagnostics,
         CancellationToken ct)
     {
+        var songId = book.BookMeta.Id;
+        var dummyAcbPath = ctx.AssetProvider.GetPath(InfrastructureAsset.DummyAcb);
+        var cachedConversion = songId is null
+            ? null
+            : await OptionConversionCacheArtifacts.CreateAudioAsync(
+                book.BookMeta,
+                cueFileFolder,
+                dummyAcbPath,
+                ct);
+        if (songId is not null &&
+            cachedConversion is not null &&
+            await OptionConversionCacheValidator.IsHitAsync(
+                settings.ConversionCache,
+                cachedConversion.Key,
+                cachedConversion.State,
+                cachedConversion.Outputs,
+                ct))
+            return;
+
         var audioConverter = new AudioConverter(
             new AudioConvertRequest(
                 book.BookMeta,
                 cueFileFolder,
-                ctx.AssetProvider.GetPath(InfrastructureAsset.DummyAcb),
+                dummyAcbPath,
                 ctx.ResourceStore.GetTempPath(
                     $"c_{Path.GetFileNameWithoutExtension(book.BookMeta.FullBgmFilePath)}.wav")),
             ctx.MediaTool);
         var convertedAudio = await audioConverter.ConvertAsync(ct);
         diagnostics.Report(convertedAudio.Diagnostics);
         if (!convertedAudio.Succeeded) return;
+
+        if (cachedConversion is not null)
+            await OptionConversionCacheValidator.StoreAsync(
+                settings.ConversionCache,
+                cachedConversion.Key,
+                cachedConversion.State,
+                cachedConversion.Outputs,
+                ct);
 
         ct.ThrowIfCancellationRequested();
     }

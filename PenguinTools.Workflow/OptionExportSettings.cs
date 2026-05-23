@@ -11,4 +11,5 @@ public sealed record OptionExportSettings(
     bool GenerateEventXml,
     int UltimaEventId,
     int WeEventId,
-    int BatchSize);
+    int BatchSize,
+    OptionConversionCache? ConversionCache = null);

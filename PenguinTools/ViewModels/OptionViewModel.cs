@@ -121,7 +121,9 @@ public partial class OptionViewModel : WatchViewModel<OptionModel>
 
         await settings.SaveAsync(ModelPath, ct);
 
-        return await _export.ExportAsync(settings, outputPaths, ct);
+        var result = await _export.ExportAsync(settings, outputPaths, ct);
+        await settings.SaveAsync(ModelPath, ct);
+        return result;
     }
 
     private async Task<OptionModel> LoadModelAsync(string path, CancellationToken ct)

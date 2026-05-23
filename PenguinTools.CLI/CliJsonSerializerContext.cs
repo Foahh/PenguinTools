@@ -22,6 +22,8 @@ namespace PenguinTools.CLI;
 [JsonSerializable(typeof(CliDiagnosticPayload[]))]
 [JsonSerializable(typeof(CliProcessPayload))]
 [JsonSerializable(typeof(OptionDocument))]
+[JsonSerializable(typeof(OptionConversionCache))]
+[JsonSerializable(typeof(OptionConversionCacheEntry))]
 [JsonSerializable(typeof(ChartFileFormat))]
 [JsonSerializable(typeof(List<ChartFileFormat>))]
 [JsonSerializable(typeof(ExecutionInfo), TypeInfoPropertyName = "RuntimeExecutionInfo")]

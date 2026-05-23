@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PenguinTools.Attributes;
+using PenguinTools.Core.IO;
 using PenguinTools.Core.Xml;
 using PenguinTools.i18n;
 using PenguinTools.Workflow;
@@ -114,6 +115,8 @@ public partial class OptionModel : Model, IPersistable
     [Range(-1, int.MaxValue)]
     public partial int BatchSize { get; set; } = 8;
 
+    [Browsable(false)] public OptionConversionCache ConversionCache { get; set; } = new();
+
     [Browsable(false)] public string WorkingDirectory { get; set; } = string.Empty;
 
     [Browsable(false)]
@@ -146,8 +149,10 @@ public partial class OptionModel : Model, IPersistable
     {
         if (string.IsNullOrWhiteSpace(directory)) throw new ArgumentNullException(nameof(directory));
         var path = Path.Combine(directory, PersistenceFileName);
-        await using var stream = File.Create(path);
-        await JsonSerializer.SerializeAsync(stream, ToDocument(), OptionDocumentJson.Default, cancellationToken);
+        await AtomicFile.WriteAsync(
+            path,
+            (stream, ct) => JsonSerializer.SerializeAsync(stream, ToDocument(), OptionDocumentJson.Default, ct),
+            cancellationToken);
     }
 
     public void Apply(OptionDocument document)
@@ -166,6 +171,7 @@ public partial class OptionModel : Model, IPersistable
         UltimaEventId = document.UltimaEventId;
         WeEventId = document.WeEventId;
         BatchSize = document.BatchSize;
+        ConversionCache = document.ConversionCache ?? new OptionConversionCache();
     }
 
     public OptionDocument ToDocument()
@@ -190,7 +196,8 @@ public partial class OptionModel : Model, IPersistable
             ReleaseTagTitleName = ReleaseTagTitleName,
             UltimaEventId = UltimaEventId,
             WeEventId = WeEventId,
-            BatchSize = BatchSize
+            BatchSize = BatchSize,
+            ConversionCache = ConversionCache
         };
     }
 

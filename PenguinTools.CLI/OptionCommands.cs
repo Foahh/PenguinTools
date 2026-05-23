@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.Text.Json;
 using PenguinTools.Core;
+using PenguinTools.Core.IO;
 using PenguinTools.i18n;
 using PenguinTools.Workflow;
 
@@ -43,10 +44,11 @@ internal static class OptionCommands
             {
                 var loadJson = parseResult.GetValue(cliOptions.LoadJson);
                 OptionDocument json;
+                string? optionsPath = null;
 
                 if (loadJson)
                 {
-                    var optionsPath = Path.Combine(input, OptionsFileName);
+                    optionsPath = Path.Combine(input, OptionsFileName);
                     if (!File.Exists(optionsPath))
                         return new CliCommandOutcome(
                             OperationResult.Failure()
@@ -122,6 +124,7 @@ internal static class OptionCommands
                     ct);
 
                 var result = CliPaths.Merge(scanned.Diagnostics, exported);
+                if (result.Succeeded && optionsPath is not null) await SaveOptionsJsonAsync(optionsPath, json, ct);
 
                 var message = result.Succeeded
                     ? string.Format(Strings.Cli_Msg_exported_option_bundle, bundleRoot)
@@ -134,6 +137,18 @@ internal static class OptionCommands
         });
 
         return command;
+    }
+
+    private static async Task SaveOptionsJsonAsync(string path, OptionDocument document, CancellationToken ct)
+    {
+        await AtomicFile.WriteAsync(
+            path,
+            (stream, cancellationToken) => JsonSerializer.SerializeAsync(
+                stream,
+                document,
+                CliJsonSerializerContext.Default.OptionDocument,
+                cancellationToken),
+            ct);
     }
 
     private sealed class OptionConvertCliOptions
