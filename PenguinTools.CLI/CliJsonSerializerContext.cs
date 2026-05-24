@@ -23,6 +23,7 @@ namespace PenguinTools.CLI;
 [JsonSerializable(typeof(CliProcessPayload))]
 [JsonSerializable(typeof(OptionDocument))]
 [JsonSerializable(typeof(OptionConversionCache))]
+[JsonSerializable(typeof(OptionConversionCachePartition))]
 [JsonSerializable(typeof(OptionConversionCacheEntry))]
 [JsonSerializable(typeof(ChartFileFormat))]
 [JsonSerializable(typeof(List<ChartFileFormat>))]

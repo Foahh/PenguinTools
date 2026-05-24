@@ -6,66 +6,111 @@ namespace PenguinTools.Workflow;
 
 public sealed class OptionConversionCache
 {
-    public const int CurrentVersion = 1;
+    public const int AudioCurrentVersion = 1;
+    public const int ImageCurrentVersion = 2;
 
-    private readonly Lock _sync = new();
-    private Dictionary<string, OptionConversionCacheEntry> _entries = new(StringComparer.OrdinalIgnoreCase);
+    public OptionConversionCachePartition Audio { get; set; } = CreatePartition(AudioCurrentVersion);
+    public OptionConversionCachePartition Image { get; set; } = CreatePartition(ImageCurrentVersion);
 
-    public int Version { get; set; } = CurrentVersion;
-
-    public Dictionary<string, OptionConversionCacheEntry> Entries
+    private static OptionConversionCachePartition CreatePartition(int version)
     {
-        get => _entries;
-        set => _entries = value is null
-            ? new Dictionary<string, OptionConversionCacheEntry>(StringComparer.OrdinalIgnoreCase)
-            : new Dictionary<string, OptionConversionCacheEntry>(value, StringComparer.OrdinalIgnoreCase);
+        return new OptionConversionCachePartition { Version = version };
     }
 
     public OptionConversionCacheEntry? GetEntry(string key)
     {
-        lock (_sync)
-        {
-            return Version == CurrentVersion && _entries.TryGetValue(key, out var entry) ? entry : null;
-        }
+        return TryResolve(key, out var partition, out var currentVersion)
+            ? partition.TryGetEntry(currentVersion, key)
+            : null;
     }
 
     public void SetEntry(string key, OptionConversionCacheEntry entry)
     {
+        if (!TryResolve(key, out var partition, out var currentVersion))
+            throw new ArgumentException($"Unsupported conversion cache key: {key}", nameof(key));
+
+        partition.SetEntry(currentVersion, key, entry);
+    }
+
+    private bool TryResolve(string key, out OptionConversionCachePartition partition, out int currentVersion)
+    {
+        if (key.StartsWith("audio:", StringComparison.OrdinalIgnoreCase))
+        {
+            partition = Audio;
+            currentVersion = AudioCurrentVersion;
+            return true;
+        }
+
+        if (key.StartsWith("jacket:", StringComparison.OrdinalIgnoreCase)
+            || key.StartsWith("stage:", StringComparison.OrdinalIgnoreCase))
+        {
+            partition = Image;
+            currentVersion = ImageCurrentVersion;
+            return true;
+        }
+
+        partition = null!;
+        currentVersion = 0;
+        return false;
+    }
+}
+
+public sealed class OptionConversionCachePartition
+{
+    private readonly Lock _sync = new();
+
+    public int Version { get; set; }
+
+    public Dictionary<string, OptionConversionCacheEntry> Entries
+    {
+        get;
+        set => field = value is null
+            ? new Dictionary<string, OptionConversionCacheEntry>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, OptionConversionCacheEntry>(value, StringComparer.OrdinalIgnoreCase);
+    } = new(StringComparer.OrdinalIgnoreCase);
+
+    internal OptionConversionCacheEntry? TryGetEntry(int currentVersion, string key)
+    {
         lock (_sync)
         {
-            if (Version != CurrentVersion)
+            return Version == currentVersion && Entries.TryGetValue(key, out var entry) ? entry : null;
+        }
+    }
+
+    internal void SetEntry(int currentVersion, string key, OptionConversionCacheEntry entry)
+    {
+        lock (_sync)
+        {
+            if (Version != currentVersion)
             {
-                Version = CurrentVersion;
-                _entries.Clear();
+                Version = currentVersion;
+                Entries.Clear();
             }
 
-            _entries[key] = entry;
+            Entries[key] = entry;
         }
     }
 }
 
 public sealed class OptionConversionCacheEntry
 {
-    private Dictionary<string, string> _inputs = new(StringComparer.OrdinalIgnoreCase);
-    private Dictionary<string, string> _outputs = new(StringComparer.OrdinalIgnoreCase);
-
     public string RecipeHash { get; set; } = string.Empty;
 
     public Dictionary<string, string> Inputs
     {
-        get => _inputs;
-        set => _inputs = value is null
+        get;
+        set => field = value is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(value, StringComparer.OrdinalIgnoreCase);
-    }
+    } = new(StringComparer.OrdinalIgnoreCase);
 
     public Dictionary<string, string> Outputs
     {
-        get => _outputs;
-        set => _outputs = value is null
+        get;
+        set => field = value is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(value, StringComparer.OrdinalIgnoreCase);
-    }
+    } = new(StringComparer.OrdinalIgnoreCase);
 }
 
 internal sealed record OptionConversionCacheState(
@@ -90,7 +135,7 @@ internal static class OptionConversionCacheValidator
             inputHashes[name] = await HashFileAsync(path, ct);
         }
 
-        var recipeHash = HashRecipe(recipeFields);
+        var recipeHash = HashRecipe(recipeFields, RecipeCacheVersion(recipeFields));
         return new OptionConversionCacheState(recipeHash, inputHashes);
     }
 
@@ -136,6 +181,18 @@ internal static class OptionConversionCacheValidator
         return value.ToString(null, CultureInfo.InvariantCulture);
     }
 
+    private static int RecipeCacheVersion(IReadOnlyDictionary<string, string?> recipeFields)
+    {
+        return recipeFields.TryGetValue("kind", out var kind)
+            ? kind switch
+            {
+                "audio" => OptionConversionCache.AudioCurrentVersion,
+                "jacket" or "stage" => OptionConversionCache.ImageCurrentVersion,
+                _ => throw new ArgumentException($"Unsupported recipe kind: {kind}", nameof(recipeFields))
+            }
+            : throw new ArgumentException("Recipe kind is required.", nameof(recipeFields));
+    }
+
     private static async Task<Dictionary<string, string>?> HashExistingOutputsAsync(
         IReadOnlyList<OptionConversionArtifact> outputs,
         CancellationToken ct)
@@ -174,10 +231,10 @@ internal static class OptionConversionCacheValidator
         return Convert.ToHexString(hash);
     }
 
-    private static string HashRecipe(IReadOnlyDictionary<string, string?> fields)
+    private static string HashRecipe(IReadOnlyDictionary<string, string?> fields, int cacheVersion)
     {
         var sb = new StringBuilder();
-        sb.Append(nameof(OptionConversionCache)).Append('=').Append(OptionConversionCache.CurrentVersion).Append('\n');
+        sb.Append(nameof(OptionConversionCache)).Append('=').Append(cacheVersion).Append('\n');
 
         foreach (var (key, value) in fields.OrderBy(kv => kv.Key, StringComparer.Ordinal))
         {
