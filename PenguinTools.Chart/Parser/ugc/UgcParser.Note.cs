@@ -258,7 +258,7 @@ public partial class UgcParser
                 Tick = hold.Tick.Original + offsetTick,
                 Lane = hold.Lane,
                 Width = hold.Width,
-                Timeline = hold.Timeline
+                Timeline = _currentTimeline
             };
             hold.AppendChild(hj);
             _lastNote = hj;
@@ -278,7 +278,7 @@ public partial class UgcParser
                 Tick = airSlide.Tick.Original + offsetTick,
                 Lane = airSlide.Lane,
                 Width = airSlide.Width,
-                Timeline = airSlide.Timeline,
+                Timeline = _currentTimeline,
                 Height = airSlide.Height,
                 Joint = payload[0] == 'c' ? Joint.C : Joint.D
             };
@@ -365,7 +365,7 @@ public partial class UgcParser
         child.Tick = absTick;
         child.Lane = x;
         child.Width = w;
-        child.Timeline = _lastParentNote.Timeline;
+        child.Timeline = _currentTimeline;
         _lastParentNote.AppendChild(child);
         _lastNote = child;
     }
