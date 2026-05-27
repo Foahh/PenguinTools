@@ -42,11 +42,11 @@ public class PayloadTests
 
     [Theory]
     [InlineData("UC", AirDirection.IR)]
-    [InlineData("UL", AirDirection.UR)]
-    [InlineData("UR", AirDirection.UL)]
+    [InlineData("UL", AirDirection.UL)]
+    [InlineData("UR", AirDirection.UR)]
     [InlineData("DC", AirDirection.DW)]
-    [InlineData("DL", AirDirection.DR)]
-    [InlineData("DR", AirDirection.DL)]
+    [InlineData("DL", AirDirection.DL)]
+    [InlineData("DR", AirDirection.DR)]
     public void AirDirectionCode_MapsToExpectedDirection(string code, AirDirection expected)
     {
         Assert.Equal(expected, UgcPayload.AirDirectionCode(code));

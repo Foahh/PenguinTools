@@ -258,11 +258,11 @@ File translated from https://gist.github.com/inonote/5c01e73781cab17765a1d93641d
             - t = `a`
             - dd: direction
                 - `UC` Up
-                - `UL` Up-right
-                - `UR` Up-left
+              - `UL` Up-left
+              - `UR` Up-right
                 - `DC` Down
-                - `DL` Down-right
-                - `DR` Down-left
+              - `DL` Down-left
+              - `DR` Down-right
             - c: color
                 - `N` Normal
                 - `I` Inverted

@@ -55,11 +55,11 @@ internal static class UgcPayload
         return code.ToString().ToUpperInvariant() switch
         {
             "UC" => AirDirection.IR,
-            "UL" => AirDirection.UR,
-            "UR" => AirDirection.UL,
+            "UL" => AirDirection.UL,
+            "UR" => AirDirection.UR,
             "DC" => AirDirection.DW,
-            "DL" => AirDirection.DR,
-            "DR" => AirDirection.DL,
+            "DL" => AirDirection.DL,
+            "DR" => AirDirection.DR,
             _ => AirDirection.IR
         };
     }

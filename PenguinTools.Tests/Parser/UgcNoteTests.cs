@@ -1,3 +1,4 @@
+using PenguinTools.Chart.Converter.c2s;
 using PenguinTools.Chart.Models;
 using PenguinTools.Chart.Models.umgr;
 using PenguinTools.Chart.Parser.ugc;
@@ -90,8 +91,26 @@ public class UgcNoteTests
         var tap = Assert.Single(chart.Notes.Children.OfType<Tap>());
         var air = Assert.Single(chart.Notes.Children.OfType<Air>());
         Assert.Same(tap, air.PairNote);
-        Assert.Equal(AirDirection.UR, air.Direction);
+        Assert.Equal(AirDirection.UL, air.Direction);
         Assert.Equal(Color.PNK, air.Color);
+    }
+
+    [Theory]
+    [InlineData("UC", "AIR")]
+    [InlineData("UL", "AUL")]
+    [InlineData("UR", "AUR")]
+    [InlineData("DC", "ADW")]
+    [InlineData("DL", "ADL")]
+    [InlineData("DR", "ADR")]
+    public async Task Air_DirectionSurvivesC2sConversion(string ugcDirection, string c2sId)
+    {
+        var chart = await Parse($"#0'480:t64\n#0'480:a64{ugcDirection}I\n");
+
+        var convert = new C2SChartConverter(new C2SConvertRequest(chart)).Convert();
+
+        Assert.True(convert.Succeeded, convert.ToString());
+        var air = Assert.Single(convert.Value!.Notes.OfType<Chart.Models.c2s.Air>());
+        Assert.Equal(c2sId, air.Id);
     }
 
     [Fact]
