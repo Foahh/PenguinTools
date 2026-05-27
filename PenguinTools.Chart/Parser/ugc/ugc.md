@@ -268,8 +268,10 @@ File translated from https://gist.github.com/inonote/5c01e73781cab17765a1d93641d
                 - `I` Inverted
 
     - AIR-HOLD
-        - `#BarTick:txwc`
+        - `#BarTick:txwc` or `#BarTick:txwhhc`
             - t = `H`
+          - The `txwc` form uses the default AIR-HOLD height, raw value `80`
+          - hh: optional height, represented as a 2-digit base-36 value equal to the original value multiplied by 10
             - c: color
                 - `N` Normal
                 - `I` Inverted
@@ -277,9 +279,15 @@ File translated from https://gist.github.com/inonote/5c01e73781cab17765a1d93641d
             - Intermediate point / endpoint
                 - `#OffsetTick:t`
                 - t = `s`
+              - Inherits the parent AIR-HOLD height
+              - `#OffsetTick:txwhh` when height is present
+              - hh: height, represented as a 2-digit base-36 value equal to the original value multiplied by 10
             - Endpoint without AIR-ACTION
                 - `#OffsetTick:t`
                 - t = `c`
+              - Inherits the parent AIR-HOLD height
+              - `#OffsetTick:txwhh` when height is present
+              - hh: height, represented as a 2-digit base-36 value equal to the original value multiplied by 10
 
     - AIR-SLIDE
         - `#BarTick:txwhhc`

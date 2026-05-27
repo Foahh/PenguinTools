@@ -8,6 +8,8 @@ using umgr = Models.umgr;
 
 public partial class UgcParser
 {
+    private const decimal DefaultAirHoldHeight = 80m;
+
     private void DispatchBodyLine(string line)
     {
         if (!line.StartsWith('#')) return;
@@ -114,7 +116,7 @@ public partial class UgcParser
         if (typeChar is 'H' or 'S')
         {
             var (height, color) = typeChar == 'H'
-                ? (0m, extras.Length >= 1 ? UgcPayload.AirColorChar(extras[0]) : Color.DEF)
+                ? ParseAirHoldExtras(extras)
                 : extras.Length >= 3
                     ? (UgcPayload.Height36(extras.AsSpan(0, 2)), UgcPayload.AirColorChar(extras[2]))
                     : (-1m, Color.DEF);
@@ -228,6 +230,17 @@ public partial class UgcParser
             's' => new umgr.Slide(),
             _ => null
         };
+    }
+
+    private static (decimal Height, Color Color) ParseAirHoldExtras(string extras)
+    {
+        if (extras.Length >= 3)
+        {
+            var height = UgcPayload.Height36(extras.AsSpan(0, 2));
+            return (height, UgcPayload.AirColorChar(extras[2]));
+        }
+
+        return (DefaultAirHoldHeight, extras.Length >= 1 ? UgcPayload.AirColorChar(extras[0]) : Color.DEF);
     }
 
     private void HandleChildPayload(int offsetTick, string payload)
