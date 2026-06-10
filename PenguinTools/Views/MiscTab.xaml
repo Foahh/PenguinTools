@@ -25,24 +25,23 @@
 
     <shell:TabShell>
         <shell:TabShell.MainContent>
-            <StackPanel
-                HorizontalAlignment="Center"
-                Margin="8,0,8,8"
-                VerticalAlignment="Center">
-                <TextBlock
-                    FontSize="14"
-                    Foreground="#555"
-                    HorizontalAlignment="Center"
-                    Margin="0,8,0,0"
-                    Text="{Binding Source={x:Static local:App.BuildDate}, StringFormat=Foahh @ {0:yyyy/MM/dd}}" />
+            <StackPanel Margin="8,0,8,8">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock
+                        FontSize="14"
+                        Foreground="#555"
+                        HorizontalAlignment="Center"
+                        Margin="0,8,0,0"
+                        Text="{Binding Source={x:Static local:App.BuildDate}, StringFormat=Foahh @ {0:yyyy/MM/dd}}" />
 
-                <TextBlock
-                    FontSize="12"
-                    FontWeight="SemiBold"
-                    Foreground="#777"
-                    HorizontalAlignment="Center"
-                    Margin="0,8,0,0"
-                    Text="{Binding Source={x:Static local:App.Version}, Converter={StaticResource VersionConverter}}" />
+                    <TextBlock
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        Foreground="#777"
+                        HorizontalAlignment="Center"
+                        Margin="0,8,0,0"
+                        Text="{Binding Source={x:Static local:App.Version}, Converter={StaticResource VersionConverter}}" />
+                </StackPanel>
             </StackPanel>
         </shell:TabShell.MainContent>
         <shell:TabShell.FooterContent>
@@ -52,6 +51,13 @@
                 <Button Command="{Binding OpenTempDirectoryCommand}" Content="{x:Static res:Strings.Button_Open_temp_directory}" />
                 <Button Command="{Binding ExtractAfbFileCommand}" Content="{x:Static res:Strings.Button_Extract_dds_from_afb}" />
                 <Button Command="{Binding CollectAssetCommand}" Content="{x:Static res:Strings.Button_Recollect_A000}" />
+                <GroupBox Header="{x:Static res:Strings.Label_Language}" Margin="0,4,0,0">
+                    <ComboBox
+                        DisplayMemberPath="DisplayName"
+                        ItemsSource="{Binding AvailableLanguages}"
+                        Margin="0,4,0,0"
+                        SelectedItem="{Binding SelectedLanguage}" />
+                </GroupBox>
             </StackPanel>
         </shell:TabShell.FooterContent>
     </shell:TabShell>

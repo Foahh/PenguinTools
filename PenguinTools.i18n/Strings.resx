@@ -1121,4 +1121,7 @@ You can still re-import game assets later from the Misc tab.</value>
     <data name="Error_Stage_background_required" xml:space="preserve">
     <value>A background path is required to build a stage.</value>
   </data>
+    <data name="Label_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
 </root>

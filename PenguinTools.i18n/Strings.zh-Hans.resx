@@ -1120,4 +1120,7 @@
     <data name="Error_Stage_background_required" xml:space="preserve">
         <value>构建 Stage 需要背景路径。</value>
     </data>
+    <data name="Label_Language" xml:space="preserve">
+        <value>语言</value>
+    </data>
 </root>

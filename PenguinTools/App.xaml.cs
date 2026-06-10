@@ -97,6 +97,39 @@ public partial class App : Application
             Debug.WriteLine(ex);
         }
 
+        var lang = uiSettings.Settings.Language;
+        if (string.IsNullOrWhiteSpace(lang))
+        {
+            var cultureName = CultureInfo.CurrentUICulture.Name;
+            lang = cultureName.StartsWith("zh-Hans", StringComparison.OrdinalIgnoreCase) ||
+                   cultureName.Equals("zh-CHS", StringComparison.OrdinalIgnoreCase) ||
+                   cultureName.Equals("zh-CN", StringComparison.OrdinalIgnoreCase) ||
+                   cultureName.Equals("zh-SG", StringComparison.OrdinalIgnoreCase)
+                ? "zh-Hans"
+                : "en";
+            uiSettings.Settings.Language = lang;
+            try
+            {
+                await uiSettings.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        try
+        {
+            var culture = CultureInfo.GetCultureInfo(lang);
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+            Strings.Culture = culture;
+        }
+        catch (CultureNotFoundException ex)
+        {
+            Debug.WriteLine($"Unknown language setting '{lang}': {ex.Message}");
+        }
+
         var assetManager = ServiceProvider.GetRequiredService<AssetManager>();
         var gameAssetService = ServiceProvider.GetRequiredService<IGameAssetService>();
         var hasConfiguredGameDirectory =

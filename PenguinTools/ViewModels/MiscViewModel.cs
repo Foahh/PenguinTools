@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using PenguinTools.Core;
@@ -7,6 +9,7 @@ using PenguinTools.Core.Asset;
 using PenguinTools.i18n;
 using PenguinTools.Infrastructure;
 using PenguinTools.Media;
+using PenguinTools.Models;
 using PenguinTools.Services;
 
 namespace PenguinTools.ViewModels;
@@ -16,6 +19,7 @@ public partial class MiscViewModel : ViewModel
     private readonly IApplicationPaths _paths;
     private readonly ResourceStoreOptions _storeOptions;
     private readonly IGameAssetService _gameAssetService;
+    private readonly IUiSettingsService _uiSettingsService;
 
     public MiscViewModel(
         ActionService actionService,
@@ -26,12 +30,43 @@ public partial class MiscViewModel : ViewModel
         IExternalLauncher externalLauncher,
         IApplicationPaths paths,
         ResourceStoreOptions storeOptions,
-        IGameAssetService gameAssetService)
+        IGameAssetService gameAssetService,
+        IUiSettingsService uiSettingsService)
         : base(actionService, assetManager, mediaTool, resourceStore, assetProvider, externalLauncher)
     {
         _paths = paths;
         _storeOptions = storeOptions;
         _gameAssetService = gameAssetService;
+        _uiSettingsService = uiSettingsService;
+
+        _selectedLanguage = LanguageOption.All.FirstOrDefault(o => o.Code == uiSettingsService.Settings.Language) ??
+                            LanguageOption.All[0];
+    }
+
+    public LanguageOption[] AvailableLanguages => LanguageOption.All;
+
+    [ObservableProperty] private LanguageOption _selectedLanguage;
+
+    partial void OnSelectedLanguageChanged(LanguageOption value)
+    {
+        _uiSettingsService.Settings.Language = value.Code;
+        _ = SaveAndRestartAsync();
+    }
+
+    private async Task SaveAndRestartAsync()
+    {
+        try
+        {
+            await _uiSettingsService.SaveAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
+
+        var exe = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName;
+        if (!string.IsNullOrWhiteSpace(exe)) Process.Start(exe);
+        Application.Current.Shutdown();
     }
 
     [RelayCommand]
